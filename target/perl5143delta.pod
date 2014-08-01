@@ -1,0 +1,273 @@
+=encoding utf8
+
+=head1 NOMBRE
+
+perl5143delta - what is new for perl v5.14.3
+
+=head1 DESCRIPCIÓN
+
+This document describes differences between the 5.14.2 release and
+the 5.14.3 release.
+
+Si va a actualizar desde una versión anterior, como la 5.12.0, debe leer primero 
+L<perl5140delta>, donde se describen las diferencias entre las versiones 5.12.0 y 5.14.0.
+
+=head1 Mejoras en los componentes
+
+Ningún cambio con respecto a la versión 5.14.0.
+
+=head1 Seguridad
+
+=head2 C<Digest> unsafe use of eval (CVE-2011-3597)
+
+The C<Digest-E<gt>new()> function did not properly sanitize input before
+using it in an eval() call, which could lead to the injection of arbitrary
+Perl code.
+
+In order to exploit this flaw, the attacker would need to be able to set
+the algorithm name used, or be able to execute arbitrary Perl code already.
+
+This problem has been fixed.
+
+=head2 Heap buffer overrun in 'x' string repeat operator (CVE-2012-5195)
+
+Poorly written perl code that allows an attacker to specify the count to
+perl's 'x' string repeat operator can already cause a memory exhaustion
+denial-of-service attack. A flaw in versions of perl before 5.15.5 can
+escalate that into a heap buffer overrun; coupled with versions of glibc
+before 2.16, it possibly allows the execution of arbitrary code.
+
+This problem has been fixed.
+
+=head1 Cambios incompatibles
+
+No hay cambios intencionadamente incompatibles con 5.14.0. Si los hay, los errores e informes serán bienvenidos.
+
+=head1 Obsolescencias
+
+No hay obsolescencias desde 5.14.0.
+
+=head1 Módulos y pragmas
+
+=head2 Nuevos módulos y pragmas
+
+Ningún cambio
+
+=head2 Módulos y pragmas actualizados
+
+=over 4
+
+=item *
+
+L<PerlIO::scalar> was updated to fix a bug in which opening a filehandle to
+a glob copy caused assertion failures (under debugging) or hangs or other
+erratic behaviour without debugging.
+
+=item *
+
+L<ODBM_File> and L<NDBM_File> were updated to allow building on GNU/Hurd.
+
+=item *
+
+L<IPC::Open3> has been updated to fix a regression introduced in perl
+5.12, which broke C<IPC::Open3::open3($in, $out, $err, '-')>.
+[perl #95748]
+
+=item *
+
+L<Digest> has been upgraded from version 1.16 to 1.16_01.
+
+Vea L</Seguridad>.
+
+=item *
+
+L<Module::CoreList> has been updated to version 2.49_04 to add data for
+this release.
+
+=back
+
+=head2 Módulos y pragmas retirados
+
+Ningún cambio
+
+=head1 Documentación
+
+=head2 Nueva documentación
+
+Ningún cambio
+
+=head2 Cambios en la documentación existente
+
+=head3 L<perlcheat>
+
+=over 4
+
+=item *
+
+L<perlcheat> was updated to 5.14.
+
+=back
+
+=head1 Configuración y compilación
+
+=over 4
+
+=item *
+
+h2ph was updated to search correctly gcc include directories on platforms
+such as Debian with multi-architecture support.
+
+=item *
+
+In Configure, the test for procselfexe was refactored into a loop.
+
+=back
+
+=head1 Compatibilidad con plataformas
+
+=head2 Nuevas plataformas
+
+Ningún cambio
+
+=head2 Plataformas retiradas
+
+Ningún cambio
+
+=head2 Notas específicas de plataformas
+
+=over 4
+
+=item FreeBSD
+
+The FreeBSD hints file was corrected to be compatible with FreeBSD 10.0.
+
+=item Solaris and NetBSD
+
+Configure was updated for "procselfexe" support on Solaris and NetBSD.
+
+=item HP-UX
+
+README.hpux was updated to note the existence of a broken header in
+HP-UX 11.00.
+
+=item Linux
+
+libutil is no longer used when compiling on Linux platforms, which avoids
+warnings being emitted.
+
+The system gcc (rather than any other gcc which might be in the compiling
+user's path) is now used when searching for libraries such as C<-lm>.
+
+=item Mac OS X
+
+The locale tests were updated to reflect the behaviour of locales in
+Mountain Lion.
+
+=item GNU/Hurd
+
+Various build and test fixes were included for GNU/Hurd.
+
+LFS support was enabled in GNU/Hurd.
+
+=item NetBSD
+
+The NetBSD hints file was corrected to be compatible with NetBSD 6.*
+
+=back
+
+=head1 Corrección de errores
+
+=over 4
+
+=item *
+
+A regression has been fixed that was introduced in 5.14, in C</i>
+regular expression matching, in which a match improperly fails if the
+pattern is in UTF-8, the target string is not, and a Latin-1 character
+precedes a character in the string that should match the pattern.  [perl
+#101710]
+
+=item *
+
+In case-insensitive regular expression pattern matching, no longer on
+UTF-8 encoded strings does the scan for the start of match only look at
+the first possible position.  This caused matches such as
+C<"f\x{FB00}" =~ /ff/i> to fail.
+
+=item *
+
+The sitecustomize support was made relocatableinc aware, so that
+-Dusesitecustomize and -Duserelocatableinc may be used together.
+
+=item *
+
+The smartmatch operator (C<~~>) was changed so that the right-hand side
+takes precedence during C<Any ~~ Object> operations.
+
+=item *
+
+A bug has been fixed in the tainting support, in which an C<index()>
+operation on a tainted constant would cause all other constants to become
+tainted.  [perl #64804]
+
+=item *
+
+A regression has been fixed that was introduced in perl 5.12, whereby
+tainting errors were not correctly propagated through C<die()>.
+[perl #111654]
+
+=item *
+
+A regression has been fixed that was introduced in perl 5.14, in which
+C</[[:lower:]]/i> and C</[[:upper:]]/i> no longer matched the opposite case.
+[perl #101970]
+
+=back
+
+=head1 Agradecimientos
+
+Perl 5.14.3 represents approximately 12 months of development since Perl 5.14.2
+and contains approximately 2,300 lines of changes across 64 files from 22
+authors.
+
+Perl continues to flourish into its third decade thanks to a vibrant community
+of users and developers. The following people are known to have contributed the
+improvements that became Perl 5.14.3:
+
+Abigail, Andy Dougherty, Carl Hayter, Chris 'BinGOs' Williams, Dave Rolsky,
+David Mitchell, Dominic Hargreaves, Father Chrysostomos, Florian Ragwitz,
+H.Merijn Brand, Jilles Tjoelker, Karl Williamson, Leon Timmermans, Michael G
+Schwern, Nicholas Clark, Niko Tyni, Pino Toscano, Ricardo Signes, Salvador
+Fandiño, Samuel Thibault, Steve Hay, Tony Cook.
+
+The list above is almost certainly incomplete as it is automatically generated
+from version control history. In particular, it does not include the names of
+the (very much appreciated) contributors who reported issues to the Perl bug
+tracker.
+
+Many of the changes included in this version originated in the CPAN modules
+included in Perl's core. We're grateful to the entire CPAN community for
+helping Perl to flourish.
+
+For a more complete list of all of Perl's historical contributors, please see
+the F<AUTHORS> file in the Perl source distribution.
+
+=head1 Notificación de errores
+
+Si usted encuentra algo que piensa que es un error, podría verificar los artículos publicados recientemente en el grupo de noticias comp.lang.perl.misc y la base de datos de errores de perl en http://rt.perl.org/perlbug/  También puede haber información en http://www.perl.org/, la página oficial de Perl.
+
+Si cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, serán enviados a perlbug@perl.org para ser analizado por el equipo de adaptación de Perl.
+
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para ser enviado a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+
+=head1 VEA TAMBIÉN
+
+En el archivo F<Changes> encontrará una explicación de cómo obtener información detallada de los cambios.
+
+El archivo F<INSTALL> contiene instrucciones para compilar Perl.
+
+El archivo F<README> contiene información general.
+
+En los archivos F<Artistic> y F<Copying> encontrará información de copyright.
+
+=cut

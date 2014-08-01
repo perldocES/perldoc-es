@@ -1,0 +1,222 @@
+=encoding utf8
+
+=head1 NOMBRE
+
+perl5144delta - what is new for perl v5.14.4
+
+=head1 DESCRIPCIÓN
+
+This document describes differences between the 5.14.3 release and
+the 5.14.4 release.
+
+Si va a actualizar desde una versión anterior, como la 5.12.0, debe leer primero 
+L<perl5140delta>, donde se describen las diferencias entre las versiones 5.12.0 y 5.14.0.
+
+=head1 Mejoras en los componentes
+
+Ningún cambio con respecto a la versión 5.14.0.
+
+=head1 Seguridad
+
+This release contains one major, and medium, and a number of minor
+security fixes.  The latter are included mainly to allow the test suite to
+pass cleanly with the clang compiler's address sanitizer facility.
+
+=head2 CVE-2013-1667: memory exhaustion with arbitrary hash keys
+
+With a carefully crafted set of hash keys (for example arguments on a
+URL), it is possible to cause a hash to consume a large amount of memory
+and CPU, and thus possibly to achieve a Denial-of-Service.
+
+This problem has been fixed.
+
+=head2 memory leak in Encode
+
+The UTF-8 encoding implementation in Encode.xs had a memory leak which has been
+fixed.
+
+=head2 [perl #111594] Socket::unpack_sockaddr_un heap-buffer-overflow
+
+A read buffer overflow could occur when copying C<sockaddr> buffers.
+Fairly harmless.
+
+This problem has been fixed.
+
+=head2 [perl #111586] SDBM_File: fix off-by-one access to global ".dir"
+
+An extra byte was being copied for some string literals. Fairly harmless.
+
+This problem has been fixed.
+
+=head2 off-by-two error in List::Util
+
+A string literal was being used that included two bytes beyond the
+end of the string. Fairly harmless.
+
+This problem has been fixed.
+
+=head2 [perl #115994] fix segv in regcomp.c:S_join_exact()
+
+Under debugging builds, while marking optimised-out regex nodes as type
+C<OPTIMIZED>, it could treat blocks of exact text as if they were nodes,
+and thus SEGV. Fairly harmless.
+
+This problem has been fixed.
+
+=head2 [perl #115992] PL_eval_start use-after-free
+
+The statement C<local $[;>, when preceded by an C<eval>, and when not part
+of an assignment, could crash. Fairly harmless.
+
+This problem has been fixed.
+
+=head2 wrap-around with IO on long strings
+
+Reading or writing strings greater than 2**31 bytes in size could segfault
+due to integer wraparound.
+
+This problem has been fixed.
+
+=head1 Cambios incompatibles
+
+No hay cambios intencionadamente incompatibles con 5.14.0. Si los hay, los errores e informes serán bienvenidos.
+
+=head1 Obsolescencias
+
+No hay obsolescencias desde 5.14.0.
+
+=head1 Módulos y pragmas
+
+=head2 Nuevos módulos y pragmas
+
+Ningún cambio
+
+=head2 Módulos y pragmas actualizados
+
+The following modules have just the minor code fixes as listed above in
+L</Security> (version numbers have not changed):
+
+=over 4
+
+=item Socket
+
+=item SDBM_File
+
+=item List::Util
+
+=back
+
+L<Encode> has been upgraded from version 2.42_01 to version 2.42_02.
+
+L<Module::CoreList> has been updated to version 2.49_06 to add data for
+this release.
+
+=head2 Módulos y pragmas retirados
+
+Ninguno.
+
+=head1 Documentación
+
+=head2 Nueva documentación
+
+Ninguno.
+
+=head2 Cambios en la documentación existente
+
+Ninguno.
+
+=head1 Diagnósticos
+
+No new or changed diagnostics.
+
+=head1 Cambios en utilidades
+
+Ningún cambio
+
+=head1 Configuración y compilación
+
+No changes.
+
+=head1 Compatibilidad con plataformas
+
+=head2 Nuevas plataformas
+
+Ninguno.
+
+=head2 Plataformas retiradas
+
+Ninguno.
+
+=head2 Notas específicas de plataformas
+
+=over 4
+
+=item VMS
+
+5.14.3 failed to compile on VMS due to incomplete application of a patch
+series that allowed C<userelocatableinc> and C<usesitecustomize> to be
+used simultaneously.  Other platforms were not affected and the problem
+has now been corrected.
+
+=back
+
+=head1 Arreglo de determinados errores
+
+=over 4
+
+=item *
+
+In Perl 5.14.0, C<$tainted ~~ @array> stopped working properly.  Sometimes
+it would erroneously fail (when C<$tainted> contained a string that occurs
+in the array I<after> the first element) or erroneously succeed (when
+C<undef> occurred after the first element) [perl #93590].
+
+=back
+
+=head1 Problemas conocidos
+
+Ninguno.
+
+=head1 Agradecimientos
+
+Perl 5.14.4 represents approximately 5 months of development since Perl 5.14.3
+and contains approximately 1,700 lines of changes across 49 files from 12
+authors.
+
+Perl continues to flourish into its third decade thanks to a vibrant community
+of users and developers. The following people are known to have contributed the
+improvements that became Perl 5.14.4:
+
+Andy Dougherty, Chris 'BinGOs' Williams, Christian Hansen, Craig A. Berry,
+Dave Rolsky, David Mitchell, Dominic Hargreaves, Father Chrysostomos,
+Florian Ragwitz, Reini Urban, Ricardo Signes, Yves Orton.
+
+
+The list above is almost certainly incomplete as it is automatically generated
+from version control history. In particular, it does not include the names of
+the (very much appreciated) contributors who reported issues to the Perl bug
+tracker.
+
+For a more complete list of all of Perl's historical contributors, please see
+the F<AUTHORS> file in the Perl source distribution.
+
+
+=head1 Notificación de errores
+
+Si usted encuentra algo que piensa que es un error, podría verificar los artículos publicados recientemente en el grupo de noticias comp.lang.perl.misc y la base de datos de errores de perl en http://rt.perl.org/perlbug/  También puede haber información en http://www.perl.org/, la página oficial de Perl.
+
+Si cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, serán enviados a perlbug@perl.org para ser analizado por el equipo de adaptación de Perl.
+
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para ser enviado a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+
+=head1 VEA TAMBIÉN
+
+En el archivo F<Changes> encontrará una explicación de cómo obtener información detallada de los cambios.
+
+El archivo F<INSTALL> contiene instrucciones para compilar Perl.
+
+El archivo F<README> contiene información general.
+
+En los archivos F<Artistic> y F<Copying> encontrará información de copyright.
+
+=cut

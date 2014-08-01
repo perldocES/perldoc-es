@@ -1,0 +1,107 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos). Está escrito en formato POD (vea pod/perlpod.pod), un formato diseñado específicamente para ser legible tal cual.
+
+=head1 NOMBRE
+
+perlvos - Perl for Stratus OpenVOS
+
+=head1 SINOPSIS
+
+This file contains notes for building perl on the Stratus OpenVOS
+operating system.  Perl es un lenguaje de scripts o lenguaje de macros que es popular en muchos sistemas.  See L<perlbook> for a number of good books
+on Perl.
+
+Estas son las instrucciones para la compilación de Perl desde el código fuente.  This version of
+Perl requires the dynamic linking support that is found in OpenVOS
+Release 17.1 and thus is not supported on OpenVOS Release 17.0 or
+earlier releases.
+
+If you are running VOS Release 14.4.1 or later, you can obtain a
+pre-compiled, supported copy of perl by purchasing the GNU Tools
+product from Stratus Technologies.
+
+=head1 BUILDING PERL FOR OPENVOS
+
+To build perl from its source code on the Stratus V Series platform
+you must have OpenVOS Release 17.1.0 or later, GNU Tools Release
+3.5 or later, and the C/POSIX Runtime Libraries.
+
+Follow the normal instructions for building perl; e.g, enter bash, run
+the Configure script, then use "gmake" to build perl.
+
+=head1 INSTALLING PERL IN OPENVOS
+
+=over 4
+
+=item 1
+
+After you have built perl using the Configure script, ensure that you
+have modify and default write permission to C<< >system>ported >> and
+all subdirectories.  A continuación, escriba
+
+     gmake install
+
+=item 2
+
+Si bien actualmente no hay extensiones específicas de la arquitectura o módulos distribuidos con perl, los siguientes directorios se pueden usar para guardar este tipo de archivos (reemplace la cadena VERSION por el número de versión que corresponda):
+
+     >system>ported>lib>perl5>VERSION>i786
+
+=item 3
+
+Extensiones y módulos de perl específicas del sitio pueden instalarse en uno de dos lugares.  Ponga los archivos independientes de la arquitectura en:
+
+     >system>ported>lib>perl5>site_perl>VERSION
+
+Ponga los archivos dependientes de la arquitectura específica especídicos del sitio en uno de los siguientes directorios:
+
+     >system>ported>lib>perl5>site_perl>VERSION>i786
+
+=item 4
+
+Puede examinar la variable @INC desde dentro de un programa perl para ver el orden en que Perl busca en esos directorios.
+
+=back
+
+=head1 USING PERL IN OPENVOS
+
+=head2 Restrictions of Perl on OpenVOS
+
+This port of Perl version 5 prefers Unix-style, slash-separated
+pathnames over OpenVOS-style greater-than-separated pathnames.
+OpenVOS-style pathnames should work in most contexts, but if you have
+trouble, replace all greater-than characters by slash characters.
+Because the slash character is used as a pathname delimiter, Perl
+cannot process OpenVOS pathnames containing a slash character in a
+directory or file name; these must be renamed.
+
+Esta adaptación de Perl también utiliza internamente valores de fecha basados en Unix.
+Siempre y cuando trate con representaciones de fechas en cadenas de caracteres ASCII, no debería ser un problema.  El periodo de tiempo soportado es 1 de enero de 1980, a 17 de enero de 2038.
+
+See the file pod/perlport.pod for more information about the OpenVOS
+port of Perl.
+
+=head1 COMPROBACIÓN DE ESTADO
+
+A number of the perl self-tests fails for various reasons; generally
+these are minor and due to subtle differences between common
+POSIX-based environments and the OpenVOS POSIX environment.  Ensure
+that you conduct sufficient testing of your code to guarantee that it
+works properly in the OpenVOS environment.
+
+=head1 ESTADO DEL SOPORTE
+
+Ofrezco esta adaptación "tal cual" está.  Puede preguntarme, pero no puedo garantizar que seré capaz de responderlas.  Hay disponibles algunos libros excelentes sobre el lenguaje Perl; consulte a su librero.
+
+If you want a supported version of perl for OpenVOS, purchase the
+OpenVOS GNU Tools product from Stratus Technologies, along with a
+support contract (or from anyone else who will sell you support).
+
+=head1 AUTOR
+
+Paul Green (Paul.Green@stratus.com)
+
+=head1 ÚLTIMA ACTUALIZACIÓN
+
+February 28, 2013
+
+=cut

@@ -1,0 +1,175 @@
+=encoding utf8
+
+=head1 NOMBRE
+
+perl5161delta - what is new for perl v5.16.1
+
+=head1 DESCRIPCIÓN
+
+This document describes differences between the 5.16.0 release and
+the 5.16.1 release.
+
+If you are upgrading from an earlier release such as 5.14.0, first read
+L<perl5160delta>, which describes differences between 5.14.0 and
+5.16.0.
+
+=head1 Seguridad
+
+=head2 an off-by-two error in Scalar-List-Util has been fixed
+
+The bugfix was in Scalar-List-Util 1.23_04, and perl 5.16.1 includes
+Scalar-List-Util 1.25.
+
+=head1 Cambios incompatibles
+
+There are no changes intentionally incompatible with 5.16.0 If any
+exist, they are bugs, and we request that you submit a report.  See
+L</Reporting Bugs> below.
+
+=head1 Módulos y pragmas
+
+=head2 Módulos y pragmas actualizados
+
+=over 4
+
+=item *
+
+L<Scalar::Util> and L<List::Util> have been upgraded from version 1.23 to
+version 1.25.
+
+=item *
+
+L<B::Deparse> has been updated from version 1.14 to 1.14_01.  An
+"uninitialized" warning emitted by B::Deparse has been squashed
+[perl #113464].
+
+=back
+
+=head1 Configuración y compilación
+
+=over
+
+=item *
+
+Building perl with some Windows compilers used to fail due to a problem
+with miniperl's C<glob> operator (which uses the C<perlglob> program)
+deleting the PATH environment variable [perl #113798].
+
+=back
+
+=head1 Compatibilidad con plataformas
+
+=head2 Notas específicas de plataformas
+
+=over 4
+
+=item VMS
+
+All C header files from the top-level directory of the distribution are now
+installed on VMS, providing consistency with a long-standing practice on other
+platforms. Previously only a subset were installed, which broke non-core extension
+builds for extensions that depended on the missing include files.
+
+=back
+
+=head1 Arreglo de determinados errores
+
+=over 4
+
+=item *
+
+A regression introduced in Perl v5.16.0 involving
+C<tr/I<SEARCHLIST>/I<REPLACEMENTLIST>/> has been fixed.  Only the first
+instance is supposed to be meaningful if a character appears more than
+once in C<I<SEARCHLIST>>.  Under some circumstances, the final instance
+was overriding all earlier ones.  [perl #113584]
+
+=item *
+
+C<B::COP::stashlen> has been added.   This provides access to an internal
+field added in perl 5.16 under threaded builds.  It was broken at the last
+minute before 5.16 was released [perl #113034].
+
+=item *
+
+The L<re> pragma will no longer clobber C<$_>. [perl #113750]
+
+=item *
+
+Unicode 6.1 published an incorrect alias for one of the
+Canonical_Combining_Class property's values (which range between 0 and
+254).  The alias C<CCC133> should have been C<CCC132>.  Perl now
+overrides the data file furnished by Unicode to give the correct value.
+
+=item *
+
+Duplicating scalar filehandles works again.  [perl #113764]
+
+=item *
+
+Under threaded perls, a runtime code block in a regular expression could
+corrupt the package name stored in the op tree, resulting in bad reads
+in C<caller>, and possibly crashes [perl #113060].
+
+=item *
+
+For efficiency's sake, many operators and built-in functions return the
+same scalar each time.  Lvalue subroutines and subroutines in the CORE::
+namespace were allowing this implementation detail to leak through.
+C<print &CORE::uc("a"), &CORE::uc("b")> used to print "BB".  The same thing
+would happen with an lvalue subroutine returning the return value of C<uc>.
+Now the value is copied in such cases [perl #113044].
+
+=item *
+
+C<__SUB__> now works in special blocks (C<BEGIN>, C<END>, etc.).
+
+=item *
+
+Formats that reference lexical variables from outside no longer result
+in crashes.
+
+=back
+
+=head1 Problemas conocidos
+
+There are no new known problems, but consult L<perl5160delta/Known
+Problems> to see those identified in the 5.16.0 release.
+
+=head1 Agradecimientos
+
+Perl 5.16.1 represents approximately 2 months of development since Perl
+5.16.0 and contains approximately 14,000 lines of changes across 96
+files from 8 authors.
+
+Perl sigue floreciendo en su tercera década gracias a una vibrante comunidad de usuarios y desarrolladores. The following people are known to
+have contributed the improvements that became Perl 5.16.1:
+
+Chris 'BinGOs' Williams, Craig A. Berry, Father Chrysostomos, Karl
+Williamson, Paul Johnson, Reini Urban, Ricardo Signes, Tony Cook.
+
+Como la lista anterior se genera automáticamente a partir del historial de control de versiones, es muy probable que sea incompleta. En particular, no incluye los nombres de los (muy apreciados) colaboradores que notificaron problemas a través del sistema de seguimiento de errores de Perl.
+
+Muchos de los cambios incluidos en esta versión tuvieron su origen en los módulos CPAN incluidos en el núcleo de Perl. Agradecemos a toda la comunidad CPAN por ayudar en el florecimiento de Perl.
+
+Si desea ver una lista más completa de todas las personas que han contribuido a lo largo de la historia de Perl, la encontrará en el archivo F<AUTHORS> de la distribución del código fuente de Perl.
+
+=head1 Notificación de errores
+
+Si usted encuentra algo que piensa que es un error, podría verificar los artículos publicados recientemente en el grupo de noticias comp.lang.perl.misc y la base de datos de errores de perl en http://rt.perl.org/perlbug/  También puede haber información en http://www.perl.org/, la página oficial de Perl.
+
+Si cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, serán enviados a perlbug@perl.org para ser analizado por el equipo de adaptación de Perl.
+
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para ser enviado a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Por favor, utilice sólo esta dirección para problemas de seguridad en el núcleo de Perl, no para los módulos distribuidos de forma independiente en CPAN.
+
+=head1 VEA TAMBIÉN
+
+En el archivo F<Changes> encontrará una explicación de cómo obtener información detallada de los cambios.
+
+El archivo F<INSTALL> contiene instrucciones para compilar Perl.
+
+El archivo F<README> contiene información general.
+
+En los archivos F<Artistic> y F<Copying> encontrará información de copyright.
+
+=cut

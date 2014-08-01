@@ -1,0 +1,216 @@
+=encoding utf8
+
+=head1 NOMBRE
+
+perl5125delta - what is new for perl v5.12.5
+
+=head1 DESCRIPCIÓN
+
+This document describes differences between the 5.12.4 release and
+the 5.12.5 release.
+
+If you are upgrading from an earlier release such as 5.12.3, first read
+L<perl5124delta>, which describes differences between 5.12.3 and
+5.12.4.
+
+=head1 Seguridad
+
+=head2 Desbordamiento de pila de n bytes en decode_xs de C<Encode> (CVE-2011-2939)
+
+Un error en C <Encode> podría, con ciertos entradas, un desborde de la pila.
+Se ha solucionado este problema.  Error notificado por Robert Zacek.
+
+=head2 Error de memoria de C<File::Glob::bsd_glob()> con GLOB_ALTDIRFUNC (CVE-2011-2728).
+
+Calling C<File::Glob::bsd_glob> with the unsupported flag GLOB_ALTDIRFUNC would 
+cause an access violation / segfault.  Un programa Perl que acepta un valor de las banderas de una fuente externa podría exponerse a una denegación de servicio o ataques de ejecución de código arbitrario.  No se conocen ataques descontrolados.  El problema se ha corregido explícitamente desactivando todas las banderas no soportadas y el establecimiento de punteros a funciones sin uso, al valor nulo.  Error reportado por Clément Lecigne.
+
+=head2 Heap buffer overrun in 'x' string repeat operator (CVE-2012-5195)
+
+Poorly written perl code that allows an attacker to specify the count to
+perl's 'x' string repeat operator can already cause a memory exhaustion
+denial-of-service attack. A flaw in versions of perl before 5.15.5 can
+escalate that into a heap buffer overrun; coupled with versions of glibc
+before 2.16, it possibly allows the execution of arbitrary code.
+
+This problem has been fixed.
+
+=head1 Cambios incompatibles
+
+There are no changes intentionally incompatible with 5.12.4. Si los hay, los errores e informes serán bienvenidos.
+
+=head1 Módulos y pragmas
+
+=head2 Módulos actualizados
+
+=head3 L<B::Concise>
+
+L<B::Concise> no longer produces mangled output with the B<-tree> option
+[perl #80632].
+
+=head3 L<charnames>
+
+A regression introduced in Perl 5.8.8 has been fixed, that caused
+C<charnames::viacode(0)> to return C<undef> instead of the string "NULL"
+[perl #72624].
+
+=head3 L<Encode> has been upgraded from version 2.39 to version 2.39_01.
+
+Vea L</Seguridad>.
+
+=head3 L<File::Glob> has been upgraded from version 1.07 to version 1.07_01.
+
+Vea L</Seguridad>.
+
+=head3 L<Unicode::UCD>
+
+The documentation for the C<upper> function now actually says "upper", not
+"lower".
+
+=head3 L<Module::CoreList>
+
+L<Module::CoreList> has been updated to version 2.50_02 to add data for
+this release.
+
+=head1 Cambios en la documentación actual
+
+=head2 L<perlebcdic>
+
+The L<perlebcdic> document contains a helpful table to use in C<tr///> to
+convert between EBCDIC and Latin1/ASCII.  Unfortunately, the table was the
+inverse of the one it describes.  Esto ha sido corregido.
+
+=head2 L<perlunicode>
+
+The section on
+L<User-Defined Case Mappings|perlunicode/User-Defined Case Mappings> had
+some bad markup and unclear sentences, making parts of it unreadable.  This
+has been rectified.
+
+=head2 L<perluniprops>
+
+This document has been corrected to take non-ASCII platforms into account.
+
+=head1 Mejoras en la instalación y configuración
+
+=head2 Cambios específicos de cada plataforma
+
+=over 4
+
+=item Mac OS X
+
+There have been configuration and test fixes to make Perl build cleanly on
+Lion and Mountain Lion.
+
+=item NetBSD
+
+The NetBSD hints file was corrected to be compatible with NetBSD 6.*
+
+=back
+
+=head1 Arreglo de determinados errores
+
+=over 4
+
+=item *
+
+C<chop> now correctly handles characters above "\x{7fffffff}"
+[perl #73246].
+
+=item *
+
+C<< ($<,$>) = (...) >> stopped working properly in 5.12.0.  It is supposed
+to make a single C<setreuid()> call, rather than calling C<setruid()> and
+C<seteuid()> separately.  Consequently it did not work properly.  This has
+been fixed [perl #75212].
+
+=item *
+
+Fixed a regression of kill() when a match variable is used for the
+process ID to kill [perl #75812].
+
+=item *
+
+C<UNIVERSAL::VERSION> no longer leaks memory.  It started leaking in Perl
+5.10.0.
+
+=item *
+
+The C-level C<my_strftime> functions no longer leaks memory.  This fixes a
+memory leak in C<POSIX::strftime> [perl #73520].
+
+=item *
+
+C<caller> ya no agota la memoria cuando se le llama desde un paquete DB si C<@DB::args> fue asignada después de la primera llamada a C<caller>.  L<Carp> desencadenaba este error [perl #97010].
+
+=item *
+
+Passing to C<index> an offset beyond the end of the string when the string
+is encoded internally in UTF8 no longer causes panics [perl #75898].
+
+=item *
+
+Syntax errors in C<< (?{...}) >> blocks in regular expressions no longer
+cause panic messages [perl #2353].
+
+=item *
+
+Perl 5.10.0 introdujo una lógica defectuosa que hizo que "U*", en el medio de una plantilla pack, equivalga a "U0" si la cadena de entrada estaba vacía.  Esto se ha corregido [perl #90160].
+
+=back
+
+=head1 Errata
+
+=head2 split() and C<@_>
+
+split() no longer modifies C<@_> when called in scalar or void context.
+In void context it now produces a "Useless use of split" warning.
+This is actually a change introduced in perl 5.12.0, but it was missed from
+that release's L<perl5120delta>.
+
+=head1 Agradecimientos
+
+Perl 5.12.5 represents approximately 17 months of development since Perl 5.12.4
+and contains approximately 1,900 lines of changes across 64 files from 18
+authors.
+
+Perl continues to flourish into its third decade thanks to a vibrant community
+of users and developers. The following people are known to have contributed the
+improvements that became Perl 5.12.5:
+
+Andy Dougherty, Chris 'BinGOs' Williams, Craig A. Berry, David Mitchell,
+Dominic Hargreaves, Father Chrysostomos, Florian Ragwitz, George Greer, Goro
+Fuji, Jesse Vincent, Karl Williamson, Leon Brocard, Nicholas Clark, Rafael
+Garcia-Suarez, Reini Urban, Ricardo Signes, Steve Hay, Tony Cook.
+
+The list above is almost certainly incomplete as it is automatically generated
+from version control history. In particular, it does not include the names of
+the (very much appreciated) contributors who reported issues to the Perl bug
+tracker.
+
+Many of the changes included in this version originated in the CPAN modules
+included in Perl's core. We're grateful to the entire CPAN community for
+helping Perl to flourish.
+
+For a more complete list of all of Perl's historical contributors, please see
+the F<AUTHORS> file in the Perl source distribution.
+
+=head1 Notificación de errores
+
+Si usted encuentra algo que piensa que es un error, podría verificar los artículos publicados recientemente en el grupo de noticias comp.lang.perl.misc y la base de datos de errores de perl en http://rt.perl.org/perlbug/  También puede haber información en http://www.perl.org/, la página oficial de Perl.
+
+Si usted cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, serán enviados a perlbug@perl.org para ser analizado por el equipo de adaptación de Perl.
+
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para ser enviado a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+
+=head1 VEA TAMBIÉN
+
+En el archivo F<Changes> encontrará una explicación de cómo obtener información detallada de los cambios.
+
+El archivo F<INSTALL> contiene instrucciones para compilar Perl.
+
+El archivo F<README> contiene información general.
+
+En los archivos F<Artistic> y F<Copying> encontrará información de copyright.
+
+=cut

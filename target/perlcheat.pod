@@ -1,0 +1,103 @@
+=head1 NOMBRE
+
+perlcheat - Hoja resumen de Perl 5
+
+=head1 DESCRIPCIÓN
+
+Esta 'hoja resumen' es una referencia útil para programadores principiantes. No abarca todo, pero incluye 195 características del lenguaje; no es mal comienzo.
+
+=head2 La hoja
+
+  CONTEXTOS  SIGILOS  ref        ARRAYS        HASHES
+  void       $escalar SCALAR     @array        %hash
+  escalar    @array   ARRAY      @array[0, 2]  @hash{'a', 'b'}
+  list      %hash   HASH       $array[0]     $hash{'a'}
+            &sub    CODE
+            *glob   GLOB       SCALAR VALUES
+                    FORMAT     number, string, ref, glob, undef
+  REFERENCIAS
+  \      referencia       $$foo[1]       equivale a $foo->[1]
+  $@%&*  desreferenciar   $$foo{bar}     equivale a $foo->{bar}
+  []     ref. array anón. ${$$foo[1]}[2] equivale a $foo->[1]->[2]
+  {}     ref. hash anón.  ${$$foo[1]}[2] equivale a $foo->[1][2]
+  \()    list of refs
+                         SYNTAX
+  OPERATOR PRECEDENCE    foreach (LIST) { }     for (a;b;c) { }
+  ->                     while   (e) { }        until (e)   { }
+  ++ --                  if      (e) { } elsif (e) { } else { }
+  **                     unless  (e) { } elsif (e) { } else { }
+  ! ~ \ u+ u-            given   (e) { when (e) {} default {} }
+  =~ !~
+  * / % x                 NUMBERS vs STRINGS  FALSE vs TRUE
+  + - .                   =          =        undef, "", 0, "0"
+  << >>                   +          .        anything else
+  named uops              == !=      eq ne
+  < > <= >= lt gt le ge   < > <= >=  lt gt le ge
+  == != <=> eq ne cmp ~~  <=>        cmp
+  &
+  | ^             REGEX MODIFIERS       REGEX METACHARS
+  &&              /i case insensitive   ^      string begin
+  || //           /m line based ^$      $      str end (bfr \n)
+  .. ...          /s . includes \n      +      one or more
+  ?:              /x ignore wh.space    *      zero or more
+  = += last goto  /p preserve           ?      zero or one
+  , =>            /a ASCII    /aa safe  {3,7}  repeat in range
+  list ops        /l locale   /d  dual  |      alternation
+  not             /u Unicode            []     character class
+  and             /e evaluate /ee rpts  \b     word boundary
+  or xor          /g global             \z     string end
+                  /o compile pat once   ()     capture
+  DEBUG                                 (?:p)  no capture
+  -MO=Deparse     REGEX CHARCLASSES     (?#t)  comment
+  -MO=Terse       .   [^\n]             (?=p)  ZW pos ahead
+  -D##            \s  whitespace        (?!p)  ZW neg ahead
+  -d:Trace        \w  word chars        (?<=p) ZW pos behind \K
+                  \d  digits            (?<!p) ZW neg behind
+  CONFIGURATION   \pP named property    (?>p)  no backtrack
+  perl -V:ivsize  \h  horiz.wh.space    (?|p|p)branch reset
+                  \R  linebreak         (?<n>p)named capture
+                  \S \W \D \H negate    \g{n}  ref to named cap
+                                        \K     keep left part
+  LISTAS RETORNO FUNCIONES
+  stat      localtime    caller            VARIABLES ESPECIALES
+   0 dev    0 segundo    0 paquete         $_    variable predeterminada
+   1 ino    1 minuto     1 nombre archivo  $0    nombre programa
+   2 mode   2 hora       2 línea           $/    separador entrada
+   3 nlink  3 día        3 subrutina       $\    separador salida
+   4 uid    4 mes-1      4 hasargs         $|    volcado automático
+   5 gid    5 año-1900   5 wantarray       $!    error de sys/libcall
+   6 rdev   6 día semana 6 evaltext        $@    error eval
+   7 size   7 día año    7 is_require      $$    Id. proceso
+   8 atime  8 is_dst     8 hints           $.    número de línea
+   9 mtime               9 máscara bits    @ARGV args línea comandos
+  10 ctime              10 hash de pistas  @INC  rutas de inclusión
+  11 blksz               3..10 solo        @_    args subroutina
+  12 blcks               con EXPR          %ENV  entorno
+
+=head1 AGRADECIMIENTOS
+
+La primera versión de este documento se publicó en Perl Monks, donde muchas personas realizaron útiles sugerencias. Gracias, Perl Monks.
+
+Debemos un agradecimiento especial a Damian Conway, quien no sólo sugirió importantes cambios, sino que también se entretuvo en contar el número de características incluidas y creó una versión para Perl 6 con el fin de demostrar que Perl seguirá siendo Perl.
+
+=head1 AUTOR
+
+Juerd Waalboer <#####@juerd.nl>, con la ayuda de muchos Perl Monks.
+
+=head1 VEA TAMBIÉN
+
+=over 4
+
+=item *
+
+L<http://perlmonks.org/?node_id=216602> - Artículo original de PM
+
+=item *
+
+L<http://perlmonks.org/?node_id=238031> - Versión para Perl 6 de Damian Conway
+
+=item *
+
+L<http://juerd.nl/site.plp/perlcheat> - Página de la hoja resumen de Perl
+
+=back
