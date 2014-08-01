@@ -1,0 +1,7 @@
+*~
+.gitignore
+credentials.properties
+/omegat/*.bak
+/omegat/project_stats.txt
+/target/*
+/*.tmx
