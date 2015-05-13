@@ -258,7 +258,7 @@ X<av_fill>
 Set the highest index in the array to the given number, equivalent to
 Perl's C<$#array = $fill;>.
 
-The number of elements in the an array will be C<fill + 1> after
+The number of elements in the array will be C<fill + 1> after
 av_fill() returns.  If the array was previously shorter, then the
 additional elements appended are set to NULL.  If the array
 was longer, then the excess elements are freed.  C<av_fill(av, -1)> is
@@ -272,9 +272,10 @@ Found in file av.c
 =item av_len
 X<av_len>
 
-Same as L</av_top_index>.  Returns the highest index in the array.  Note that the
-return value is +1 what its name implies it returns; and hence differs in
-meaning from what the similarly named L</sv_len> returns.
+Same as L</av_top_index>.  Note that, unlike what the name implies, it returns
+the highest index in the array, so to get the size of the array you need to use
+S<C<av_len(av) + 1>>.  This is unlike L</sv_len>, which returns what you would
+expect.
 
 	SSize_t	av_len(AV *av)
 
@@ -543,7 +544,7 @@ Found in file scope.h
 =item eval_pv
 X<eval_pv>
 
-Tells Perl to C<eval> the given string and return an SV* result.
+Tells Perl to C<eval> the given string in scalar context and return an SV* result.
 
 NOTE: the perl_ form of this function is deprecated.
 
@@ -2384,7 +2385,7 @@ Found in file dump.c
 =item is_safe_syscall
 X<is_safe_syscall>
 
-Test that the given C<pv> doesn't contain any internal NUL characters.
+Test that the given C<pv> doesn't contain any internal C<NUL> characters.
 If it does, set C<errno> to ENOENT, optionally warn, and return FALSE.
 
 Return TRUE if the name is safe.
@@ -4429,7 +4430,7 @@ removed without notice.
 
 
 Reallocates the lexer buffer (L</PL_parser-E<gt>linestr>) to accommodate
-at least I<len> octets (including terminating NUL).  Returns a
+at least I<len> octets (including terminating C<NUL>).  Returns a
 pointer to the reallocated buffer.  This is necessary before making
 any direct modification of the buffer that would increase its length.
 L</lex_stuff_pvn> provides a more convenient way to insert text into
@@ -5050,7 +5051,7 @@ removed without notice.
 
 Direct pointer to the end of the chunk of text currently being lexed, the
 end of the lexer buffer.  This is equal to C<SvPVX(PL_parser-E<gt>linestr)
-+ SvCUR(PL_parser-E<gt>linestr)>.  A NUL character (zero octet) is
++ SvCUR(PL_parser-E<gt>linestr)>.  A C<NUL> character (zero octet) is
 always located at the end of the buffer, and does not count as part of
 the buffer's contents.
 
@@ -5135,6 +5136,26 @@ through normal scalar means.
 
 =for hackers
 Found in file toke.c
+
+
+=back
+
+=head1 Locale-related functions and macros
+
+=over 8
+
+=item sync_locale
+X<sync_locale>
+
+Changing the program's locale should be avoided by XS code.  Nevertheless,
+certain non-Perl libraries called from XS, such as C<Gtk> do so.  When this
+happens, Perl needs to be told that the locale has changed.  Use this macro
+to do so, before returning to Perl code.
+
+	void	sync_locale()
+
+=for hackers
+Found in file perl.h
 
 
 =back
@@ -5317,7 +5338,7 @@ Found in file sv.h
 X<SvSetSV>
 
 Calls C<sv_setsv> if dsv is not the same as ssv.  May evaluate arguments
-more than once.
+more than once.  Does not handle 'set' magic on the destination SV.
 
 	void	SvSetSV(SV* dsv, SV* ssv)
 
@@ -5540,8 +5561,9 @@ X<savepv>
 
 Perl's version of C<strdup()>.  Returns a pointer to a newly allocated
 string which is a duplicate of C<pv>.  The size of the string is
-determined by C<strlen()>.  The memory allocated for the new string can
-be freed with the C<Safefree()> function.
+determined by C<strlen()>, which means it may not contain embedded C<NUL>
+characters and must have a trailing C<NUL>.  The memory allocated for the new
+string can be freed with the C<Safefree()> function.
 
 On some platforms, Windows for example, all allocated memory owned by a thread
 is deallocated when that thread ends.  So if you need that not to happen, you
@@ -5558,7 +5580,7 @@ X<savepvn>
 Perl's version of what C<strndup()> would be if it existed.  Returns a
 pointer to a newly allocated string which is a duplicate of the first
 C<len> bytes from C<pv>, plus a trailing
-NUL byte.  The memory allocated for
+C<NUL> byte.  The memory allocated for
 the new string can be freed with the C<Safefree()> function.
 
 On some platforms, Windows for example, all allocated memory owned by a thread
@@ -5573,7 +5595,8 @@ Found in file util.c
 =item savepvs
 X<savepvs>
 
-Like C<savepvn>, but takes a literal string instead of a string/length pair.
+Like C<savepvn>, but takes a literal C<NUL>-terminated string instead of a
+string/length pair.
 
 	char*	savepvs(const char* s)
 
@@ -5838,17 +5861,17 @@ Found in file util.c
 X<my_strlcat>
 
 The C library C<strlcat> if available, or a Perl implementation of it.
-This operates on C NUL-terminated strings.
+This operates on C C<NUL>-terminated strings.
 
 C<my_strlcat()> appends string C<src> to the end of C<dst>.  It will append at
-most S<C<size - strlen(dst) - 1>> characters.  It will then NUL-terminate,
+most S<C<size - strlen(dst) - 1>> characters.  It will then C<NUL>-terminate,
 unless C<size> is 0 or the original C<dst> string was longer than C<size> (in
 practice this should not happen as it means that either C<size> is incorrect or
-that C<dst> is not a proper NUL-terminated string).
+that C<dst> is not a proper C<NUL>-terminated string).
 
 Note that C<size> is the full size of the destination buffer and
-the result is guaranteed to be NUL-terminated if there is room.  Note that room
-for the NUL should be included in C<size>.
+the result is guaranteed to be C<NUL>-terminated if there is room.  Note that
+room for the C<NUL> should be included in C<size>.
 
 	Size_t	my_strlcat(char *dst, const char *src,
 		           Size_t size)
@@ -5860,10 +5883,10 @@ Found in file util.c
 X<my_strlcpy>
 
 The C library C<strlcpy> if available, or a Perl implementation of it.
-This operates on C NUL-terminated strings.
+This operates on C C<NUL>-terminated strings.
 
 C<my_strlcpy()> copies up to S<C<size - 1>> characters from the string C<src>
-to C<dst>, NUL-terminating the result if C<size> is not 0.
+to C<dst>, C<NUL>-terminating the result if C<size> is not 0.
 
 	Size_t	my_strlcpy(char *dst, const char *src,
 		           Size_t size)
@@ -7201,7 +7224,8 @@ at that depth of recursion into the CV.  The 0th slot of a frame AV is an
 AV which is @_.  Other entries are storage for variables and op targets.
 
 Iterating over the PADNAMELIST iterates over all possible pad
-items.  Pad slots for targets (SVs_PADTMP) and GVs end up having &PL_sv_no
+items.  Pad slots for targets (SVs_PADTMP)
+and GVs end up having &PL_sv_undef
 "names", while slots for constants have &PL_sv_no "names" (see
 pad_alloc()).  That &PL_sv_no is used is an implementation detail subject
 to change.  To test for it, use C<PadnamePV(name) && !PadnameLEN(name)>.
@@ -8668,7 +8692,8 @@ Found in file sv.h
 =item newSVpvn_utf8
 X<newSVpvn_utf8>
 
-Creates a new SV and copies a string into it.  If utf8 is true, calls
+Creates a new SV and copies a string (which may contain C<NUL> (C<\0>)
+characters) into it.  If utf8 is true, calls
 C<SvUTF8_on> on the new SV.  Implemented as a wrapper around C<newSVpvn_flags>.
 
 	SV*	newSVpvn_utf8(NULLOK const char* s, STRLEN len,
@@ -8703,7 +8728,7 @@ X<SvEND>
 
 Returns a pointer to the spot just after the last character in
 the string which is in the SV, where there is usually a trailing
-null (even though Perl scalars do not strictly require it).
+C<NUL> character (even though Perl scalars do not strictly require it).
 See C<SvCUR>.  Access the character as *(SvEND(sv)).
 
 Warning: If C<SvCUR> is equal to C<SvLEN>, then C<SvEND> points to
@@ -8735,7 +8760,7 @@ X<SvGROW>
 
 Expands the character buffer in the SV so that it has room for the
 indicated number of bytes (remember to reserve space for an extra trailing
-NUL character).  Calls C<sv_grow> to perform the expansion if necessary.
+C<NUL> character).  Calls C<sv_grow> to perform the expansion if necessary.
 Returns a pointer to the character
 buffer.  SV must be of type >= SVt_PV.  One
 alternative is to call C<sv_grow> if you are not sure of the type of SV.
@@ -9189,7 +9214,7 @@ Returns a pointer to the string in the SV, or a stringified form of
 the SV if the SV does not contain a string.  The SV may cache the
 stringified version becoming C<SvPOK>.  Handles 'get' magic.  The
 C<len> variable will be set to the length of the string (this is a macro, so
-don't use C<&len>). See also C<SvPVx> for a version which guarantees to
+don't use C<&len>).  See also C<SvPVx> for a version which guarantees to
 evaluate sv only once.
 
 Note that there is no guarantee that the return value of C<SvPV()> is
@@ -9403,7 +9428,8 @@ Found in file sv.h
 =item SvPV_set
 X<SvPV_set>
 
-Set the value of the PV pointer in sv to val.  See also C<SvIV_set>.
+Set the value of the PV pointer in C<sv> to the C<NUL>-terminated string
+C<val>.  See also C<SvIV_set>.
 
 Beware that the existing pointer may be involved in copy-on-write or other
 mischief, so do C<SvOOK_off(sv)> and use C<sv_force_normal> or
@@ -10011,7 +10037,7 @@ X<newSV>
 
 Creates a new SV.  A non-zero C<len> parameter indicates the number of
 bytes of preallocated string space the SV should have.  An extra byte for a
-trailing NUL is also reserved.  (SvPOK is not set for the SV even if string
+trailing C<NUL> is also reserved.  (SvPOK is not set for the SV even if string
 space is allocated.)  The reference count for the new SV is set to 1.
 
 In 5.9.3, newSV() replaces the older NEWSV() API, and drops the first
@@ -10062,9 +10088,13 @@ Found in file sv.c
 =item newSVpv
 X<newSVpv>
 
-Creates a new SV and copies a string into it.  The reference count for the
+Creates a new SV and copies a string (which may contain C<NUL> (C<\0>)
+characters) into it.  The reference count for the
 SV is set to 1.  If C<len> is zero, Perl will compute the length using
-strlen().  For efficiency, consider using C<newSVpvn> instead.
+strlen(), (which means if you use this option, that C<s> can't have embedded
+C<NUL> characters and has to have a terminating C<NUL> byte).
+
+For efficiency, consider using C<newSVpvn> instead.
 
 	SV*	newSVpv(const char *const s, const STRLEN len)
 
@@ -10085,7 +10115,7 @@ Found in file sv.c
 =item newSVpvn
 X<newSVpvn>
 
-Creates a new SV and copies a buffer into it, which may contain NUL characters
+Creates a new SV and copies a string into it, which may contain C<NUL> characters
 (C<\0>) and other binary data.  The reference count for the SV is set to 1.
 Note that if C<len> is zero, Perl will create a zero length (Perl) string.  You
 are responsible for ensuring that the source buffer is at least
@@ -10100,7 +10130,8 @@ Found in file sv.c
 =item newSVpvn_flags
 X<newSVpvn_flags>
 
-Creates a new SV and copies a string into it.  The reference count for the
+Creates a new SV and copies a string (which may contain C<NUL> (C<\0>)
+characters) into it.  The reference count for the
 SV is set to 1.  Note that if C<len> is zero, Perl will create a zero length
 string.  You are responsible for ensuring that the source string is at least
 C<len> bytes long.  If the C<s> argument is NULL the new SV will be undefined.
@@ -10142,7 +10173,8 @@ Found in file sv.c
 =item newSVpvs
 X<newSVpvs>
 
-Like C<newSVpvn>, but takes a literal string instead of a string/length pair.
+Like C<newSVpvn>, but takes a literal C<NUL>-terminated string instead of a
+string/length pair.
 
 	SV*	newSVpvs(const char* s)
 
@@ -10152,8 +10184,8 @@ Found in file handy.h
 =item newSVpvs_flags
 X<newSVpvs_flags>
 
-Like C<newSVpvn_flags>, but takes a literal string instead of a string/length
-pair.
+Like C<newSVpvn_flags>, but takes a literal C<NUL>-terminated string instead of
+a string/length pair.
 
 	SV*	newSVpvs_flags(const char* s, U32 flags)
 
@@ -10163,8 +10195,8 @@ Found in file handy.h
 =item newSVpvs_share
 X<newSVpvs_share>
 
-Like C<newSVpvn_share>, but takes a literal string instead of a string/length
-pair and omits the hash parameter.
+Like C<newSVpvn_share>, but takes a literal C<NUL>-terminated string instead of
+a string/length pair and omits the hash parameter.
 
 	SV*	newSVpvs_share(const char* s)
 
@@ -10174,7 +10206,7 @@ Found in file handy.h
 =item newSVpv_share
 X<newSVpv_share>
 
-Like C<newSVpvn_share>, but takes a nul-terminated string instead of a
+Like C<newSVpvn_share>, but takes a C<NUL>-terminated string instead of a
 string/length pair.
 
 	SV*	newSVpv_share(const char* s, U32 hash)
@@ -10399,7 +10431,8 @@ Found in file sv.c
 =item sv_catpv
 X<sv_catpv>
 
-Concatenates the string onto the end of the string which is in the SV.
+Concatenates the C<NUL>-terminated string onto the end of the string which is
+in the SV.
 If the SV has the UTF-8 status set, then the bytes appended should be
 valid UTF-8.  Handles 'get' magic, but not 'set' magic.  See C<sv_catpv_mg>.
 
@@ -10481,8 +10514,8 @@ Found in file handy.h
 =item sv_catpvs_flags
 X<sv_catpvs_flags>
 
-Like C<sv_catpvn_flags>, but takes a literal string instead of a
-string/length pair.
+Like C<sv_catpvn_flags>, but takes a literal C<NUL>-terminated string instead
+of a string/length pair.
 
 	void	sv_catpvs_flags(SV* sv, const char* s,
 		                I32 flags)
@@ -10515,7 +10548,8 @@ Found in file handy.h
 =item sv_catpv_flags
 X<sv_catpv_flags>
 
-Concatenates the string onto the end of the string which is in the SV.
+Concatenates the C<NUL>-terminated string onto the end of the string which is
+in the SV.
 If the SV has the UTF-8 status set, then the bytes appended should
 be valid UTF-8.  If C<flags> has the C<SV_SMAGIC> bit set, will C<mg_set>
 on the modified SV if appropriate.
@@ -11211,8 +11245,9 @@ Found in file sv.c
 =item sv_setpv
 X<sv_setpv>
 
-Copies a string into an SV.  The string must be null-terminated.  Does not
-handle 'set' magic.  See C<sv_setpv_mg>.
+Copies a string into an SV.  The string must be terminated with a C<NUL>
+character.
+Does not handle 'set' magic.  See C<sv_setpv_mg>.
 
 	void	sv_setpv(SV *const sv, const char *const ptr)
 
@@ -11266,7 +11301,8 @@ Found in file sv.c
 =item sv_setpvn
 X<sv_setpvn>
 
-Copies a string into an SV.  The C<len> parameter indicates the number of
+Copies a string (possibly containing embedded C<NUL> characters) into an SV.
+The C<len> parameter indicates the number of
 bytes to be copied.  If the C<ptr> argument is NULL the SV will become
 undefined.  Does not handle 'set' magic.  See C<sv_setpvn_mg>.
 
@@ -11585,18 +11621,20 @@ Found in file sv.c
 X<sv_usepvn_flags>
 
 Tells an SV to use C<ptr> to find its string value.  Normally the
-string is stored inside the SV but sv_usepvn allows the SV to use an
+string is stored inside the SV, but sv_usepvn allows the SV to use an
 outside string.  The C<ptr> should point to memory that was allocated
-by C<malloc>.  It must be the start of a mallocked block
-of memory, and not a pointer to the middle of it.  The
-string length, C<len>, must be supplied.  By default
-this function will realloc (i.e. move) the memory pointed to by C<ptr>,
+by L<Newx|perlclib/Memory Management and String Handling>.  It must be
+the start of a Newx-ed block of memory, and not a pointer to the
+middle of it (beware of L<OOK|perlguts/Offsets> and copy-on-write),
+and not be from a non-Newx memory allocator like C<malloc>.  The
+string length, C<len>, must be supplied.  By default this function
+will C<Renew> (i.e. realloc, move) the memory pointed to by C<ptr>,
 so that pointer should not be freed or used by the programmer after
 giving it to sv_usepvn, and neither should any pointers from "behind"
 that pointer (e.g. ptr + 1) be used.
 
 If C<flags> & SV_SMAGIC is true, will call SvSETMAGIC.  If C<flags> &
-SV_HAS_TRAILING_NUL is true, then C<ptr[len]> must be NUL, and the realloc
+SV_HAS_TRAILING_NUL is true, then C<ptr[len]> must be C<NUL>, and the realloc
 will be skipped (i.e. the buffer is actually at least 1 byte longer than
 C<len>, and already meets the requirements for storing in C<SvPVX>).
 

@@ -1137,7 +1137,7 @@ X<PAD_SV>
 
 Get the value at offset C<po> in the current pad
 
-	void	PAD_SV(PADOFFSET po)
+	SV *	PAD_SV(PADOFFSET po)
 
 =for hackers
 Found in file pad.h
