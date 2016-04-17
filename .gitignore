@@ -1,10 +1,10 @@
 *~
 .gitignore
 credentials.properties
-/omegat/*.bak
-/omegat/project_stats.txt
-/omegat/last_entry.properties
-/target/*
-/*.tmx
+omegat/*.bak
+omegat/project_stats.txt
+omegat/last_entry.properties
+target/*
+*.tmx
 source*zip
 informe*
