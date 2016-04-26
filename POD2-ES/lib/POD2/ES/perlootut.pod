@@ -278,7 +278,7 @@ clase C<Archivo>:
   my $minero = Archivo::MP3->new(
       ruta          => 'mp3/Soy-minero.mp3',
       contenido     => $datos_mp3,
-      hora_ult_mod => 1304974868,
+      hora_ult_mod  => 1304974868,
       titulo        => 'Soy minero',
   );
 
@@ -670,7 +670,7 @@ usar este módulo que escribir código orientado a objetos desde cero.
 Nuestra clase C<Archivo> sería:
 
   package Archivo;
-  use Class::Tiny qw( path content last_mod_time );
+  use Class::Tiny qw( ruta contenido hora_ult_mod );
 
   sub imprimir_info {
       my $self = shift;
