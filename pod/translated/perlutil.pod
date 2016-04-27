@@ -22,7 +22,7 @@ Cuando se ejecuta desde un terminal, normalmente F<perldoc> llama a F<pod2man> p
 
 =item L<pod2html|pod2html>
 
-Igual que estos dos, hay otro conversor: F<pod2html> producirá páginas de HTML a partir de POD.
+Además de estos dos conversores, hay otro más: F<pod2html> genera páginas HTML a partir de POD.
 
 =item L<pod2usage|pod2usage>
 
@@ -48,7 +48,7 @@ La utilidad C<roffitall> no se instala en el sistema, pero puede encontrarla en 
 
 =head2 Conversores
 
-Para ayudarle a convertir programas antiguos a un Perl más moderno, la utilidad L<pl2pm|pl2pm> le ayudará a convertir bibliotecas del viejo estilo Perl 4 al nuevo estilo de los módulos de Perl 5.
+Para convertir programas antiguos a Perl más moderno puede utilizar la utilidad L<pl2pm|pl2pm>, que le ayudará a convertir bibliotecas antiguas de Perl 4 a módulos de Perl 5 modernos.
 
 =head2 Administración
 
@@ -121,7 +121,7 @@ También se distribuyen con perl algunas herramientas de propósito general, bá
 
 =item L<piconv>
 
-B<piconv> es una versión Perl de B<iconv>, un conversor de codificaciones de caracteres de uso muy extendido en el mundo Unix.  Este script se desarrolló simplemente como una demostración tecnológica para Perl v5.8.0, pero puede usar piconv para cualquier tarea para la que usaría iconv.
+B<piconv> es una versión Perl de B<iconv>, un conversor de codificaciones de caracteres de uso muy extendido en el mundo Unix.  Este script era principalmente una demostración de tecnología en Perl v5.8.0, pero puede usar piconv en lugar de iconv prácticamente en todos los casos.
 
 =item L<ptar>
 
@@ -169,10 +169,9 @@ Esta utilidad ofrece una interfaz sencilla de ExtUtils::Installed, que permite e
 L<perldoc|perldoc>, L<pod2man|pod2man>, L<perlpod>,
 L<pod2html|pod2html>, L<pod2usage|pod2usage>, L<podselect|podselect>,
 L<podchecker|podchecker>, L<splain|splain>, L<perldiag>,
-C<roffitall|roffitall>, L<a2p|a2p>, L<s2p|s2p>, L<find2perl|find2perl>,
-L<File::Find|File::Find>, L<pl2pm|pl2pm>, L<perlbug|perlbug>,
-L<h2ph|h2ph>, L<c2ph|c2ph>, L<h2xs|h2xs>, L<enc2xs>, L<xsubpp>,
-L<cpan>, L<instmodsh>, L<piconv>, L<prove>,
-L<corelist>, L<ptar>, L<ptardiff>, L<shasum>, L<zipdetails>
+C<roffitall|roffitall>, L<File::Find|File::Find>, L<pl2pm|pl2pm>,
+L<perlbug|perlbug>, L<h2ph|h2ph>, L<c2ph|c2ph>, L<h2xs|h2xs>, L<enc2xs>,
+L<xsubpp>, L<cpan>, L<instmodsh>, L<piconv>, L<prove>, L<corelist>, L<ptar>,
+L<ptardiff>, L<shasum>, L<zipdetails>
 
 =cut

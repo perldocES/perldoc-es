@@ -15,7 +15,7 @@ B<perl>	S<[ B<-sTtuUWX> ]>
 	S<[ B<-i>[I<extensión>] ]>
 	S<[ [B<-e>|B<-E>] I<'comando'> ] [ B<--> ] [ I<archivo_programa> ] [ I<argumento> ]...>
 
-Para obtener más información sobre estas opciones, consulte L<perldoc perlrun>.
+Para obtener más información sobre estas opciones, puede ejecutar C<perldoc perlrun>.
 
 =head1 CÓMO OBTENER AYUDA
 
@@ -288,9 +288,9 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
 
 En un sistema Unix, esta documentación estará también disponible, por lo general, en forma de páginas de manual que se pueden consultar con el programa F<man>.
 
-Alguna parte de la documentación no está disponible como páginas de manual, así que si man no encuentra una referencia cruzada, inténtelo con L<perldoc>.  Perldoc también puede llevarle directamente a la documentación de las funciones (con la opción B<-f>). Vea C<perldoc --help> (o C<perldoc perldoc> o C<man perldoc>) para otras opciones útiles que ofrece L<perldoc>.
+Parte de la documentación no está disponible en formato de páginas de manual. Si man no encuentra una referencia cruzada, pruebe con L<perldoc>.  Perldoc también puede mostrarle directamente la documentación de las funciones (con el modificador B<-f>). Ejecute C<perldoc --help> (o C<perldoc perldoc>, o C<man perldoc>) para ver otras opciones útiles de L<perldoc>.
 
-En general, si algo extraño le sucede a su programa, y no está seguro de dónde mirar para encontrar ayuda, intente hacer que su código cumpla con B<use strict> y B<use warnings>.  Normalmente le indicarán dónde está el problema.
+En general, si ocurre algo raro en su programa y no sabe dónde buscar ayuda, trate de hacer que cumpla las normas de B<use strict> y B<use warnings>.  Normalmente le indicarán dónde está el problema.
 
 =head1 DESCRIPCIÓN
 
@@ -298,10 +298,11 @@ Oficialmente, Perl significa Practical Extraction and Report Language (I<Lenguaj
 
 Perl se creó como un lenguaje optimizado para procesar archivos de texto, a fin de extraer información y utilizarla para generar informes.  Pronto se convirtió en un lenguaje útil para muchas tareas de administración de sistemas. Con los años, Perl se ha convertido en un lenguaje de programación de propósito general. Se utiliza para todo tipo de desarrollos, desde "programas de una línea" hasta aplicaciones a gran escala.
 
-El lenguaje se diseñó para ser práctico (fácil de usar, eficaz, completo), más que estético (reducido, elegante, minimalista).  Combina (en opinión del autor, naturalmente) algunas de las mejores características de B<sed>, B<awk> y B<sh>, haciéndole familiar y fácil de usar por los usuarios de Unix para desplegar soluciones rápidas a problemas molestos.  Sus facilidades para la programación de propósito general soporta los paradigmas: procedimental, funcional y orientado a objetos, haciendo de Perl un lenguaje confortable para el largo recorrido en los proyectos mayores, cualquiera que sea su intención.
+El lenguaje se diseñó para ser práctico (fácil de usar, eficaz, completo), más que estético (reducido, elegante, minimalista).  Perl combina
+(en opinión del autor) algunas de las mejores características de B<sed>, B<awk> y B<sh>, por lo que resulta familiar y fácil de usar para los usuarios de Unix, permitiéndoles crear rápidamente soluciones para problemas fastidiosos.  Sus características de programación de propósito general son compatibles con los paradigmas de programación procedural, funcional y orientada a objetos, lo que convierte a Perl en un lenguaje cómodo para grandes proyectos de larga duración, sea cual sea su paradigma preferido.
 
-No se han perdido las raíces de Perl en el procesamiento de texto.
-Presume todavía de tener algunas de las más poderosas expresiones regulares que puedan encontrarse, y su soporte para texto Unicode es de primera clase.  Gestiona toda clase de texto estructurado, también, a través de una extensa colección de extensiones.  Esas bibliotecas, recogidas en CPAN, ofrece soluciones prefabricadas para una pasmosa variedad de problemas.  Cuando no crean sus propios estándares, los roban de los mejores -igual que el propio Perl-.
+Las raíces de Perl como lenguaje de procesamiento de texto siguen siendo muy fuertes.
+El lenguaje de expresiones regulares que incluye es el más potente que existe y su compatibilidad con texto Unicode es vanguardista.  Además, permite procesar todo tipo de texto estructurado mediante una amplia colección de extensiones.  Estas bibliotecas, recopiladas en CPAN, proporcionan soluciones listas para usar para una inmensa cantidad de problemas.  Al igual que Perl, las bibliotecas que no han establecido la norma, han copiado de las mejores bibliotecas.
 
 =head1 DISPONIBILIDAD
 
@@ -325,18 +326,18 @@ Si considera que sus éxitos con Perl y sus testimonios pueden ayudar a otros pr
 
  http://www.perl.org/       página de inicio del lenguaje Perl
  http://www.perl.com/       artículos sobre Perl (O'Reilly)
- http://www.cpan.org/       Comprehensive Perl Archive Network
+ http://www.cpan.org/       I<Comprehensive Perl Archive Network>
  http://www.pm.org/         el sitio de Perl Mongers
 
 =head1 DIAGNÓSTICO
 
-Usando el pragma C<use strict> se asegura que todas las variables están declaradas correctamente, y previene de otros abusos de las características heredadas de Perl.
+El uso del pragma C<use strict> garantiza que se declaren todas las variables de forma adecuada e impide que se usen incorrectamente las características heredadas de Perl.
 
-El pragma C<use warnings> produce algunos diagnósticos muy interesantes. También puede usar la opción B<-w>, pero su uso está altamente desaconsejado, porque se aplica a todo código Perl que se ejecute, incluyendo el que no está bajo su control.
+El pragma C<use warnings> produce diagnósticos muy informativos. También se puede usar la marca B<-w>, pero esto no se recomienda, ya que se aplica a todo el código Perl ejecutado, incluido el que no está bajo su control.
 
 Encontrará en L<perldiag> las descripciones de todos los diagnósticos de Perl.  El pragma C<use diagnostics> convierte automáticamente las advertencias y errores de Perl, normalmente escuetos, en estos mensajes más desarrollados.
 
-Los errores de compilación le indicarán el número de línea del error, además del siguiente I<token> que iba a ser examinado.
+Los errores de compilación le indicarán el número de línea del error, además del siguiente símbolo o tipo de símbolo que iba a ser examinado.
 (En un script pasado a Perl a través de modificadores B<-e>, cada B<-e> cuenta como una línea).
 
 Los scripts setuid tienen restricciones adicionales que pueden producir mensajes de error como "Insecure dependency" (dependencia insegura).  Vea L<perlsec>.
@@ -345,7 +346,7 @@ No olvide que es muy importante utilizar el pragma B<use warnings>.
 
 =head1 ERRORES
 
-No es obligatorio seguir los mandatos del pragma B<use warnings>.
+El pragma B<use warnings> implica un comportamiento que no es obligatorio.
 
 Perl depende de las definiciones de hardware para diversas operaciones, como la conversión de tipos, atof() o la salida de números de punto flotante con sprintf().
 
@@ -353,7 +354,7 @@ Si stdio requiere ejecutar seek o eof entre lecturas y escrituras para una secue
 
 Aunque ninguno de los tipos de datos predefinidos tiene un límite de tamaño (aparte del tamaño de la memoria disponible), hay algunos límites arbitrarios. Por ejemplo, un nombre de variable no puede tener más de 251 caracteres.  Por otra parte, los números de línea especificados por los diagnósticos se almacenan internamente como enteros cortos, por lo que están limitados a un máximo de 65535 (cifras más altas quedarán afectadas por el desbordamiento).
 
-Puede enviar informes de error a través de la dirección perlbug@perl.org (no olvide incluir toda la información de configuración emitida por el programa myconfig en el árbol de código fuente de perl, o por C<perl -V>).  Si ha logrado compilar perl, puede utilizar el script L<perlbug> del subdirectorio F<utils/> para enviar informes de error.
+Puede notificar sus informes de error a través de la dirección perlbug@perl.org (no olvide incluir toda la información de configuración emitida por el programa myconfig en el árbol de código fuente de perl, o por C<perl -V>).  Si ha logrado compilar perl, puede utilizar el script L<perlbug> del subdirectorio F<utils/> para notificar informes de error.
 
 En realidad Perl significa I<Pathologically Eclectic Rubbish Lister> (Presentador de basura patológicamente ecléctico), pero nadie debe enterarse de esto :-).
 

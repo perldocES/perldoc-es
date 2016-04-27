@@ -148,9 +148,9 @@ Los nombres de los elementos que obtenemos del array empiezan por C<$> porque re
 
 Para obtener varios elementos de un array:
 
- @animales[0,1];                # devuelve ("camello", "llama");
- @animales[0..2];               # devuelve ("camello", "llama", "búho");
- @animales[1..$#animales];      # devuelve todos los elementos menos el primero
+ @animales[0,1];                 # devuelve ("camello", "llama");
+ @animales[0..2];                # devuelve ("camello", "llama", "búho");
+ @animales[1..$#animales];       # devuelve todos los elementos menos el primero
 
 Esto se denomina una "porción de array".
 

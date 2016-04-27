@@ -35,11 +35,11 @@ Este directorio contiene módulos programados en Perl puro que solo se publican 
 
 =item * F<ext/>
 
-Igual que F<lib/>, este directorio contiene módulos que solo han sido publicados como parte del núcleo.  A diferencia de F<lib/>, sin embargo, un módulo bajo F<ext/> tiene, generalmente, un estilo y disposición parecido al de CPAN, y tiene su propio F<Makefile.PL>.  No se espera que un módulo bajo F<ext/> funcione con versiones anteriores de Perl 5.  Por ello, dicho módulo puede aprovecharse de las ventajas sintácticas y otras mejoras de Perl 5.
+Al igual que F<lib/>, este directorio contiene módulos que solo se publican como parte del núcleo.  Sin embargo, a diferencia de F<lib/>, un módulo de F<ext/> suele tener una estructura de directorios y archivos estilo CPAN, así como su propio archivo F<Makefile.PL>.  No se espera que un módulo de F<ext/> pueda trabajar con versiones anteriores de Perl 5.  Por esta razón, estos módulos pueden beneficiarse de las mejoras sintácticas y de otro tipo incluidas en la rama C<blead> de Perl 5.
 
 =item * F<dist/>
 
-Este directorio contiene módulos de evolución dual en los que la versión canónica es la del código fuente de la rama B<blead>. Tenga en cuenta que es posible que algunos de los módulos de este directorio aún no se hayan publicado por separado en CPAN.  Los módulos bajo F<dist/> tendrían que hacer un esfuerzo para funcionar en versiones anteriores de Perl 5.
+Este directorio contiene módulos de evolución dual en los que la versión canónica es la del código fuente de la rama B<blead>. Tenga en cuenta que es posible que algunos de los módulos de este directorio aún no se hayan publicado por separado en CPAN.  Los módulos de F<dist/> deberían poder trabajar con versiones anteriores de Perl 5.
 
 =item * F<cpan/>
 
@@ -88,7 +88,7 @@ Pruebas de funciones predefinidas de perl que no se corresponden con ninguno de 
 
 =item * F<t/opbasic/>
 
-Pruebas para las funciones predefinidas de perl que, como las que hay en F<t/op/>, no encajan en ninguno de otros directorios, pero que, además, ya no puede usar F<t/test.pl>, ya que el programa depende de la funcionalidad del propio archivo de prueba.
+Pruebas de funciones predefinidas de perl que, al igual que las de F<t/op/>, no se corresponden con ninguno de los demás directorios y que, además, no pueden usar F<t/test.pl>, ya que ese programa depende de funcionalidad que el mismo archivo de prueba está comprobando.
 
 =item * F<t/re/>
 

@@ -93,18 +93,20 @@ Si codifica correctamente las cadenas para la salida, no tiene que preocuparse p
 =head2 ¿Por qué algunas veces las clases de caracteres de expresiones regulares solo detectan caracteres ASCII?
 
 Desde Perl 5.14 (y, de forma parcial, desde Perl 5.12), solo tiene que agregar C<use feature 'unicode_strings'> al principio del programa.
-En su ámbito léxico, este problema no debería producirse.  También se habilita automáticamente con C<use feature ':5.12'> o C<use v5.12> o mediante el modificador C<-E> en la línea de comandos para Perl 5.12 o superior.
+En su ámbito léxico, este problema no debería producirse.  También se habilita
+automáticamente con C<use feature ':5.12'> o C<use v5.12>, o si se utiliza C<-E> en la línea de comandos de Perl 5.12 o una versión posterior.
 
-Esto se hace así para evitar que dejen de funcionar programas antiguos, que se basan en el funcionamiento anterior a la creación de Unicode.  Esos programas antiguos solo usaban el juego de caracteres ASCII, por lo que es posible que no funcionen con otros caracteres.  Si una cadena está codificada en UTF-8, Perl supone que el programa está preparado para trabajar con Unicode, pero si la codificación es otra, Perl supone que solo se desea usar ASCII, por lo que los caracteres que no sean ASCII no se reconocerán como lo que serían en Unicode.
+Esto se hace así para evitar que dejen de funcionar programas antiguos, que se basan en el funcionamiento anterior a la creación de Unicode.  Esos programas antiguos solo usaban el juego de caracteres ASCII, por lo que es posible que no funcionen con otros caracteres.  Si una cadena está codificada en UTF-8,
+Perl supone que el programa está preparado para trabajar con Unicode, pero si la codificación es otra, Perl supone que solo se desea usar ASCII por lo que los caracteres que no sean ASCII no se reconocerán como lo que serían en Unicode.
 C<use feature 'unicode_strings'> indica a Perl que debe tratar todos los caracteres como Unicode, independientemente de si la cadena está codificada como UTF-8 o no, lo que evita el problema.
 
-Sin embargo, en versiones anteriores de Perl, o si pasa cadenas a subrutinas fuera del ámbito del pragma C<feature>, puede forzar el uso de reglas Unicode cambiando la codificación a UTF-8 mediante C<utf8::upgrade($cadena)>. Esto se puede aplicar de manera segura a cualquier cadena, puesto que comprueba si una cadena ya se ha promovido y, en caso afirmativo, no la modifica.
+Sin embargo, en versiones anteriores de Perl, o si pasa cadenas a subrutinas fuera del ámbito del pragma C<feature>, puede forzar el uso de reglas Unicode cambiando la codificación a UTF-8 mediante C<utf8::upgrade($string)>. Esto se puede aplicar de manera segura a cualquier cadena, puesto que comprueba si una cadena ya se ha promovido y, en caso afirmativo, no la modifica.
 
 Encontrará una descripción más detallada en L<Unicode::Semantics> (disponible en CPAN).
 
 =head2 ¿Por qué algunos caracteres no se convierten a mayúsculas o minúsculas correctamente?
 
-Mire la respuesta de la pregunta anterior.
+Vea la respuesta a la pregunta anterior.
 
 =head2 ¿Cómo se puede determinar si una cadena es una cadena de texto o una cadena binaria?
 
@@ -137,12 +139,12 @@ Ofrecen una sintaxis alternativa a C<decode('utf8', ...)> y C<encode('utf8',
 
 =head2 ¿Qué es un "carácter ancho"?
 
-Este es un término que se usa para los caracteres que ocupan más de un byte.
+Término utilizado para designar caracteres que ocupan más de un byte.
 
-Tales caracteres generan la advertencia "I<Wide character in ...>" en Perl.
-Si no se ha especificado una capa de codificación, Perl intenta ajustarlo a un único byte.  Si no puede, emite esta advertencia (si las advertencias están habilitadas) y en su lugar usa UTF-8 para codificar los datos.
+La advertencia de Perl "Wide character in ..." (Carácter ancho en...) se debe a la presencia de un carácter de este tipo.
+Si no se especifica una capa de codificación, Perl intenta que cada carácter ocupe un solo byte.  Si no lo consigue, emite esta advertencia (si las advertencias están habilitadas), y utiliza datos codificados como UTF-8.
 
-Para evitar que salga esta advertencia y evitar también la mezcla de diferentes codificaciones de salida en un único flujo, especifique siempre una codificación explícitamente (por ejemplo, con una capa de entrada/salida):
+Para evitar esta advertencia y evitar la mezcla de distintas codificaciones de salida en una sola secuencia, especifique siempre una codificación explícitamente (por ejemplo, con una capa de entrada/salida):
 
     binmode STDOUT, ":encoding(UTF-8)";
 
