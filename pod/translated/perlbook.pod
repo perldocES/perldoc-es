@@ -4,7 +4,7 @@ perlbook - Libros sobre Perl y otros libros relacionados
 
 =head1 DESCRIPCIÓN
 
-Hay muchos libros sobre Perl o relacionados con Perl. Algunos son buenos y otros aceptables, pero muchos no merecen la pena. Aquí hay una lista de esos libros, algunos con una extensa revisión, en http://books.perl.org/ Listamos algunos de ellos, y mientras que listar un libro implica nuestra aprobación, no piense que el no incluir un libro signifique algo malo.
+Hay muchos libros sobre Perl o relacionados con Perl. Algunos son buenos y otros aceptables, pero muchos no merecen la pena. En http://books.perl.org/ encontrará una lista de estos libros. De algunos de ellos se incluyen extensas reseñas. En este documento se hace referencia a algunos de estos libros. Los que figuran en la lista son libros que recomendamos; no obstante, el que un libro no figure en la lista no quiere decir que sea malo.
 
 La mayoría de estos libros están disponibles en línea a través de Safari Books Online
 ( http://safaribooksonline.com/ ).
@@ -17,9 +17,9 @@ El principal libro de referencia sobre Perl, escrito por el creador del lenguaje
 
 =item I<Programming Perl> (el "Libro del Camello"):
 
-	de Tom Christiansen, brian d foy, Larry Wall con Jon Orwant
+	por Tom Christiansen, brian d foy, Larry Wall con Jon Orwant
 	ISBN 978-0-596-00492-7 [4ª edición, febrero de 2012]
-	ISBN 978-1-4493-9890-3 [ebook]
+	ISBN 978-1-4493-9890-3 [libro electrónico]
 	http://oreilly.com/catalog/9780596004927
 
 =back
@@ -75,7 +75,7 @@ Es probable que desee tener estas referencias a mano:
 
 	Johan Vromans
 	ISBN 978-1-4493-0370-9 [5ª edición, julio de 2011]
-	ISBN 978-1-4493-0813-1 [ebook]
+	ISBN 978-1-4493-0813-1 [libro electrónico]
 	http://oreilly.com/catalog/0636920018476/
 
 =item I<Perl Debugger Pocket Reference>

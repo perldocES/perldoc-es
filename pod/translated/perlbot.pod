@@ -2,12 +2,12 @@
 
 =head1 NOMBRE
 
-perlbot - Enlaza a la información sobre programación orientada a objetos, en Perl
+perlbot - Vínculos a información sobre programación orientada a objetos en Perl
 
 =head1 DESCRIPCIÓN
 
 Para obtener más información sobre la programación orientada a objetos en Perl, vea L<perlootut> y L<perlobj>.
 
-(Los documentos anteriores reemplazan la colección de trucos que antes estaba aquí).
+(Estos documentos sustituyen al tutorial que se incluía anteriormente en perlbot).
 
 =cut

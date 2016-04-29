@@ -5,7 +5,7 @@ Para aplicar un formato uniforme a este archivo, use:
   perl ./Porting/podtidy pod/perlobj.pod
 
 =head1 NOMBRE
-X<object> X<OOP> X<objeto> X<POO>
+X<object> X<objeto> X<OOP> X<POO>
 
 perlobj - Referencia de objetos en Perl
 
@@ -205,9 +205,9 @@ En una clase derivada se puede sobrescribir un método de la clase primaria. En 
 
 El modificador C<SUPER> I<solo> se puede usar para llamar a métodos. No se puede usar para llamadas normales a subrutinas ni para métodos de clase:
 
-  SUPER::guardar($algo);   # ERROR: busca la subrutina guardar() en el paquete SUPER
+  SUPER::guardar($algo);     # ERROR: busca la subrutina guardar() en el paquete SUPER
 
-  SUPER->guardar($algo);   # ERROR: busca el método guardar() en la clase
+  SUPER->guardar($algo);     # ERROR: busca el método guardar() en la clase
                            #       SUPER
 
   $algo->SUPER::guardar(); # CORRECTO: busca el método guardar() en las
@@ -619,7 +619,7 @@ El nombre completo del método llamado está disponible para su clase en la vari
       my $llamado =  $AUTOLOAD =~ s/.*:://r;
 
       # ¿Existe un atributo con este nombre?
-      die "No existe ese atributo: $llamado"
+      die "No existe el atributo $llamado"
           unless exists $self->{$llamado};
 
       # si es así, devolverlo...

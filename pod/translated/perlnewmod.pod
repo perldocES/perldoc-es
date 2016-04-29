@@ -12,7 +12,7 @@ La forma principal de compartir código es abstraer la solución en un módulo P
 
 Si no existe ningún módulo para lo que usted necesita, y ya se ha encargado de escribir el código, sería un detalle que empaquetara la solución en un módulo y lo subiera a CPAN para que otros programadores puedan usarlo.
 
-También debería echar un vistazo en L<perlmodstyle> para las mejores prácticas para crear un módulo.
+También puede consultar L<perlmodstyle>, donde se describe procedimientos recomendados para desarrollar módulos.
 
 =head2 Advertencia
 
