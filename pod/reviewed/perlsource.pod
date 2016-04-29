@@ -40,7 +40,7 @@ como parte del núcleo.  Sin embargo, a diferencia de F<lib/>, un módulo de F<e
 suele tener una estructura de directorios y archivos estilo CPAN, así como su propio archivo
 F<Makefile.PL>.  No se espera que un módulo de F<ext/>
 pueda trabajar con versiones anteriores de Perl 5.  Por esta razón, estos módulos pueden
-beneficiarse de las mejoras sintáticas y de otro tipo incluidas en la rama
+beneficiarse de las mejoras sintácticas y de otro tipo incluidas en la rama
 C<blead> de Perl 5.
 
 =item * F<dist/>
