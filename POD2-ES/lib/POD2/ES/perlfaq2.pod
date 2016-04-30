@@ -18,7 +18,7 @@ y se incluye información sobre otros temas relacionados.
 
 La versión estándar de Perl (la mantenida por el equipo de desarrollo de
 perl) sólo se distribuye en forma de código fuente. Encontrará las versiones
-más recientes en L<http://www.cpan.org/src/>.
+más recientes en L<http://www.cpan.org/src/>
 
 Perl se puede compilar y ejecutar en una gran variedad de plataformas. Es
 compatible con prácticamente todos los sistemas operativos derivados de Unix
@@ -92,7 +92,7 @@ interfaces de bases de datos comerciales, control de pantalla y teclado, o
 sitios web de gran complejidad.
 
 Puede hacer búsquedas en CPAN a través de L<http://metacpan.org> o
-L<http://search.cpan.org/>.
+L<http://search.cpan.org/>
 
 El sitio web principal de CPAN está en L<http://www.cpan.org/>. En
 L<http://www.cpan.org/SITES.html> encontrará una lista de todos los servidores
@@ -119,7 +119,7 @@ revisar; es un buen punto de partida.
 
 La distribución de Perl incluye la documentación completa de Perl. Si ha
 instalado Perl localmente, es probable que también haya instalado la
-documentación: escriba C<perldoc perl> en el terminal. Como alternativa, puede 
+documentación: escriba C<perldoc perl> en el terminal. Como alternativa, puede
 L<consultar la documentación en línea|http://perldoc.perl.org/perl.html>.
 
 (Las distribuciones para algunos sistemas operativos pueden incluir la
@@ -236,16 +236,16 @@ Todo módulo de CPAN tiene un sistema de seguimiento de errores configurado en
 RT, L<http://rt.cpan.org>. Puede enviar informes de error a RT a través de su
 interfaz web o por correo electrónico. Para notificar un informe de error,
 envíe un mensaje de correo electrónico a
-bug-E<lt>nombre-distribuciónE<gt>@rt.cpan.org . Por ejemplo, si desea
-notificar un error de L<Business::ISBN>, debe enviar un mensaje a
-bug-Business-ISBN@rt.cpan.org .
+bug-E<lt>nombre-distribuciónE<gt>@rt.cpan.org (por ejemplo, si desea notificar
+un error de L<Business::ISBN>, debe enviar un mensaje a
+bug-Business-ISBN@rt.cpan.org).
 
 Es posible que algunos módulos tengan requisitos de notificación
 específicos, como usar un sistema de seguimiento de errores de Github o Google
 Code, por lo que es recomendable consultar también la documentación de los
 módulos.
 
-=head1 AUTOR Y COPYRIGHT
+e=head1 AUTOR Y COPYRIGHT
 
 Copyright (c) 1997-2010 Tom Christiansen, Nathan Torkington y otros autores
 indicados. Todos los derechos reservados.
