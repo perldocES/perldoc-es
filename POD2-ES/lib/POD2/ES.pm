@@ -6,50 +6,50 @@ use open ':locale';
 use base 'Exporter';
 use base 'POD2::Base';
 
-our $VERSION = '5.20.01';
+our $VERSION = '5.22.0.1';
 
 our @EXPORT = qw(print_pod print_pods);
 
 # Versions list
 sub pod_info {{
-    perl              => '5.20.1',
-    perlbook          => '5.20.1',
-    perlboot          => '5.20.1',
-    perlbot           => '5.20.1',
-    perlcheat         => '5.20.1',
-    perlclib          => '5.20.1',
-    perlcommunity     => '5.20.1',
-    perldata          => '5.20.1',
-    perldbmfilter     => '5.20.1',
-    perldoc           => '5.20.1',
-    perlexperiment    => '5.20.1',
-    perlfaq1          => '5.20.1',
-    perlfaq2          => '5.20.1',
-    perlfreebsd       => '5.20.1',
-    perlgit           => '5.20.1',
-    perlglossary      => '5.20.1',
-    perlhacktut       => '5.20.1',
-    perlhist          => '5.20.1',
-    perlhurd          => '5.20.1',
-    perlintro         => '5.20.1',
-    perlmod           => '5.20.1',
-    perlmodinstall    => '5.20.1',
-    perlmroapi        => '5.20.1',
-    perlnewmod        => '5.20.1',
-    perlnumber        => '5.20.1',
-    perlobj           => '5.20.1',
-    perlootut         => '5.20.1',
-    perlopenbsd       => '5.20.1',
-    perlpragma        => '5.20.1',
-    perlre            => '5.20.1',
-    perlsource        => '5.20.1',
-    perlstyle         => '5.20.1',
-    perltodo          => '5.20.1',
-    perltooc          => '5.20.1',
-    perltoot          => '5.20.1',
-    perlunifaq        => '5.20.1',
-    perlunitut        => '5.20.1',
-    perlutil          => '5.20.1',
+    perl              => '5.22.0',
+    perlbook          => '5.22.0',
+    perlboot          => '5.22.0',
+    perlbot           => '5.22.0',
+    #perlcheat         => '5.22.0',
+    #perlclib          => '5.22.0',
+    #perlcommunity     => '5.22.0',
+    #perldata          => '5.22.0',
+    perldbmfilter     => '5.22.0',
+    #perldoc           => '5.22.0',
+    #perlexperiment    => '5.22.0',
+    #perlfaq1          => '5.22.0',
+    perlfaq2          => '5.22.0',
+    perlfreebsd       => '5.22.0',
+    perlgit           => '5.22.0',
+    #perlglossary      => '5.22.0',
+    perlhacktut       => '5.22.0',
+    #perlhist          => '5.22.0',
+    perlhurd          => '5.22.0',
+    perlintro         => '5.22.0',
+    perlmod           => '5.22.0',
+    perlmodinstall    => '5.22.0',
+    perlmroapi        => '5.22.0',
+    perlnewmod        => '5.22.0',
+    perlnumber        => '5.22.0',
+    perlobj           => '5.22.0',
+    perlootut         => '5.22.0',
+    perlopenbsd       => '5.22.0',
+    perlpragma        => '5.22.0',
+    perlre            => '5.22.0',
+    perlsource        => '5.22.0',
+    perlstyle         => '5.22.0',
+    perltodo          => '5.22.0',
+    perltooc          => '5.22.0',
+    perltoot          => '5.22.0',
+    perlunifaq        => '5.22.0',
+    perlunitut        => '5.22.0',
+    perlutil          => '5.22.0',
 }};
 
 # String for perldoc with -L switch
@@ -264,12 +264,12 @@ Latinoamérica.
 =head1 PROYECTO
 
 Encontrará más información sobre el proyecto en
-L<http://github.com/zipf/perldoc-es>.
+L<https://github.com/perldocES/perldoc-es>.
 
 
 =head1 VEA TAMBIÉN
 
-L<POD2::PT_BR>, L<POD2::IT>, L<POD2::FR>, L<POD2::LT>.
+L<POD2::RU>, L<POD2::PT_BR>, L<POD2::IT>, L<POD2::FR>, L<POD2::LT>.
 
 
 =head1 DONATIVOS
@@ -333,7 +333,7 @@ Proyecto OmegaT: L<http://omegat.org/>
 
 =head1 LICENCIA Y COPYRIGHT
 
-Copyright (C) 2011-2013 Equipo de Perl en Español.
+Copyright (C) 2011-2016 Equipo de Perl en Español.
 
 Este programa es software libre; puede redistribuirlo o modificarlo bajo los
 términos de la licencia GNU General Public License publicada por la Free
