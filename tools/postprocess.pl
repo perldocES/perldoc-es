@@ -352,6 +352,13 @@ sub diff_file {
 
     my %params = @_;
 
+    unless ( -e $params{trans} ) {
+
+        say "Translated file not available in translated folder; will not generate a diff file.";
+        return;
+
+    }
+
     my (@trans, @rev);
 
     {
