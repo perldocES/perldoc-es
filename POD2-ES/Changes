@@ -1,9 +1,15 @@
 Revision history for Perl extension POD2::ES
 
-5.20.0.01  August 16, 2014
+5.22.0.01  May 7, 2016
 
-           * Started upgrade to v5.20
-
+           * Updated most of the files in our latest release to v5.22.0
+             Pending files: perlcheat, perlclib, perldata, perlexperiment, 
+                            perlglossary, perlhist
+           * Changes in ES.pm:
+                - Updated copyright notice
+                - Added a reference to the Russian doc project POD2::RU
+                - Added a reference to our new github project repository
+                - Updated pod versions
 
 5.16.2.02  January 1, 2013
 
