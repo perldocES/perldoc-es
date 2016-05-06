@@ -245,7 +245,7 @@ específicos, como usar un sistema de seguimiento de errores de Github o Google
 Code, por lo que es recomendable consultar también la documentación de los
 módulos.
 
-e=head1 AUTOR Y COPYRIGHT
+=head1 AUTOR Y COPYRIGHT
 
 Copyright (c) 1997-2010 Tom Christiansen, Nathan Torkington y otros autores
 indicados. Todos los derechos reservados.
