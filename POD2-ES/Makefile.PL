@@ -23,8 +23,8 @@ WriteMakefile(
         resources   => {
             repository => {
                 type => 'git',
-                url  => 'https://github.com/zipf/perldoc-es.git',
-                web  => 'https://github.com/zipf/perldoc-es',
+                url  => 'https://github.com/perldocES/perldoc-es.git',
+                web  => 'https://github.com/perldocES/perldoc-es',
             },
         },
     },
