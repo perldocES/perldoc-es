@@ -26,7 +26,7 @@ sub pod_info {{
     perlfaq1          => '5.22.0',
     perlfaq2          => '5.22.0',
     perlfreebsd       => '5.22.0',
-    perlgit           => '5.22.0',
+    #perlgit           => '5.22.0',
     #perlglossary      => '5.22.0',
     perlhacktut       => '5.22.0',
     #perlhist          => '5.22.0',
