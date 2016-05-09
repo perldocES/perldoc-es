@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE tmx SYSTEM "tmx11.dtd">
 <tmx version="1.1">
-  <header creationtool="OmegaT" o-tmf="OmegaT TMX" adminlang="EN-US" datatype="plaintext" creationtoolversion="3.1.9" segtype="sentence" srclang="EN-US"/>
+  <header creationtool="OmegaT" o-tmf="OmegaT TMX" adminlang="EN-US" datatype="plaintext" creationtoolversion="3.1.9_4" segtype="sentence" srclang="EN-US"/>
   <body>
 <!-- Default translations -->
     <tu>
@@ -153,8 +153,8 @@ at the end of the list, just before the closing "]".</seg>
       <tuv lang="EN-US">
         <seg>"@INC"			locations of perl libraries</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150910T223744Z">
-        <seg>"@INC"                     ubicación de bibliotecas de Perl</seg>
+      <tuv lang="ES-ES" changeid="zipf" changedate="20110211T202503Z">
+        <seg>"@INC"			ubicación de bibliotecas de Perl</seg>
       </tuv>
     </tu>
     <tu>
@@ -5488,6 +5488,14 @@ the opposite which is what a .NET regex hacker might expect.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>&amp;&amp;              /i case insensitive   ^      string begin</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T122936Z" creationid="explorer" creationdate="20160505T122936Z">
+        <seg>&amp;&amp;              /i no distinguir may/min   ^       principio cadena</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>&amp;&amp;              ^      string begin      /i case insensitive</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20121115T214002Z">
@@ -5532,6 +5540,14 @@ the opposite which is what a .NET regex hacker might expect.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110719T093621Z">
         <seg>&amp;mod($foo);</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>&amp;sub    CODE</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121602Z" creationid="explorer" creationdate="20160505T121532Z">
+        <seg>&amp;sub      CODE</seg>
       </tuv>
     </tu>
     <tu>
@@ -6456,6 +6472,14 @@ document your guess with a comment.)</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>(Don't judge me.)</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T214645Z" creationid="explorer" creationdate="20160506T214645Z">
+        <seg>(Sobre gustos no hay nada escrito).</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>(Don't worry about that C&lt;&lt; -&gt; &gt;&gt; operator, it will be explained
 later.)</seg>
       </tuv>
@@ -7238,6 +7262,14 @@ Spanish dollar into 8 bits, each of which still counted for money.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>(The to-do list used to be here in perltodo.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160429T221715Z" creationid="explorer" creationdate="20160429T221715Z">
+        <seg>(La lista de tareas pendientes solía estar aquí, en perltodo.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>(Their position I&lt;does&gt;
 change their meanings.)</seg>
       </tuv>
@@ -7796,6 +7828,14 @@ boundary, just as it normally does in any double-quoted string.)</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>* / % x                 NUMBERS vs STRINGS  FALSE vs TRUE</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121833Z" creationid="explorer" creationdate="20160505T121803Z">
+        <seg>* / % x                NÚMEROS vs CADENAS  FALSO vs VERDADERO</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>* / % x                 SYNTAX</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110718T075459Z">
@@ -7840,6 +7880,14 @@ boundary, just as it normally does in any double-quoted string.)</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120605T191320Z">
         <seg>**                     &lt; &gt; &lt;= &gt;=  lt gt le ge          pm.org</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>**                     unless  (e) { } elsif (e) { } else { }</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121735Z" creationid="explorer" creationdate="20160505T121735Z">
+        <seg>**                     unless  (e) { } elsif (e) { } else { }</seg>
       </tuv>
     </tu>
     <tu>
@@ -7948,6 +7996,14 @@ boundary, just as it normally does in any double-quoted string.)</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>*glob   GLOB       SCALAR VALUES</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121604Z" creationid="explorer" creationdate="20160505T121556Z">
+        <seg>*glob     GLOB       VALORES ESCALARES</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>*some_hash = fn( \%another_hash );</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120906T112652Z">
@@ -8028,6 +8084,14 @@ boundary, just as it normally does in any double-quoted string.)</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>+ - .</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121837Z" creationid="explorer" creationdate="20160505T121837Z">
+        <seg>+ - .</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>+ - .                   for    (LIST) { }, for (a;b;c) { }</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110718T113901Z">
@@ -8088,6 +8152,14 @@ boundary, just as it normally does in any double-quoted string.)</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120605T191319Z">
         <seg>++ --                  == !=      eq ne              cpan.org</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>++ --                  if      (e) { } elsif (e) { } else { }</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121731Z" creationid="explorer" creationdate="20160505T121731Z">
+        <seg>++ --                  if      (e) { } elsif (e) { } else { }</seg>
       </tuv>
     </tu>
     <tu>
@@ -8433,6 +8505,14 @@ boundary, just as it normally does in any double-quoted string.)</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>-&gt;                     while   (e) { }        until (e)   { }</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121728Z" creationid="explorer" creationdate="20160505T121728Z">
+        <seg>-&gt;                     while   (e) { }        until (e)   { }</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>-&gt;in( @INC );</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20111030T190411Z">
@@ -8681,6 +8761,14 @@ de llamada para C&lt;File::Find&gt;:</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20121115T214008Z">
         <seg>...          +      una o más             /s . incluir \n</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>...          /s .</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T122959Z" creationid="explorer" creationdate="20160505T122959Z">
+        <seg>...          /s .</seg>
       </tuv>
     </tu>
     <tu>
@@ -9927,12 +10015,28 @@ de llamada para C&lt;File::Find&gt;:</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>1.001..10     1988-Jan-30</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T195213Z" creationid="explorer" creationdate="20160430T195213Z">
+        <seg>1.001..10     1988-Ene-30</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>1.001..10     1988-Jan-30
           1.011..14     1988-Feb-02</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110718T231900Z">
         <seg>1.001..10     1988-Ene-30
           1.011..14     1988-Feb-02</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>1.011..14     1988-Feb-02</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T195217Z" creationid="explorer" creationdate="20160430T195217Z">
+        <seg>1.011..14     1988-Feb-02</seg>
       </tuv>
     </tu>
     <tu>
@@ -12315,6 +12419,14 @@ de llamada para C&lt;File::Find&gt;:</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>5.9.2         2005-Apr-01     720    57   858</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T194955Z" creationid="explorer" creationdate="20160430T194955Z">
+        <seg>5.9.2         2005-Abr-01     720    57   858</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>5.9.3          4096  91   5318 381   4806  597   4272 1214   5139 147</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110717T231558Z">
@@ -12323,6 +12435,14 @@ de llamada para C&lt;File::Find&gt;:</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>5.9.3         2006-Jan-28    1124   102  1906</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T195010Z" creationid="explorer" creationdate="20160430T195010Z">
+        <seg>5.9.3         2006-Ene-28    1124   102  1906</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>5.9.4          4393  94   5718 415   4578  642   4646 1310   5335 153</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110717T231559Z">
@@ -12331,10 +12451,26 @@ de llamada para C&lt;File::Find&gt;:</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>5.9.4         2006-Aug-15     896    60   862</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T195017Z" creationid="explorer" creationdate="20160430T195017Z">
+        <seg>5.9.4         2006-Ago-15     896    60   862</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>5.9.5          4681  96   6849 479   4827  671   5155 1490   5572 159</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110717T231559Z">
         <seg>5.9.5          4681  96   6849 479   4827  671   5155 1490   5572 159</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>5.9.5         2007-Jul-07    1149   128  1062</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T195031Z" creationid="explorer" creationdate="20160430T195031Z">
+        <seg>5.9.5         2007-Jul-07    1149   128  1062</seg>
       </tuv>
     </tu>
     <tu>
@@ -12917,6 +13053,14 @@ the current interpreter.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>&lt; &gt; &lt;= &gt;= lt gt le ge   &lt; &gt; &lt;= &gt;=  lt gt le ge</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121919Z" creationid="explorer" creationdate="20160505T121919Z">
+        <seg>&lt; &gt; &lt;= &gt;= lt gt le ge   &lt; &gt; &lt;= &gt;=  lt gt le ge</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>&lt; &gt; &lt;= &gt;= lt gt le ge   unless ( ) { } elsif ( ) { } else { }</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110608T190032Z">
@@ -12953,6 +13097,14 @@ the current interpreter.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110719T075917Z">
         <seg>&lt;...snip...&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>&lt;&lt; &gt;&gt;                   +          .</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121845Z" creationid="explorer" creationdate="20160505T121845Z">
+        <seg>&lt;&lt; &gt;&gt;                   +          .</seg>
       </tuv>
     </tu>
     <tu>
@@ -13029,6 +13181,14 @@ the current interpreter.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>=          =        undef, "", 0, "0"</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121842Z" creationid="explorer" creationdate="20160505T121842Z">
+        <seg>=          =        undef, "", 0, "0"</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>=   assignment</seg>
       </tuv>
       <tuv lang="ES-ES">
@@ -13073,6 +13233,14 @@ the current interpreter.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110203T120408Z">
         <seg>==  igual que</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>== != &lt;=&gt; eq ne cmp ~~  &lt;=&gt;        cmp</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121929Z" creationid="explorer" creationdate="20160505T121929Z">
+        <seg>== != &lt;=&gt; eq ne cmp ~~  &lt;=&gt;        cmp</seg>
       </tuv>
     </tu>
     <tu>
@@ -15437,6 +15605,14 @@ X&lt;for&gt; X&lt;foreach&gt;</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110223T113159Z">
         <seg>=head2 ¿Cómo es Perl en comparación con otros lenguajes como Java, Python, REXX, Scheme o Tcl?</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>=head2 How often are new versions of Perl released?</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T115700Z" creationid="explorer" creationdate="20160505T105323Z">
+        <seg>=head2 ¿Con qué frecuencia se lanzan nuevas versiones de Perl?</seg>
       </tuv>
     </tu>
     <tu>
@@ -23268,10 +23444,26 @@ X&lt;HOME&gt;</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>=item L&lt;http://blogs.perl.org/&gt;</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T092042Z" creationid="explorer" creationdate="20160505T092042Z">
+        <seg>=item L&lt;http://blogs.perl.org/&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>=item L&lt;http://perl.com/&gt;</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110717T224558Z">
         <seg>=item L&lt;http://perl.com/&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>=item L&lt;http://stackoverflow.com/&gt;</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T092729Z" creationid="explorer" creationdate="20160505T092729Z">
+        <seg>=item L&lt;http://stackoverflow.com/&gt;</seg>
       </tuv>
     </tu>
     <tu>
@@ -30724,6 +30916,14 @@ X&lt;/x&gt;</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>=~ !~</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121814Z" creationid="explorer" creationdate="20160505T121814Z">
+        <seg>=~ !~</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>=~ !~                                            perldoc.com</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110608T190018Z">
@@ -33980,6 +34180,15 @@ values as a L&lt;/variable&gt; does.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120729T174343Z">
         <seg>Una invocación típica de L&lt;h2xs|h2xs&gt; para crear un módulo Perl puro es:</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>A useful setting for this command is your favorite editor as in
+C&lt;/usr/bin/nano&gt;.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T215424Z" creationid="explorer" creationdate="20160506T214514Z">
+        <seg>Una práctica opción de configuración para este comando permite especificar su editor favorito; por ejemplo, C&lt;/usr/bin/nano&gt;.</seg>
       </tuv>
     </tu>
     <tu>
@@ -42100,6 +42309,14 @@ populated by a combination of C&lt;Config&gt; entries and C&lt;ExtUtil::MakeMake
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>Currently, those are perl5.18.x and perl5.16.x, respectively.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T105217Z" creationid="explorer" creationdate="20160505T105134Z">
+        <seg>En la actualidad, éstas son perl5.22.x y perl5.20.x respectivamente.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>Curses                  CPAN</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110719T162134Z">
@@ -43978,6 +44195,15 @@ typically ends with a semicolon.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>Even numbered minor versions (5.14, 5.16, 5.18) are production versions, and
+odd numbered minor versions (5.15, 5.17, 5.19) are development versions.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T113643Z" creationid="explorer" creationdate="20160505T110028Z">
+        <seg>Los números de versión secundaria pares (5.18, 5.20, 5.22) indican versiones de producción, mientras que los números de versión secundaria impares (5.19, 5.21, 5.23) indican versiones de desarrollo.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>Even the most
 minimal of them eliminates a lot of repetitive boilerplate.</seg>
       </tuv>
@@ -44429,6 +44655,14 @@ necessary to let Perl access those functions.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110719T093246Z">
         <seg>FNR	$.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>FORMAT     number, string, ref, glob, undef</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121623Z" creationid="explorer" creationdate="20160505T121559Z">
+        <seg>FORMAT    número, cadena, ref, glob, undef</seg>
       </tuv>
     </tu>
     <tu>
@@ -45626,10 +45860,10 @@ el método C&lt;imprimir_info()&gt; de la clase C&lt;Archivo&gt;:</seg>
 wanted to report a bug in L&lt;Business::ISBN&gt;, you could send a message to
 bug-Business-ISBN@rt.cpan.org .</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150514T162135Z" creationid="explorer" creationdate="20150514T162135Z">
-        <seg>Por ejemplo, si desea notificar un error de
-L&lt;Business::ISBN&gt;, deben enviar un mensaje a
-bug-Business-ISBN@rt.cpan.org .</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T234511Z" creationid="explorer" creationdate="20150514T162135Z">
+        <seg>(por ejemplo, si desea notificar un error de
+L&lt;Business::ISBN&gt;, debe enviar un mensaje a
+bug-Business-ISBN@rt.cpan.org).</seg>
       </tuv>
     </tu>
     <tu>
@@ -47164,6 +47398,16 @@ reinventing the wheel!</seg>
     <tu>
       <tuv lang="EN-US">
         <seg>Having PERLDOCDEBUG set to a positive integer will make perldoc emit
+even more descriptive output than the C&lt;-D&gt; switch does; the higher the
+number, the more it emits.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T214746Z" creationid="explorer" creationdate="20160506T214746Z">
+        <seg>Si se establece como valor de PERLDOCDEBUG un entero positivo, perldoc emitirá una salida aún más descriptiva que la que proporciona el modificador C&lt;-D&gt;; cuanto mayor sea el número, más información emitirá.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>Having PERLDOCDEBUG set to a positive integer will make perldoc emit
 even more descriptive output than the C&lt;-v&gt; switch does; the higher the
 number, the more it emits.</seg>
       </tuv>
@@ -47314,9 +47558,9 @@ it is disposed of correctly.</seg>
 take full advantage of syntactical and other improvements in Perl 5
 blead.</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150513T121338Z" creationid="explorer" creationdate="20150513T121338Z">
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160429T224025Z" creationid="explorer" creationdate="20150513T121338Z">
         <seg>Por esta razón, estos módulos pueden
-beneficiarse de las mejoras sintáticas y de otro tipo incluidas en la rama
+beneficiarse de las mejoras sintácticas y de otro tipo incluidas en la rama
 C&lt;blead&gt; de Perl 5.</seg>
       </tuv>
     </tu>
@@ -48688,8 +48932,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 1-55860-701-3 [1st edition March 2005]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150905T111628Z" creationid="explorer" creationdate="20150905T111628Z">
-        <seg>ISBN 1-55860-701-3 [1ª edición - Marzo de 2005]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T231631Z" creationid="explorer" creationdate="20150905T111628Z">
+        <seg>ISBN 1-55860-701-3 [1ª edición, marzo de 2005]</seg>
       </tuv>
     </tu>
     <tu>
@@ -48704,8 +48948,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 1-59059-018-X [1st edition August 2002 &amp; ebook]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150717T170116Z" creationid="explorer" creationdate="20150717T170116Z">
-        <seg>ISBN 1-59059-018-X [1ª edición - Agosto de 2002 y libro electrónico]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T232418Z" creationid="explorer" creationdate="20150717T170116Z">
+        <seg>ISBN 1-59059-018-X [1ª edición, agosto de 2002, y libro electrónico]</seg>
       </tuv>
     </tu>
     <tu>
@@ -48720,8 +48964,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 1-59059-097-X [1st edition July 2003 &amp; ebook]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150717T170148Z" creationid="explorer" creationdate="20150717T170148Z">
-        <seg>ISBN 1-59059-097-X [1ª edición - Julio 2003 y libro electrónico]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T232432Z" creationid="explorer" creationdate="20150717T170148Z">
+        <seg>ISBN 1-59059-097-X [1ª edición, julio de 2003, y libro electrónico]</seg>
       </tuv>
     </tu>
     <tu>
@@ -48736,8 +48980,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 1-59059-391-X [3rd edition April 2010 &amp; ebook]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150717T165954Z" creationid="explorer" creationdate="20150717T165954Z">
-        <seg>ISBN 1-59059-391-X [3ª edición - Abril de 2010 y libro electrónico]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T232356Z" creationid="explorer" creationdate="20150717T165954Z">
+        <seg>ISBN 1-59059-391-X [3ª edición, abril de 2010, y libro electrónico]</seg>
       </tuv>
     </tu>
     <tu>
@@ -48752,8 +48996,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 1-59059-454-1 [1st edition July 2005 &amp; ebook]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150905T112111Z" creationid="explorer" creationdate="20150905T112111Z">
-        <seg>ISBN 1-59059-454-1 [1ª edición - Julio de 2005 y libro electrónico]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T232533Z" creationid="explorer" creationdate="20150905T112111Z">
+        <seg>ISBN 1-59059-454-1 [1ª edición, julio de 2005, y libro electrónico]</seg>
       </tuv>
     </tu>
     <tu>
@@ -48768,8 +49012,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 1-884777-79-1 [1st edition August 1999 &amp; ebook]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150905T111900Z" creationid="explorer" creationdate="20150905T111900Z">
-        <seg>ISBN 1-884777-79-1 [1ª edición - Agosto de 1999 y libro electrónico]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T232519Z" creationid="explorer" creationdate="20150905T111900Z">
+        <seg>ISBN 1-884777-79-1 [1ª edición, agosto de 1999, y libro electrónico]</seg>
       </tuv>
     </tu>
     <tu>
@@ -48784,8 +49028,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 1-930110-00-6 [1st edition 2001 &amp; ebook]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150905T111914Z" creationid="explorer" creationdate="20150905T111914Z">
-        <seg>ISBN 1-930110-00-6 [1ª edición - 2001 y libro electrónico]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T232632Z" creationid="explorer" creationdate="20150905T111914Z">
+        <seg>ISBN 1-930110-00-6 [1ª edición - 2001, y libro electrónico]</seg>
       </tuv>
     </tu>
     <tu>
@@ -48800,8 +49044,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 1-930110-82-0 [1st edition August 2002 &amp; ebook]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150905T112002Z" creationid="explorer" creationdate="20150905T112002Z">
-        <seg>ISBN 1-930110-82-0 [1ª edición - Agosto de 2002 y libro electrónico]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T232527Z" creationid="explorer" creationdate="20150905T112002Z">
+        <seg>ISBN 1-930110-82-0 [1ª edición, agosto de 2002, y libro electrónico]</seg>
       </tuv>
     </tu>
     <tu>
@@ -48832,8 +49076,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 978-0-596-00173-5 [1st edition July 2005]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150905T111601Z" creationid="explorer" creationdate="20150905T111528Z">
-        <seg>ISBN 978-0-596-00173-5 [1ª edición - Julio de 2005]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T231621Z" creationid="explorer" creationdate="20150905T111528Z">
+        <seg>ISBN 978-0-596-00173-5 [1ª edición, julio de 2005]</seg>
       </tuv>
     </tu>
     <tu>
@@ -48872,8 +49116,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 978-0-596-00492-7 [4th edition February 2012]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150513T111352Z" creationid="explorer" creationdate="20150513T111319Z">
-        <seg>ISBN 978-0-596-00492-7 [4ª edición - Febrero de 2012]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T231325Z" creationid="explorer" creationdate="20150513T111319Z">
+        <seg>ISBN 978-0-596-00492-7 [4ª edición, febrero de 2012]</seg>
       </tuv>
     </tu>
     <tu>
@@ -48928,8 +49172,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 978-0-596-51427-3 [2nd edition July 2007]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150717T165857Z" creationid="explorer" creationdate="20150717T165857Z">
-        <seg>ISBN 978-0-596-51427-3 [2ª edición - Julio de 2007]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T231434Z" creationid="explorer" creationdate="20150717T165857Z">
+        <seg>ISBN 978-0-596-51427-3 [2ª edición, julio de 2007]</seg>
       </tuv>
     </tu>
     <tu>
@@ -49008,16 +49252,16 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 978-1-4493-0358-7 [6th edition June 2011]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150513T111417Z" creationid="explorer" creationdate="20150513T111417Z">
-        <seg>ISBN 978-1-4493-0358-7 [6ª edición - Junio de 2011]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T231351Z" creationid="explorer" creationdate="20150513T111417Z">
+        <seg>ISBN 978-1-4493-0358-7 [6ª edición, junio de 2011]</seg>
       </tuv>
     </tu>
     <tu>
       <tuv lang="EN-US">
         <seg>ISBN 978-1-4493-0370-9 [5th edition July 2011]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150513T111524Z" creationid="explorer" creationdate="20150513T111524Z">
-        <seg>ISBN 978-1-4493-0370-9 [5ª edición - Julio de 2011]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T231418Z" creationid="explorer" creationdate="20150513T111524Z">
+        <seg>ISBN 978-1-4493-0370-9 [5ª edición, julio de 2011]</seg>
       </tuv>
     </tu>
     <tu>
@@ -49048,8 +49292,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 978-1-4493-1943-4 [2nd edition August 2012]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150717T170203Z" creationid="explorer" creationdate="20150717T170203Z">
-        <seg>ISBN 978-1-4493-1943-4 [2ª edición - Agosto de 2012]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T231603Z" creationid="explorer" creationdate="20150717T170203Z">
+        <seg>ISBN 978-1-4493-1943-4 [2ª edición, agosto de 2012]</seg>
       </tuv>
     </tu>
     <tu>
@@ -49064,8 +49308,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 978-1-4493-6487-8 [ebook]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150717T170052Z" creationid="explorer" creationdate="20150717T170052Z">
-        <seg>ISBN 978-1-4493-6487-8 [libro eléctronico]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T233001Z" creationid="explorer" creationdate="20150717T170052Z">
+        <seg>ISBN 978-1-4493-6487-8 [libro electrónico]</seg>
       </tuv>
     </tu>
     <tu>
@@ -49088,8 +49332,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 978-1-4493-9309-0 [2nd edition August 2012]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150513T111434Z" creationid="explorer" creationdate="20150513T111434Z">
-        <seg>ISBN 978-1-4493-9309-0 [2ª edición - Agosto de 2012]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T231405Z" creationid="explorer" creationdate="20150513T111434Z">
+        <seg>ISBN 978-1-4493-9309-0 [2ª edición, agosto de 2012]</seg>
       </tuv>
     </tu>
     <tu>
@@ -49120,8 +49364,8 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       <tuv lang="EN-US">
         <seg>ISBN 9978-1-4493-9311-3 [2st edition January 2014]</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150717T170044Z" creationid="explorer" creationdate="20150717T170044Z">
-        <seg>ISBN 9978-1-4493-9311-3 [2ª edición - Enero de 2014]</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T231515Z" creationid="explorer" creationdate="20150717T170044Z">
+        <seg>ISBN 9978-1-4493-9311-3 [2ª edición, enero de 2014]</seg>
       </tuv>
     </tu>
     <tu>
@@ -49448,6 +49692,15 @@ you want your program to be readable, consider supplying the argument.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20111022T100232Z">
         <seg>Si desea que su programa sea legible, debería proporcionar explícitamente los argumentos.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>If
+you'd like to join them, you can sign up for free.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T092205Z" creationid="explorer" creationdate="20160505T092205Z">
+        <seg>Puede apuntarse gratuitamente.</seg>
       </tuv>
     </tu>
     <tu>
@@ -51010,6 +51263,17 @@ return a pointer to it without changing the reference count.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120730T221254Z">
         <seg>Si almacenó en caché el valor devuelto, debe devolver un puntero a dicho valor sin cambiar el contador de referencias.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>If you have never been to a hackathon, here are a few basic things you need to
+know before attending: have a working laptop and know how to use it; check out
+the involved projects beforehand; have the necessary version control client;
+and bring backup equipment (an extra LAN cable, additional power strips, etc.)</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T102548Z" creationid="explorer" creationdate="20160505T093708Z">
+        <seg>Si nunca ha participado en un I&lt;hackathon&gt;, antes de asistir a uno debe saber algunas cosas básicas: debe llevar un portátil y saber usarlo; debe haber echado un vistazo a los proyectos en los que se va a trabajar; debe tener instalado el cliente del sistema de control de versiones necesario; también debería llevar material de repuesto (un cable LAN adicional, una regleta de alimentación adicional, etc.),</seg>
       </tuv>
     </tu>
     <tu>
@@ -52756,6 +53020,17 @@ to 16 decimal digits and decimal exponents in the range of -304..304.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110717T173532Z">
         <seg>En representación decimal, estos límites se acercan a 16 dígitos decimales y exponentes decimales en el intervalo -304..304.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>In directories where either C&lt;Makefile.PL&gt; or C&lt;Build.PL&gt; exist, C&lt;perldoc&gt;
+will add C&lt;.&gt; and C&lt;lib&gt; first to its search path, and as long as you're not
+the superuser will add C&lt;blib&gt; too.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T215109Z" creationid="explorer" creationdate="20160506T214125Z">
+        <seg>En directorios en los que existen C&lt;Makefile.PL&gt; o C&lt;Build.PL&gt;, C&lt;perldoc&gt;
+agregará C&lt;.&gt; y C&lt;lib&gt; al principio de la ruta de búsqueda. También agregará C&lt;blib&gt; si su cuenta no es la del superusuario.</seg>
       </tuv>
     </tu>
     <tu>
@@ -55051,6 +55326,15 @@ values (called L&lt;arguments|/argument&gt;).</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>It no longer accepts
+updates, but you can still use the site to read old entries and comments.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T092539Z" creationid="explorer" creationdate="20160505T092539Z">
+        <seg>Actualmente ya no se actualiza, pero todavía se pueden consultar las publicaciones y los comentarios.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>It only _looks_ like it should be confusing.\n";</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="explorer" changedate="20150905T140939Z" creationid="explorer" creationdate="20150905T140939Z">
@@ -55528,10 +55812,30 @@ to automate the building and testing of perl revisions.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>It's not
+focussed solely on Perl, but it does have an active group of users who do
+their best to help people with their Perl programming questions.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T093314Z" creationid="explorer" creationdate="20160505T093314Z">
+        <seg>No se centra exclusivamente en Perl, pero tiene un grupo activo de usuarios que hacen lo posible por ayudar a personas que tienen dudas sobre programación en Perl.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>It's on CPAN and available for free.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110427T235503Z">
         <seg>Está en CPAN, disponible gratuitamente.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>It's possible to
+substitute for a simple identifier, an expression that produces a reference
+to the value at runtime.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160420T224910Z" creationid="explorer" creationdate="20160420T224910Z">
+        <seg>También es posible sustituir un identificador simple por una expresión que produzca una referencia al valor en tiempo de ejecución.</seg>
       </tuv>
     </tu>
     <tu>
@@ -58266,6 +58570,14 @@ identifiers that start with a letter and contain letters and digits.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>Many members of the community have a Perl-related blog on this site.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T092130Z" creationid="explorer" creationdate="20160505T092130Z">
+        <seg>Muchos miembros de la comunidad tienen un blog sobre Perl en este sitio.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>Many of Perl's syntactic elements are B&lt;optional&gt;.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110220T004533Z">
@@ -60447,6 +60759,14 @@ know what sort of object they are based on Perl's concept of packages.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>OPERATOR PRECEDENCE    foreach (LIST) { }     for (a;b;c) { }</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121712Z" creationid="explorer" creationdate="20160505T121712Z">
+        <seg>PRECEDENCIA OPERADORES foreach (LIST) { }     for (a;b;c) { }</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>ORS	$\</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110719T093256Z">
@@ -62249,13 +62569,8 @@ Kenneth Albanowski C&lt;&lt; &lt;kjahds@kjahds.com&gt; &gt;&gt;,
 Andy Dougherty  C&lt;&lt; &lt;doughera@lafcol.lafayette.edu&gt; &gt;&gt;,
 and many others.</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="zipf" changedate="20120605T195418Z">
-        <seg>Anteriormente contribuyeron a este documento:
-brian d foy C&lt;&lt; &lt;bdfoy@cpan.org&gt; &gt;&gt; 
-Adriano R. Ferreira C&lt;&lt; &lt;ferreira@cpan.org&gt; &gt;&gt;,
-Sean M. Burke C&lt;&lt; &lt;sburke@cpan.org&gt; &gt;&gt;,
-Kenneth Albanowski C&lt;&lt; &lt;kjahds@kjahds.com&gt; &gt;&gt;,
-Andy Dougherty  C&lt;&lt; &lt;doughera@lafcol.lafayette.edu&gt; &gt;&gt; y muchos otros.</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T220016Z">
+        <seg>Anteriormente contribuyeron a este documento: brian d foy C&lt;&lt; &lt;bdfoy@cpan.org&gt; &gt;&gt;, Adriano R. Ferreira C&lt;&lt; &lt;ferreira@cpan.org&gt; &gt;&gt;, Sean M. Burke C&lt;&lt; &lt;sburke@cpan.org&gt; &gt;&gt;, Kenneth Albanowski C&lt;&lt; &lt;kjahds@kjahds.com&gt; &gt;&gt;, Andy Dougherty C&lt;&lt; &lt;doughera@lafcol.lafayette.edu&gt; &gt;&gt; y muchos otros.</seg>
       </tuv>
     </tu>
     <tu>
@@ -62788,8 +63103,8 @@ X&lt;expresión regular, aserción ancho cero&gt;</seg>
 lesser extent from sed, awk, the Unix shell, and many other tools
 and languages.</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="zipf" changedate="20120605T210030Z">
-        <seg>Se deriva del extendido lenguaje de programación C y, en menor medida, de sed, awk, la shell de Unix, y de muchos otros lenguajes y herramientas.</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T112652Z">
+        <seg>Perl desciende del extendido lenguaje de programación C y, en menor medida, de sed, awk, la shell de Unix, y de muchos otros lenguajes y herramientas.</seg>
       </tuv>
     </tu>
     <tu>
@@ -64996,6 +65311,14 @@ hold.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>Rafael   5.9.1         2004-Mar-16      57   250  2107</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T194901Z" creationid="explorer" creationdate="20160430T194901Z">
+        <seg>Rafael   5.9.1         2004-Mar-16      57   250  2107</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>Rafael   5.9.1         2004-Mar-16      57   250  2107
           5.9.2         2005-Apr-01     720    57   858
           5.9.3         2006-Jan-28    1124   102  1906
@@ -65176,6 +65499,16 @@ Public License), but this is difficult to justify etymologically.</seg>
       <tuv lang="ES-ES" changeid="zipf" changedate="20121110T152431Z">
         <seg>Recientemente se ha puesto de moda usar este término en contradicción con L&lt;/software open source&gt;, para referirse únicamente al software libre publicado con la licencia GPL (General
 Public License) de la Free Software Foundation, pero es difícil justificar esto desde un punto de vista etimológico.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>Recently, the plan has been to release a new version of Perl roughly every
+April, but getting the release right is more important than sticking rigidly to
+a calendar date, so the release date is somewhat flexible.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T105556Z" creationid="explorer" creationdate="20160505T105556Z">
+        <seg>Recientemente se acordó el plan de lanzar una versión nueva de Perl cada mes de abril, aproximadamente, pero dando prioridad a la calidad de la distribución, por lo que la fecha de lanzamiento es flexible; no se fija una fecha estricta.</seg>
       </tuv>
     </tu>
     <tu>
@@ -66464,6 +66797,14 @@ target given in the next item would have caught this problem.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110211T181939Z">
         <seg>SINOPSIS</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>SYNTAX</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121651Z" creationid="explorer" creationdate="20160505T121651Z">
+        <seg>SINTAXIS</seg>
       </tuv>
     </tu>
     <tu>
@@ -70424,6 +70765,14 @@ gives added protection.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>Stack Overflow is a free question-and-answer site for programmers.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T093143Z" creationid="explorer" creationdate="20160505T093143Z">
+        <seg>Stack Overflow es un sitio para programadores en el que todos pueden hacer preguntas o contestarlas.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>Stands for "Data Base Management" routines, a set of routines that
 emulate an L&lt;/associative array&gt; using disk files.</seg>
       </tuv>
@@ -71543,6 +71892,15 @@ que normalmente se usa dentro del I&lt;constructor&gt; de la clase.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>That has stopped, as installing a
+snapshot that becomes increasingly out of date isn't that useful to anyone.)</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160429T222501Z" creationid="explorer" creationdate="20160429T222147Z">
+        <seg>Hemos dejado de incluirla, puesto que un listado del estado actual que queda obsoleto en poco tiempo no tiene mucha utilidad).</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>That is any branch matching
 C&lt;m!^(blead|maint|perl)!&gt;.</seg>
       </tuv>
@@ -72194,9 +72552,8 @@ C&lt;$Config{archlib}/pod.idx&gt;.</seg>
         <seg>The B&lt;-a&gt; option followed by the name of a perl api function will
 extract the documentation of this function from L&lt;perlapi&gt;.</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150905T113105Z" creationid="explorer" creationdate="20150905T113105Z">
-        <seg>La opción B&lt;-a&gt; seguida del nombre de una función de la API de perl 
-extrae la documentación de esta función de L&lt;perlapi&gt;.</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T214907Z" creationid="explorer" creationdate="20150905T113105Z">
+        <seg>La opción B&lt;-a&gt; seguida del nombre de una función de la API de perl extrae la documentación de esta función de L&lt;perlapi&gt;.</seg>
       </tuv>
     </tu>
     <tu>
@@ -73411,6 +73768,15 @@ complete re-write of the previous perl sources.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>The Perl 5 to-do list is maintained in the git repository, and can
+be viewed at L&lt;http://perl5.git.perl.org/perl.git/blob/HEAD:/Porting/todo.pod&gt;</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160429T221651Z" creationid="explorer" creationdate="20160429T221651Z">
+        <seg>Puede ver la lista de tareas pendientes de Perl 5 en el repositorio git: L&lt;http://perl5.git.perl.org/perl.git/blob/HEAD:/Porting/todo.pod&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>The Perl Foundation is an advocacy organization for the Perl language
 which maintains the web site ( http://www.perl.org/ ) as a general
 advocacy site for the Perl language.</seg>
@@ -73502,6 +73868,15 @@ convention, because they predate it.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120606T143226Z">
         <seg>En el núcleo de Perl se usan unas cuantas claves de C&lt;%^H&gt; que no siguen esta convención, ya que se definieron antes de que esta se estableciera.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>The Perl development team are called Perl 5 Porters, and their
+organization is described at L&lt;http://perldoc.perl.org/perlpolicy.html&gt;.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T110227Z" creationid="explorer" creationdate="20160505T110227Z">
+        <seg>El equipo de desarrollo de Perl se llama Perl 5 Porters, y su organización se describe en L&lt;http://perldoc.perl.org/perlpolicy.html&gt;.</seg>
       </tuv>
     </tu>
     <tu>
@@ -74496,6 +74871,16 @@ behavior with C&lt;use integer;&gt;</seg>
       <tuv lang="EN-US">
         <seg>The experimental versions may include features that
 don't make it into the stable versions, and have an odd number as the
+minor release (i.e. perl5.19.x, where 19 is the minor release).</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T110634Z" creationid="explorer" creationdate="20160505T110634Z">
+        <seg>Las versiones experimentales pueden incluir características que no se incluyen en las versiones estables; en este caso el número de versión secundaria es un número impar (p. ej., perl5.19.x, donde 19 es la versión secundaria).</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>The experimental versions may include features that
+don't make it into the stable versions, and have an odd number as the
 minor release (i.e. perl5.9.x, where 9 is the minor release).</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110401T180302Z">
@@ -74889,11 +75274,29 @@ whether the last match was zero-length.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>The historical
+release dates can be viewed at L&lt;http://www.cpan.org/src/README.html&gt;.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T105617Z" creationid="explorer" creationdate="20160505T105617Z">
+        <seg>En L&lt;http://www.cpan.org/src/README.html&gt; se pueden ver las fechas de lanzamiento históricas.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>The holder of the pumpkin is sometimes called
 the pumpking (keeping the source afloat?)</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120730T224009Z">
         <seg>A la persona que tiene la calabaza en su poder a veces la llamamos I&lt;pumpking&gt; (¿quizás porque una bomba permite mantener el código a flote?)</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>The immediate, previous releases (i.e. perl5.14.x ) are usually maintained
+for a while, although not at the same level as the current releases.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T105210Z" creationid="explorer" creationdate="20160505T105210Z">
+        <seg>Las versiones anteriores más recientes (en este caso, perl5.18.x) suelen mantenerse durante un tiempo, aunque en menor medida que las versiones actuales.</seg>
       </tuv>
     </tu>
     <tu>
@@ -75353,6 +75756,16 @@ minor release).</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110401T185851Z">
         <seg>Las versiones de mantenimiento son estables; en estas versiones se utiliza un número par como número de versión secundaria (p.ej., perl5.10.x, donde 10 es el número de versión secundaria).</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>The maintenance versions are stable, and
+have an even number as the minor release (i.e. perl5.18.x, where 18 is the
+minor release).</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T110522Z" creationid="explorer" creationdate="20160505T110522Z">
+        <seg>Las versiones de mantenimiento son estables; en estas versiones se utiliza un número par como número de versión secundaria (p. ej., perl5.18.x, donde 18 es el número de versión secundaria).</seg>
       </tuv>
     </tu>
     <tu>
@@ -75900,6 +76313,15 @@ value of a character is called a B&lt;code point&gt;.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110403T225501Z">
         <seg>El valor ordinal de un carácter se denomina B&lt;código de carácter&gt; (I&lt;code point&gt;).</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>The organizational rules really just boil down to one: Larry is always
+right, even when he was wrong.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T110333Z" creationid="explorer" creationdate="20160505T110333Z">
+        <seg>Sus normas de organización se resumen en una: Larry siempre tiene la razón, incluso cuando no la tenga.</seg>
       </tuv>
     </tu>
     <tu>
@@ -78619,8 +79041,8 @@ and implicitly.</seg>
       <tuv lang="EN-US">
         <seg>These threads can be used explicitly and implicitly.</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150905T141115Z" creationid="explorer" creationdate="20150905T141115Z">
-        <seg>Estos hilos de ejecución se puede usar de forma explícita o implícita.</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160429T234147Z" creationid="explorer" creationdate="20150905T141115Z">
+        <seg>Estos hilos de ejecución se pueden usar de forma explícita o implícita.</seg>
       </tuv>
     </tu>
     <tu>
@@ -79049,6 +79471,15 @@ parent is really a rather ridiculous creation.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120628T164325Z">
         <seg>De hecho, esta clase primaria es más bien ridícula.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>This
+prevents many problems in locales that aren't UTF-8.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160420T231428Z" creationid="explorer" creationdate="20160420T231428Z">
+        <seg>fuzzy Esto evita muchos problemas en configuraciones regionales que no son UTF-8.</seg>
       </tuv>
     </tu>
     <tu>
@@ -80447,6 +80878,16 @@ methods and subroutines which I&lt;don't&gt; operate on an object or class.</seg
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>This is really helpful if you're working
+inside of a build directory and want to read through the docs even if you
+have a version of a module previously installed.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T215243Z" creationid="explorer" creationdate="20160506T214329Z">
+        <seg>Esto es muy útil cuando se trabaja en un directorio de compilación y se desea leer la documentación actual aunque esté instalada una versión anterior del módulo.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>This is set up with the L&lt;overload&gt;
 L&lt;/pragma&gt;.</seg>
       </tuv>
@@ -81347,6 +81788,15 @@ positive, but it's best to avoid it.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20111007T203039Z">
         <seg>Permite especificar una opción con ("w" viene de la palabra inglesa B&lt;w&gt;ith) la que desea llamar al formateador.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>This specifies that the output is not to be sent to a pager, but is to
+be sent directly to STDOUT.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T213418Z" creationid="explorer" creationdate="20160506T213418Z">
+        <seg>Especifica que la salida no se enviará a un paginador; se enviará directamente a STDOUT.</seg>
       </tuv>
     </tu>
     <tu>
@@ -82293,9 +82743,9 @@ regular expression within the scope of C&lt;use locale&gt;.</seg>
         <seg>To email a bug report, send it to
 bug-E&lt;lt&gt;distribution-nameE&lt;gt&gt;@rt.cpan.org .</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150514T162106Z" creationid="explorer" creationdate="20150514T162106Z">
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160430T233739Z" creationid="explorer" creationdate="20150514T162106Z">
         <seg>Para notificar un informe de error, envíe un mensaje de correo electrónico a
-bug-E&lt;lt&gt;nombre-distribuciónE&lt;gt&gt;@rt.cpan.org .</seg>
+bug-E&lt;lt&gt;nombre-distribuciónE&lt;gt&gt;@rt.cpan.org</seg>
       </tuv>
     </tu>
     <tu>
@@ -83549,6 +83999,16 @@ forbidden.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>Unless
+you want to try out an experimental feature, you probably never want to install
+a development version of Perl.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T110156Z" creationid="explorer" creationdate="20160505T110156Z">
+        <seg>Es probable que nunca tenga que instalar una versión de desarrollo de Perl, a menos que desee probar una funcionalidad experimental.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>Unless noted otherwise, the size mentioned is
 the patch to bring version x.y.z to x.y.z+1.</seg>
       </tuv>
@@ -83985,6 +84445,17 @@ or the like.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20111007T174933Z">
         <seg>Algunos valores útiles para C&lt;PERLDOC&gt; son C&lt;-oman&gt;, C&lt;-otext&gt;, C&lt;-otk&gt;, C&lt;-ortf&gt;, C&lt;-oxml&gt;, etc., en función de los módulos disponibles; o bien, se puede especificar exactamente la clase de formateador con C&lt;-MPod::Perldoc::ToMan&gt; o similar.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>Useful values for C&lt;PERLDOC&gt; include C&lt;-oterm&gt;, C&lt;-otext&gt;, C&lt;-ortf&gt;,
+C&lt;-oxml&gt;, and so on, depending on what modules you have on hand; or
+the formatter class may be specified exactly with C&lt;-MPod::Perldoc::ToTerm&gt;
+or the like.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T213834Z" creationid="explorer" creationdate="20160506T213834Z">
+        <seg>Algunos valores útiles para C&lt;PERLDOC&gt; son C&lt;-oterm&gt;, C&lt;-otext&gt;, C&lt;-ortf&gt;, C&lt;-oxml&gt;, etc., en función de los módulos disponibles; o bien, se puede especificar exactamente la clase de formateador con C&lt;-MPod::Perldoc::ToTerm&gt; o similar.</seg>
       </tuv>
     </tu>
     <tu>
@@ -85299,8 +85770,8 @@ implemented, they just need to know I&lt;what&gt; it does.</seg>
 L&lt;resources|http://www.cpan.org/&gt;, L&lt;testing culture|http://www.cpantesters.org/&gt;
 and L&lt;community|http://www.perl.org/community.html&gt; which surrounds it.</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="zipf" changedate="20120613T184010Z">
-        <seg>Al elegir un lenguaje también debe tener en cuenta los L&lt;recursos|http://www.cpan.org/&gt;, la L&lt;cultura de ejecución de pruebas|http://www.cpantesters.org/&gt;
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T113916Z">
+        <seg>Al elegir un lenguaje también debe tener en cuenta los L&lt;recursos|http://www.cpan.org/&gt;, la L&lt;cultura de ejecución de pruebas (I&lt;testing&gt;)|http://www.cpantesters.org/&gt;
 y la L&lt;comunidad|http://www.perl.org/community.html&gt; del lenguaje.</seg>
       </tuv>
     </tu>
@@ -85577,6 +86048,15 @@ trickier.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20121230T162719Z">
         <seg>Cuando se utiliza con aserciones de inspección hacia adelante y negaciones, todo esto puede complicarse aún más.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>When using perldoc in it's C&lt;-m&gt; mode (display module source code),
+C&lt;perldoc&gt; will attempt to use the pager set in C&lt;PERLDOC_SRC_PAGER&gt;.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T215353Z" creationid="explorer" creationdate="20160506T214429Z">
+        <seg>Al ejecutar C&lt;perldoc&gt; en modo C&lt;-m&gt; (muestra el código fuente del módulo), intentará utilizar el paginador establecido en C&lt;PERLDOC_SRC_PAGER&gt;.</seg>
       </tuv>
     </tu>
     <tu>
@@ -88579,8 +89059,8 @@ or you can subscribe to the mailing list by sending
 perl5-porters-subscribe@perl.org a subscription request
 (an empty message with no subject is fine).</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="zipf" changedate="20120605T210735Z">
-        <seg>Si desea curiosear los desarrollos pendientes, puede consultar el L&lt;archivo de mensajes de la lista de correo|http://www.nntp.perl.org/group/perl.perl5.porters/&gt; o leer las L&lt;preguntas más frecuentes|http://dev.perl.org/perl5/docs/p5p-faq.html&gt;. También puede suscribirse a la lista de correo enviando una solicitud de suscripción a perl5-porters-subscribe@perl.org (solo tiene que enviar un mensaje vacío sin asunto).</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T112859Z">
+        <seg>Si desea curiosear los desarrollos que se están realizando, puede consultar el L&lt;archivo de mensajes de la lista de correo|http://www.nntp.perl.org/group/perl.perl5.porters/&gt; o leer las L&lt;preguntas más frecuentes|http://dev.perl.org/perl5/docs/p5p-faq.html&gt;. También puede suscribirse a la lista de correo enviando una solicitud de suscripción a perl5-porters-subscribe@perl.org (solo tiene que enviar un mensaje vacío sin asunto).</seg>
       </tuv>
     </tu>
     <tu>
@@ -89324,10 +89804,26 @@ during C&lt;split&gt;.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>[-n nroff-replacement]</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T212850Z" creationid="explorer" creationdate="20160506T212850Z">
+        <seg>[-n sustituto-nroff]</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>[-o formatname]</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="explorer" changedate="20150905T112938Z" creationid="explorer" creationdate="20150905T112938Z">
         <seg>[-o nombreformato]</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>[-w formatteroption:value]</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T212818Z" creationid="explorer" creationdate="20160506T212818Z">
+        <seg>[-w opciónformateador:valor]</seg>
       </tuv>
     </tu>
     <tu>
@@ -89737,6 +90233,14 @@ passing", as in the exotic pawn-capturing maneuver in chess.]</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110718T213717Z">
         <seg>\     crear referencia      $$foo[1]       equivale a $foo-&gt;[1]</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>\()    list of refs</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121647Z" creationid="explorer" creationdate="20160505T121647Z">
+        <seg>\()    lista de ref.</seg>
       </tuv>
     </tu>
     <tu>
@@ -90663,6 +91167,14 @@ itself you can fix it up by editing the files once more and then issue:</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>anything else</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121854Z" creationid="explorer" creationdate="20160505T121854Z">
+        <seg>otra cosa</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>apollo          -    -     -    -     -    -     -    -      0   1</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110717T231639Z">
@@ -90920,6 +91432,14 @@ help.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110719T162046Z">
         <seg>bar( qw( a b c ) );</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>because someone will forget.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T093722Z" creationid="explorer" creationdate="20160505T093722Z">
+        <seg>ya que siempre habrá alguien a quien se le olvide algo.</seg>
       </tuv>
     </tu>
     <tu>
@@ -91359,6 +91879,20 @@ http://www.ddj.com/184404580 .</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="explorer" changedate="20150513T111229Z" creationid="explorer" creationdate="20150513T111229Z">
         <seg>por Tom Christiansen, brian d foy y Larry Wall, con Jon Orwant</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>by Tom Christiansen, brian d foy, Larry Wall with Jon Orwant
+	ISBN 978-0-596-00492-7 [4th edition February 2012]
+	ISBN 978-1-4493-9890-3 [ebook]
+	http://oreilly.com/catalog/9780596004927</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160420T224741Z" creationid="explorer" creationdate="20160420T224741Z">
+        <seg>por Tom Christiansen, brian d foy y Larry Wall, con Jon Orwant
+	ISBN 978-0-596-00492-7 [4ª edición - Febrero de 2012]
+	ISBN 978-1-4493-9890-3 [libro electrónico]
+	http://oreilly.com/catalog/9780596004927</seg>
       </tuv>
     </tu>
     <tu>
@@ -95509,6 +96043,14 @@ http://www.primate.wisc.edu/software/csh-tcsh-book/</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>includes \n      +      one or more</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T123115Z" creationid="explorer" creationdate="20160505T123115Z">
+        <seg>incluir \n              +       uno o más</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>index 293dd70..722c93e 100644</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110608T172533Z">
@@ -96389,6 +96931,14 @@ http://www.primate.wisc.edu/software/csh-tcsh-book/</seg>
              &amp;sub
              *glob    VALORES ESCALARES
                       número, cadena, referencia, glob, undef</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>list      %hash   HASH       $array[0]     $hash{'a'}</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121541Z" creationid="explorer" creationdate="20160505T121524Z">
+        <seg>lista      %hash    HASH       $array[0]     $hash{'a'}</seg>
       </tuv>
     </tu>
     <tu>
@@ -98744,6 +99294,14 @@ to non-negative integral values less than a preset limit defined when perl is bu
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110608T172803Z">
         <seg>name( '*.pm' )-&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>named uops              == !=      eq ne</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121903Z" creationid="explorer" creationdate="20160505T121903Z">
+        <seg>ops unarios con nombre  == !=      eq ne</seg>
       </tuv>
     </tu>
     <tu>
@@ -101216,10 +101774,42 @@ system.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>perldoc -L fr -q FAQ Keyword</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T213126Z" creationid="explorer" creationdate="20160506T213126Z">
+        <seg>perldoc -L fr -q I&lt;palabra clave de perlfaq&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>perldoc -L it -f BuiltinFunction</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T213037Z" creationid="explorer" creationdate="20160506T213037Z">
+        <seg>perldoc -L it -f I&lt;función predefinida&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>perldoc -a PerlAPI</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150905T113016Z" creationid="explorer" creationdate="20150905T113016Z">
-        <seg>perldoc -a PerlAPI</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T213330Z" creationid="explorer" creationdate="20150905T113016Z">
+        <seg>perldoc -a I&lt;API de Perl&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>perldoc -a newHV</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T213340Z" creationid="explorer" creationdate="20160506T213340Z">
+        <seg>perldoc -a newHV</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>perldoc -f BuiltinFunction</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T213017Z" creationid="explorer" creationdate="20160506T213017Z">
+        <seg>perldoc -f I&lt;función predefinida&gt;</seg>
       </tuv>
     </tu>
     <tu>
@@ -101228,6 +101818,14 @@ system.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110719T074056Z">
         <seg>perldoc -f sprintf</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>perldoc -q FAQ Keyword</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T213116Z" creationid="explorer" creationdate="20160506T213116Z">
+        <seg>perldoc -q I&lt;palabra clave de perlfaq&gt;</seg>
       </tuv>
     </tu>
     <tu>
@@ -101260,6 +101858,14 @@ system.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110608T191501Z">
         <seg>perldoc -v DATA</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>perldoc -v PerlVariable</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160506T213201Z" creationid="explorer" creationdate="20160506T213201Z">
+        <seg>perldoc -v I&lt;variable de Perl&gt;</seg>
       </tuv>
     </tu>
     <tu>
@@ -102324,6 +102930,14 @@ system.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110211T222204Z">
         <seg>perltodo		Tareas pendientes</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>perltodo - Link to the Perl to-do list</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160429T222304Z" creationid="explorer" creationdate="20160426T231438Z">
+        <seg>perltodo - Vínculo a la lista de tareas pendientes de Perl</seg>
       </tuv>
     </tu>
     <tu>
@@ -107576,8 +108190,8 @@ or specific values).</seg>
       <tuv lang="EN-US">
         <seg>use Class::Tiny qw( path content last_mod_time );</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150905T125412Z" creationid="explorer" creationdate="20150905T125412Z">
-        <seg>use Class::Tiny qw( path content last_mod_time );</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160426T233447Z" creationid="explorer" creationdate="20150905T125412Z">
+        <seg>use Class::Tiny qw( ruta contenido hora_ult_mod );</seg>
       </tuv>
     </tu>
     <tu>
@@ -108132,6 +108746,16 @@ announcements with (ir)relevant discussion.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120414T212213Z">
         <seg>use Perl; ofrece un sitio web de noticias sobre Perl al estilo Slashdot que cubre todo lo relacionado con Perl, desde actas de las reuniones del equipo de diseño de Perl 6 hasta los anuncios de conferencias con discusiones (ir)relevantes.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>use Perl; used to provide a slashdot-style news/blog website covering all
+things Perl, from minutes of the meetings of the Perl 6 Design team to
+conference announcements with (ir)relevant discussion.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T092714Z" creationid="explorer" creationdate="20160505T092440Z">
+        <seg>use Perl; es un sitio web de noticias/blog sobre Perl al estilo Slashdot que en su día cubría toda la información relacionada con Perl, desde actas de las reuniones del equipo de diseño de Perl 6 hasta anuncios de conferencias con debates (ir)relevantes.</seg>
       </tuv>
     </tu>
     <tu>
@@ -110760,6 +111384,14 @@ only return true or false, rather than a count of matches.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>| ^             REGEX MODIFIERS       REGEX METACHARS</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T122857Z" creationid="explorer" creationdate="20160505T122857Z">
+        <seg>| ^             MODIFICADORES REGEX   METACARACTERES REGEX</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>| z/OS | OS/400 |</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110718T232707Z">
@@ -111336,6 +111968,14 @@ only return true or false, rather than a count of matches.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>|| //           /m line based ^$      $      str end (bfr \n)</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T122954Z" creationid="explorer" creationdate="20160505T122954Z">
+        <seg>|| //           /m basado en líneas ^$       $       fin cadena (antes \n)</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>}</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110608T171333Z">
@@ -111608,6 +112248,14 @@ only return true or false, rather than a count of matches.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110719T080319Z">
         <seg>}} until $x++ &gt; $z;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>~ \ u+ u-            given   (e) { when (e) {} default {} }</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160505T121827Z" creationid="explorer" creationdate="20160505T121812Z">
+        <seg>~ \ u+ u-              given   (e) { when (e) {} default {} }</seg>
       </tuv>
     </tu>
     <tu>

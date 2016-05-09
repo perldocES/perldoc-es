@@ -1,5 +1,15 @@
 Revision history for Perl extension POD2::ES
 
+5.22.0.02 May 9, 2016
+
+           * Changes in Makefile.PL
+                - Added use utf8
+                - Updated the github repository address
+           * Changes in ES.pm
+                - Changed the layer of the open pragma from locale to utf8
+                - Reverted the translation of section headings to check a 
+                  couple of issues
+
 5.22.0.01  May 7, 2016
 
            * Updated most of the files in our latest release to v5.22.0
