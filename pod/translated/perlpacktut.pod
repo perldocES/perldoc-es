@@ -617,7 +617,7 @@ Típicamente, un compilador C aloja 12 bytes a una variable C<gappy_t>, pero req
 
    0           +4          +8          +12
    +--+--+--+--+--+--+--+--+--+--+--+--+
-   |c1|xx|  s  |c2|xx|xx|xx|     l     |    xx = byte de relleno
+   |c1|xx|  s  |c2|xx|xx|xx|     l     |    xx = fill byte
    +--+--+--+--+--+--+--+--+--+--+--+--+
    gappy_t
 

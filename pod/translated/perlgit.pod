@@ -107,7 +107,7 @@ Indica que los cambios realizados a este documento se han preparado y están pen
 =head2 Flujo de trabajo con parches
 
 En primer lugar, lea L<perlhack> para obtener información detallada sobre cómo trabajar en el núcleo de Perl.
-Ese documento explica muchos detalles sobre la manera correcta de crear un parche.
+Este documento explica muchos detalles sobre la manera correcta de crear un parche.
 
 Si ya tiene un repositorio de Perl, debe asegurarse de que está en la rama I<blead> y que el repositorio está actualizado:
 
@@ -150,7 +150,7 @@ Y puede ver los cambios:
   index 293dd70..722c93e 100644
   --- a/AUTHORS
   +++ b/AUTHORS
-  @@ -541,7 +541,7 @@    Lars Hecking                   <lhecking@nmrc.ucc.ie>
+  @@ -541,7 +541,7 @@    Lars Hecking                  <lhecking@nmrc.ucc.ie>
    Laszlo Molnar                  <laszlo.molnar@eth.ericsson.se>
    Leif Huhn                      <leif@hale.dkstat.com>
    Len Johnson                    <lenjay@ibm.net>
@@ -393,7 +393,7 @@ B<NOTA:> está prohibido eliminar ramas "principales" de un repositorio. Es deci
      ! [remote rejected] blead (hook declined)
      error: failed to push some refs to 'ssh://perl5.git.perl.org/perl'
 
-Tenemos la política de B<no> editar el historial de las ramas blead y maint-*. Si se colara un error ortográfico (o algo más grave) en una confirmación en blead o
+Tenemos la política de B<no> editar el historial las ramas de blead y maint-*. Si se colara un error ortográfico (o algo más grave) en una confirmación en blead o
 maint-*, lo corregiremos en una confirmación posterior. Los únicos tipos de actualización que se permiten en estas ramas son los de "avance rápido", que conservan el historial.
 
 Las etiquetas con anotaciones del repositorio perl.git canónico nunca se eliminarán ni modificarán. Si desea enviar una etiqueta local a perl.git, piénselo detenidamente antes de hacerlo. (No se permite insertar etiquetas sin anotaciones).
@@ -488,7 +488,7 @@ Si desea eliminar su rama temporal, puede hacerlo con el siguiente comando:
   % git branch -D experimental
   Deleted branch experimental.
 
-=head2 Confirmar en I<blead>
+=head2 Confirmar en blead
 
 La rama 'blead' se convertirá en la siguiente versión de producción de Perl.
 
@@ -655,7 +655,7 @@ Finalmente, deberá borrar la rama remota I<smoke-me>:
 
 =head2 Nota sobre los servidores I<camel> (camello) y I<dromedary> (dromedario)
 
-Las personas que contribuyen con cambios tienen acceso SSH a los dos servidores que ofrecen servicio a C<perl5.git.perl.org>. Uno es C<perl5.git.perl.org> (I<camel>), el repositorio "principal". El otro es C<users.perl5.git.perl.org> (I<dromedary>), que se puede usar para pruebas y desarrollo general. El servidor I<dromedary> sincroniza el árbol git de I<camel> cada pocos minutos. No debe insertar cambios en I<camel>. Ambos equipos también tienen un servidor reflejado de CPAN completo en /srv/CPAN. Use estos servidores. Para compartir archivos con el público general, I<dromedary> ofrece ~/public_html/ como
+Las personas que contribuyen cambios tienen acceso SSH a los dos servidores que ofrecen servicio a C<perl5.git.perl.org>. Uno es C<perl5.git.perl.org> (I<camel>), el repositorio "principal". El otro es C<users.perl5.git.perl.org> (I<dromedary>), que se puede usar para pruebas y desarrollo general. El servidor I<dromedary> sincroniza el árbol git de I<camel> cada pocos minutos. No debe insertar cambios en I<camel>. Ambos equipos también tienen un servidor reflejado de CPAN completo en /srv/CPAN. Use estos servidores. Para compartir archivos con el público general, I<dromedary> ofrece ~/public_html/ como
 C<http://users.perl5.git.perl.org/~usuario/>
 
 El acceso de estos hosts al exterior está considerablemente restringido mediante firewall. Hacia fuera, solo se admiten rsync, ssh y git. Para http y ftp puede usar http://webproxy:3128 como proxy. Para la entrada, el firewall trata de detectar ataques y bloquea las direcciones IP con actividad sospechosa. A veces (aunque raramente) esto produce falsos positivos y en ese caso se le bloqueará. La forma más rápida de conseguir que le desbloqueen es notificárselo a los administradores.

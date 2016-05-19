@@ -1,5 +1,5 @@
-=head1 NOMBRE
-X<syntax> X<sintaxis>
+=head1 NAME
+X<syntax>
 
 perlsyn - Sintaxis de Perl
 

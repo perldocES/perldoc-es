@@ -20,19 +20,19 @@ En las operaciones de detección de coincidencias se pueden usar varios modifica
 =over 4
 
 =item m
-X</m> X<regex, multiline> X<regexp, multiline> X<regular expression, multiline> X<regex, multilínea> X<expresión regular, multilínea>
+X</m> X<regex, multiline> X<regexp, multiline> X<regular expression, multiline> X<regex, multilínea> X<regexp, multilínea> X<expresión regular, multilínea>
 
 Trata la cadena como si fuera un conjunto de líneas.  Es decir, cambia el significado de "^" y "$", de coincidir, respectivamente, con el principio de la primera línea y el final de la última línea, a coincidir con el principio y el final de cada línea, dentro de la cadena.
 
 =item s
-X</s> X<regex, single-line> X<regexp, single-line> X<regular expression, single-line> X<regex, una línea> X<expresión regular, una línea>
+X</s> X<regex, single-line> X<regexp, single-line> X<regular expression, single-line> X<regex, una línea> X<regexp, una línea> X<expresión regular, una línea>
 
 Trata la cadena como una sola línea.  Es decir, cambia el significado de "." para que detecte cualquier carácter, incluso el de nueva línea, que normalmente no detectaría.
 
 Si se usan juntos, como C</ms>, permiten que "." detecte cualquier carácter y, a la vez, que "^" y "$" detecten, respectivamente, las posiciones justo a continuación e inmediatamente antes de los caracteres de nueva línea en la cadena.
 
 =item i
-X</i> X<regex, case-insensitive> X<regexp, case-insensitive> X<regular expression, case-insensitive> X<regex, no distinguir mayúsculas de minúsculas> X<regex, no distinguir mayúsculas de minúsculas> X<expresión regular, no distinguir mayúsculas de minúsculas>
+X</i> X<regex, case-insensitive> X<regexp, case-insensitive> X<regular expression, case-insensitive> X<regex, no distinguir mayúsculas de minúsculas> X<regexp, no distinguir mayúsculas de minúsculas> X<expresión regular, no distinguir mayúsculas de minúsculas>
 
 Busca coincidencias de patrones sin distinguir mayúsculas de minúsculas.
 
@@ -57,7 +57,7 @@ Mejora la legibilidad del patrón, al permitir espacios en blanco y comentarios.
 Para obtener más información, vea L</"/x">
 
 =item p
-X</p> X<regex, preserve> X<regexp, preserve> X<regex, conservar>
+X</p> X<regex, preserve> X<regexp, preserve> X<regex, conservar> X<regexp, conservar>
 
 Conserva la cadena coincidente, de manera que ${^PREMATCH}, ${^MATCH} y ${^POSTMATCH} estén disponibles tras la detección.
 
@@ -192,7 +192,7 @@ X</l>
 
 =head4 /u
 
-significa que se usan las reglas de Unicode al detectar coincidencias de patrones.  En plataformas ASCII, esto significa que los códigos de carácter entre 128 y 255 se usan como si fueran Latin-1 (ISO-1-8859) (que son los mismos que en Unicode).
+significa que se usan las reglas de Unicode al detectar coincidencias de patrones.  En plataformas ASCII, esto significa que los códigos de carácter entre 128 y 255 se usan como si fueran Latin-1 (ISO-8859-1) (que son los mismos que en Unicode).
 (De lo contrario, Perl considerará que no están definidos).  Así, con este modificador la plataforma ASCII se convierte de forma efectiva en una plataforma Unicode. Por ejemplo, C<\w> detectará cualquiera de los más de 100 000 caracteres de Unicode que pueden formar parte de una "palabra".
 
 A diferencia de la mayoría de las configuraciones regionales, que son específicas de un par idioma/país, Unicode clasifica como C<\w> todos los caracteres que son letras I<en cualquier parte> del mundo.  Por ejemplo, aunque una configuración regional no considere que C<LATIN SMALL LETTER ETH> es una letra (a menos que corresponda a un sistema islandés), Unicode sí lo considerará como una letra.  Del mismo modo, C<\d> detectará todos los caracteres que son dígitos decimales en algún lugar del mundo; esto supone detectar cientos de posibles coincidencias, no diez.  Y algunas de esas cifras se parecen a algunos de los 10 dígitos ASCII, pero se refieren a un número diferente, por lo que un ser humano podría pensar que un número se refiere a una cantidad distinta de la real.  Por ejemplo, C<BENGALI DIGIT FOUR> (U+09EA) se parece mucho a C<ASCII DIGIT EIGHT> (U+0038).  Y C<\d+> puede detectar coincidencias en cadenas de dígitos que son una mezcla de diferentes sistemas de escritura, lo que crea un problema de seguridad.  Para solucionar este problema puede usar L<Unicode::UCD/num()>.  O bien, puede usar el modificador C</a> para forzar que C<\d> solo detecte los caracteres ASCII 0 a 9.
@@ -238,7 +238,7 @@ el patrón usa L</C<(?[ ])>>
 
 =back
 
-Otra regla mnemotécnica para este modificador es "Depende", ya que las reglas utilizadas realmente dependen de varias cosas, y como consecuencia se pueden obtener resultados inesperados.  Vea L<perlunicode/El "Bug Unicode">.  El "Error de Unicode" se ha convertido en algo más bien infame, que conduce a otro nombre (imprimible) en inglés para este modificador: "Dodgy" (poco fiable).
+Otra regla mnemotécnica para este modificador es "Depende", ya que las reglas utilizadas realmente dependen de varias cosas, y como consecuencia se pueden obtener resultados inesperados.  Vea L<perlunicode/El "Error de Unicode">.  El "Error de Unicode" se ha convertido en algo más bien infame, que conduce a otro nombre (imprimible) en inglés para este modificador: "Dodgy" (poco fiable).
 
 A no ser que el patrón o la cadena estén codificados en UTF-8, sólo los caracteres ASCII pueden emparejar positivamente.
 
@@ -495,7 +495,7 @@ X<regexp, zero-width assertion>
 X<regular expression, zero-width assertion>
 X<\b> X<\B> X<\A> X<\Z> X<\z> X<\G>
 X<aserción ancho cero> X<aserción> X<regex, aserción ancho cero>
-X<regex, aserción ancho cero>
+X<regexp, aserción ancho cero>
 X<expresión regular, aserción ancho cero>
 
     \b{} Coincide con el límite Unicode del tipo especificado
@@ -505,8 +505,8 @@ X<expresión regular, aserción ancho cero>
     \A  Comienzo de la cadena únicamente
     \Z  Final de cadena únicamente, posición anterior a carácter de nueva línea al final
     \z  Final de cadena únicamente
-    \G  Coincidencia en pos() únicamente (p. ej. en la posición final de coincidencia
-        de la iteración anterior de m//g)
+    \G  Coincidencia en pos() únicamente (p. ej. en posición final de última coincidencia
+        antes de m//g)
 
 Un límite Unicode (C<\b{}>), disponible a partir de v5.22, es un espacio entre dos caracteres, o antes del primer carácter en la cadena, o después del último carácter en la cadena, donde coincida con el criterio Unicode definido.  Vea L<perlrebackslash/\b{}, \b, \B{}, \B> para más detalles.
 
@@ -540,7 +540,8 @@ Note también que C<s///> rechazará sobreescribir parte de la sustitución que 
 
 Los paréntesis C<( ... )> crean grupos de captura (también denominados búferes de captura). Para hacer referencia posteriormente, dentro del mismo patrón, al contenido actual de un grupo de captura, use C<\g1> (o C<\g{1}>) para el primero, C<\g2> (o C<\g{2}>) para el segundo, y así sucesivamente.
 Esto se denomina I<retrorreferencia>.
-X<regex, búfer de captura> X<regex, grupo de captura>
+X<regex, búfer de captura> X<regexp, búfer de captura>
+X<regex, grupo de captura> X<regexp, grupo de captura>
 X<expresión regular, búfer de captura> X<retrorreferencia>
 X<expresión regular, grupo de captura>
 X<\g{1}> X<\g{-1}> X<\g{nombre}> X<retrorreferencia relativa> X<retrorreferencia con nombre>
@@ -860,7 +861,7 @@ Ambas formas son equivalentes.
 B<NOTA:> para facilitar las cosas a los programadores con experiencia de uso de los motores de expresiones regulares de Python o PCRE, se puede usar el patrón C<< (?P=NOMBRE) >> en lugar de C<< \k<NOMBRE> >>.
 
 =item C<(?{ código })>
-X<(?{})> X<regex, code in> X<regexp, code in> X<regular expression, code in> X<regex, código interior> X<expresión regular, código interior>
+X<(?{})> X<regex, code in> X<regexp, code in> X<regular expression, code in> X<regex, código interior> X<regexp, código interior> X<expresión regular, código interior>
 
 B<ADVERTENCIA:> Usar esta característica de forma segura requiere que entienda sus limitaciones.  El código ejecutado que tenga efectos secundarios puede no funcionar de forma idéntica de una versión a otra debido al efecto de futuras optimizaciones del motor de expresiones regulares.  Para más información sobre esto, vea L</Frecuencia de ejecución de código incrustado>.
 
@@ -915,7 +916,7 @@ Estas localizaciones acumuladas se deshacen al final de una coincidencia exitosa
 
   $_ = 'a' x 8;
   m<
-     (?{ $cnt = 0 })		   # Inicializa $cnt.
+     (?{ $cnt = 0 })               # Inicializa $cnt.
      (
        a
        (?{
@@ -947,7 +948,7 @@ Note que la variable especial C<$^N> es particularmente útil con bloques de có
 
 
 =item C<(??{ código })>
-X<(??{})> X<regex, postponed> X<regexp, postponed> X<regular expression, postponed> X<regex, pospuesta> X<expresión regular, pospuesta>
+X<(??{})> X<regex, postponed> X<regexp, postponed> X<regular expression, postponed> X<regex, pospuesta> X<regexp, pospuesta> X<expresión regular, pospuesta>
 
 B<ADVERTENCIA:> Usar esta característica de forma segura requiere que entienda sus limitaciones.  El código que se ejecuta que tenga efectos secundarios puede no funcionar de forma idéntica de una versión a otra debido al efecto de futuras optimizaciones del motor de expresiones regulares.  Para más información sobre esto, vea L</Frecuencia de ejecución de código incrustado>.
 
@@ -979,7 +980,7 @@ El siguiente patrón detecta un grupo entre paréntesis:
 
 Consulte L<C<(?I<PARNO>)>|/(?PARNO) (?-PARNO) (?+PARNO) (?R) (?0)> para ver una diferente y más eficiente forma de cumplir la misma tarea.
 
-Ejecutar 50 veces una expresión regular pospuesta sin consumir ninguna cadena de entrada resultará en un error fatal.  La profundidad máxima está compilada en perl, por lo que su modificación requiere una generación personalizada.
+Ejecutar 50 veces una expresión regular pospuesta sin consumir ninguna cadena de entrada resultará en un error fatal.  La profundidad máxima está compilada en perl, por lo que su modificación requiere una compilación personalizada.
 
 =item C<(?I<PARNO>)> C<(?-I<PARNO>)> C<(?+I<PARNO>)> C<(?R)> C<(?0)>
 X<(?PARNO)> X<(?1)> X<(?R)> X<(?0)> X<(?-1)> X<(?+1)> X<(?-PARNO)> X<(?+PARNO)> X<regex, recursive> X<regexp, recursive> X<regular expression, recursive>
@@ -1023,7 +1024,7 @@ debe generar la siguiente salida:
     $2 = (bar(baz)+baz(bop))
     $3 = bar(baz)+baz(bop)
 
-Si no hay ningún grupo de captura correspondiente definido, se producirá un error irrecuperable.  Realizar un proceso recursivo más de 50 veces sin consumir ninguna cadena de entrada generará un error irrecuperable.  La profundidad máxima está compilada en perl, por lo que su modificación requiere una generación personalizada.
+Si no hay ningún grupo de captura correspondiente definido, se producirá un error irrecuperable.  Realizar un proceso recursivo más de 50 veces sin consumir ninguna cadena de entrada generará un error irrecuperable.  La profundidad máxima está compilada en perl, por lo que su modificación requiere una compilación personalizada.
 
 A continuación se muestra cómo el uso de la indexación negativa puede facilitar la incrustación de patrones recursivos dentro de una construcción C<qr//> para su uso posterior:
 
@@ -1137,7 +1138,7 @@ X<backtrack> X<backtracking> X<atomic> X<possessive> X<vuelta atrás> X<volver a
 Un subexpresión "independiente", que coincide con la subcadena con la que coincidiría un C<patrón> I<independiente> si estuviera anclado en la posición indicada, y no coincide con I<nada más que con esta subcadena>.  Esta construcción es útil para la optimización de lo que de otro modo serían comparaciones "eternas", puesto que no hay vuelta atrás (vea L<"Vuelta atrás">).
 También puede ser útil cuando la semántica "capturar todo lo que se pueda y no devolver nada" sea deseable.
 
-Por ejemplo: C<< ^(?>a*)ab >> nunca coincidirá, ya que C<< (?>a*) >> (anclada al comienzo de la cadena, como antes) encontrará I<todos> los caracteres C<a> al comienzo de la cadena, sin dejar ninguna otra para C<ab>.  En cambio, C<a*ab> coincidirá igual que C<a+b>, ya que la coincidencia del subgrupo C<a*> está influenciada por el texto del grupo C<ab> siguiente (vea L<"Vuelta atrás">).  En particular, C<a*> dentro de C<a*ab> coincidirá con menos caracteres que el patrón C<a*> independiente, para permitir que el resto del patrón coincida.
+Por ejemplo: C<< ^(?>a*)ab >> nunca coincidirá, ya que C<< (?>a*) >> (anclada al comienzo de la cadena, como antes) encontrará I<todos> los caracteres C<a> al comienzo de la cadena, sin dejar ninguno para que C<ab> coincida.  En cambio, C<a*ab> coincidirá igual que C<a+b>, ya que la coincidencia del subgrupo C<a*> está influenciada por el texto del grupo C<ab> siguiente (vea L<"Vuelta atrás">).  En particular, C<a*> dentro de C<a*ab> coincidirá con menos caracteres que el patrón C<a*> independiente, para permitir que el resto del patrón coincida.
 
 C<< (?>patrón) >> no deshabilita la vuelta atrás una vez que ha coincidido. Se puede dar marcha atrás más allá de la construcción, pero no volver a entrar en ella. Por tanto C<< ((?>a*)|(?>b*))ar >> aún coincidirá con "bar".
 
@@ -1370,7 +1371,7 @@ coincidirá, y C<$1> será C<AB> y C<$2> será C<B>; no se establecerá el valor
 =back
 
 =head2 Vuelta atrás
-X<backtrack> X<backtracking> X<vuelta atrás>
+X<backtrack> X<backtracking> X<volver atrás> X<vuelta atrás>
 
 NOTA: en esta sección se presenta una aproximación abstracta del comportamiento de las expresiones regulares.  Para un análisis más riguroso (y complejo) de las normas involucradas en la selección de una coincidencia entre las alternativas posibles, vea L<Combinación de partes de expresiones regulares>.
 
@@ -1401,7 +1402,7 @@ del que, inesperadamente, resulta:
 Esto se debe a que C<.*> es avaricioso, por lo que obtiene todo lo que hay entre la I<primera> instancia de "mesa" y la I<última> instancia de "come".  Aquí es más eficaz utilizar una coincidencia mínima para asegurarse de obtener el texto entre una instancia de "mesa" y la primera instancia de "come" que haya a continuación.
 
     if ( /mesa(.*?)come/ ) { print "obtiene <$1>\n" }
-  obtiene <, al mediodía, se >
+  se obtiene <, al mediodía, se >
 
 Veamos otro ejemplo: Suponga que desea buscar la coincidencia con un número al final de una cadena y mantener la parte que precede a esa coincidencia.
 Podemos probar con:
@@ -1418,7 +1419,7 @@ Eso no funcionará, ya que C<.*> es avaricioso y engullirá toda la cadena. Como
 Veamos otras variantes, la mayoría de las cuales tampoco funcionarán:
 
     $_ = "Tengo 2 números: 53147";
-    @patrones = qw{
+    @pats = qw{
         (.*)(\d*)
         (.*)(\d+)
         (.*?)(\d*)
@@ -1445,7 +1446,7 @@ Esto imprimirá:
     (.*?)(\d*)   <> <>
     (.*?)(\d+)   <Tengo > <2>
     (.*)(\d+)$   <Tengo 2 números: 5314> <7>
-    (.*?)(\d+)$  <Tengo 2 números: > <53147>
+    (.*)(\d+)$   <Tengo 2 números: > <53147>
     (.*)\b(\d+)$ <Tengo 2 números: > <53147>
     (.*\D)(\d+)$ <Tengo 2 números: > <53147>
 
@@ -1489,7 +1490,7 @@ Decimos que la primera parte en $1 debe ir seguida de un dígito y de algo que n
 
     6: se obtiene ABC
 
-Es decir, las dos aserciones de ancho cero, una junto a la otra, funcionan como si estuvieran unidas por una conjunción Y, como si se hubieran usado aserciones predefinidas: C</^$/> solo coincide si está simultáneamente al comienzo de la línea Y al final de la línea.  La verdad más profunda que subyace es que la yuxtaposición de las expresiones regulares siempre significa Y, salvo cuando se usa una conjunción O explícita mediante la barra vertical.  C</ab/> significa buscar una coincidencia con "a" Y (a continuación) buscar una coincidencia con "b", aunque los intentos de coincidencia se realicen en posiciones distintas, ya que "a" no es una aserción de ancho cero, sino una aserción de ancho uno.
+Es decir, las dos aserciones de ancho cero, una junto a la otra, funcionan como si estuvieran unidas por una conjunción Y, como si se hubieran usando aserciones predefinidas: C</^$/> solo coincide si está simultáneamente al comienzo de la línea Y al final de la línea.  La verdad más profunda que subyace es que la yuxtaposición de las expresiones regulares siempre significa Y, salvo cuando se usa una conjunción O explícita mediante la barra vertical.  C</ab/> significa buscar una coincidencia con "a" Y (a continuación) buscar una coincidencia con "b", aunque los intentos de coincidencia se realicen en posiciones distintas, ya que "a" no es una aserción de ancho cero, sino una aserción de ancho uno.
 
 B<ADVERTENCIA>: la resolución de expresiones regulares muy complicadas puede tardar un tiempo exponencial, por la inmensa cantidad de formas posibles de vuelta atrás existentes para lograr una coincidencia.  Por ejemplo, sin las optimizaciones internas del motor de expresiones regulares, la siguiente detección de coincidencias tardará muchísimo tiempo:
 
@@ -1500,7 +1501,7 @@ Y si utiliza algún C<*> en los grupos internos en lugar de limitarlos a un núm
 Una herramienta eficaz para optimizar estos engendros es lo que se conoce como un "grupo independiente", que no vuelve atrás (vea L</C<< (?>patrón) >>>).  Tenga en cuenta también que las aserciones de inspección hacia adelante/hacia atrás de longitud cero no darán marcha atrás para que la parte final coincida, ya que están en un contexto "lógico": lo único que importa es si coinciden o no.  En la descripción de L</C<< (?>patrón) >>> encontrará un ejemplo en el que los efectos secundarios de la inspección hacia adelante I<pueden> haber influido en la coincidencia siguiente.
 
 =head2 Expresiones regulares versión 8
-X<regular expression, version 8> X<regex, version 8> X<regexp, version 8> X<expresión regular, versión 8> X<regex, versión 8>
+X<regular expression, version 8> X<regex, version 8> X<regexp, version 8> X<expresión regular, versión 8> X<regex, versión 8> X<regexp, versión 8>
 
 En caso de que no esté familiarizado con la versión 8 "normal" de las rutinas de expresiones regulares, se indican aquí las reglas de coincidencia de patrones no descritas anteriormente.
 
@@ -1525,7 +1526,7 @@ Las alternativas se procesan de izquierda a derecha, de modo que la primera alte
 
 Debe recordar también que "|" se interpreta como un literal cuando está entre corchetes, por lo que buscar C<[fee|fie|foe]> equivale a buscar C<[feio|]>.
 
-Dentro de un patrón, puede designar subpatrones escribiéndolos entre paréntesis para consultarlos posteriormente, y puede hacer referencia al subpatrón I<n>-ésimo más adelante en el patrón mediante el metacarácter \I<n> o \gI<n>.  Los subpatrones se numeran por orden de paréntesis de apertura, de izquierda a derecha.  Una retrorreferencia coincide con lo que coincidía realmente el subpatrón en la cadena examinada, no con las reglas de ese subpatrón.  Por lo tanto, C<(0|0x)\d*\s\g1\d*> coincidirá con "0x1234 0x4321", pero no con "0x1234 0", debido a que el subpatrón 1 detectó "0x", aunque la regla C<0|0x> podría detectar el 0 inicial del segundo número.
+Dentro de un patrón, puede designar subpatrones escribiéndolos entre paréntesis para consultarlos posteriormente, y puede hacer referencia al subpatrón I<n>-ésimo más adelante en el patrón mediante el metacarácter \I<n> o \gI<n>.  Los subpatrones se numeran por orden de paréntesis de apertura, de izquierda a derecha.  Una retrorreferencia coincide con lo que coincidía realmente el subpatrón en la cadena examinada, no con las reglas de ese subpatrón.  Por lo tanto, C<(0|0x)\d*\s\g1\d*> coincidirá con "0x1234 0x4321", pero no con "0x1234 01234", debido a que el subpatrón 1 detectó "0x", aunque la regla C<0|0x> podría detectar el 0 inicial del segundo número.
 
 =head2 Advertencia sobre \1 en lugar de $1
 
@@ -1541,7 +1542,7 @@ O si intenta esto
 
     s/(\d+)/\1000/;
 
-No puede eliminar la ambigüedad con C<\{1}1>, pero lo puede arreglar con C<${000}000>.  La operación de interpolación no se debe confundir con la operación de coincidencia con una retrorreferencia.  Significan dos cosas distintas en el lado I<izquierdo> de C<s///>.
+No puede eliminar la ambigüedad con C<\{1}000>, pero lo puede arreglar con C<${1}000>.  La operación de interpolación no se debe confundir con la operación de coincidencia con una retrorreferencia.  Significan dos cosas distintas en el lado I<izquierdo> de C<s///>.
 
 =head2 Patrones repetidos que coinciden con subcadenas de longitud cero
 

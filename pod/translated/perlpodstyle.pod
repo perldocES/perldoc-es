@@ -18,7 +18,7 @@ Las secciones estándar de una página de manual son:
 
 =over 4
 
-=item NOMBRE (en inglés, I<NAME>)
+=item NOMBRE (en inglés, NAME)
 
 Sección obligatoria; tendría que sea una lista separada por comas de programas o funciones documentadas en esta página POD, como por ejemplo:
 
@@ -26,7 +26,7 @@ Sección obligatoria; tendría que sea una lista separada por comas de programas
 
 Los indexadores de páginas de manual son, a menudo, extremadamente picajosos sobre el formato de esta sección, así que no ponga nada en ella, salvo esa línea.  Cada programa y función documentados en esta página POD se deben listar, separados por comas y espacios.  Para un módulo Perl, indique solo el nombre del módulo.  Uno y solo un único guión debe separar la lista de programas o funciones de su descripción.  No use ningún marcado como CE<lt>E<gt> o BE<lt>E<gt> en ninguna parte de esta línea.  Las funciones no se deben cualificar con C<()> o algo parecido.  La descripción debe, idealmente, caber en una única línea, incluso si un programa man reemplaza el guión con unos pocos tabuladores.
 
-=item SINOPSIS (en inglés, I<SYNOPSIS>)
+=item SINOPSIS (en inglés, SYNOPSIS)
 
 Un resumen breve de uso de los programas y funciones.  Esta sección es obligatoria para páginas de sección 3.  Para la documentación de un módulo Perl, es normalmente conveniente tener los contenidos de esta sección en un bloque que muestre, literalmente, algunos ejemplos (breves) de formas típicas de usar el módulo.
 
@@ -106,15 +106,15 @@ Cosas con las que hay que tener cuidado, llamadas algunas veces I<WARNINGS> (ADV
 
 Cosas que están rotas o que no funcionan de forma correcta.
 
-=item RESTRICCIONES (en inglés, I<RESTRICTIONS>)
+=item RESTRICCIONES
 
-Errores que no planea arreglar.  :-) 
+Errores que no planea arreglar.   
 
-=item NOTAS (en inglés, I<NOTES>)
+=item NOTAS
 
 Comentarios varios.
 
-=item AUTOR (en inglés, I<AUTHOR>)
+=item AUTOR
 
 Quien escribe esto (use I<AUTHORS> (AUTORES) para varias personas).  Es una buena idea incluir su actual dirección de correo electrónico (o algunas direcciones de correo a donde enviar los informes de errores) o alguna otra información de contacto para que los usuarios tengan una forma de contactar con usted.  Recuerde que la documentación del programa tiende a irse por las ramas más allá de lo esperado, y elegir un método de contacto que probablemente será la último en hacer.
 
@@ -137,7 +137,7 @@ La forma más fácil de licenciarlo es usar la misma licencia que la del propio 
 
 Esto hace más fácil a los demás usar su módulo con Perl.  Note que este ejemplo de licenciamiento no es ni una aprobación ni un requerimiento naturalmente es libre de elegir cualquier licenciamiento.
 
-=item VEA TAMBIÉN (en inglés, I<SEE ALSO>)
+=item VEA TAMBIÉN
 
 Otras páginas de manual para comprobar, como man(1), man(7), makewhatis(8), o catman(8).  Normalmente una lista sencilla de páginas de manual separadas por comas, o un párrafo que da el nombre de un trabajo relativo a la documentación.  Las referencias a las páginas de manual, si usan la forma estándar C<nombre(sección)>, no debe estar encerrado en LE<lt>E<gt> (aunque se recomiende), pero otras cosas en esta sección probablemente sí que deberían, cuando resulte apropiado.
 

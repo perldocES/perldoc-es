@@ -1,6 +1,5 @@
-=head1 NOMBRE
+=head1 NAME
 X<data structure> X<complex data structure> X<struct>
-X<estructura de datos> X<estructura de datos complejos> X<estructura>
 
 perldsc - Introducción a las estructuras de datos
 
@@ -129,7 +128,7 @@ X<[]> X<{}>
         $AoA[$i] = [ @array ];
     }
 
-Los corchetes hacen referencia a un nuevo array con una I<copia> de lo que está en @array en el momento de la asignación.  Esto es lo que realmente quiere.
+Los corchetes hacen referencia a un nuevo array con una I<copia> de lo que está en @array en el momento de la asignación.  Esto es lo que quiere.
 
 Tenga en cuenta que esto produce algo similar, pero es mucho más difícil de leer:
 
@@ -149,7 +148,7 @@ entonces la asignación con la indirección en el lado izquierdo podría usar la
 
     @{$AoA[3]} = @array;
 
-Naturalmente, esto I<podría> tener el "interesante" efecto de sobreescribir @otro_array.  (¿Alguna vez ha notado que cuando un programador dice que algo es "interesante" en lugar de decir "intrigante", inquietantemente quiere decir que es algo "molesto", "difícil", o ambas cosas?  :-) 
+Naturalmente, esto I<podría> tener el "interesante" efecto de sobreescribir @otro_array.  (¿Alguna vez ha notado que cuando un programador dice que algo es "interesante" en lugar de decir "intrigante", inquietantemente quiere decir que es algo "molesto", "difícil", o ambas cosas?   
 
 Así que recuerde siempre utilizar constructores de array o hash con C<[]> o C<{}>, y todo irá bien, aunque no siempre sea óptimamente eficiente.
 

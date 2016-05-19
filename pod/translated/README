@@ -1,6 +1,6 @@
 Perl is Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012
-2013, 2014 by Larry Wall and others.  Todos los derechos reservados.
+2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
+2013, 2014, 2015 by Larry Wall and others.  Todos los derechos reservados.
 
 
 
@@ -21,7 +21,8 @@ También hay muchos libros sobre Perl de diversos editores, que cubren una ampli
 INSTALACIÓN
 ============
 
-Si está usando un sistema operativo relativamente moderno y quiere instalar esta versión de Perl de forma loca, ejecute los siguientes comandos:
+If you're using a relatively modern operating system and want to
+install this version of Perl locally, run the following commands:
 
   ./Configure -des -Dprefix=$HOME/localperl
   make test
@@ -47,7 +48,7 @@ Siempre puede encontrar la última versión de perl en un sitio CPAN (Comprehens
 
 Si quiere enviar un parche sencillo del código fuente, vea la "SUPER GUÍA DE PARCHEO RÁPIDO" en pod/perlhack.pod.
 
-Sólo un apunte personal: quiero que sepa que puedo crear cosas bonitas como ésta, ya que agrada al Autor de mi historia.  Si esto te molesta, entonces el concepto de Autoría necesita un poco de revisión.  Pero puede usar perl, de todos modos. :-) 
+Sólo un apunte personal: quiero que sepa que puedo crear cosas bonitas como ésta, ya que agrada al Autor de mi historia.  Si esto te molesta, entonces el concepto de Autoría necesita un poco de revisión.  Pero puede usar perl, de todos modos.  
 
 							El autor.
 

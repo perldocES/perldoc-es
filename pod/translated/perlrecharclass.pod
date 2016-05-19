@@ -1,5 +1,5 @@
-=head1 NOMBRE
-X<character class> X<clase de caracteres>
+=head1 NAME
+X<character class>
 
 perlrecharclass - Clases de caracteres en expresiones regulares Perl
 

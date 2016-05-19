@@ -10,7 +10,7 @@ Para una información completa, vea L<perlre> y L<perlop>, así como la sección
 =head2 OPERADORES
 
 C<=~> determina a qué variable se aplica la expresión regular.
-En su ausencia, se usa $_.
+In its absence, $_ is used.
 
     $var =~ /foo/;
 

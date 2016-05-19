@@ -240,7 +240,7 @@ El separador de subíndice para la emulación de array multidimensionales.  Si s
 
     $foo{$x,$y,$z}
 
-realmente significa
+it really means
 
     $foo{join($;, $x, $y, $z)}
 
@@ -986,7 +986,7 @@ El separador de registros a la entrada; de forma predeterminada, los caracteres 
     local $_ = <FH>;    # obtendremos aquí todo el archivo
     s/\n[ \t]+/ /g;
 
-Recuerde: el valor de C<$/> es una cadena, no una expresión regular.  Por algo B<awk> tenía que ser mejor. :-) 
+Recuerde: el valor de C<$/> es una cadena, no una expresión regular.  Por algo B<awk> tenía que ser mejor.  
 
 Estableciendo C<$/> a una referencia a un número entero, o un escalar conteniendo un número entero, o un escalar que es convertible a un número entero, intentará leer registros en lugar de líneas, siendo el tamaño máximo del registro el referenciado número entero de caracteres.  Así que esto:
 

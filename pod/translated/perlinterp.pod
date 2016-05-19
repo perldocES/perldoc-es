@@ -14,7 +14,7 @@ Este documento muestra una visión general de cómo funciona el intérprete de P
 
 =head1 ELEMENTOS DEL INTÉRPRETE
 
-La función del intérprete se realiza en dos fases: compilar el código a la representación interna, denominada I<bytecode>, y después ejecutarlo.
+La función del intérprete se realiza en dos fases: compilar el código a la representación interna, denominada bytecode, y después ejecutarlo.
 L<perlguts/Código compilado> explica exactamente cómo sucede la etapa de compilación.
 
 Aquí hay un pequeño desglose de cómo opera perl:
@@ -61,7 +61,7 @@ C<perl_parse> es, realmente, un envoltorio alrededor de C<S_parse_body>, tal com
 
 =head2 Análisis
 
-El objetivo de esta fase es convertir el código fuente de Perl en un árbol sintáctico de I<op> (operaciones básicas). Luego veremos que aspecto tienen. Estrictamente hablando, hay tres cosas que ocurren aquí.
+El objetivo de esta fase es convertir el código fuente de Perl en un árbol sintático de operaciones. Luego veremos que aspecto tienen. Estrictamente hablando, hay tres cosas que ocurren aquí.
 
 C<yyparse>, el intérprete, reside en F<perly.c>, a pesar de que sea mejor que leyera la entrada YACC original en F<perly.y>. (Sí, Virginia, ¡B<existe> una gramática YACC para Perl!) El trabajo del intérprete es tomar su código y "entenderlo", dividiéndolo en sentencias, decidiendo qué operandos van con qué operadores, y así.
 
@@ -86,7 +86,7 @@ Puede que le resulte más comprensible la versión Perl del código anterior:
     PERL_ASYNC_CHECK() while $Perl::op = &{$Perl::op->{function}};
 
 Bueno, tal vez no. En cualquier caso, cada operación contiene un puntero de función que estipula la función que se encargará de realizar la operación.
-Esta función devolverá la siguiente I<op> en la secuencia. Esto permite que cosas como el C<if> elija dinámicamente la siguiente I<op> en tiempo de ejecución. C<PERL_ASYNC_CHECK> se asegura de que cosas como las señales interrumpan la ejecución, si es necesario.
+Esta función devolverá la siguiente I<op> en la secuencia. Esto permite que cosas como el C<if> elija dinámicamente la siguiente I<op> en tiempo de ejecución. C<PERL_ASYNC_CHECK> se asegura de que cosas como las señales interrumpan la ejecución si es necesario.
 
 Las funciones que realmente se llaman, se conocen como código PP, y se dispersan por cuatro archivos: F<pp_hot.c> contiene el código "caliente", que es el más usado y altamente optimizado, F<pp_sys.c> contiene todas las funciones específicas del sistema, F<pp_ctl.c> contiene las funciones que implementan las estructuras de control (C<if>, C<while> y parecidas) y F<pp.c> contiene todo lo demás. Son, si lo prefiere, el código en C de las funciones y operadores integrados de Perl.
 
@@ -232,7 +232,8 @@ Tomemos un ejemplo de manipulación de un PV, desde C<sv_catpvn>, en F<sv.c>
     14      SvTAINT(sv);
     15  }
 
-Esta función agrega una cadena, C<ptr>, de longitud C<len>, al final del PV almacenado en C<sv>. Lo primero que hacemos en la línea 6 es asegurarnos de que el SV B<has> tiene un PV válido llamando a la macro C<SvPV_force> para forzar un PV. Como efecto colateral, C<tlen> se ajusta al valor actual del PV, y el propio PV se devuelve a C<junk>.
+Esta función agrega una cadena, C<ptr>, de longitud C<len>, al final del PV almacenado en C<sv>. Lo primero que hacemos en la línea 6 es asegurarnos de que el SV B<has> tiene un PV válido llamando a la macro C<SvPV_force>
+para forzar un PV. Como efecto colateral, C<tlen> se ajusta al valor actual del PV, y el propio PV se devuelve a C<junk>.
 
 En la línea 7, nos aseguramos que el SV tendrá suficiente espacio para acomodar la anterior cadena, la nueva cadena y el terminador nulo. Si C<LEN> no es suficiente, C<SvGROW> reasignará espacio por nosotros.
 

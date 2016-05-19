@@ -298,7 +298,8 @@ Enlaza a una sección en otra página del manual.  Por ej., C<LE<lt>perlsyn/"Buc
 
 C<LE<lt>/"sección"E<gt>> o C<LE<lt>/secciónE<gt>>
 
-Enlaza a una sección en esta página del manual.  Por ej., C<LE<lt>/"Métodos de objetos"E<gt>>
+Enlaza a una sección en esta página del manual.  E.g.,
+C<LE<lt>/"Object Methods"E<gt>>
 
 =back
 
@@ -318,13 +319,13 @@ Enlaza este texto a la página de manual.  P. ej., C<LE<lt>Mensajes de error de 
 
 C<LE<lt>texto|nombre/"sección"E<gt>> o C<LE<lt>texto|nombre/secciónE<gt>>
 
-Enlaza este texto a esa sección en esa página de manual.  Por ej., C<LE<lt>"if" postfijo|perlsyn/"Modificadores de instrucciones"E<gt>>
+Vincule este texto a esa sección en esa página de manual.  Por ej., C<LE<lt>"if" postfijo|perlsyn/"Modificadores de instrucciones"E<gt>>
 
 =item *
 
 C<LE<lt>texto|/"sección"E<gt>> o C<LE<lt>texto|/secciónE<gt>> o C<LE<lt>texto|"sección"E<gt>>
 
-Enlaza este texto a esa sección en esta página de manual.  Por ej., C<LE<lt>Atributos diversos|/"Datos miembro"E<gt>>
+Vincule este texto a esa sección en esa página de manual.  Por ej., C<LE<lt>Atributos diversos|/"Datos miembro"E<gt>>
 
 =back
 

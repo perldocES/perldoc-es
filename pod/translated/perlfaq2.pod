@@ -60,7 +60,7 @@ L<http://search.cpan.org/>.
 El sitio web principal de CPAN está en L<http://www.cpan.org/>.
 En L<http://www.cpan.org/SITES.html> encontrará una lista de todos los servidores reflejados.
 
-En la sección FAQ (preguntas más frecuentes) de CPAN (en L<http://www.cpan.org/misc/cpan-faq.html>) encontrará respuestas a las preguntas más frecuentes sobre CPAN.
+En la sección FAQ (preguntas más frecuentes) de CPAN (en L<http://www.cpan.org/misc/cpan-faq.html> ) encontrará respuestas a las preguntas más frecuentes sobre CPAN.
 
 El módulo L<Task::Kensho> incluye una lista de módulos recomendados que debe revisar; es un buen punto de partida.
 
@@ -85,7 +85,7 @@ Se han escrito muchos libros buenos sobre Perl. Encontrará más información en
 
 =head2 ¿Qué es perl.com? ¿Y Perl Mongers? ¿Y pm.org? ¿Y perl.org? ¿Y cpan.org?
 
-Anteriormente, Perl.com (L<http://www.perl.com/>) formaba parte de O'Reilly Network, una subsidiaria de O'Reilly Media. Aunque conserva la mayor parte del contenido original de O'Reilly Network, ahora se hospeda en L<The Perl Foundation|http://www.perlfoundation.org/>.
+Anteriormente, Perl.com ( L<http://www.perl.com/> ) formaba parte de O'Reilly Network, una subsidiaria de O'Reilly Media. Aunque conserva la mayor parte del contenido original de O'Reilly Network, ahora se hospeda en L<The Perl Foundation|http://www.perlfoundation.org/>.
 
 The Perl Foundation es una organización que respalda al lenguaje Perl y mantiene el sitio web L<http://www.perl.org/> como recurso general de apoyo a Perl. Usa el dominio para proporcionar servicios generales de soporte a la comunidad Perl, como el alojamiento de listas de correo y sitios web, entre otros. Además, existen muchos subdominios dedicados a temas específicos, como el aprendizaje de Perl, o anuncios de puestos de trabajo para programadores Perl. Por ejemplo:
 
@@ -103,15 +103,15 @@ The Perl Foundation es una organización que respalda al lenguaje Perl y mantien
 
 L<Perl Mongers|http://www.pm.org/> usa el dominio pm.org para ofrecer servicios relacionados con grupos de usuarios de Perl, como el alojamiento de listas de correo y sitios web. Visite el L<sitio web de Perl Mongers|http://www.pm.org/> para obtener más información sobre servicios relacionados con los grupos de usuarios de Perl: cómo unirse a un grupo, cómo iniciar un grupo o cómo solicitar servicios para un grupo.
 
-CPAN, o Comprehensive Perl Archive Network (L<http://www.cpan.org/>), es un repositorio de software Perl replicado en todo el mundo.
-Vea L<¿Qué es CPAN?|/"¿Qué módulos y extensiones están disponibles para Perl? ¿Qué es CPAN?">
+CPAN, o Comprehensive Perl Archive Network ( L<http://www.cpan.org/> ), es un repositorio de software Perl replicado en todo el mundo.
+Vea L<¿Qué es CPAN?|/"¿Qué módulos y extensiones están disponibles para Perl? ¿Qué es CPAN?">.
 
 =head2 ¿Dónde puedo publicar preguntas?
 
 Existen muchas L<listas de correo|lists.perl.org> sobre diversos temas relacionados con Perl. En concreto, la L<lista para principiantes|http://lists.perl.org/list/beginners.html> puede resultar útil cuando se empieza.
 
 Otros lugares en los que puede hacer consultas son el
-L<sitio de PerlMonks|http://www.perlmonks.org/> y L<stackoverflow|http://stackoverflow.com/questions/tagged/perl>
+L<sitio de PerlMonks|http://www.perlmonks.org/> y L<stackoverflow|http://stackoverflow.com/questions/tagged/perl>.
 
 =head2 Libros sobre Perl
 
@@ -119,7 +119,7 @@ Se han publicado muchos L<libros sobre Perl|http://www.perl.org/books/library.ht
 
 =head2 ¿En qué revistas puedo encontrar artículos sobre Perl?
 
-I<$foo Magazin> (L<http://www.foo-magazin.de>) es una revista dedicada a Perl, escrita en alemán. I<Perl-Zeitung> es otra revista en alemán para programadores Perl principiantes (visite L<http://perl-zeitung.at.tf>).
+I<$foo Magazin> ( http://www.foo-magazin.de ) es una revista dedicada a Perl, escrita en alemán. I<Perl-Zeitung> es otra revista en alemán para programadores Perl principiantes (visite L<http://perl-zeitung.at.tf> ).
 
 Varias revistas del mundo Unix/Linux suelen incluir artículos sobre Perl.
 
@@ -151,7 +151,9 @@ Para determinar si un módulo está incluido en su versión de Perl, puede usar 
 
 Todo módulo de CPAN tiene un sistema de seguimiento de errores configurado en RT, L<http://rt.cpan.org>.
 Puede enviar informes de error a RT a través de su interfaz web o por correo electrónico. Para notificar un informe de error, envíe un mensaje de correo electrónico a
-bug-E<lt>nombre-distribuciónE<gt>@rt.cpan.org . Por ejemplo, si desea notificar un error de L<Business::ISBN>, deben enviar un mensaje a bug-Business-ISBN@rt.cpan.org
+bug-E<lt>nombre-distribuciónE<gt>@rt.cpan.org (por ejemplo, si desea notificar un error de
+L<Business::ISBN>, debe enviar un mensaje a
+bug-Business-ISBN@rt.cpan.org).
 
 Es posible que algunos módulos tengan requisitos de notificación específicos, como usar un sistema de seguimiento de errores de Github o Google Code, por lo que es recomendable consultar también la documentación de los módulos.
 

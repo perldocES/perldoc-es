@@ -12,9 +12,9 @@ Esta 'hoja resumen' es una referencia útil para programadores principiantes. No
   void       $escalar SCALAR     @array        %hash
   escalar    @array   ARRAY      @array[0, 2]  @hash{'a', 'b'}
   lista      %hash    HASH       $array[0]     $hash{'a'}
-             &sub     CODE
-             *glob    GLOB       VALORES ESCALARES
-                      FORMAT     número, cadena, ref, glob, undef
+            &sub      CODE
+            *glob     GLOB       VALORES ESCALARES
+                    FORMAT    número, cadena, ref, glob, undef
   REFERENCIAS
   \      referencia       $$foo[1]       equivale a $foo->[1]
   $@%&*  desreferenciar   $$foo{bar}     equivale a $foo->{bar}
@@ -22,21 +22,21 @@ Esta 'hoja resumen' es una referencia útil para programadores principiantes. No
   {}     ref. hash anón.  ${$$foo[1]}[2] equivale a $foo->[1][2]
   \()    lista de ref.
                          SINTAXIS
-  PRECEDENCIA OP.        foreach (LIST) { }     for (a;b;c) { }
+  PRECEDENCIA OPERADORES foreach (LIST) { }     for (a;b;c) { }
   ->                     while   (e) { }        until (e)   { }
   ++ --                  if      (e) { } elsif (e) { } else { }
   **                     unless  (e) { } elsif (e) { } else { }
-  ! ~ \ u+ u-            given   (e) { when (e) {} default {} }
+  ! ~ \ u+ u-              given   (e) { when (e) {} default {} }
   =~ !~
-  * / % x                 NÚMEROS vs CADENAS  FALSO vs VERDADERO
+  * / % x                NÚMEROS vs CADENAS  FALSO vs VERDADERO
   + - .                   =          =        undef, "", 0, "0"
   << >>                   +          .        otra cosa
   ops unarios con nombre  == !=      eq ne
   < > <= >= lt gt le ge   < > <= >=  lt gt le ge
   == != <=> eq ne cmp ~~  <=>        cmp
   &
-  | ^             MODIFICADORES EXP. REG.      METACARACTERES EXP. REG.     
-  &&              /i no distinguir may./min.   ^       principio cadena
+  | ^             MODIFICADORES REGEX   METACARACTERES REGEX
+  &&              /i no distinguir may/min   ^       principio cadena
   || //           /m basado en líneas ^$       $       fin cadena (antes \n)
   .. ...          /s . incluir \n              +       uno o más
   ?:              /x ignorar espacios          *       cero o más

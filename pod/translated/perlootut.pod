@@ -10,9 +10,13 @@ perlootut - Manual de programación orientada a objetos en Perl
 
 =head1 FECHA
 
-Este documento se creó en febrero de 2011 y la última revisión fue en febrero de 2013.
+Este documento se creó en febrero de 2011 y la última revisión
+fue en febrero de 2013.
 
-Si está leyendo este documento en el futuro, es probable que las técnicas utilizadas sea más avanzadas. Para empezar le recomendamos que lea el documento perlootut de la versión estable más reciente de Perl, en lugar de esta versión.
+Si está leyendo este documento en el futuro, es probable que las técnicas
+utilizadas sea más avanzadas. Para empezar le recomendamos que lea el documento perlootut
+de la versión estable más reciente de Perl, en lugar de esta
+versión.
 
 =head1 DESCRIPCIÓN
 
@@ -30,7 +34,7 @@ Suponemos que ya conoce y comprende la sintaxis de Perl, los tipos de variables 
 La mayoría de los sistemas orientados a objetos comparten una serie de conceptos comunes. Probablemente ya conoce términos como "clase", "objeto", "método" y "atributo".
 La comprensión de estos conceptos hará más fácil la lectura y escritura de código orientado a objetos. Aunque ya esté familiarizado con estos conceptos, debería leer por encima esta sección, puesto que explica cada concepto en términos de la implementación de la orientación a objetos de Perl.
 
-El sistema de orientación a objetos de Perl se basa en clases. La orientación a objetos basada en clases es bastante común. Se usa en Java, C++, C#, Python, Ruby y otros muchos lenguajes. Hay otros paradigmas de orientación a objetos. JavaScript es el lenguaje más popular que usa un paradigma diferente; el sistema de orientación a objetos de JavaScript se basa en prototipos.
+El sistema de orientación a objetos de Perl se basa en clases. La orientación a objetos basada en clases en bastante común. Se usa en Java, C++, C#, Python, Ruby y otros muchos lenguajes. Hay otros paradigmas de orientación a objetos. JavaScript es el lenguaje más popular que usa un paradigma diferente; el sistema de orientación a objetos de JavaScript se basa en prototipos.
 
 =head2 Objeto
 
@@ -60,7 +64,7 @@ Sin embargo, la mayoría de los módulos orientados a objetos disponibles en CPA
   my $nombre_host = Archivo->new(
       ruta         => '/etc/hostname',
       contenido    => "foo\n",
-      hora_ult_mod  => 1304974868,
+      hora_ult_mod => 1304974868,
   );
 
 (No se preocupe por el operador C<< -> >>; se explicará más adelante).
@@ -144,7 +148,8 @@ El polimorfismo es uno de los conceptos clave del diseño orientado a objetos.
 
 =head2 Herencia
 
-La B<herencia> permite crear una versión especializada de una clase existente. Mediante herencia, la nueva clase puede reutilizar los métodos y atributos de otra clase.
+La B<herencia> permite crear una versión especializada de una clase existente. Mediante herencia, la nueva clase puede reutilizar los métodos y atributos
+de otra clase.
 
 Por ejemplo, podríamos crear una clase C<Archivo::MP3> que B<herede>
 de C<Archivo>. Un objeto de la clase C<Archivo::MP3> es un (B<is-a>) tipo de objeto I<más específico> que un objeto de la clase C<Archivo>.
@@ -174,7 +179,7 @@ el método C<imprimir_info()> de la clase C<Archivo>:
   my $minero = Archivo::MP3->new(
       ruta          => 'mp3/Soy-minero.mp3',
       contenido     => $datos_mp3,
-      hora_ult_mod  => 1304974868,
+      hora_ult_mod => 1304974868,
       titulo        => 'Soy minero',
   );
 
@@ -397,16 +402,31 @@ Por otra parte, C<Moose> depende de muchos módulos. La mayoría son módulos in
 
 =head3 Moo
 
-Si prueba C<Moose> y descubre que uno de los problemas mencionados le impide utilizarlo, le recomendamos que pruebe L<Moo>. C<Moo> implementa un subconjunto de la funcionalidad de C<Moose> en un paquete más sencillo.
-Para la mayoría de las características que implementa, la API para usuarios finales es I<identica> a la de C<Moose>. Esto hace que la transición de C<Moo> a C<Moose> sea muy sencilla.
+Si prueba C<Moose> y descubre que uno de los problemas mencionados le impide
+utilizarlo, le recomendamos que pruebe L<Moo>. C<Moo>
+implementa un subconjunto de la funcionalidad de C<Moose> en un paquete más sencillo.
+Para la mayoría de las características que implementa, la API para usuarios finales es
+I<identica> a la de C<Moose>. Esto hace que la transición de C<Moo> a
+C<Moose> sea muy sencilla.
 
-C<Moo> no implementa la mayor parte de la API de introspección de C<Moose>, por lo que los módulos suelen cargarse más rápido. Además, ninguna de sus dependencias requiere XS, por lo que se puede instalar en los equipos que carecen de compilador.
+C<Moo> no implementa la mayor parte de la API de introspección de C<Moose>, por lo que
+los módulos suelen cargarse más rápido. Además, ninguna de sus
+dependencias requiere XS, por lo que se puede instalar en los equipos que carecen de
+compilador.
 
-Una de las características más atractivas de C<Moo> es su interoperabilidad con C<Moose>. Cuando alguien intenta utilizar la API de introspección de C<Moose> en una clase o un rol de C<Moo>, se convierte de forma transparente en una clase o un rol de C<Moose>. Esto facilita incorporar código basado en C<Moo> en una base de código que utiliza C<Moose>, y viceversa.
+Una de las características más atractivas de C<Moo> es su interoperabilidad con
+C<Moose>. Cuando alguien intenta utilizar la API de introspección de C<Moose> en una
+clase o un rol de C<Moo>, se convierte de forma transparente en una clase
+o un rol de C<Moose>
+. Esto facilita incorporar código basado en C<Moo>
+en una base de código que utiliza C<Moose>, y viceversa.
 
-Por ejemplo, una clase de C<Moose> puede crear una subclase a partir de una clase de C<Moo> mediante C<extends> o consumir un rol de C<Moo> mediante C<with>.
+Por ejemplo, una clase de C<Moose> puede crear una subclase a partir de una clase de C<Moo> mediante
+C<extends> o consumir un rol de C<Moo> mediante C<with>.
 
-Los autores de C<Moose> esperan que C<Moo> quede obsoleto algún día, cuando C<Moose> haya mejorado lo suficiente, pero de momento es una buena alternativa a C<Moose>.
+Los autores de C<Moose> esperan que C<Moo> quede obsoleto
+algún día, cuando C<Moose> haya mejorado lo suficiente, pero de momento es una buena
+alternativa a C<Moose>.
 
 =head2 Class::Accessor
 
@@ -437,7 +457,8 @@ Al igual que C<Moose>, C<Class::Accessor> genera los métodos de acceso y un con
 
 =head2 Class::Tiny
 
-Por último, también está disponible L<Class::Tiny>. Este módulo se ajusta realmente a su nombre. Tiene una API increíblemente reducida sin ninguna dependencia de versiones recientes de Perl. Sin embargo, es mucho más sencillo usar este módulo que escribir código orientado a objetos desde cero.
+Por último, también está disponible L<Class::Tiny>. Este módulo se ajusta realmente a su nombre. Tiene una API increíblemente reducida sin ninguna dependencia
+de versiones recientes de Perl. Sin embargo, es mucho más sencillo usar este módulo que escribir código orientado a objetos desde cero.
 
 Nuestra clase C<Archivo> sería:
 
@@ -461,7 +482,8 @@ También puede utilizar L<Class::Tiny::Antlers> si prefiere una sintaxis parecid
 Como se mencionó con anterioridad, los roles proporcionan un alternativa a la herencia, pero Perl no ofrece esta característica de forma predefinida. Si elige usar Moose, dispondrá de una implementación completa de los roles. Si usa alguno de los otros módulos de orientación a objetos recomendados, también podrá usar roles con L<Role::Tiny>
 
 C<Role::Tiny> ofrece algunas de las características que proporciona el sistema Moose, pero en un paquete mucho más pequeño. En particular, no admite ningún tipo de declaración de atributo, por lo que tendrá que declararlos a mano.
-De todos modos, es útil y funciona bien con C<Class::Accessor> y C<Class::Tiny>
+De todos modos, es útil y funciona bien con C<Class::Accessor> y
+C<Class::Tiny>
 
 =head2 Resumen de sistemas de orientación a objetos
 
@@ -471,8 +493,9 @@ A continuación se ofrece un breve resumen de las opciones consideradas:
 
 =item * L<Moose>
 
-C<Moose> es la opción máxima (la más completa). Dispone de muchas características, un gran ecosistema y una importante base de usuarios. También se ha descrito brevemente L<Moo>.
-C<Moo> es una versión ligera de C<Moose> que ofrece una alternativa razonable cuando Moose no es adecuado para la aplicación.
+C<Moose> es la opción máxima (la más completa). Dispone de muchas características, un gran ecosistema y una importante base de usuarios. También hemos descrito L<Moo>.
+C<Moo> es una versión ligera de C<Moose> que ofrece una alternativa razonable cuando Moose
+no es adecuado para la aplicación.
 
 =item * L<Class::Accessor>
 
@@ -484,7 +507,8 @@ C<Class::Tiny> es la opción más minimalista. No presenta dependencias y casi n
 
 =item * L<Role::Tiny>
 
-Use C<Role::Tiny> con C<Class::Accessor> o C<Class::Tiny> si quiere utilizar herencia múltiple. Si se decanta por C<Moose>, podrá disponer de su implementación de roles.
+Use C<Role::Tiny> con C<Class::Accessor> o C<Class::Tiny> si quiere
+utilizar herencia múltiple. Si se decanta por C<Moose>, podrá disponer de su implementación de roles.
 
 =back
 
@@ -498,10 +522,13 @@ Además, existe mucho código en el que se usa orientación a objetos "a mano", 
 
 Como se indicó con anterioridad, el sistema de orientación a objetos de Perl es minimalista y esto ha hecho que surgieran muchos sistemas de programación orientada a objetos en CPAN. Aunque puede prescindir de estos sistemas modernos y escribir sus propias clases a mano, no es necesario hacerlo con las versiones modernas de Perl.
 
-Para sistemas pequeños, L<Class::Tiny> y L<Class::Accessor> ofrecen sistemas de objetos minimalistas que se encargan de las tareas repetitivas y simplifican el trabajo.
+Para sistemas pequeños, L<Class::Tiny> y L<Class::Accessor> ofrecen
+sistemas de objetos minimalistas que se encargan de las tareas repetitivas y simplifican el trabajo.
 
 Para proyectos más complejos, L<Moose> proporciona un variado conjunto de características que le permitirán centrarse en la implementación de la lógica del sistema.
 
-Le recomendamos que pruebe L<Moose>, L<Class::Accessor>, y L<Class::Tiny> para decidir qué sistema de objetos es adecuado para usted.
+Le recomendamos que pruebe L<Moose>,
+L<Class::Accessor>, y L<Class::Tiny> para decidir qué sistema de objetos es adecuado
+para usted.
 
 =cut

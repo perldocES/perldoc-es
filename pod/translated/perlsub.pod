@@ -1,5 +1,5 @@
-=head1 NOMBRE
-X<subroutine> X<function> X<subrutina> X<función>
+=head1 NAME
+X<subroutine> X<function>
 
 perlsub - Subrutinas en Perl
 
