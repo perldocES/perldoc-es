@@ -22,7 +22,8 @@ Cuando se ejecuta desde un terminal, normalmente F<perldoc> llama a F<pod2man> p
 
 =item L<pod2html|pod2html>
 
-Además de estos dos conversores, hay otro más: F<pod2html> genera páginas HTML a partir de POD.
+Además de estos dos conversores, hay otro más: F<pod2html> genera
+páginas HTML a partir de POD.
 
 =item L<pod2usage|pod2usage>
 
@@ -48,7 +49,9 @@ La utilidad C<roffitall> no se instala en el sistema, pero puede encontrarla en 
 
 =head2 Conversores
 
-Para convertir programas antiguos a Perl más moderno puede utilizar la utilidad L<pl2pm|pl2pm>, que le ayudará a convertir bibliotecas antiguas de Perl 4 a módulos de Perl 5 modernos.
+Para convertir programas antiguos a Perl más moderno puede utilizar la
+utilidad L<pl2pm|pl2pm>, que le ayudará a convertir bibliotecas antiguas de Perl 4
+a módulos de Perl 5 modernos.
 
 =head2 Administración
 
@@ -121,7 +124,9 @@ También se distribuyen con perl algunas herramientas de propósito general, bá
 
 =item L<piconv>
 
-B<piconv> es una versión Perl de B<iconv>, un conversor de codificaciones de caracteres de uso muy extendido en el mundo Unix.  Este script era principalmente una demostración de tecnología en Perl v5.8.0, pero puede usar piconv en lugar de iconv prácticamente en todos los casos.
+B<piconv> es una versión Perl de B<iconv>, un conversor de codificaciones de caracteres de uso muy extendido en el mundo Unix.  Este script era principalmente una demostración
+de tecnología en Perl v5.8.0, pero puede usar piconv en lugar
+de iconv prácticamente en todos los casos.
 
 =item L<ptar>
 

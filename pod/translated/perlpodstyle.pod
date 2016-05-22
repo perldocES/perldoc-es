@@ -165,13 +165,13 @@ La versión actual siempre está disponible desde su sitio web en <http://www.ey
 
 =head1 AUTOR
 
-Russ Allbery <rra@stanford.edu>, con buena parte de esta documentación tomada de la documentación original de la implementación de B<pod2man> por Larry Wall y Tom Christiansen.
+Russ Allbery <rra@cpan.org>, con buena parte de esta documentación tomada de la documentación original de la implementación de B<pod2man> por Larry Wall y Tom Christiansen.
 
 =head1 COPYRIGHT y LICENCIA
 
-Copyright 1999, 2000, 2001, 2004, 2006, 2008, 2010 Russ Allbery
-<rra@stanford.edu>.
+Copyright 1999, 2000, 2001, 2004, 2006, 2008, 2010, 2015 Russ Allbery
+<rra@cpan.org>
 
-Esta documentación es software libre; puede redistribuirla o modificarla en los mismos términos que el propio Perl.
+La copia y distribución de este archivo, con o sin modificación, están permitidas en cualquier medio sin coste, siempre que se proporcione la nota sobre derechos de copia y este aviso.  Este archivo se ofrece tal cual, sin ninguna garantía.
 
 =cut

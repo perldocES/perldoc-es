@@ -4,23 +4,24 @@ perlmod - Módulos Perl (paquetes y tablas de símbolos)
 
 =head1 DESCRIPCIÓN
 
-=head2 ¿Es este el documento que debe leer?
+=head2 ¿Es este el documento que buscaba?
 
-Existen otros documentos que podrían contener la información por la que está buscando:
+Hay otros documentos que pueden contener la información que está
+buscando:
 
 =over 2
 
 =item Este documento
 
-Paquetes de Perl, espacios de nombres, y alguna información sobre clases.
+Paquetes de Perl, espacios de nombres e información sobre clases.
 
 =item L<perlnewmod>
 
-Tutorial sobre cómo hacer un nuevo módulo
+Tutorial sobre cómo crear un módulo nuevo.
 
 =item L<perlmodstyle>
 
-Buenas prácticas para hacer un nuevo módulo.
+Procedimientos recomendados para crear un módulo nuevo.
 
 =back
 
@@ -120,7 +121,7 @@ Puede usar C<*foo{PACKAGE}> y C<*foo{NAME}> para averiguar de qué nombre y paqu
 
     sub identificar_typeglob {
         my $glob = shift;
-        print 'Recibí ', *{$glob}{PACKAGE},
+        print 'He recibido ', *{$glob}{PACKAGE},
             '::', *{$glob}{NAME}, "\n";
     }
     identificar_typeglob *foo;
@@ -194,7 +195,10 @@ Dentro de un bloque C<END>, el valor de C<${^GLOBAL_PHASE}> es C<"END">.
 
 Los bloques C<UNITCHECK>, C<CHECK> e C<INIT> son útiles para capturar la transición entre la fase de compilación y la de ejecución del programa principal.
 
-Los bloques C<UNITCHECK> se ejecutan inmediatamente después de que se haya compilado la unidad que los definió.  El archivo del programa principal y cada módulo que carga son unidades de compilación, como lo son las cadenas pasadas a C<eval>, el código compilado en tiempo de compilación con la construcción C<(?{ })> en una expresión regular, las llamadas a C<do ARCHIVO>, C<require ARCHIVO> y el código que haya a continuación del modificador C<-e> en la línea de comandos.
+Los bloques C<UNITCHECK> se ejecutan inmediatamente después de que se haya compilado la unidad que los definió.  El archivo del programa principal y cada módulo que carga son
+unidades de compilación, como lo son los resultados de aplicar C<eval> a cadenas, el código compilado en tiempo de ejecución con la
+construcción C<(?{ })> en una expresión regular, las llamadas a C<do FILE>, C<require FILE>,
+ o el código que hay a continuación del modificador C<-e> en la línea de comandos.
 
 Los bloques C<BEGIN> y C<UNITCHECK> no están directamente relacionados con la fase del intérprete.  Se pueden crear y ejecutar en cualquier fase.
 
@@ -242,7 +246,7 @@ El programa B<begincheck> expone esto de forma clara (o eso esperamos):
   }
   INIT { print  " 9.   Verá la diferencia inmediatamente.\n" }
 
-  print         "13.   Solo _parece_ lioso, pero no lo es en realidad.\n";
+  print         "13.   Puede que parezca lioso, pero no lo es en realidad.\n";
 
   __END__
 
@@ -283,15 +287,15 @@ Por ejemplo, para empezar a desarrollar un módulo tradicional, no orientado a o
 
     # las variables globales de paquete exportadas van aquí
     our $Var1    = '';
-    our %Hash1   = ();
+    our %Hash1  = ();
 
     # las variables globales de paquete no exportadas van aquí
     # (son accesibles mediante $Mi::Modulo::cosa)
-    our @otras   = ();
-    our $cosa    = '';
+    our @otras    = ();
+    our $cosa   = '';
 
     # las variables léxicas privadas del archivo van aquí, antes que las funciones que las usan
-    my $var_priv     = '';
+    my $var_priv    = '';
     my %hash_secreto = ();
 
     # aquí va una función privada del archivo, como clausura
@@ -359,7 +363,7 @@ Como la instrucción C<use> implica la presencia de un bloque C<BEGIN>, la impor
     $directorio = getcwd();
 
     require Cwd;		# hace Cwd:: accesible
-    $directorio= getcwd();	# vaya... no existe main::getcwd()
+    $directorio= getcwd(); 		# vaya... no existe main::getcwd()
 
 En general se recomienda usar C<use Module ()> en lugar de C<require Module>, ya que determina la disponibilidad del módulo en tiempo de compilación, y no durante la ejecución del programa.  Puede producirse una excepción cuando dos módulos intentan usarse mutuamente mediante C<use> y a la vez cada uno llama a una función del otro módulo.  En este caso debe usarse C<require>.
 
@@ -372,10 +376,10 @@ X<threadsafe> X<thread safe> X<seguro para hilos de ejecución>
 X<module, threadsafe> X<module, thread safe> X<seguro para hilos de ejecución>
 X<CLONE> X<CLONE_SKIP> X<thread> X<hilo de ejecución> X<threads> X<hilos de ejecución> X<ithread> X<hilo de ejecución de intérprete>
 
-Perl agrega compatibilidad con un nuevo tipo de hilos de ejecución, denominado hilos de ejecución de intérprete (I<ithreads>).
-Estos hilos de ejecución se pueden usar de forma explícita e implícita.
+Perl ofrece un tipo de hilos de ejecución denominados hilos de ejecución de intérprete (ithreads).
+Estos hilos de ejecución se pueden usar de forma explícita o implícita.
 
-Los hilos de ejecución de intérprete clonan el árbol de datos de forma que no haya datos compartidos entre distintos hilos de ejecución. Estos hilos de ejecución pueden usarse con el módulo C<threads> o bien ejecutando fork() en win32 (en realidad, una simulación de fork()). Cuando se clona un hilo de ejecución, se clonan también todos los datos de Perl. Sin embargo, los datos que no pertenecen a Perl no se pueden clonar automáticamente.  Desde la versión 5.8.0 se tiene soporte a la subrutina especial C<CLONE>.  C<CLONE> le permite hacer todo lo que necesite, como controlar la clonación de datos que no sean de Perl, si es necesario.
+Los hilos de ejecución de intérprete clonan el árbol de datos de forma que no haya datos compartidos entre distintos hilos de ejecución. Estos hilos de ejecución pueden usarse con el módulo C<threads> o bien ejecutando fork() en win32 (en realidad, una simulación de fork()). Cuando se clona un hilo de ejecución, se clonan también todos los datos de Perl. Sin embargo, los datos que no pertenecen a Perl no se pueden clonar automáticamente.  Desde la versión 5.8.0 de Perl se incluye la subrutina especial C<CLONE>.  C<CLONE> le permite hacer todo lo que necesite, como controlar la clonación de datos que no sean de Perl, si es necesario.
 Se llamará a C<CLONE> como método de clase una vez por cada paquete en el que esté definido (o que lo herede).  Se llamará en el contexto del nuevo hilo de ejecución, de forma que todas las modificaciones se realizarán en el nuevo espacio.  Actualmente se llama a C<CLONE> sin más parámetros que el nombre del paquete que llama, pero esto podría cambiar; es probable que en el futuro se pasen parámetros adicionales para proporcionar más información sobre el estado de la clonación.
 
 Si desea ejecutar C<CLONE> sobre todos los objetos tendrá que hacer un seguimiento de los objetos correspondientes a cada paquete. Esto se hace de forma sencilla mediante un hash y Scalar::Util::weaken().

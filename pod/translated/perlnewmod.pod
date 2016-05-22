@@ -12,7 +12,8 @@ La forma principal de compartir código es abstraer la solución en un módulo P
 
 Si no existe ningún módulo para lo que usted necesita, y ya se ha encargado de escribir el código, sería un detalle que empaquetara la solución en un módulo y lo subiera a CPAN para que otros programadores puedan usarlo.
 
-También puede consultar L<perlmodstyle>, donde se describe procedimientos recomendados para desarrollar módulos.
+También puede consultar L<perlmodstyle>, donde se describe procedimientos
+recomendados para desarrollar módulos.
 
 =head2 Advertencia
 
@@ -95,8 +96,8 @@ El módulo L<Carp|Carp> permite presentar los mensajes de error desde la perspec
 
 el usuario verá algo similar a:
 
-    No se ha especificado un nombre de host en /usr/local/lib/perl5/site_perl/5.6.0/Net/Acme.pm
-    línea 123.
+ No hostname given at
+ /usr/local/lib/perl5/site_perl/5.6.0/Net/Acme.pm line 123.
 
 que parece indicar que su módulo ha producido un error. En lugar de ello, tiene que atribuir la culpa al usuario y decir esto:
 

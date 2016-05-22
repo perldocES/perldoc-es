@@ -666,6 +666,8 @@ Esta es una característica experimental disponible a partir de v5.18, y está s
 
 Serán bienvenidos los comentarios sobre esta característica; mande correo electrónico a C<perl5-porters@perl.org>.
 
+Las reglas que usa L<C<use re 'strict>|re/modo 'strict'> se aplican a esta construcción.
+
 Podemos extender el ejemplo anterior:
 
  /(?[ ( \p{Thai} + \p{Lao} ) & \p{Digit} ])/
@@ -707,7 +709,7 @@ El camino más sencillo de especificar un carácter imprimible es el de encerrar
 
 (Puede, naturalmente, especificar caracteres únicos usando, C<\x{...}>, C<\N{...}>, etc.).
 
-Este último ejemplo muestra el uso de esta construcción para especificar una clase de caracteres entre corchetes ordinaria sin el adicional conjunto de operaciones.  Fíjese en el espacio en blanco dentro de ella; C<E<sol>x> se activa incluso dentro de las clases de caracteres entre corchetes, excepto si no tiene comentarios dentro de ellas.  Por ello,
+Este último ejemplo muestra el uso de esta construcción para especificar una clase de caracteres entre corchetes ordinaria sin el adicional conjunto de operaciones.  Fíjese en el espacio en blanco dentro de ella; C<E<sol>x> se activa incluso dentro de las clases de caracteres entre corchetes,permitiéndose solo los caracteres SPACE y TAB (C<\t>), y sin comentarios.  Por ello,
 
  (?[ [#] ])
 
@@ -745,7 +747,7 @@ C<< (?[ ]) >> es una construcción de una exp. reg. en tiempo de compilación.  
 
 =item 1
 
-Esta construcción no se puede usar dentro del ámbito de C<use locale> (o el modificador de exp. reg. C<E<sol>l>).
+Cuando se compila dentro del ámbito de C<use locale> (o con el modificador de I<regex> C<E<sol>l>), esta construcción asume que la configuración regional en tiempo de ejecución será una UTF-8, y que el patrón generado siempre usa las reglas Unicode.  Lo que coincide o no, entonces, no depende de la configuración regional en tiempo de ejecución, así que no se activa el entintado.  Pero se levanta una advertencia de categoría C<locale> si la configuración regional en tiempo de ejecución resulta que no es UTF-8.
 
 =item 2
 

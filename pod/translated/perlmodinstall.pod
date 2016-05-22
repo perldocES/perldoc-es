@@ -10,7 +10,8 @@ Este documento explica lo que hay que hacer para descargar e instalar módulos d
 
 =head2 PREÁMBULO
 
-Primero debe asegurarse de que el módulo no está instalado en el sistema.  Ejecute C<perl -MFoo -e 1>  (Sustituya "Foo" por el nombre del módulo; por ejemplo, C<perl -MCGI::Carp -e 1>).
+Primero debe asegurarse de que el módulo no está instalado en el sistema.  Ejecute C<perl -MFoo -e 1>  (Sustituya "Foo" por el nombre del módulo; por
+ejemplo, C<perl -MCGI::Carp -e 1>.)
 
 Si no aparece un mensaje de error, significa que ya tiene el módulo instalado.  Si ve un mensaje de error, puede ser que el módulo esté instalado pero no esté en la ruta (que puede ver ejecutando C<perl -e "print qq(@INC)">).  En lo sucesivo supondremos que no tiene el módulo instalado y que lo ha encontrado en CPAN.
 
@@ -31,7 +32,9 @@ Así pues, ahora tiene un archivo con la extensión .tar.gz (o .zip, aunque esto
 Veamos cómo se realizan estos pasos en los distintos sistemas operativos.  Leer esta información B<no> le exime de la lectura de los archivos README e INSTALL incluidos en un módulo.
 
 También debe tener en cuenta que, aunque estas instrucciones son específicas de la instalación del módulo en el repositorio de módulos Perl de su sistema, puede instalar un módulo en cualquier directorio que desee.  Por ejemplo, en lugar de
-C<perl Makefile.PL> puede ejecutar C<perl Makefile.PL PREFIX=/mi/directorio_perl> para instalar los módulos en F</mi/directorio_perl>.  Para poder usar estos módulos en sus programas Perl, debe agregar C<use lib "/mi/directorio_perl/lib/site_perl";> al principio del programa o, en algunos casos, simplemente C<use "/mi/directorio_perl";>.  Si usa un sistema en el que la instalación de módulos en los directorios que ve al ejecutar C<perl -e "print qq(@INC)"> requiere privilegios de acceso de superusuario/root, posiblemente prefiera instalar los módulos en un directorio local (como su directorio personal) y usar este enfoque.
+C<perl Makefile.PL> puede ejecutar C<perl Makefile.PL
+PREFIX=/mi/directorio_perl> para instalar los módulos en
+F</mi/directorio_perl>.  Para poder usar estos módulos en sus programas Perl, debe agregar C<use lib "/mi/directorio_perl/lib/site_perl";> al principio del programa o, en algunos casos, simplemente C<use "/mi/directorio_perl";>.  Si usa un sistema en el que la instalación de módulos en los directorios que ve al ejecutar C<perl -e "print qq(@INC)"> requiere privilegios de acceso de superusuario/raíz, posiblemente prefiera instalar los módulos en un directorio local (como su directorio personal) y usar este enfoque.
 
 =over 4
 

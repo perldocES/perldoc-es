@@ -502,7 +502,8 @@ El esquema de numeración de versiones más común en CPAN es el siguiente:
 
 Un número correcto de versión en CPAN es un número de punto flotante con al menos dos dígitos después del decimal.  Se puede comprobar si se ajusta a CPAN utilizando
 
-    perl -MExtUtils::MakeMaker -le 'print MM->parse_version(shift)' 'Foo.pm'
+    perl -MExtUtils::MakeMaker -le 'print MM->parse_version(shift)' \
+                                                            'Foo.pm'
 
 Si desea liberar una versión 'beta' o 'alfa' de un módulo, pero no quiere que CPAN.pm lo liste, use un '_' después del número de versión normal seguido por al menos dos dígitos, por ejemplo. 1.20_01.  Si hace esto, se recomienda usar el siguiente modismo:
 

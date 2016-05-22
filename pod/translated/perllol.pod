@@ -137,32 +137,6 @@ Si sólo quiere añadir a una fila, tendrá que hacer algo un poco más divertid
     # añadir nuevas columnas a una fila existente
     push @{ $AoA[0] }, "wilma", "betty";   # desreferencia explícita
 
-Antes de Perl 5.14, esto ni siquiera hubiera compilado:
-
-    push $AoA[0], "wilma", "betty";        # desreferencia implícita
-
-¿Por qué?  Porque hubo un tiempo, en que el argumento de push() tenía que ser un array real, no sólo una referencia a un array. Que ya no es cierto.  De hecho, la anterior línea marcada "desreferencia implícita" funciona muy bien -en este caso- para hacer lo mismo que hacía el de desreferencia explícita.
-
-La razón por la que he dicho "en este caso" se debe a que funciona I<solo> porque C<$AoA[0]> ya contiene, realmente, una referencia a un array.  Si intenta hacer esto en una variable no definida, recibirá una excepción.  Eso es así porque la desrefererencia implícita nunca autovivificará una variable indefinida de la misma manera que C<@{}> lo hace siempre:
-
-    my $aref = undef;
-    push $aref,  qw(some more values);  # ¡MAL!
-    push @$aref, qw(a few more);        # ok
-
-Si desea aprovecharse de este nuevo comportamiento de desreferencia implícita, adelante: hace el código más fácil para el ojo y la muñeca.  Sólo entienda que las versiones anteriores de Perl se ahogarán en él durante la compilación.  Siempre que haga uso de algo que sólo funciona en algunas versiones de Perl y superiores, pero no antes, se debe colocar un prominente
-
-    use v5.14;   # necesario para una desref. implícita de ref. de array para oper. de array
-
-directiva en la parte superior del archivo que lo necesite.  De esta forma cuando alguien intente ejecutar el nuevo código en un viejo perl, en lugar de obtener un error como
-
-    Type of arg 1 to push must be array (not array element) at /tmp/a line 8, near ""betty";"
-    Execution of /tmp/a aborted due to compilation errors.
-
-va a ser cortésmente informado de que
-
-    Perl v5.14.0 required--this is only v5.12.3, stopped at /tmp/a line 1.
-    BEGIN failed--compilation aborted at /tmp/a line 1.
-
 =head2 Acceso e impresión
 
 Ahora es el momento de imprimir la estructura de datos.  ¿Cómo va a hacer eso?  Bueno, si desea sólo uno de los elementos, es trivial:
@@ -215,26 +189,28 @@ Hmm ... que aún es un poco feo.  ¿Qué le parece esto?
 Cuando se canse de escribir una impresión personalizada de las estructuras de datos, podría mirar los módulos estándar L<Dumpvalue> o L<Data::Dumper>.
 El primero es el que el depurador de Perl utiliza, mientras que el segundo genera código Perl interpretable de forma directa.  Por ejemplo:
 
-    use v5.14;     # usando el prototipo +, nuevo en v5.14
+ use v5.14;     # usando el prototipo +, nuevo en v5.14
 
-    sub show(+) {
+ sub show(+) {
 	require Dumpvalue;
 	state $bellamente = new Dumpvalue::
 			    tick        => q("),
-			    compactDump => 1,  # comentar estas dos líneas
-			    veryCompact => 1,  # si quiere un volcado mayor
+			    compactDump => 1,  # descomentar estas dos líneas
+                                               # (sacarlas fuera)
+			    veryCompact => 1,  # si quiere un mayor
+                                               # volcado
 			;
 	dumpValue $bellamente @_;
-    }
+ }
 
-    # Asigna una lista de referencias de array a un array.
-    my @AoA = (
+ # Asigna una lista de referencias de array a un array.
+ my @AoA = (
 	   [ "pedro", "pablo" ],
 	   [ "george", "jane", "elroy" ],
 	   [ "homer", "marge", "bart" ],
-    );
-    push $AoA[0], "wilma", "betty";
-    show @AoA;
+ );
+ push @{ $AoA[0] }, "wilma", "betty";
+ show @AoA;
 
 imprimirá en pantalla:
 

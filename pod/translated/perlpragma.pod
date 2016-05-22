@@ -49,7 +49,7 @@ Una implementación mínima del paquete C<MisOperadores> podría ser:
     use overload '+' => sub {
         my ($l, $r) = @_;
 	# Primer barrido para comprobar un nivel de llamada superior desde aquí
-        if (myint::in_effect(1)) {
+        if (entero::in_effect(1)) {
             int($$l) + int($$r);
         } else {
             $$l + $$r;

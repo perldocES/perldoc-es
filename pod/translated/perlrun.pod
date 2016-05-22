@@ -62,7 +62,7 @@ Un truco similar hay con el programa I<env>, si lo tiene instalado.
 
 Los ejemplos anteriores usan una ruta relativa al intérprete perl, accediendo al primero que se encuentre en la ruta del usuario, sin fijarse en qué versión sea.  Si necesita una versión específica de Perl, por ejemplo, la perl5.14.1, debe colocarla directamente en la ruta de la línea C<#!>.
 
-Si la línea C<#!> no contiene la palabra "perl" ni la palabra "indir", el programa nombrado después de C<#!> es ejecutado en lugar del intérprete de Perl.  Esto es algo extraño, pero ayuda a personas en máquinas que no pueden trabajar con C<#!>, porque ellas pueden indicar a un programa que su SHELL es F</usr/bin/perl>, y Perl, entonces, despachará, por ellos, el programa al intérprete correcto.
+Si la línea C<#!> no contiene la palabra "perl" ni la palabra "indir", el programa que se nombra después de C<#!> se ejecuta en lugar del intérprete de Perl.  Esto es algo extraño, pero ayuda a personas en máquinas que no pueden trabajar con C<#!>, porque ellas pueden indicar a un programa que su SHELL es F</usr/bin/perl>, y Perl, entonces, despachará, por ellos, el programa al intérprete correcto.
 
 Después de localizar a su programa, Perl compila el programa entero a una forma interna.  Si existe algún error de compilación, ni se intenta la ejecución del programa.  (Esto es muy distinto del típico script shell, que se ejecutará sin pensarlo hasta encontrar el primer error de sintaxis).
 
@@ -499,7 +499,8 @@ Aquí hay una manera eficaz de eliminar todos los archivos que no hayan sido mod
 
     find . -mtime +7 -print | perl -nle unlink
 
-Esto es más rápido que utilizar la opción B<-exec> de I<find> porque no tiene que arrancar un proceso en cada nombre de archivo encontrado.  Adolece del error de perder los caracteres de nueva línea en los nombres de las rutas de archivos, que puede arreglar si sigue el ejemplo que hay en B<-0>.
+Esto es más rápido que utilizar la opción B<-exec> de I<find> porque no tiene que arrancar un proceso por cada nombre de archivo encontrado (pero no es más rápido que usar la opción B<-delete>, disponible en las nuevas versiones de I<find>).
+Adolece del error de perder los caracteres de nueva línea en los nombres de las rutas de archivos, que puede arreglar si sigue el ejemplo que hay en B<-0>.
 
 Los bloques C<BEGIN> y C<END> pueden ser usados para capturar el control antes de o después del
 bucle de programa implícito, como se hace en I<awk>.
@@ -894,7 +895,7 @@ B <Note> que cualquier información sobre la función hash, especialmente la sem
 
 Un de ejemplo de la salida podría ser:
 
-    HASH_FUNCTION = ONE_AT_A_TIME_HARD HASH_SEED = 0x652e9b9349a7a032 PERTURB_KEYS = 1 (RANDOM)
+ HASH_FUNCTION = ONE_AT_A_TIME_HARD HASH_SEED = 0x652e9b9349a7a032 PERTURB_KEYS = 1 (RANDOM)
 
 =item PERL_MEM_LOG
 X<PERL_MEM_LOG>

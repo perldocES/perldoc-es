@@ -111,7 +111,7 @@ Ahora comprobamos que la comprobación de espacio inicial es correcta:
 Por último, vamos a comprobar que no creamos cadenas Unicode si C<U> B<no> es el primer formato activo:
 
  isnt( v1.20.300.4000, sprintf "%vd", pack("C0U*",1,20,300,4000),
-                                       "U* que no es lo primero, no es Unicode" );
+                                       "U* no es el primer formato, así que no es Unicode" );
 
 No hay que olvidarse de actualizar el número de pruebas especificado al principio del código, para que el programa de ejecución automática de pruebas no se confunda. Será algo así:
 

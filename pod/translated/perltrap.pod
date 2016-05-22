@@ -144,7 +144,7 @@ Las palabras clave C<break> y C<continue> del C se convierten en el C<last> y C<
 
 =item *
 
-La sentencia switch se llama C<given/when> y solo está disponible en perl 5.10 o superior.  Vea L<perlsyn/"Instrucciones Switch">.
+La sentencia switch se llama C<given>/C<when> y solo está disponible en perl 5.10 o superior.  Vea L<perlsyn/"Instrucciones Switch">.
 
 =item *
 

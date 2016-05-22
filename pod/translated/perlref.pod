@@ -33,8 +33,6 @@ Las referencias son fáciles de usar en Perl.  Sólo hay un principio fundamenta
 Cuando un escalar almacena una referencia, siempre se comporta como un simple escalar.
 No lo convierte en un array o hash o subrutina; usted tiene que decirle explícitamente que lo haga, desreferenciandolo.
 
-Dicho esto, tenga en cuenta que la versión de Perl 5.14 introduce una excepción a la regla, por conveniencia sintáctica.  Un comportamiento experimental de una función contenedora para array y hash, permite que las referencias a array y a hash sean manipulados por Perl como si hubieran sido explícitamente desreferenciadas sintácticamente.  Vea L<perl5140delta/"Mejoras sintácticas"> y L<perlfunc> para más detalles.
-
 =head2 Creando referencias
 X<reference, creation> X<referencing>
 X<referencia, creación> X<referenciando>
@@ -188,7 +186,7 @@ Una referencia se puede crear mediante el uso de una sintaxis especial, cariños
     $globname  = *foo{NAME};    # "foo"
     $pkgname   = *foo{PACKAGE}; # "main"
 
-Todos ellos se explican por sí mismos, excepto para C<*foo{IO}>, que requiere una atención especial.  Devuelve el identificador de E/S, utilizado para los identificadores de archivo (L<perlfunc/open>), sockets (L<perlfunc/socket> and L<perlfunc/socketpair>), e identificadores de directorio (L<perlfunc/opendir>).  Por razones de compatibilidad con versiones anteriores de Perl, C<*foo{IDENTIFICADOR_ARCHIVO}> es un sinónimo de C<*foo{IO}>, a pesar de que es obsoleta a partir de 5.8.0.  Si los avisos de obsolescencia están activados, se le avisará de su uso.
+Todos ellos se explican por sí mismos, excepto para C<*foo{IO}>, que requiere una atención especial.  Devuelve el identificador de E/S, utilizado para los identificadores de archivo (L<perlfunc/open>), sockets (L<perlfunc/socket> and L<perlfunc/socketpair>), e identificadores de directorio (L<perlfunc/opendir>).  Por razones de compatibilidad con versiones anteriores de Perl, C<*foo{IDENTIFICADOR_ARCHIVO}> es un sinónimo de C<*foo{IO}>, a pesar de que no se recomienda, para usar en su lugar un uso consistente de un único nombre: IO.  En versiones de perl entre v5.8 y v5.22, emitirá una advertencia de obsolescencia, pero esta obsolescencia se rescindió.
 
 C<*foo{COSA}> devuelve undef si esta COSA particular todavía no se ha usado, excepto en el caso de los escalares.  C<*foo{SCALAR}> devuelve una referencia a un escalar anónimo si $foo todavía no se ha usado.  Esto podría cambiar en una futura versión.
 
@@ -529,8 +527,7 @@ Por ejemplo:
     $r = [ 1, [ 2, 3 ], 4 ];
     $r->[1]->@*;  # equivale a @{ $r->[1] }
 
-La sintaxis se debe activar con C<use feature 'postderef'>.  Es experimental, y por defecto lanzará un aviso, a menos que se active C<no warnings
-'experimental::postderef'>.
+En Perl 5.20 y 5.22, esta sintaxis se debe activar con C<use feature 'postderef'>. A partir de 5.24, no se requieren más declaraciones de características (I<feature>) para que quede disponible.
 
 La desreferencia posfija debería funcionar en todas las circunstancias donde funcione un bloque de desreferencia (infijo), y debería ser completamente equivalente.  Esta sintaxis permite escribir y leer desreferencias izquierda a derecha de forma completa.  Se definen las siguientes equivalencias:
 
@@ -547,7 +544,7 @@ Los elementos Glob se pueden extraer por medio de la característica de la desre
 
   $gref->*{SCALAR}; # lo mismo que *{ $gref }{SCALAR}
 
-La desreferencia de array y escalar posfija se I<puede> usar en la interpolación de cadenas (comillas dobles o con el operador C<qq>), pero sólo si se activa la característica adicional C<postderef_qq>.
+La desreferencia de array y escalar posfija se I<puede> usar en la interpolación de cadenas (comillas dobles o con el operador C<qq>), pero sólo si se activa la característica C<postderef_qq>.
 
 =head2 Partición posfija de referencias
 
@@ -561,7 +558,7 @@ La partición de pares clave/valor, añadido en 5.20.0 y documentado en L<la sec
   $aref->%[ ... ];  # lo mismo que %$aref[ ... ]
   $href->%{ ... };  # lo mismo que %$href{ ... }
 
-Igual que con la desreferencia posfija de array, la desreferencia posfija de porciones de valores se I<puede> usar en la interpolación de cadenas (comillas dobles o con el operador C<qq>), pero sólo si se activa la L<feature> (característica) adicional C<postderef_qq>.
+Igual que con la desreferencia posfija de array, la desreferencia posfija de porciones de valores se I<puede> usar en la interpolación de cadenas (comillas dobles o con el operador C<qq>), pero sólo si se activa la L<feature> (característica) C<postderef_qq>.
 
 =head1 Asignando a referencias
 
@@ -631,7 +628,7 @@ La asignación a referencias y no-referencias se puede combinar en listas y en e
     # @harry es (1,2,3)
 
     my $tipo = ref $cosita;
-    ($tipo ? $tipo == 'ARRAY' ? \@foo : \$bar : $baz) = $cosita;
+    ($tipo ? $type eq 'ARRAY' ? \@foo : \$bar : $baz) = $cosita;
 
 El bucle C<foreach> también puede tomar un constructor de referencias para su variable de bucle, aunque la sintaxis se limita a una de las siguientes, con un opcional C<my>, C<state> o C<our> después de la barra diagonal inversa:
 
@@ -647,7 +644,7 @@ No se permiten paréntesis.  Esta característica es particularmente útil para 
     }
 
     foreach \my %h (@array_de_hashes) {
-        $h{carcajada}++ if $h{tipo} == 'gracioso';
+        $h{carcajada}++ if $h{tipo} eq 'gracioso';
     }
 
 B<ADVERTENCIA:> el crear alias no funciona correctamente con clausuras.  Si intenta crear alias a variables léxicas en el interior de una subrutina o C<eval>, solo será visible en el interior de la subrutina, y no afectará a la subrutina exterior, donde se declararon las variables.  Este comportamiento tan extraño está sujeto a cambio.

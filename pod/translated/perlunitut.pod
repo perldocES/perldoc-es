@@ -8,7 +8,8 @@ Actualmente ya no es posible trabajar con cadenas de texto de manera irreflexiva
 
 Hay mucho que aprender sobre juegos de caracteres y codificaciones de texto. Probablemente lo mejor sea dedicar un día entero a esta tarea, pero para aprender los conceptos básicos bastan unos pocos minutos. 
 
-Aunque estos conceptos no son tan básicos... Se supone que ya conoce la diferencia entre bytes y caracteres, y comprende (y acepta) que hay muchos juegos de caracteres y codificaciones distintos que deben especificarse cuando se utilicen en un programa. Para adquirir estos conocimientos básicos, es recomendable leer el artículo "The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)" de Joel Spolsky, en L<http://joelonsoftware.com/articles/Unicode.html>
+Aunque estos conceptos no son tan básicos... Se supone que ya conoce la diferencia entre bytes y caracteres, y comprende (y acepta) que hay muchos juegos de caracteres y codificaciones distintos que deben especificarse cuando se utilicen en un programa. Para adquirir estos conocimientos básicos, es recomendable leer el artículo "The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)" de Joel Spolsky, en
+L<http://joelonsoftware.com/articles/Unicode.html>.
 
 En este tutorial hablamos en términos absolutos, y solo proporcionamos una visión limitada de las muchas características relacionadas con el procesamiento de cadenas de caracteres que Perl ofrece. Sin embargo, es probable que para la mayoría de los proyectos baste con esta información.
 
@@ -30,7 +31,8 @@ Existen varias codificaciones de Unicode en competencia, de las cuales la más u
 
 B<UTF-8> es una codificación de Unicode. Muchas personas creen que Unicode es lo mismo que UTF-8, pero se equivocan. Hay otras codificaciones de Unicode, pero UTF-8 se está convirtiendo en la codificación estándar. 
 
-En UTF-8 los primeros 128 códigos de carácter (0 a 127) son equivalentes a ASCII. Ocupan un solo byte por carácter. Para codificar los demás caracteres se utilizan entre dos y cuatro bytes mediante un esquema complejo. Afortunadamente, Perl se encarga de esto.
+En UTF-8 los primeros 128 códigos de carácter (0 a 127) son equivalentes a ASCII. Ocupan un solo byte por carácter. Para codificar los demás caracteres se utilizan entre dos
+y cuatro bytes mediante un esquema complejo. Afortunadamente, Perl se encarga de esto.
 
 =head3 Cadenas de texto (cadenas de caracteres)
 
@@ -122,7 +124,8 @@ Descodifique todo lo que reciba y codifique todo lo que envíe (si son datos de 
 
 =head1 Preguntas y respuestas (o P+F)
 
-Después de leer este documento también debería leer L<perlunifaq> y, a continuación, L<perluniintro>.
+Después de leer este documento también debería leer L<perlunifaq> y, a continuación,
+L<perluniintro>.
 
 =head1 AGRADECIMIENTOS
 

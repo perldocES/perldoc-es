@@ -109,10 +109,10 @@ La bendición no afecta a la variable que contiene la referencia al objeto bende
   my $bar = $foo;
 
   bless $foo, 'Clase';
-  print blessed( $bar );      # imprime "Clase"
+  print blessed( $bar ) // 'no blessed';     # imprime "Clase"
 
   $bar = "otro valor";
-  print blessed( $bar );      # imprime undef
+  print blessed( $bar ) // 'no blessed';     # imprime "no blessed"
 
 Cuando se produce la llamada a C<bless> con una variable, se bendice la estructura de datos subyacente a la que la variable hace referencia. No se bendicen ni la referencia en sí ni tampoco la variable que contiene la referencia. Esto es por lo que la segunda llamada a C<blessed( $bar )> devuelve falso. En ese momento C<$bar> ya no almacena una referencia a un objeto.
 
@@ -207,7 +207,7 @@ El modificador C<SUPER> I<solo> se puede usar para llamar a métodos. No se pued
 
   SUPER::guardar($algo);     # ERROR: busca la subrutina guardar() en el paquete SUPER
 
-  SUPER->guardar($algo);     # ERROR: busca el método guardar() en la clase
+  SUPER->guardar($algo);   # ERROR: busca el método guardar() en la clase
                            #       SUPER
 
   $algo->SUPER::guardar(); # CORRECTO: busca el método guardar() en las
@@ -303,7 +303,7 @@ Esto significa que se comienza buscando en la primera clase primaria del array C
             /                    \
   AbueloPaterno             AbueloMaterno
             \                    /
-             Padre         Madre
+             Padre        Madre
                    \      /
                     Hijo
 
