@@ -1,6 +1,6 @@
 README			About Perl
 README.aix		Perl version 5 on IBM AIX (UNIX) systems 
-README.amiga		Perl under Amiga OS 
+README.amiga		Perl under AmigaOS 4.1 
 README.android		Perl under Android 
 README.bs2000		building and installing Perl for BS2000. 
 README.ce		Perl for WinCE 
@@ -57,18 +57,10 @@ perl5184delta.pod	what is new for perl v5.18.4
 perl5200delta.pod	what is new for perl v5.20.0 
 perl5201delta.pod	what is new for perl v5.20.1 
 perl5202delta.pod	what is new for perl v5.20.2 
-perl5210delta.pod	what is new for perl v5.21.0 
-perl52110delta.pod	what is new for perl v5.21.10 
-perl52111delta.pod	what is new for perl v5.21.11 
-perl5211delta.pod	what is new for perl v5.21.1 
-perl5212delta.pod	what is new for perl v5.21.2 
-perl5213delta.pod	what is new for perl v5.21.3 
-perl5214delta.pod	what is new for perl v5.21.4 
-perl5215delta.pod	what is new for perl v5.21.5 
-perl5216delta.pod	what is new for perl v5.21.6 
-perl5217delta.pod	what is new for perl v5.21.7 
-perl5218delta.pod	what is new for perl v5.21.8 
-perl5219delta.pod	what is new for perl v5.21.9 
+perl5203delta.pod	what is new for perl v5.20.3 
+perl5220delta.pod	what is new for perl v5.22.0 
+perl5221delta.pod	what is new for perl v5.22.1 
+perl5222delta.pod	what is new for perl v5.22.2 
 perl561delta.pod	what's new for perl v5.6.1 
 perl56delta.pod		what's new for perl v5.6.0 
 perl581delta.pod	what is new for perl v5.8.1 
@@ -96,7 +88,7 @@ perldbmfilter.pod	Perl DBM Filters
 perldebguts.pod		Guts of Perl debugging  
 perldebtut.pod		Perl debugging tutorial 
 perldebug.pod		Perl debugging 
-perldelta.pod		what is new for perl v5.22.0 
+perldelta.pod		what is new for perl v5.24.0 
 perldiag.pod		various Perl diagnostics 
 perldoc.pod		Look up Perl documentation in Pod format. 
 perldsc.pod		Perl Data Structures Cookbook 
@@ -180,7 +172,7 @@ perlunicode.pod		Unicode support in Perl
 perlunicook.pod		cookbookish examples of handling Unicode in Perl 
 perlunifaq.pod		Perl Unicode FAQ 
 perluniintro.pod	Perl Unicode introduction 
-perluniprops.pod	Index of Unicode Version 7.0.0 character properties in Perl
+perluniprops.pod	Index of Unicode Version 8.0.0 character properties in Perl
 perlunitut.pod		Perl Unicode Tutorial 
 perlutil.pod		utilities packaged with the Perl distribution 
 perlvar.pod		Perl predefined variables 
