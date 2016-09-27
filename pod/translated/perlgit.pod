@@ -104,9 +104,7 @@ Este comando produce como resultado una descripción del estado actual del repos
 
        deliberate.untracked
 
-Indica que los cambios realizados a este documento se han preparado y están pendientes de confirmación, y que en el directorio de trabajo hay más cambios que aún no están preparados. También muestra que en el directorio de trabajo hay un archivo sin seguimiento y, como se puede ver, explica qué tiene que hacer para cambiar esto. Además, indica que hay una confirmación en la rama de trabajo C<blead> que aún no se ha enviado al repositorio remoto C<origin>. B<NOTE>: This output
-is also what you see as a template if you do not provide a message to
-C<git commit>.
+Indica que los cambios realizados a este documento se han preparado y están pendientes de confirmación, y que en el directorio de trabajo hay más cambios que aún no están preparados. También muestra que en el directorio de trabajo hay un archivo sin seguimiento y, como se puede ver, explica qué tiene que hacer para cambiar esto. Además, indica que hay una confirmación en la rama de trabajo C<blead> que aún no se ha enviado al repositorio remoto C<origin>. B<NOTA>: esta salida también es la plantilla que verá si no proporciona un mensaje a C<git commit>.
 
 =head2 Flujo de trabajo con parches
 
@@ -256,31 +254,16 @@ En caso de duda, y antes de hacer cualquier otra cosa, compruebe el estado y lé
 
 =head2 Enviar parches por correo electrónico
 
-After you've generated your patch you should send it
-to L<perlbug@perl.org|mailto:perlbug@perl.org> (as discussed L<in the
-previous section|/"Patch workflow">) with a normal mail client as an
-attachment, along with a description of the patch.
+Después de que haya generado su parche debería enviarlo a L<perlbug@perl.org|mailto:perlbug@perl.org> (tal como se explica L<en la sección anterior|/"Flujo de trabajo con parches">) como un adjunto a un programa de correo normal, junto con la descripción del parche.
 
-B<No debe> usar git-send-email(1) para enviar parches generados con git-format-patch(1). The RT ticketing system living behind
-L<perlbug@perl.org|mailto:perlbug@perl.org> does not respect the inline
-contents of E-Mails, sending an inline patch to RT guarantees that your
-patch will be destroyed.
+B<No debe> usar git-send-email(1) para enviar parches generados con git-format-patch(1). El sistema de tiques RT que está por detrás de L<perlbug@perl.org|mailto:perlbug@perl.org> no respetará los contenidos normales de los correos electrónicos; enviar un parche en el cuerpo de un correo a RT será una garantía de que el parche será destruido.
 
-Alguien puede descargar su parche desde RT, que resultará que el asunto se omita (la primera línea del mensaje enviado).  See
-L<RT #74192|https://rt.perl.org/Ticket/Display.html?id=74192> and
-L<commit a4583001|http://perl5.git.perl.org/perl.git/commitdiff/a4583001>
-for an example. De forma alternativa, alguien puede aplicar su parche desde RT después de que haya llegado a su correo electrónico, antes de que RT modifique el contenido del mensaje.  See
-L<RT #74532|https://rt.perl.org/Ticket/Display.html?id=74532> and
-L<commit f9bcfeac|http://perl5.git.perl.org/perl.git/commitdiff/f9bcfeac>
-for a bad example of this failure mode.
+Alguien puede descargar su parche desde RT, que resultará que el asunto se omita (la primera línea del mensaje enviado).  Vea L<RT #74192|https://rt.perl.org/Ticket/Display.html?id=74192> y L<commit a4583001|http://perl5.git.perl.org/perl.git/commitdiff/a4583001>
+para ver un ejemplo. De forma alternativa, alguien puede aplicar su parche desde RT después de que haya llegado a su correo electrónico, antes de que RT modifique el contenido del mensaje.  Vea L<RT #74532|https://rt.perl.org/Ticket/Display.html?id=74532> y L<commit f9bcfeac|http://perl5.git.perl.org/perl.git/commitdiff/f9bcfeac> para ver un mal ejemplo de este modo de fallo.
 
 =head2 Nota sobre archivos derivados
 
-Tenga en cuenta que muchos de los archivos de la distribución están derivados, por lo que debe evitar aplicarles parches, ya que git no verá los cambios que les aplique y el proceso de compilación los sobrescribirá. Debe aplicar los parches a los archivos originales. La mayoría de las utilidades (como perldoc) pertenecen a esta categoría; es decir, debe aplicar un parche a F<utils/perldoc.PL> en lugar de aplicárselo a F<utils/perldoc>. Similarly, don't
-create patches for files under F<$src_root/ext> from their copies found
-in F<$install_root/lib>. If you are unsure about the proper location of
-a file that may have gotten copied while building the source
-distribution, consult the F<MANIFEST>.
+Tenga en cuenta que muchos de los archivos de la distribución están derivados, por lo que debe evitar aplicarles parches, ya que git no verá los cambios que les aplique y el proceso de compilación los sobrescribirá. Debe aplicar los parches a los archivos originales. La mayoría de las utilidades (como perldoc) pertenecen a esta categoría; es decir, debe aplicar un parche a F<utils/perldoc.PL> en lugar de aplicárselo a F<utils/perldoc>. Por la misma razón, no debe crear parches para archivos de F<$src_root/ext> a partir de las copias que se encuentran en F<$install_root/lib>. Si no está seguro de cuál es la ubicación correcta de un archivo que podría haberse copiado al compilar la distribución de código fuente, consulte el archivo F<MANIFEST>.
 
 =head2 Limpiar un directorio de trabajo
 
@@ -294,8 +277,7 @@ Sin embargo, tenga en cuenta que esto eliminará TODO el contenido sin seguimien
 
   % git clean -Xf
 
-to remove all ignored untracked files, such as build and test
-byproduct, but leave any manually created files alone.
+para eliminar todos los archivos sin seguimiento ignorados, como los creados al compilar o realizar pruebas, conservando los archivos creados manualmente.
 
 Si sólo desea cancelar algunos cambios sin confirmar, puede usar C<git checkout> con una lista de archivos que hay que revertir, o C<git checkout -f> para revertirlos todos.
 
@@ -313,8 +295,7 @@ solo tiene que ejecutar esto:
 
     .../Porting/bisect.pl -e 'my $a := 2;'
 
-Using F<Porting/bisect.pl>, with one command (and no other files) it's easy to
-find out
+Con F<Porting/bisect.pl>, solo tiene que usar un comando (y ningún otro archivo) para averiguar fácilmente lo siguiente:
 
 =over 4
 
@@ -336,9 +317,7 @@ La confirmación que eliminó el último archivo coincidente con esta expresión
 
 =back
 
-usually without needing to know which versions of perl to use as start and
-end revisions, as F<Porting/bisect.pl> automatically searches to find the
-earliest stable version for which the test case passes. Ejecute C<Porting/bisect.pl --help> para ver toda la documentación, que incluye una descripción de la configuración mediante C<Configure> y las opciones de tiempo de compilación.
+generalmente, sin necesidad de saber qué versiones de perl hay que usar como revisiones inicial y final, ya que F<Porting/bisect.pl> buscará automáticamente la versión estable más reciente que supera el caso de prueba. Ejecute C<Porting/bisect.pl --help> para ver toda la documentación, que incluye una descripción de la configuración mediante C<Configure> y las opciones de tiempo de compilación.
 
 Si necesita más flexibilidad que la que ofrece F<Porting/bisect.pl> tendrá que usar C<git bisect> directamente. El uso de C<git bisect run> resulta muy útil para automatizar la compilación y prueba de las revisiones de perl. Para ello necesitará un script de shell que haga que C<git> llame una revisión concreta para realizar pruebas. Se proporciona un script de ejemplo, F<Porting/bisect-example.sh>, que debe copiar B<fuera> del repositorio, ya que al ejecutar el proceso de bisección restablece el estado a una copia limpia. En las instrucciones siguientes se supone que lo ha copiado como F<~/run> y ha hecho las modificaciones necesarias.
 
@@ -376,28 +355,22 @@ C<git help bisect> ofrece mucha más información sobre cómo puede manipular la
 
 =head2 Ramas puntuales e historial de reescritura
 
-Individual committers should create topic branches under
-B<yourname>/B<some_descriptive_name>:
+Los usuarios individuales que deseen aplicar cambios deben crear ramas puntuales en B<nombre>/B<nombre_descriptivo>:
 
-  % branch="$yourname/$some_descriptive_name"
-  % git checkout -b $branch
-  ... do local edits, commits etc ...
-  % git push origin -u $branch
+  % rama="$nombre/$nombre_descriptivo"
+  % git checkout -b $rama
+  ... hacer ediciones locales, confirmaciones, etc. ...
+  % git push origin -u $rama
 
-Should you be stuck with an ancient version of git (prior to 1.7), then
-C<git push> will not have the C<-u> switch, and you have to replace the
-last step with the following sequence:
+Si estuviera enganchado con una versión vieja de git (antes de la 1.7), entonces C<git push> no tendrá la opción C<-u>, y tendrá que reemplazar el último paso con la siguiente secuencia:
 
-  % git push origin $branch:refs/heads/$branch
-  % git config branch.$branch.remote origin
-  % git config branch.$branch.merge refs/heads/$branch
+  % git push origin $rama:refs/heads/$rama
+  % git config branch.$rama.remote origin
+  % git config branch.$rama.merge refs/heads/$rama
 
-If you want to make changes to someone else's topic branch, you should
-check with its creator before making any change to it.
+Si desea hacer cambios a una rama principal de otra persona, antes deberá consultárselo al autor antes de hacer ningún cambio en ella.
 
-You
-might sometimes find that the original author has edited the branch's
-history. Hay muchas razones de peso para ello. En algunos casos, el autor simplemente reorganiza la rama para asignarle un nuevo punto de origen.
+Algunas veces podría encontrar que el autor original ha editado la historia de la rama. Hay muchas razones de peso para ello. En algunos casos, el autor simplemente reorganiza la rama para asignarle un nuevo punto de origen.
 También puede ocurrir que un autor haya detectado un error en una confirmación anterior que desea corregir antes de combinar la rama con blead.
 
 Actualmente el repositorio principal está configurado para prohibir combinaciones que no sean de avance rápido. Esto significa que las ramas que contiene no se pueden reorganizar y enviar en un solo paso.
@@ -407,13 +380,13 @@ La única manera de reorganizar o modificar el historial de una rama enviada es 
 Si desea reorganizar una rama puntual personal tendrá que eliminar la rama puntual existente y enviarla como una nueva versión de la misma. Puede hacer esto con la fórmula siguiente (para obtener más información, vea la descripción de C<refspec> en la documentación sobre git push) tras reorganizar la rama:
 
   # primero reorganizar
-  % git checkout $user/$topic
+  % git checkout $usuario/$tema
   % git fetch
   % git rebase origin/blead
 
   # después "eliminar y enviar cambios"
-  % git push origin :$user/$topic
-  % git push origin $user/$topic
+  % git push origin :$usuario/$tema
+  % git push origin $usuario/$tema
 
 B<NOTA:> está prohibido eliminar ramas "principales" de un repositorio. Es decir, cualquier rama cuyo nombre coincida con C<m!^(blead|maint|perl)!>. Si se intenta eliminar una de estas ramas, git generará un error parecido al siguiente:
 
@@ -426,12 +399,9 @@ B<NOTA:> está prohibido eliminar ramas "principales" de un repositorio. Es deci
    error: failed to push some refs to 'ssh://perl5.git.perl.org/perl'
 
 Tenemos la política de B<no> editar el historial las ramas de blead y maint-*. Si se colara un error ortográfico (o algo más grave) en una confirmación en blead o
-maint-*, lo corregiremos en una confirmación posterior. The only types of updates
-allowed on these branches are "fast-forwards", where all history is
-preserved.
+maint-*, lo corregiremos en una confirmación posterior. Los únicos tipos de actualización que se permiten en estas ramas son los de "avance rápido", que conservan el historial.
 
-Las etiquetas con anotaciones del repositorio perl.git canónico nunca se eliminarán ni modificarán. Si desea enviar una etiqueta local a perl.git, piénselo detenidamente antes de hacerlo. (Pushing simple tags is
-not allowed.)
+Las etiquetas con anotaciones del repositorio perl.git canónico nunca se eliminarán ni modificarán. Si desea enviar una etiqueta local a perl.git, piénselo detenidamente antes de hacerlo. (No se permite insertar etiquetas simples).
 
 =head2 Injertos
 
@@ -452,8 +422,7 @@ También puede configurar su nombre de usuario y su dirección de correo electr�
   % git config --global user.name "Ævar Arnfjörð Bjarmason"
   % git config --global user.email avarab@gmail.com
 
-However, if you'd like to override that just for perl,
-execute something like the following in F<perl>:
+Sin embargo, si desea sobrescribir esa configuración solo para perl, debe ejecutar algo parecido a lo siguiente en F<perl>:
 
   % git config user.email avar@cpan.org
 
@@ -481,8 +450,7 @@ Los parches a los que se aplicó formato con C<git format-patch> se aplican medi
  % git am 0001-Cambiar-nombre-de-Leon-Brocard-a-Orange-Brocard.patch
  Applying Cambiar nombre de Leon Brocard a Orange Brocard
 
-Note that some UNIX mail systems can mess with text attachments containing
-'From '. This will fix them up:
+Tenga en cuenta que algunos sistemas de correo UNIX pueden mezclar adjuntos de texto conteniendo 'From '. Esto lo arreglará:
 
  % perl -pi -e's/^>From /From /' \
                         0001-Cambiar-nombre-de-Leon-Brocard-a-Orange-Brocard.patch
@@ -490,7 +458,7 @@ Note that some UNIX mail systems can mess with text attachments containing
 Si solo se proporciona un archivo de diferencias sin formato, también se puede seguir este proceso en dos pasos:
 
  % git apply bugfix.diff
- % git commit -a -m "Some fixing" \
+ % git commit -a -m "Algún arreglo" \
                             --author="That Guy <that.guy@internets.com>"
 
 Ahora podemos inspeccionar el cambio:
@@ -546,9 +514,7 @@ Asegúrese de escribir un mensaje de confirmación adecuado. Encontrará informa
 
 =item *
 
-Ejecute el conjunto de pruebas. Seguramente crea que es imposible que un error ortográfico genere un error de un archivo de prueba. Se equivoca. En el caso que se describe a continuación, hubo problemas por no ejecutar la batería de pruebas. A patch was submitted that added a couple of
-tests to an existing F<.t>. It couldn't possibly affect anything else, so
-no need to test beyond the single affected F<.t>, right?  Pero la dirección de correo electrónico del remitente había cambiado desde su último envío, y esto hizo que se produjeran errores en otras pruebas. Si se hubiera ejecutado el objetivo de prueba del siguiente elemento, se habría detectado este problema.
+Ejecute el conjunto de pruebas. Seguramente crea que es imposible que un error ortográfico genere un error de un archivo de prueba. Se equivoca. En el caso que se describe a continuación, hubo problemas por no ejecutar la batería de pruebas. Se envió un parche para agregar un par de pruebas a un archivo F<.t> existente. No podía afectar a nada más, por lo que no era necesario probar más que el archivo F<.t> en cuestión.  Pero la dirección de correo electrónico del remitente había cambiado desde su último envío, y esto hizo que se produjeran errores en otras pruebas. Si se hubiera ejecutado el objetivo de prueba del siguiente elemento, se habría detectado este problema.
 
 =item *
 
@@ -586,13 +552,13 @@ Se volverán a aplicar sus confirmaciones y entonces podrá enviar cambios de fo
 Para grandes conjuntos de confirmaciones que solo tienen sentido juntas, o que puedan beneficiarse de disponer de un resumen de propósito del conjunto, es recomendable usar una confirmación de combinación.  Debe realizar el trabajo en una L<rama puntual|/Ramas puntuales e historial de reescritura>, que habrá que reorganizar regularmente con blead para asegurarse de que el código no deja de funcionar cuando blead se mueva.
 Cuando haya terminado su trabajo, haga una última reorganización y ejecute las pruebas.  El historial deja de ser lineal cada vez que se realiza una confirmación en blead, pero una reorganización final restablece la linealidad del historial, lo que facilita a los futuros mantenedores la labor de comprobar los cambios realizados.  La reorganización se realiza como se indica a continuación (suponiendo que el trabajo está en la rama C<< contribuidor/trabajo >>):
 
-  % git checkout committer/somework
-  % git rebase blead
+  % git checkout contribuidor/trabajo
+  $ git rebase blead
 
 Después puede combinarla en la rama principal de esta manera:
 
   % git checkout blead
-  % git merge --no-ff --no-commit committer/somework
+  % git merge --no-ff --no-commit contribuidor/trabajo
   % git commit -a
 
 A continuación se describen estos modificadores.  C<--no-ff> indica que aunque se pueda aplicar todo el trabajo de forma lineal a blead, debe prepararse una confirmación de combinación.  Esto garantiza que se mostrará todo el trabajo como una rama paralela, con todas las confirmaciones combinadas en la rama blead principal mediante la combinación de mezcla.
@@ -703,13 +669,9 @@ Finalmente, deberá borrar la rama remota I<smoke-me>:
 
 =head2 Nota sobre los servidores I<camel> (camello) y I<dromedary> (dromedario)
 
-Las personas que contribuyen cambios tienen acceso SSH a los dos servidores que ofrecen servicio a C<perl5.git.perl.org>. Uno es C<perl5.git.perl.org> (I<camel>), el repositorio "principal". El otro es C<users.perl5.git.perl.org> (I<dromedary>), que se puede usar para pruebas y desarrollo general. El servidor I<dromedary> sincroniza el árbol git de I<camel> cada pocos minutos. No debe insertar cambios en I<camel>. Both machines also
-have a full CPAN mirror in F</srv/CPAN>, please use this. To share files
-with the general public, dromedary serves your F<~/public_html/> as
-C<http://users.perl5.git.perl.org/~yourlogin/>
+Las personas que contribuyen cambios tienen acceso SSH a los dos servidores que ofrecen servicio a C<perl5.git.perl.org>. Uno es C<perl5.git.perl.org> (I<camel>), el repositorio "principal". El otro es C<users.perl5.git.perl.org> (I<dromedary>), que se puede usar para pruebas y desarrollo general. El servidor I<dromedary> sincroniza el árbol git de I<camel> cada pocos minutos. No debe insertar cambios en I<camel>. Ambos equipos también tienen un servidor reflejado de CPAN completo en F</srv/CPAN>. Use estos servidores. Para compartir archivos con el público general, I<dromedary> ofrece F<~/public_html/> como
+C<http://users.perl5.git.perl.org/~usuario/>
 
 El acceso de estos hosts al exterior está considerablemente restringido mediante firewall. Hacia fuera, solo se admiten rsync, ssh y git. Para http y ftp puede usar http://webproxy:3128 como proxy. Para la entrada, el firewall trata de detectar ataques y bloquea las direcciones IP con actividad sospechosa. A veces (aunque raramente) esto produce falsos positivos y en ese caso se le bloqueará. La forma más rápida de conseguir que le desbloqueen es notificárselo a los administradores.
 
-Estos dos equipos son propiedad de booking.com, que se encarga de su alojamiento y administración. You can
-reach the sysadmins in #p5p on irc.perl.org or via mail to
-L<perl5-porters@perl.org|mailto:perl5-porters@perl.org>.
+Estos dos equipos son propiedad de booking.com, que se encarga de su alojamiento y administración. Puede ponerse en contacto con los administradores del sistema en el canal #p5p de irc.perl.org o enviar un mensaje de correo electrónico a L<perl5-porters@perl.org|mailto:perl5-porters@perl.org>.
