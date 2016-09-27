@@ -1,0 +1,236 @@
+=head1 NOMBRE
+
+perlfork - Emulación de fork() por parte de Perl
+
+=head1 SINOPSIS
+
+    NOTA: A partir de la distribución 5.8.0, se considera que la emulación fork() es
+    madura.  Sin embargo, aún existen unos pocos errores conocidos y diferencias
+    con respecto al auténtico fork() que podrían afectarle.  Vea "ERRORES" y
+    la sección "CUESTIONES Y LIMITACIONES", más abajo.
+
+Perl ofrece una palabra clave fork() que corresponde a la llamada del sistema Unix del mismo nombre.  En la mayor parte de las plataformas Unix donde está disponible una llamada fork() del sistema, el fork() del Perl, simplemente, la llama.
+
+En algunas plataformas, como Windows, en donde la llamada del sistema fork() no está disponible, Perl se puede compilar para emular fork() a nivel del intérprete de Perl.
+Mientras que la emulación se diseñó para ser compatible tanto como sea posible con el auténtico fork() a nivel del programa Perl, existen algunas importantes diferencias que penden del hecho de que todos los pseudo "procesos" hijo creados de esta manera vivirán en el mismo proceso real tanto como le concierna al sistema operativo.
+
+Este documento ofrece un idea general de las capacidades y limitaciones de la emulación de fork().  Note que las cuestiones explicadas aquí no son aplicables a las plataformas donde está disponible un auténtico fork() y Perl está configurado para usarlo.
+
+=head1 DESCRIPCIÓN
+
+La emulación fork() se implementó a nivel del intérprete Perl.
+Lo que esto significa, en general, es que ejecutar fork(), realmente, clonará el intérprete que está corriendo y todo su estado, y ejecutará el intérprete en una hebra separada, comenzando la ejecución de la hebra justo después del punto donde se llamó a fork(), en el padre.  Nos referiremos a la hebra que implementa este "proceso" hijo como el pseudo-proceso.
+
+Todo esto se diseñó para que fuera transparente al programa Perl que llamó a fork().  El padre regresa del fork() con un ID de un pseudo-proceso, que puede, más tarde, usarse en cualquiera de las funciones de manipulación de procesos; el hijo regresa del fork() con un valor de C<0> para indicar que él es el pseudo-proceso hijo.
+
+=head2 Comportamiento de las otras características de Perl en un pseudo-proceso I<forkeado>
+
+La mayor parte de las características de Perl se comportan de forma natural dentro de los pseudo-procesos.
+
+=over 8
+
+=item $$ o $PROCESS_ID
+
+Esta variable especial se establece correctamente al ID del pseudo-proceso.
+Se puede usar para identificar pseudo-procesos dentro de una sesión en particular.  Note que este valor está sujeto a reciclaje si alguno de los pseudo-procesos se lanza después de que se haya esperado (wait()) por los otros.
+
+=item %ENV
+
+Cada pseudo-proceso mantiene su propio entorno virtual.  Las modificaciones a %ENV afectan al entorno virtual, y solo están visibles dentro del pseudo-proceso, y en cualquier proceso (o pseudo-procesos) lanzados desde él.
+
+=item chdir() y todas las funciones incorporadas que aceptan nombres de archivo
+
+Cada pseudo-proceso mantiene su propia idea virtual idea de lo que es su directorio actual.
+Las modificaciones al directorio actual, usando chdir() solo están visibles dentro del pseudo-proceso, y cualquier otro proceso (o pseudo-procesos) lanzados desde él.  Todo acceso a archivo o directorio desde el pseudo-proceso mapeará correctamente el directorio de trabajo virtual al directorio de trabajo actual apropiado.
+
+=item wait() y waitpid()
+
+A wait() y waitpid() se les puede pasar un ID de un pseudo-proceso, devuelto por fork().
+Estas llamadas esperarán apropiadamente por la terminación del pseudo-proceso y devolverán su código de estado.
+
+=item kill()
+
+Se puede usar C<kill('KILL', ...)> para terminar un pseudo-proceso pasándole el ID devuelto por el fork(). El resultado de matar un pseudo-proceso es impredecible y no se debería usar excepto en circunstancias horribles, porque el sistema operativo no puede garantizar la integridad de los recursos del proceso cuando se termina una hebra en ejecución.  El proceso que implementa los pseudo-procesos puede quedar bloqueado, y colgarse el intérprete Perl. Note que usar C<kill('KILL', ...)> en un pseudo-proceso() puede, típicamente, causar agotamiento de la memoria, porque la hebra que implementa el pseudo-proceso no tiene oportunidad de hacer una limpieza de los recursos.
+
+También puede usarse C<kill('TERM', ...)> en pseudo-procesos, pero la señal no se entregará mientras que el pseudo-proceso esté bloqueado por una llamada del sistema; por ejemplo, esperando a que un I<socket> conecte, o intentando leer de un I<socket> cuando no hay datos disponibles.  A partir de Perl 5.14, el proceso padre no esperará a que los hijos terminen, una vez que se les envíe la señal con C<kill('TERM', ...)>, para evitar bloqueos entre ellos durante el proceso de salida.  Tendrá que llamar explícitamente a waitpid() para asegurarse de que el hijo tiene tiempo para limpiarse a sí mismo, pero también es responsable de que el hijo no esté bloqueado en ninguna operación de E/S.
+
+=item exec()
+
+Llamar a exec() dentro de un pseudo-proceso, actualmente, clona el ejecutable solicitado en un proceso separado, y espera a que termine antes de salir con el mismo código de estado de salida que ese proceso.  Esto significa que el ID mostrado del proceso dentro del ejecutable que está corriendo será diferente del que devolvió anteriormente el fork() de Perl.  De forma similar, cualquier función de manipulación de procesos aplicados al ID devuelto por fork() afectará al pseudo-proceso que llamó a exec(), no al proceso real que está esperando después del exec().
+
+Cuando se llama a exec() dentro de un pseudo-proceso, se seguirán llamando a los métodos de los bloques DESTROY y END después de que el proceso externo regrese.
+
+=item exit()
+
+exit() siempre terminará el pseudo-proceso que se esté ejecutando, después de esperar de forma automática por cualesquiera pseudo-procesos hijo pendientes.  Note que esto significa que el proceso, como un todo, no terminará a menos que terminen todos los pseudo-procesos en ejecución.  Vea más abajo por algunas limitaciones con identificadores de archivo abiertos.
+
+=item Identificadores abiertos a archivos, directorios y I<sockets> de red
+
+Todos los identificadores abiertos están dup()licados en los pseudo-procesos, así que cerrar un identificador en un proceso no afecta a los demás.  Vea más abajo algunas limitaciones.
+
+=back
+
+=head2 Límites de recursos
+
+A los ojos del sistema operativo, los pseudo-procesos creados a través de la emulación fork() son simplemente hebras del mismo proceso.  Esto significa que cualquier limitación a nivel de proceso impuesta por el sistema operativo se aplica a todos los pseudo-procesos tomados en conjunto.  Esto incluye cualquier límite impuesto por el sistema operativo en el número de identificadores de archivos, directorios y I<sockets> abiertos, límites en el espacio usado en disco, límites en la utilización de la CPU, etc.
+
+=head2 Matando al proceso padre
+
+Si se mata al proceso padre (usando tanto el kill() incrustado en Perl, o por algún medio externo) también se mueren todos los pseudo-procesos, y todo el proceso termina.
+
+=head2 Tiempo de vida del proceso padre y pseudo-procesos
+
+Durante el curso normal de los eventos, el proceso padre y cada pseudo-proceso iniciado por él esperará a que se completen sus respectivos pseudo-hijos antes de terminar.  Esto significa que el padre y cada pseudo-hijo creado por él, que también es un pseudo-padre, que solo terminará después de que terminen sus pseudo-hijos.
+
+A partir de Perl 5.14, un padre no esperará (wait()) de forma automática por ningún hijo a quien se le haya enviado la señal C<kill('TERM', ...)> para evitar bloqueos en caso de que el hijo esté parado en una operación de E/S y nunca reciba la señal.
+
+=head1 CUESTIONES Y LIMITACIONES
+
+=over 8
+
+=item Bloques BEGIN
+
+La emulación fork() no funcionará completamente de forma correcta cuando se le llame desde dentro de un bloque BEGIN.  La copia I<forkeada> ejecutará los contenidos del bloque BEGIN, pero no continuará la interpretación del flujo fuente después del bloque BEGIN.  Por ejemplo, considere el código siguiente:
+
+    BEGIN {
+        fork and exit;          # forkea un hijo y sale el padre
+        print "interior\n";
+    }
+    print "exterior\n";
+
+Esto imprimirá:
+
+    interior
+
+en lugar de lo esperado:
+
+    interior
+    exterior
+
+Esta limitación surge de dificultades técnicas fundamentales en la clonación y reinicio de las pilas utilizadas por el intérprete Perl, en el medio de una interpretación.
+
+=item Identificadores de archivo abiertos
+
+Cualesquiera identificadores de archivos abiertos en el momento del fork() serán dup()licados.  Así, los archivos se pueden cerrar inmediatamente en el padre y en el hijo, pero preste atención a que los identificadores dup()licados seguirán compartiendo el mismo puntero de posicionamiento.  Cambiar el puntero de posicionamiento en el padre hará que cambie en el hijo, y viceversa.
+Uno puede evitar esto abriendo los archivos en los que necesite distintos punteros de posicionamiento, en el hijo.
+
+En algunos sistemas operativos, notablemente en Solaris y Unixware, llamar a C<exit()> desde un proceso hijo vaciará y cerrará los identificadores de archivo abiertos en el padre, y por lo tanto corrompiendo los identificadores de archivo.  En esos sistemas, se sugiere llamar, en su lugar, a C<_exit()>.  C<_exit()> está disponible en Perl a través del módulo C<POSIX>.  Por favor, consulte las páginas de manual de su sistema para más información sobre todo esto.
+
+=item Identificadores de directorio abiertos
+
+Perl leerá completamente de todos los identificadores de directorio abiertos hasta que se llegue al final del flujo.  Entonces hará un seekdir() para regresar a la posición original y las futuras llamadas a readdir() se cumplimentarán desde el búfer caché.  Eso significa que ni el identificador de directorio guardado por el proceso padre, ni el almacenado por el proceso hijo verán ningún cambio realizado en el directorio después de la llamada a fork().
+
+Note que rewinddir() tiene una limitación similar en Windows y no forzará un readdir() para volver a leer el directorio.  Solo un nuevo identificador de directorio abierto reflejará los cambios del directorio.
+
+=item I<Forkear> un open() entubado aún no está implementado
+
+Las construcciones C<open(FOO, "|-")> y C<open(BAR, "-|")> todavía no están implementadas.  Esta limitación se puede solventar fácilmente en un nuevo código, creando una tubería de forma explícita.  El siguiente ejemplo muestra cómo escribir a un hijo I<forkeado>.
+
+    # simula open(FOO, "|-")
+    sub pipe_to_fork ($) {
+        my $padre = shift;
+        pipe my $hijo, $padre or die;
+        my $pid = fork();
+        die "fork() falló: $!" unless defined $pid;
+        if ($pid) {
+            close $hijo;
+        }
+        else {
+            close $padre;
+            open(STDIN, "<&=" . fileno($hijo)) or die;
+        }
+        $pid;
+    }
+
+    if (pipe_to_fork('FOO')) {
+        # padre
+        print FOO "pipe_to_fork\n";
+        close FOO;
+    }
+    else {
+        # hijo
+        while (<STDIN>) { print; }
+        exit(0);
+    }
+
+Y este lee desde un hijo:
+
+    # simula open(FOO, "-|")
+    sub pipe_from_fork ($) {
+        my $padre = shift;
+        pipe $padre, my $hijo or die;
+        my $pid = fork();
+        die "fork() falló: $!" unless defined $pid;
+        if ($pid) {
+            close $hijo;
+        }
+        else {
+            close $padre;
+            open(STDOUT, ">&=" . fileno($hijo)) or die;
+        }
+        $pid;
+    }
+
+    if (pipe_from_fork('BAR')) {
+        # padre
+        while (<BAR>) { print; }
+        close BAR;
+    }
+    else {
+        # hijo
+        print "pipe_from_fork\n";
+        exit(0);
+    }
+
+Se dará soporte en el futuro a I<forkear> construcciones entubadas de open().
+
+=item Estado global mantenido por XSUBs
+
+Las subrutinas externas (XSUB) que mantienen su propio estado global pueden no funcionar de forma correcta.  Tales XSUB necesitarán tanto mantener los bloqueos para proteger accesos simultáneos a datos globales desde diferentes pseudo-procesos, o mantener todo su estado en la tabla de símbolos de Perl, que se copia de forma natural cuando se llame a fork().  En el futuro, se ofrecerá un mecanismo de retrollamada que ofrezca la oportunidad de clonar su estado.
+
+=item Interprete incrustado en una aplicación mayor
+
+La emulación de fork() puede no ejecutarse como se espera cuando se ejecuta en una aplicación que incruste un intérprete Perl y llame a la API de Perl que pueda evaluar partes de código Perl.  Esto enraíza en el hecho que la emulación solo tiene conocimiento sobre las estructuras de datos propias del intérprete de Perl y no sabe nada el estado de la aplicación que la contiene.  Por ejemplo, cualquier estado almacenado por la pila de llamadas de la propia aplicación está fuera de su alcance.
+
+=item Seguridad de las hebras en las extensiones
+
+Ya que la emulación de fork() ejecuta código en múltiples hebras, las extensiones que llaman a bibliotecas que no sean seguras en hebras, pueden no funcionar con fiabilidad cuando se llame a fork().  A medida que el soporte de hebras de Perl se soporta, gradualmente, incluso en plataformas con fork() nativo, se espera que tales extensiones se arreglen para que sean seguras dentro de las hebras.
+
+=back
+
+=head1 CUESTIONES DE PORTABILIDAD
+
+En código portable Perl, C<kill(9, $child)> no se debe usar en procesos I<forkeados>.
+Matar un proceso I<forkeado> no es seguro y tiene resultados impredecibles.
+Vea L</kill()>, arriba.
+
+=head1 ERRORES
+
+=over 8
+
+=item *
+
+Tener ID de pseudo-procesos con números enteros negativos rompe la regla de dejar aparte el valor C<-1> porque las funciones wait() y waitpid() lo tratan como algo especial.  La asunción tácita, en la implementación actual, es que el sistema nunca reserva un ID de hebra con el número C<1> para las hebras de usuario.  Se implementará, en el futuro, una mejor representación para los ID de los pseudo-procesos.
+
+=item *
+
+En ciertos casos, los identificadores a nivel del sistema operativo, creados por los operadores pipe(), socket(), y accept() no son, aparentemente, duplicados, en los pseudo-procesos.  Esto solo sucede en algunas situaciones, pero donde sucede, puede resultar en bloqueos entre los finales de lectura y escritura de los identificadores de las tuberías, o incapacidad para enviar o recibir datos a través de los identificadores de I<sockets>.
+
+=item *
+
+Este documento puede estar incompleto, en algunos aspectos.
+
+=back
+
+=head1 AUTOR
+
+El soporte para intérpretes concurrentes y la emulación fork() se implementó por ActiveState, con fondos de la Microsoft Corporation.
+
+El autor y mantenedor de este documento es Gurusamy Sarathy
+E<lt>gsar@activestate.comE<gt>.
+
+=head1 VEA TAMBIÉN
+
+L<perlfunc/"fork">, L<perlipc>
+
+=cut
