@@ -1,0 +1,339 @@
+=head1 NAME
+X<format> X<report> X<chart>
+
+perlform . Formatos en Perl
+
+=head1 DESCRIPCIÓN
+
+Perl tiene un mecanismo para ayudarle a generar informes y gráficos sencillos.  Para ayudarle en esto, Perl le ayuda a programar su página de salida de forma cercana a como aparecerá cuando se imprima.  Puede mantener un seguimiento de los elementos como cuántas líneas hay en la página, en qué página está, cuándo imprimir las cabeceras de la página, etc. Las palabras clave se han tomado del FORTRAN: format() para declarar, y write() para ejecutar; vea sus entradas en L<perlfunc>.  Afortunadamente, la disposición es mucho más legible, más parecida a la sentencia PRINT USING del BASIC.  Piense en él como un nroff(1) para pobres.
+X<nroff>
+
+Los formatos, como los paquetes y las subrutinas, se declaran, en lugar de ejecutarse, así que pueden aparecer en cualquier parte de su programa.  (Aún así, es mejor mantenerlos todos juntos). Tienen su propio espacio de nombres, distinto de todos los demás "tipos" que hay en Perl.  Esto significa que si tiene una función llamada "Foo", no es la misma cosa que el tener un formato llamado "Foo".  Sin embargo, el valor por defecto para el formato asociado con un determinado identificador de archivo es lo mismo que el nombre del identificador de archivo.  Así, el formato por defecto para STDOUT se llama "STDOUT", y el formato por defecto para el identificador de archivo TEMP se llama "TEMP".  Parecen lo mismo.  Pero no lo son.
+
+Los formatos de registro de salida se declaran como sigue:
+
+    format NOMBRE =
+    FORMLIST
+    .
+
+Si se omite el nombre, se define el formato "STDOUT". Para terminar un formato se usa un único "." en la columna 1.  FORMLIST consiste en una secuencia de líneas, cada de las cuales puede ser una de tres tipos:
+
+=over 4
+
+=item 1.
+
+Un comentario, indicado al poner un '#' en la primera columna.
+
+=item 2.
+
+El "dibujo" de una línea, dando el formato para una línea de salida.
+
+=item 3.
+
+Un argumento de línea que suministra los valores a insertar en el dibujo de línea anterior.
+
+=back
+
+Las líneas de dibujo contienen definiciones de campos de salida, intercalados con texto literal. Estas líneas no experimentan ninguna clase de interpolación de variables.
+Las definiciones de campo se hacen con un conjunto de caracteres, para iniciar y extender un campo al ancho deseado. Este es el conjunto completo de caracteres para las definiciones de campo:
+X<format, picture line>
+X<@> X<^> X<< < >> X<< | >> X<< > >> X<#> X<0> X<.> X<...>
+X<@*> X<^*> X<~> X<~~>
+
+   @    iniciar un campo normal
+   ^    iniciar un campo especial
+   <    carácter de relleno para justificar hacia la izquierda
+   |    carácter de relleno para centrar
+   >    carácter de relleno para justificar hacia la derecha
+   #    carácter de relleno para justificar un campo numérico hacia la derecha
+   0    en lugar del primer #: rellenar el número con ceros a la izquierda
+   .    punto decimal dentro de un campo numérico
+   ...  termina un campo de texto, muestra "..." como evidencia de un truncamiento
+   @*   campo de ancho variable para un valor multi línea
+   ^*   campo de ancho variable para la siguiente línea de un valor multi línea
+   ~    suprime la línea con todos los campos vacíos
+   ~~   repite la línea hasta que se agoten todos los campos
+
+Cada campo en la línea de dibujo comienza tanto con un "@" (arroba) como un "^" (circunflejo), indicando que los llamaremos, respectivamente, un campo "regular" o "especial".
+La elección de caracteres de relleno determina cuándo un campo es texto o numérico. Los operadores tilde no son parte del campo.  Veamos con detalle las diferentes posibilidades.
+
+
+=head2 Campos de texto
+X<format, text field>X<format, campo de texto>
+
+La longitud del campo se indica rellenando el campo con múltiples caracteres "E<lt>", "E<gt>", o "|" para especificar un campo no numérico con, respectivamente, justificación hacia la izquierda, hacia la derecha o centrada. 
+Para un campo normal, el valor (hasta el primer carácter de nueva línea) se toma e imprime de acuerdo a la justificación seleccionada, truncando los caracteres que haya en exceso.
+Si terminó un campo de texto con "...", se mostrarán tres puntos si se truncó el valor. Un campo especial de texto se puede usar como un bloque de relleno multilínea rudimentario; vea L</Usando el modo de relleno> para más detalles.
+
+   Ejemplo:
+      format STDOUT =
+      @<<<<<<   @||||||   @>>>>>>
+      "izq.",   "medio",  "dcha."
+      .
+   Salida:
+      izq.      medio     dcha.
+
+
+=head2 Campos numéricos
+X<#> X<format, numeric field>X<format, campo numérico>
+
+Usar "#" como carácter de relleno especifica un campo numérico, con justificación hacia la derecha. Un "." opcional define la posición del punto decimal. Con un "0" (cero) en lugar del primer "#", el número formateado se rellenará con ceros a la izquierda, si fuera necesario.
+Un campo numérico especial se deja en blanco si valor no está definido.
+Si el valor resultando excediera el ancho especificado, el campo se rellena con "#" como evidencia de un desbordamiento.
+
+   Ejemplo:
+      format STDOUT =
+      @###   @.###   @##.###  @###   @###   ^####
+       42,   3.1415,  undef,    0, 10000,   undef
+      .
+   Salida:
+        42   3.142     0.000     0   ####
+
+
+=head2 El campo @* para texto multilínea de anchura variable
+
+El campo "@*" se puede usar para imprimir valores multilínea, de forma no truncada; debería (pero no es necesario) aparecer el solo en una línea. Se elimina el carácter de avance de línea final, pero se emitan tal cual todos los demás caracteres.
+
+
+=head2 El campo ^* para texto de una-línea-cada-vez de anchura variable
+
+Como "@*", este es un campo de anchura variable. El valor suministrado debe ser una variable escalar. Perl pone la primera línea (hasta el primer "\n") del texto en el campo, y entonces recorta la parte frontal de la cadena, para que la próxima vez que se referencia a la variable, se imprima el resto del texto. 
+La variable I<no> será restaurada.
+
+   Ejemplo:
+      $texto = "línea 1\nlínea 2\nlínea 3";
+      format STDOUT =
+      Texto: ^*
+            $texto
+      ~~    ^*
+            $texto
+      .
+   Salida:
+      Texto: línea 1
+            línea 2
+            línea 3
+
+
+=head2 Especificando valores
+X<format, specifying values>X<format, especificando valores>
+
+Los valores se especifican en la siguiente línea de formato, en el mismo orden que indiquen los campos de la línea de dibujo.  Las expresiones que proporcionan los valores se deben separar con comas.  Se evalúan todos en contexto de lista antes de que se procese la línea, así que una única expresión de lista podría producir múltiples elementos de lista.  Las expresiones se pueden extender por más de una línea si se encierran entre llaves.  Así, la llave de apertura debe ser el primer elemento de la primera línea.  Si una expresión evalúa a un número con una parte decimal, y si la correspondiente línea de dibujo especifica que la parte decimal debe aparecer en la salida (es decir, cualquier línea de dibujo excepto múltiples caracteres "#" B<sin> un "." incrustado), el carácter utilizado para el punto decimal se determina por el valor de LC_NUMERIC de la configuración regional si está en activo C<use locale>.  Esto significa que, si, por ejemplo, en el entorno en tiempo de ejecución se especifica una configuración regional en Alemán, se usará "," en lugar del valor por defecto ".".  Vea L<perllocale> y L<"WARNINGS"> para más información.
+
+
+=head2 Usando el modo de relleno
+X<format, fill mode>X<format, modo de relleno>
+
+En campos de texto el circunflejo habilita una clase de modo relleno.  En lugar de una expresión arbitraria, el valor suministrado debe ser una variable escalar que contiene una cadena de texto.  Perl pone la siguiente parte del texto en el campo, y entonces recorta la parte frontal de la cadena, para que la próxima vez que se referencia a la variable, se imprima el resto del texto.  (Sí, esto significa que la variable queda alterada durante la ejecución de la llamada write(), y no es restaurada).  La siguiente porción del texto se determina por un algoritmo muy simple de ruptura de líneas. Puede usar el carácter de retorno de carro (C<\r>) para forzar una ruptura de línea. Puede cambiar el qué caracteres son legales para la ruptura cambiando la variable C<$:> (es decir, $FORMAT_LINE_BREAK_CHARACTERS si usa el módulo English) a una lista de los caracteres deseados.
+
+Normalmente usted podría usar una secuencia de campos en una pila vertical asociada con la misma variable escalar para imprimir un bloque de texto. Podría desear terminar el campo final con el texto "...", que aparecerá en la salida si el texto es demasiado largo como para aparecer completamente.  
+
+
+=head2 Suprimir líneas donde todos los campos están vacíos
+X<format, suppressing lines>X<format, suprimiendo líneas>
+
+Usando campos circunflejos puede producir líneas donde todos los campos son blancos. Puede suprimir tales líneas poniendo un carácter "~" (tilde) en cualquier parte de la línea.  La tilde se traducirá a un espacio, en la salida.
+
+
+=head2 Repitiendo líneas de formato
+X<format, repeating lines>X<format, repitiendo líneas>
+
+Si pone dos caracteres tilde consecutivos "~~" en cualquier parte de la línea, la línea se repetirá hasta que se agoten todos los campos en la línea, es decir, hasta que quede indefinida. Para los campos de texto especiales (circunflejo) esto ocurrirá tarde o temprano, pero si usa un campo de texto de la variedad arroba, ¡la expresión que suministre es mejor que no devuelva siempre lo mismo! (C<shift(@f)> es un ejemplo sencillo que podría funcionar).  No use un campo numérico normal (arroba) en tales líneas, porque nunca dejará de imprimir.
+
+
+=head2 Procesado de la parte superior del formato
+X<format, top of form> X<top> X<header>X<format, parte superior> X<cabecera>
+
+El procesamiento de la parte superior se maneja por defecto con un formato con el mismo nombre que el identificador de archivo actual, con el añadido de "_TOP".
+Se ejecutará al comienzo de cada página.  Vea L<perlfunc/write>.
+
+Ejemplos:
+
+ # un informe del archivo /etc/passwd
+ format STDOUT_TOP =
+                         Archivo de contraseñas
+ Nombre              Login    Oficina  Uid   Gid Dir.
+ ------------------------------------------------------------------
+ .
+ format STDOUT =
+ @<<<<<<<<<<<<<<<<<< @||||||| @<<<<<<@>>>> @>>>> @<<<<<<<<<<<<<<<<<
+ $nombre,            $login,  $oficina,$uid,$gid,$dir
+ .
+
+
+ # un informe a partir de un formato de informe de errores
+ format STDOUT_TOP =
+                         Informes de errores
+ @<<<<<<<<<<<<<<<<<<<<<<<     @|||         @>>>>>>>>>>>>>>>>>>>>>>>
+ $sistema,                     $%,         $fecha
+ ------------------------------------------------------------------
+ .
+ format STDOUT =
+ Tema: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+          $tema
+ Índice: @<<<<<<<<<<<<<<<<<<<<<<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        $indice,                      $descripcion
+ Prioridad: @<<<<<<<<<< Fecha: @<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+           $prioridad,       $fecha,  $descripcion
+ Desde: @<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+       $desde,                        $descripcion
+ Asignado a: @<<<<<<<<<<<<<<<<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+              $programador,           $descripcion
+ ~                                    ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                      $descripcion
+ ~                                    ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                      $descripcion
+ ~                                    ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                      $descripcion
+ ~                                    ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                      $descripcion
+ ~                                    ^<<<<<<<<<<<<<<<<<<<<<<<...
+                                      $descripcion
+ .
+
+Es posible entremezclar print() con write() en el mismo canal de salida, pero tendrá que manejar C<$-> (C<$FORMAT_LINES_LEFT>, líneas restantes en la página) usted mismo.
+
+=head2 Variables de formato
+X<format variables>
+X<format, variables>
+
+El nombre del formato actual se almacena en la variable C<$~> (C<$FORMAT_NAME>), y el nombre del formato de la parte superior en C<$^> (C<$FORMAT_TOP_NAME>).
+El número de página de salida actual se almacena en C<$%> (C<$FORMAT_PAGE_NUMBER>), y el número de líneas en la página está en C<$=> (C<$FORMAT_LINES_PER_PAGE>).
+Si hay que realizar un vaciado del búfer de salida en este identificador, se almacena en C<$|> (C<$OUTPUT_AUTOFLUSH>).  La cadena de salida antes de cada cabecera de página (excepto la primera) se almacena en C<$^L> (C<$FORMAT_FORMFEED>).  Estas variables se establecen por cada identificador de archivo, así que necesitará hacer un select() para hacer un cambio en ellas:
+
+    select((select(OUTF),
+	    $~ = "Mi_otro_formato",
+	    $^ = "Mi_formato_de_cabecera"
+	   )[0]);
+
+Bastante feo, ¿verdad?  Aún así, es un modismo bastante común, así que no se sorprenda cuando lo vea.  Al menos, puede usar una variable temporal para almacenar el identificador de archivo anterior: (esto es, generalmente, un enfoque mejor, porque, no solo mejora la legibilidad, sino que ahora tiene un paso intermedio cuando use el modo de paso simple del depurador):
+
+    $ofh = select(OUTF);
+    $~ = "Mi_otro_formato";
+    $^ = "Mi_formato_de_cabecera";
+    select($ofh);
+
+Si usa el módulo English, incluso puede leer los nombres de las variables:
+
+    use English;
+    $ofh = select(OUTF);
+    $FORMAT_NAME     = "Mi_otro_formato";
+    $FORMAT_TOP_NAME = "Mi_formato_de_cabecera";
+    select($ofh);
+
+Pero seguirá teniendo esos select() tan graciosos.  Así que, simplemente, utilice el módulo FileHandle.  Ahora, puede acceder a estas variables especiales usando los nombres de los métodos en minúsculas:
+
+    use FileHandle;
+    format_name     OUTF "Mi_otro_formato";
+    format_top_name OUTF "Mi_formato_de_cabecera";
+
+¡Mucho mejor!
+
+=head1 NOTAS
+
+Ya que los valores de la línea pueden contener expresiones arbitrarias (para los campos de arrobas, no para los campos de circunflejos), puede agruparlos con un procesado más sofisticado usando otras funciones, como sprintf() o una propia suya.  Por ejemplo:
+
+    format Ident =
+	@<<<<<<<<<<<<<<<
+	&comificar($n)
+    .
+
+Para obtener una arroba o circunflejo real, en el campo, haga esto:
+
+    format Ident =
+    Aquí tengo una @.
+	    "@"
+    .
+
+Para centrar una línea de texto completa, haga algo como esto:
+
+    format Ident =
+    @|||||||||||||||||||||||||||||||||||||||||||||||
+	    "Alguna línea de texto"
+    .
+
+No existe una forma incorporada para decir "fluye esto a la parte derecha de la página, sin importar lo ancha que sea". Tendrá que especificar dónde va.
+El verdaderamente desesperado puede generar su propio formato al vuelo, basado en el número de columnas actual, y entonces, eval()uarlo:
+
+    $formato = "format STDOUT = \n"
+             . '^' . '<' x $columnas . "\n"
+             . '$entrada' . "\n"
+             . "\t^" . "<" x ($columnas-8) . "~~\n"
+             . '$entrada' . "\n"
+             . ".\n";
+    print $formato if $Depurando;
+    eval $formato;
+    die $@ if $@;
+
+que generaría un formato que se parecería a algo como esto:
+
+ format STDOUT =
+ ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ $entrada
+         ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<~~
+ $entrada
+ .
+
+Aquí hay un pequeño programa que funciona como el fmt(1):
+
+ format =
+ ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ~~
+ $_
+
+ .
+
+ $/ = '';
+ while (<>) {
+     s/\s*\n\s*/ /g;
+     write;
+ }
+
+=head2 Pies de página
+X<format, footer> X<footer> X<pies de página>
+
+Mientras $FORMAT_TOP_NAME contiene el nombre del formato de la cabecera actual, no existe un mecanismo correspondiente para hacer lo mismo con el pie de página.  Uno de los mayores problemas es no saber cómo va a ser de grande un formato, hasta que lo evalúe.  Está en la lista TODO (POR HACER).
+
+Existe una estrategia: si tiene un pie de página de un tamaño fijo, puede obtener los pies de página comprobando $FORMAT_LINES_LEFT antes de cada write() e imprimir usted mismo el pie de página, si es necesario.
+
+Aquí hay otra estrategia: abra una tubería a usted mismo, usando C<open(YOMISMO, "|-")> (vea L<perlfunc/open>) y siempre use write() a YOMISMO en lugar de a STDOUT.
+Tendrá a sus procesos hijo masajeando su STDIN para colocar las cabeceras y pies de página a lo que usted quiera.  No muy conveniente, pero factible.
+
+=head2 Acceder a las partes internas del formateo
+X<format, internals> X<format, interno>
+
+Para el acceso a bajo nivel del mecanismo de formateo, puede usar formline() y acceder C<$^A> (la variable $ACCUMULATOR) directamente.
+
+Por ejemplo:
+
+    $str = formline <<'END', 1,2,3;
+    @<<<  @|||  @>>>
+    END
+
+    print "¡Uau, acabo de almacenar '$^A' en el acumulador!\n";
+
+O hacer una subrutina swrite(), que es a write() lo que es sprintf() a printf(), haga esto:
+
+    use Carp;
+    sub swrite {
+	croak "uso: swrite DIBUJO ARGS" unless @_;
+	my $formato = shift;
+	$^A = "";
+	formline($formato,@_);
+	return $^A;
+    }
+
+    $cadena = swrite(<<'END', 1, 2, 3);
+ Compruébame
+ @<<<  @|||  @>>>
+ END
+    print $cadena;
+
+=head1 ADVERTENCIAS
+
+El punto solitario que termina el formato puede también terminar un mensaje de correo pasado a través de un gestor de correo de Internet mal configurado (y, basado en la experiencia, tal falta de configuración es una regla, no la excepción).  Así que cuando envíe un código de formato a través del correo electrónico, debería sangrarlo para que el punto de fin de formato no esté en el margen izquierdo; esto impedirá que el SMTP lo corte.
+
+Las variables léxicas (declaradas con "my") no son visibles dentro de un formato a menos que el formato se declare dentro del ámbito de la variable léxica.
+
+Si el entorno de un programa especifica una configuración regional LC_NUMERIC y C<use locale> está en vigor cuando el formato está declarado, se utiliza la configuración regional para especificar el carácter de punto decimal en la salida formateada.  La salida formateada no se puede controlar por C<use locale> en el momento cuando se llama a write(). Vea L<perllocale> para una explicación de la gestión de la configuración regional.
+
+Dentro de las cadenas que no se muestran en un campo de texto de tamaño fijo, cada carácter de control se sustituye por un espacio. (Pero recuerde el significado especial de C<\r> cuando use el modo de relleno). Esto se hace así para evitar el desalineamiento cuando los caracteres de control "desaparecen" en algún medio de salida.
+
