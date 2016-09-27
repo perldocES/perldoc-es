@@ -1,0 +1,635 @@
+=head1 NOMBRE
+
+perldebtut - Tutorial de depuración
+
+=head1 DESCRIPCIÓN
+
+Una (muy) ligera introducción en el uso del depurador de perl, y un índice a la actual y más profundas fuentes de información en el tema del depurado de programas perl.  
+
+Existe un extraordinario número de personas ahí fuera que parece no saber nada sobre el uso del depurador de perl, aunque estén usando el lenguaje todos los días.  
+Este documento es para ellos.  
+
+
+=head1 use strict
+
+Lo primero de todo, hay algunas cosas que puede hacer su vida un poco más sencilla cuando depure programas perl, sin ni siquiera usar el depurador.  Para demostrarlo, aquí tiene un sencillo script, de nombre "hello", con un problema:
+
+	#!/usr/bin/perl
+
+	$var1 = 'Hello World'; # siempre quiso hacer esto :-)
+	$var2 = "$varl\n";
+
+	print $var2; 
+	exit;
+
+Mientras que esto compila y se ejecuta correctamente, probablemente no hace lo que se espera. Concretamente, no imprime "Hello World\n"; por otro lado, hace exactamente lo que se ha dicho, que es lo que los ordenadores suelen hacer.  Es decir, imprimirá un carácter de nueva línea, y obtendrá lo que parece que es una línea en blanco.  Parece que existen dos variables, cuando (debido a un error ortográfico) realmente son 3.
+
+	$var1 = 'Hello World';
+	$varl = undef;
+	$var2 = "\n";
+
+Para cazar esta clase de problema, podemos forzar que cada variable debe ser declarada antes de usarse, por medio del módulo strict, poniendo 'use strict;' después de la primera línea del I<script>.
+
+Ahora, cuando lo ejecute, perl se quejará sobre que existen 3 variables no declaradas, y obtenemos cuatro mensajes de error porque una de las variables se referencia dos veces:
+
+ Global symbol "$var1" requires explicit package name at ./t1 line 4.
+ Global symbol "$var2" requires explicit package name at ./t1 line 5.
+ Global symbol "$varl" requires explicit package name at ./t1 line 5.
+ Global symbol "$var2" requires explicit package name at ./t1 line 7.
+ Execution of ./hello aborted due to compilation errors.     
+
+¡Horrible! y para arreglar esto declaramos todas las variables de forma explícita, y ahora nuestro I<script> se parece a esto:	
+
+	#!/usr/bin/perl
+	use strict;
+
+	my $var1 = 'Hello World';
+	my $varl = undef;
+	my $var2 = "$varl\n";
+
+	print $var2; 
+	exit;
+
+Ahora hacemos (siempre es una buena idea) una comprobación de sintaxis antes de intentar ejecutarlo de nuevo:
+
+	> perl -c hello
+	hello syntax OK 
+
+Y ahora cuando lo ejecutamos, seguimos obteniendo "\n", pero al menos sabemos por qué.  Solo con haber compilado este I<script> ha expuesto la variable '$varl' (con la letra 'l') y, simplemente, cambiando $varl a $var1 soluciona el problema.
+
+
+=head1 Mirando a los datos y a -w y v
+
+Ok, pero ¿qué pasa cuando realmente quiere ver sus datos, qué es lo que hay en esa variable dinámica, justo antes de usarla?
+
+	#!/usr/bin/perl 
+	use strict;
+
+	my $clave = 'bienvenido';
+	my %datos = (
+		'este' => qw(ese), 
+		'tom' => qw(y jerry),
+		'bienvenido' => q(Hello World),
+		'zip' => q(bienvenido),
+	);
+	my @datos = keys %datos;
+
+	print "$datos{$clave}\n";
+	exit;                               
+
+Parece que está bien, después de pasar la comprobación de sintaxis (perl -c script), lo ejecutamos y todo lo que obtenemos es, otra vez, ¡una línea en blanco!  Hmmmm.
+
+Aquí, una aproximación común a la depuración, sería el de salpicar unas pocas sentencias print, para añadir una comprobación justo antes de que imprimamos nuestros datos, y otro justo después:
+
+	print "Todo OK\n" if grep($clave, keys %datos);
+	print "$datos{$clave}\n";
+	print "hecho: '$datos{$clave}'\n";
+
+He intentarlo de nuevo:
+
+	> perl data
+	Todo OK     
+
+	hecho: ''
+
+Después de quedarnos mirando durante un rato el mismo trozo de código, y no capaces de distinguir los árboles del bosque, nos hacemos una taza de café e intentamos otro enfoque.  Así, traemos a la caballería dándole a perl la opción 'B<-d>' en la línea de comandos:
+
+	> perl -d data 
+	Default die handler restored.
+
+	Loading DB routines from perl5db.pl version 1.07
+	Editor support available.
+
+	Enter h or `h h' for help, or `man perldebug' for more help.
+
+	main::(./data:4):     my $clave = 'bienvenido';   
+
+Ahora, lo que hemos hecho es lanzar el depurador integrado en nuestro I<script>.  Se ha parado en la primera línea del código ejecutable y queda esperando por instrucciones.
+
+Antes de que vayamos más allá, querrá saber cómo salir del depurador: use solo la letra 'B<q>', no las palabras 'quit' o 'exit':
+
+	DB<1> q
+	>
+
+De esta manera, regresa de nuevo a su césped casero.
+
+
+=head1 ayuda
+
+Encienda otra vez el depurador sobre su I<script> y miraremos en el menú de ayuda. 
+Existen un par de formas de llamar a la ayuda: con un simple 'B<h>' obtendrá una lista resumen de la ayuda, 'B<|h>' (pipe-h) entubará la ayuda a través de su paginador (que, probablemente, será 'more' o 'less') y, finalmente, 'B<h h>' (h-space-h) le ofrecerá la pantalla de ayuda completa.  Aquí hay un resumen de la página:
+
+DB<1>h
+
+ Lista/busca líneas fuente:              Controla ejecución del I<script>:
+  l [ln|sub]  Lista código fuente         T           Traza de pila
+  - o  .      Lista línea anterior/actual s [expr]    Un solo paso
+                                                               [en expr]
+  v [línea]   Ver alrededor de línea      n [expr]    Siguiente, saltando
+                                                                    subs
+  f archivo   Ver fuente en archivo       <CR/Enter>  Repetir último n o s
+  /patrón/ ?patr.?   Buscar adel./atrás   r           Regresar desde
+                                                              subrutina
+  M           Muestra versiones módulo    c [ln|sub]  Continuar hasta
+                                                                posición
+ Controla el depurador:                   L           Lista paradas/visores/
+                                                                 acciones
+  o [...]     Establece opciones          t [expr]    (Des)act. la traza
+                                                            [expr. traza]
+  <[<]|{[{]|>[>] [cmd] Pre/post prompt    b [ln|evento|sub] [cnd] Establace
+                                                              punto de parada
+  ! [N|pat]   Rehacer comando anterior    B ln|*      Borrar uno/todos los
+                                                             puntos de parada
+  H [-num]    Muestra últimos num. cmd.   a [ln] cmd  Hacer cmd. antes de la línea
+  = [a val]   Define/lista un alias       A ln|*      Borra una/todas las
+                                                                 acciones
+  h [db_cmd]  Obtener ayuda del cmd.      w expr      Añade un visor
+                                                              expresión
+  h h         Página de ayuda completa    W expr|*    Borra una/todas los visores
+                                                                   exprs
+  |[|]db_cmd  Manda salida al paginador   ![!] syscmd Ejecuta cmd. en un
+                                                              subproceso
+  q o ^D      Salir                       R           Intentar un reinicio
+ Examen de datos:      expr     Ejecute código perl, ver también: s,n,t expr
+  x|m expr       Evalúa expr. en contexto lista, vuelca el resultado o lista
+                                                                métodos
+  p expr         Imprime expresión (usa paquete actual del I<script>).
+  S [[!]pat]     Lista nombres de subr. [no] coincidentes con el patrón
+  V [Pk [Var.]]  Lista variables en paquete.  Las vars. pueden ser ~patrón o
+                                                               !patrón.
+  X [Vars.]      Lo mismo que "V paquete_actual [Vars.]".
+  y [n [Vars.]]  Lista léxicas en el <n>-ámbito más alto.  Vars. es lo mismo que V.
+ Para más ayuda, escriba h letra_comando, o ejecuta man perldebug para toda la documentación. 
+
+¡Hay más opciones confusiones de los que una vara pueda hacer caer!  No es tan malo como parece y es muy útil saber más sobre todas ellas, ¡y también divertido!
+
+Hay un par de ellas que es útil conocerlas aunque sea aproximadamente.  Pensaría que estamos usando cualquier biblioteca en cualquier momento, pero 'B<M>' mostrará qué módulos están cargados en este momento, y su número de versión, mientras que 'B<m>' mostrará los métodos, y 'B<S>' muestra todas las subrutinas (por patrón) como se muestra a continuación.  'B<V>' y 'B<X>' muestra variables en el programa por ámbito de paquete y se puede ajustar por patrón. 
+
+	DB<2>S str 
+	dumpvar::stringify
+	strict::bits
+	strict::import
+	strict::unimport  
+
+Usar 'X' y sus primos le requiere no usar el tipo de identificador ($@%), solo el 'nombre':
+
+	DM<3>X ~err
+	FileHandle(stderr) => fileno(2)    
+
+Recuerde que tenemos un problema en nuestro pequeño programa; deberíamos echar un vistazo en el lugar donde estamos, y qué aspecto tiene los datos. Lo primero de todo, veamos algo de código en nuestro posición actual (la primera línea de código, en nuestro caso), con 'B<v>':
+
+	DB<4> v
+	1       #!/usr/bin/perl
+	2:      use strict;
+	3
+	4==>    my $clave = 'bienvenido';
+	5:      my %datos = (
+	6               'este' => qw(ese),
+	7               'tom' => qw(y jerry),
+	8               'bienvenido' => q(Hello World),
+	9               'zip' => q(bienvenido),
+	10      );                                 
+
+En la línea número 4 es un puntero de apoyo, que indica dónde estamos ahora.  Para ver más código, pulse 'v' otra vez:
+
+	DB<4> v
+	8               'bienvenido' => q(Hello World),
+	9               'zip' => q(bienvenido),
+	10      );
+	11:     my @datos = keys %datos;
+	12:     print "Todo OK\n" if grep($clave, keys %datos);
+	13:     print "$datos{$clave}\n";
+	14:     print "done: '$datos{$clave}'\n";
+	15:     exit;      
+
+Y si quiere listar de nuevo la línea 5, escriba 'l 5', (note el espacio):
+
+	DB<4> l 5
+	5:      my %datos = (
+
+En este caso, no hay mucho que ver, pero, normalmente, existen páginas de código que podemos saltarnos, y 'l' puede ser muy útil.  Par reiniciar su vista a la línea donde estamos a punto de ejecutar, escriba un punto solitario '.':
+
+	DB<5> .
+	main::(./data_a:4):     my $clave = 'bienvenido';  
+
+La línea muestra que es la única que va a ejecutarse B<a continuación>, si todavía no ha ocurrido.  Así que mientras que podemos imprimir una variable con la letra 'B<p>', en este punto todo lo que obtenemos es un valor vacío (indefinido).  Lo que necesitamos es saltar a través de la siguiente sentencia ejecutable con un 'B<s>':
+
+	DB<6> s
+	main::(./data_a:5):     my %datos = (
+	main::(./data_a:6):             'este' => qw(ese),
+	main::(./data_a:7):             'tom' => qw(y jerry),
+	main::(./data_a:8):             'bienvenido' => q(Hello World),
+	main::(./data_a:9):             'zip' => q(bienvenido),
+	main::(./data_a:10):    );   
+
+Ahora podemos echar un vistazo en la primera variable ($clave):
+
+	DB<7> p $clave 
+	bienvenido 
+
+La línea 13 es donde está la acción, así que permitamos continuar con la letra 'B<c>' que, al mismo tiempo, inserta un punto de parada 'de-solo-un-uso' en la línea indicada o en la subrutina:
+
+	DB<8> c 13
+	Todo OK
+	main::(./data_a:13):    print "$datos{$clave}\n";
+
+Hemos pasado nuestra comprobación (donde se imprimía 'Todo OK') y hemos parado justo antes de llegar al meollo de nuestra tarea.  Podríamos intentar imprimir un par de variables para ver qué está pasando:
+
+	DB<9> p $datos{$clave}
+
+No hay mucho, aquí; veamos nuestro hash:
+
+	DB<10> p %datos
+	Hello Worldziptomybienvenidojerrybienvenidoesteese 
+
+	DB<11> p keys %datos
+	Hello Worldtombienvenidojerryeste  
+
+Bien, esto no es fácil de leer, y usando el útil manual (B<h h>), el comando 'B<x>' parece prometedor:
+
+	DB<12> x %datos
+	0  'Hello World'
+	1  'zip'
+	2  'tom'
+	3  'y'
+	4  'bienvenido'
+	5  undef
+	6  'jerry'
+	7  'bienvenido'
+	8  'este'
+	9  'ese'     
+
+Esto no ayuda mucho: hay una pareja de bienvenidas, pero no hay indicación de cuáles son claves, y cuáles son valores; solo es un listado de un volcado de array y, en este caso, no es particularmente útil.  El truco, aquí, es el de usar una B<referencia> a la estructura de datos:
+
+	DB<13> x \%datos
+	0  HASH(0x8194bc4)
+	   'Hello World' => 'zip'
+	   'jerry' => 'bienvenido'
+	   'este' => 'ese'
+	   'tom' => 'y'
+	   'bienvenido' => undef  
+
+La referencia es volcada como tal y podemos finalmente ver con qué estamos tratando. 
+Nuestro entrecomillado era perfectamente válido pero equivocado para nuestros propósitos, con un 'y jerry' tratado como dos palabras separadas, en lugar de una frase, y rompiendo la alineación de elementos pares de la estructura del hash.
+
+La opción 'B<-w>' debería habernos avisado sobre esto, si lo hubiéramos puesto al principio, y nos habríamos ahorrado un montón de problemas: 
+
+	> perl -w data
+	Odd number of elements in hash assignment at ./data line 5.    
+
+Fijamos nuestro entrecomillado: 'tom' => q(y jerry), y lo ejecutamos de nuevo, y esta vez obtenemos la salida esperada:
+
+	> perl -w data
+	Hello World
+
+
+Mientras estamos aqui, fijémonos en el comando 'B<x>': es realmente útil y gentilmente volcará referencias anidadas, objetos completos, parciales -cualquier cosa que le pasemos:
+
+Vamos a crear un objeto rápido, y lo e-x-plosionaremos. Primero arrancaremos el depurados: necesita alguna forma de entrada desde el STDIN, así que le damos algo que no nos comprometa: un cero:
+
+ > perl -de 0
+ Default die handler restored.
+
+ Loading DB routines from perl5db.pl version 1.07
+ Editor support available.
+
+ Enter h or `h h' for help, or `man perldebug' for more help.
+
+ main::(-e:1):   0
+
+Ahora construyamos un objeto al vuelo en un par de líneas (atención a la barra diagonal inversa):
+
+ DB<1> $obj = bless({'id_unico'=>'123', 'atr'=> \
+ cont: 	{'col' => 'negro', 'cosas' => [qw(este ese etc.)]}}, 'MI_clase')
+
+Y ahora veamos su aspecto:
+
+  	DB<2> x $obj
+ 0  MI_clase=HASH(0x828ad98)
+   		'atr' => HASH(0x828ad68)
+      	'col' => 'negro'
+      	'cosas' => ARRAY(0x828abb8)
+         	0  'este'
+         	1  'ese'
+         	2  'etc.'
+   		'id_unico' => 123       
+  	DB<3>
+
+¿A que es útil?  Ahora puede evaluar aquí casi cualquier cosa, y experimentar con trozos de código o exp. reg. hasta que las vacas vuelvan a casa:
+
+ DB<3> @datos = qw(this that the other atheism leather theory scythe)
+
+ DB<4> p 'saw -> '.($cnt += map { print "\t:\t$_\n" } grep(/the/, sort @datos))
+ atheism
+ leather
+ other
+ scythe
+ the
+ theory
+ saw -> 6
+
+Si quiere ver el histórico de comandos, escriba 'B<H>':
+
+ DB<5> H
+ 4: p 'saw -> '.($cnt += map { print "\t:\t$_\n" } grep(/the/, sort @datos))
+ 3: @datos = qw(this that the other atheism leather theory scythe)
+ 2: x $obj
+ 1: $obj = bless({'id_unico'=>'123', 'atr'=>
+ {'col' => 'negro', 'cosas' => [qw(este ese etc.)]}}, 'MI_clase')
+ DB<5>
+
+Y si quiere repetir cualquier comando anterior, use la exclamación: 'B<!>':
+
+ DB<5> !4
+ p 'saw -> '.($cnt += map { print "$_\n" } grep(/the/, sort @datos))
+ atheism
+ leather
+ other
+ scythe
+ the
+ theory
+ saw -> 12
+
+Para más información sobre referencias vea L<perlref> y L<perlreftut>
+
+
+=head1 Dando un paseo por el código
+
+Aquí hay un programa sencillo que convierte entre Celsius y Farenheit, que también tiene un problema:
+
+ #!/usr/bin/perl -w
+ use strict;
+
+ my $arg = $ARGV[0] || '-c20';
+
+ if ($arg =~ /^\-(c|f)((\-|\+)*\d+(\.\d+)*)$/) {
+	my ($deg, $num) = ($1, $2);
+	my ($in, $out) = ($num, $num);
+	if ($deg eq 'c') {
+		$deg = 'f';
+		$out = &c2f($num);
+	} else {
+		$deg = 'c';
+		$out = &f2c($num);
+	}
+	$out = sprintf('%0.2f', $out);
+	$out =~ s/^((\-|\+)*\d+)\.0+$/$1/;
+	print "$out $deg\n";
+ } else {
+	print "Uso: $0 -[c|f] num\n";
+ }
+ exit;
+
+ sub f2c {
+	my $f = shift;
+	my $c = 5 * $f - 32 / 9;
+	return $c;
+ }
+
+ sub c2f {
+	my $c = shift;
+	my $f = 9 * $c / 5 + 32;
+	return $f;
+ }
+
+
+Por alguna razón, la conversión de Farenheit a Celsius falla a la hora de devolver su salida.  Esto es lo que hace:
+
+ > temp -c0.72
+ 33.30 f
+
+ > temp -f33.3
+ 162.94 c
+
+¡No muy consistente!  Pondremos manualmente un punto de parada en el código y lo ejecutaremos bajo el depurador para ver qué sucede.  Un punto de parada es un indicador, en que el depurador se ejecutará sin interrupción, hasta que llegue al punto de parada, en que parará y ofrecerá un prompt para esperar más interacción.  En un uso normal, estos comandos del depurador se ignoran completamente; y son seguros -si acaso un poco liosos, pero suficientes para usarse-.
+
+	my ($in, $out) = ($num, $num);
+	$DB::single=2; # ¡insertar en la línea 9!
+	if ($deg eq 'c') 
+		...
+
+	> perl -d temp -f33.3
+	Default die handler restored.
+
+	Loading DB routines from perl5db.pl version 1.07
+	Editor support available.
+
+	Enter h or `h h' for help, or `man perldebug' for more help.
+
+	main::(temp:4): my $arg = $ARGV[0] || '-c100';     
+
+Simplemente continuaremos hacia abajo hacia nuestro punto de parada pre-instalado, con un 'B<c>':
+
+  	DB<1> c
+	main::(temp:10):                if ($deg eq 'c') {   
+
+Seguido por un comando de vista para ver dónde estamos:
+
+	DB<1> v
+	7:              my ($deg, $num) = ($1, $2);
+	8:              my ($in, $out) = ($num, $num);
+	9:              $DB::single=2;
+	10==>           if ($deg eq 'c') {
+	11:                     $deg = 'f';
+	12:                     $out = &c2f($num);
+	13              } else {
+	14:                     $deg = 'c';
+	15:                     $out = &f2c($num);
+	16              }                             
+
+Y un comando de impresión para mostrar qué valores estamos usando en estos momentos:
+
+	DB<1> p $deg, $num
+	f33.3
+
+Podemos poner otro punto de parada en cualquier línea, comenzando con un carácter de dos puntos. Usaremos la línea 17, al regresar de la subrutina, y queremos hacer una pausa cuando lleguemos allí:
+
+	DB<2> b 17
+
+No existe retroalimentación a partir de aquí, pero puede ver qué puntos de parada se han establecido usando el comando 'L':
+
+	DB<3> L
+	temp:
+ 		17:            print "$out $deg\n";
+   		break if (1)     
+
+Note que para borrar un punto de parada usa 'B'.
+
+Ahora continuaremos hacia abajo en nuestra subrutina, esta vez, en lugar de usar un número de línea, usaremos el nombre de la subrutina, seguido por el conocido 'v':
+
+	DB<3> c f2c
+	main::f2c(temp:30):             my $f = shift;  
+
+	DB<4> v
+	24:     exit;
+	25
+	26      sub f2c {
+	27==>           my $f = shift;
+	28:             my $c = 5 * $f - 32 / 9; 
+	29:             return $c;
+	30      }
+	31
+	32      sub c2f {
+	33:             my $c = shift;   
+
+
+Note que si existe una llamada a una subrutina entre nosotros y la línea 29, y queremos ir B<paso-a-paso> a través de ella, podríamos usar el comando 'B<s>', y si quisiéramos obviar su ejecución usaremos 'B<n>' que puede ejecutar la subrutina pero sin descender dentro de ella, sin inspeccionarla.  En este caso, sin embargo, simplemente continuaremos hacia abajo, hasta la línea 29:
+
+	DB<4> c 29  
+	main::f2c(temp:29):             return $c;
+
+Y echar un vistazo en el valor de retorno:
+
+	DB<5> p $c
+	162.944444444444
+
+Esa no es la respuesta correcta -en absoluto-, pero la suma parece correcta.  Me pregunto si podemos hacer algo con la precedencia de operadores.  Intentaremos un par de posibilidades, con nuestra suma:
+
+	DB<6> p (5 * $f - 32 / 9)
+	162.944444444444
+
+	DB<7> p 5 * $f - (32 / 9) 
+	162.944444444444
+
+	DB<8> p (5 * $f) - 32 / 9
+	162.944444444444
+
+	DB<9> p 5 * ($f - 32) / 9
+	0.722222222222221
+
+:-) ¡esto gusta más!  Vale, ahora podemos establecer nuestra variable de retorno, y regresaremos de la subrutina con un 'r':
+
+	DB<10> $c = 5 * ($f - 32) / 9
+
+	DB<11> r
+	scalar context return from main::f2c: 0.722222222222221
+
+Parece que está bien; ahora continuaremos hasta el final del I<script>:
+
+	DB<12> c
+	0.72 c 
+	Debugged program terminated.  Use q to quit or R to restart,
+  	use O inhibit_exit to avoid stopping after program termination,
+  	h q, h R or h O to get additional info.   
+
+Un arreglo rápido en la línea problemática (insertar los paréntesis que faltan) en el programa actual, y habremos terminado.
+
+
+=head1 Espacio reservado para a, w, t, T
+
+Acciones, variables vigiladas, trazas de pila, etc.: en la lista TODO (por hacer).
+
+	a 
+
+	w 
+
+	t 
+
+	T
+
+
+=head1 EXPRESIONES REGULARES
+
+¿Nunca quiso saber qué aspecto tiene una I<regex>?  Necesitará perl compilado con el indicador DEBUGGING para verlo:
+
+  > perl -Dr -e '/^pe(a)*rl$/i'
+  Compiling REx `^pe(a)*rl$'
+  size 17 first at 2
+  rarest char
+   at 0
+     1: BOL(2)
+     2: EXACTF <pe>(4)
+     4: CURLYN[1] {0,32767}(14)
+     6:   NOTHING(8)
+     8:   EXACTF <a>(0)
+    12:   WHILEM(0)
+    13: NOTHING(14)
+    14: EXACTF <rl>(16)
+    16: EOL(17)
+    17: END(0)
+  floating `'$ at 4..2147483647 (checking floating) stclass
+    `EXACTF <pe>' anchored(BOL) minlen 4
+  Omitting $` $& $' support.
+
+  EXECUTING...
+
+  Freeing REx: `^pe(a)*rl$'
+
+¿Realmente quiere saberlo? :-)
+Para más detalles sangrientos a la hora de trabajar con expresiones regulares, eche un vistazo a 
+L<perlre>, L<perlretut> y para decodificar las etiquetas misteriosas (BOL, CURLYN, etc., de más arriba), vea L<perldebguts>.
+
+
+=head1 TRUCOS DE SALIDA
+
+Para obtener la salida desde su registro de actividad de errores, y no perder ningún mensaje en el búfer del sistema operativo, inserte una línea como esta, al inicio de su I<script>:
+
+	$|=1;	
+
+Para mirar la parte final de un archivo de registro de actividad que crece de forma dinámica, (desde la línea de comandos):
+
+	tail -f $error_log
+
+Envolver todas las llamadas die en una rutina de gestión puede ser útil para ver cómo, y desde dónde se han llamado; vea L<perlvar> tiene más información:
+
+    BEGIN { $SIG{__DIE__} = sub { require Carp; Carp::confess(@_) } }
+
+Diversas técnicas útiles para la redirección de los identificadores de archivo STDOUT y STDERR se explican en L<perlopentut> y L<perlfaq8>.
+
+
+=head1 CGI
+
+Solo un truco rápido, aquí, para todos los programadores CGI que no pueden adivinar cómo, en este mundo, obtener el I<prompt> de 'esperando por entrada', cuando se ejecuta su I<script> CGI desde la línea de comandos, intente algo como esto:
+
+	> perl -d my_cgi.pl -nodebug 
+
+Naturalmente, en L<CGI> y L<perlfaq9> le contará más.
+
+
+=head1 GUI
+
+El interfaz de línea de comandos está estrechamente integrado con una extensión de B<emacs> y también existe una interfaz con B<vi>.  
+
+Sin embargo, no tiene que hacer todo esto en la línea de comandos; existe por ahí unas pocas opciones gráficas.  Lo más agradable de todo esto es que puede llevar un ratón sobre una variable y un volcado de sus datos aparecerán en una ventana apropiada, o en un globo; ya no más el tener que escribir 'x $variable' :-)
+
+En particular, otee lo siguiente:
+
+B<ptkdb> envoltorio basado en perlTK para el depurador integrado
+
+B<ddd> I<data display debugger> (depurador visualizador de datos)
+
+B<PerlDevKit> y B<PerlBuilder> son específicos de NT
+
+NB. (se agradecerá más información sobre estos y otros más).
+
+
+=head1 RESUMEN
+
+Hemos visto cómo animar en el uso de buenas prácticas de programación con B<use strict> y B<-w>.  Podemos ejecutar el depurador perl con B<perl -d scriptname> para inspeccionar sus datos desde el interior del depurador perl con los comandos B<p> y B<x>.  Puede andar a través de su código, poner puntos de parada con B<b> y saltar por el código con B<s> o B<n>, continuar con B<c> y regresar de una subr. con B<r>.  Es material bastante intuitivo cuando bajas a su nivel.  
+
+Existe, naturalmente, mucho más; esto solo ha rascado la superficie.  La mejor forma de aprender más es el de usar perldoc para encontrar más sobre el lenguaje, leer la ayuda en línea (L<perldebug> es, probablemente el siguiente lugar a ir) y, naturalmente, experimentar.  
+
+
+=head1 VEA TAMBIÉN
+
+L<perldebug>, 
+L<perldebguts>, 
+L<perldiag>,
+L<perlrun>
+
+
+=head1 AUTOR
+
+Richard Foley <richard.foley@rfi.net> Copyright (c) 2000
+
+
+=head1 COLABORADORES
+
+Algunas personas han hecho sugerencias y contribuciones; en particular:
+
+Ronald J Kimball <rjk@linguist.dartmouth.edu>
+
+Hugo van der Sanden <hv@crypt0.demon.co.uk>
+
+Peter Scott <Peter@PSDT.com>
+
