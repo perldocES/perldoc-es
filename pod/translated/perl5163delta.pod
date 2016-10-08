@@ -1,0 +1,100 @@
+=encoding utf8
+
+=head1 NOMBRE
+
+perl5163delta - qué hay de nuevo para Perl 5.16.3
+
+=head1 DESCRIPCIÓN
+
+Este documento describe las diferencias entre la versión 5.16.2 y la versión 5.16.3.
+
+Si va a actualizar desde una versión anterior, como 5.16.1, lea primero L<perl5162delta>, en el que se describen las diferencias entre 5.16.1 y 5.16.2.
+
+=head1 Mejoras en los componentes
+
+Ningún cambio con respecto a la versión 5.16.0.
+
+=head1 Seguridad
+
+Esta versión contiene un arreglo de seguridad principal y otros menores.
+Estos últimos están incluidos principalmente para permitir que el conjunto de pruebas pase limpiamente con la herramienta de direcciones higiénicas del compilador clang.
+
+=head2 CVE-2013-1667: memory exhaustion with arbitrary hash keys
+
+Con un cuidadoso conjunto elaborado de claves hash (por ejemplo, argumentos en una URL), es posible hacer que un hash consuma una gran cantidad de memoria y CPU, y llegar, posiblemente a una Denegación-de-servicio.
+
+Este problema se ha arreglado.
+
+=head2 Parcheo de la E/S con cadenas largas
+
+Leer o escribir cadenas mayores de 2**31 bytes de tamaño podrían provocar un fallo de segmentación debido a un desborde de entero.
+
+Este problema se ha arreglado.
+
+=head2 Fuga de memoria en Encode
+
+La implementación de UTF-8 en Encode.xs tenía una fuga de memoria, que se ha arreglado.
+
+=head1 Cambios incompatibles
+
+No hay cambios intencionadamente incompatibles con 5.16.0. Si los hay, los errores e informes serán bienvenidos.
+
+=head1 Obsolescencias
+
+No hay obsolescencias desde 5.16.0.
+
+=head1 Módulos y pragmas
+
+=head2 Módulos y pragmas actualizados
+
+=over 4
+
+=item *
+
+L<Encode> se ha actualizado de la versión 2.44 a la 2.44_01.
+
+=item *
+
+L<Module::CoreList> se ha actualizado de la versión 2.76 a la 2.76_02.
+
+=item *
+
+L<XS::APItest> se ha actualizado de la versión 0.38 a la 0.39.
+
+=back
+
+=head1 Problemas conocidos
+
+Ninguno.
+
+=head1 Agradecimientos
+
+Perl 5.16.3 representa aproximadamente 4 meses de desarrollo desde Perl 5.16.2 y contiene aproximadamente 870 líneas de cambios en 39 archivos por parte de 7 autores.
+
+Perl sigue floreciendo en su tercera década gracias a una vibrante comunidad de usuarios y desarrolladores. Las siguientes personas aportaron las mejoras que hicieron posible Perl 5.16.3:
+
+Andy Dougherty, Chris 'BinGOs' Williams, Dave Rolsky, David Mitchell, Michael Schroeder, Ricardo Signes, Yves Orton.
+
+Como la lista anterior se genera automáticamente a partir del historial de control de versiones, es muy probable que sea incompleta. En particular, no incluye los nombres de los (muy apreciados) colaboradores que notificaron problemas a través del sistema de seguimiento de errores de Perl.
+
+Si desea ver una lista más completa de todas las personas que han contribuido a lo largo de la historia de Perl, la encontrará en el archivo F<AUTHORS> de la distribución del código fuente de Perl.
+
+=head1 Notificación de errores
+
+Si usted encuentra algo que piensa que es un error, podría verificar los artículos publicados recientemente en el grupo de noticias comp.lang.perl.misc y la base de datos de errores de perl en http://rt.perl.org/perlbug/  También puede haber información en http://www.perl.org/, la página oficial de Perl.
+
+Si cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
+
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Por favor, utilice sólo esta dirección para problemas de seguridad en el núcleo de Perl, no para los módulos distribuidos de forma independiente en CPAN.
+
+=head1 VEA TAMBIÉN
+
+En el archivo F<Changes> encontrará una explicación de cómo obtener información detallada de los cambios.
+
+El archivo F<INSTALL> contiene instrucciones para compilar Perl.
+
+El archivo F<README> contiene información general.
+
+En los archivos F<Artistic> y F<Copying> encontrará información de copyright.
+
+=cut
