@@ -1,0 +1,929 @@
+=head1 NOMBRE
+X<debug> X<debugger>
+
+perldebug - Depuración en Perl
+
+=head1 DESCRIPCIÓN
+
+Lo primero de todo, ¿ha intentado usar L<C<use strict;>|strict> y L<C<use warnings;>|warnings>?
+
+
+Si es nuevo con el depurador de Perl, puede preferir leer L<perldebtut>, que es un manual introductorio al depurador.
+
+=head2 El depurador Perl
+
+Si invoca Perl con la opción B<-d>, su programa se ejecuta bajo el depurador de código Perl.  Esto funciona como un entorno Perl interactivo, preguntando por comandos del depurador que le permiten examinar código fuente, poner puntos de parada, obtener trazas de pila, cambiar el valor de variables, etc. Esto es tan útil que a menudo lanza el depurador solo para comprobar qué hacen las estructuras Perl, de forma interactiva.  Por ejemplo:
+X<-d>
+
+    $ perl -d -e 42
+
+En Perl, el depurador no es un programa separado, a diferencia de lo que sucede en un entorno típico de compilación.  En lugar de eso, el indicador B<-d> le dice al compilador que inserte información de código fuente en el árbol de interpretación, que será gestionada por el intérprete.  Eso significa que su código debe, primero, compilarse correctamente para que el depurador trabaje en él.  Entonces, cuando el intérprete arranca, precarga una biblioteca Perl especial que contiene al depurador.
+
+El programa se parará I<justo antes> de la primera sentencia ejecutable en tiempo de ejecución (pero vea más abajo sobre las sentencias en tiempo de compilación) y le pedirá entrar un comando del depurador.  Contrariamente a las creencias populares, siempre que el depurador se para y muestra una línea de código, siempre muestra la línea que I<va a> ejecutar, en lugar de la que se acaba de ejecutar.
+
+Cualquier comando no reconocido por el depurador se ejecuta directamente (C<eval>uado) como código Perl, en el paquete actual.  (El depurador usa el paquete DB para mantener su propio estado de información).
+
+Note que hemos dicho que C<eval> está atado a un alcance implícito. Como resultado de esto, cualquier nueva variable léxica o cualquier contenido del búfer de captura se pierde después de ese eval. El depurador es un entorno amigable para aprender Perl, pero si experimenta interactivamente usando material que debería ir en el mismo ámbito, colóquelo en una línea.
+
+Se elimina cualquier espacio en blanco remanente al principio o al final del texto que se entre en el prompt del depurador, antes de realizar cualquier procesamiento.  Si un comando del depurador coincide con alguna función en su propio programa, simplemente preceda a la función con algo que no parezca un comando del depurador, como un C<;> al principio, o quizás un C<+>, o envolviendo todo con paréntesis o llaves.
+
+=head2 Llamando al depurador
+
+Existen diversas formas de llamar al depurador:
+
+=over 4
+
+=item perl -d nombre_programa
+
+En el programa identificado como C<nombre_programa>.
+
+=item perl -d -e 0 
+
+De forma interactiva, suministrando una C<expresión> arbitraria usando C<-e>.
+
+=item perl -d:ptkdb nombre_programa
+
+Depura un programa dado a través del entorno gráfico C<Devel::ptkdb>.
+
+=item perl -dt nombre_programa_con_hilos
+
+Depura un programa dado usando hilos (experimental).
+
+=back
+
+=head2 Comandos del depurador
+
+El depurador interactivo entiende los siguientes comandos:
+
+=over 12
+
+=item h
+X<debugger command, h>X<comando del depurador, h>
+
+Imprime un mensaje con el resumen de la ayuda
+
+=item h [comando]
+
+Imprime un mensaje de ayuda para el comando del depurador dado.
+
+=item h h
+
+El argumento especial de C<h h> produce la página entera de ayuda, que es muy larga.
+
+Si la salida del comando C<h h> (o de cualquier comando, por cierto) hace desplazar su pantalla, preceda el comando con un símbolo de tubería, para que así se ejecute a través de su paginador, como en
+
+    DB> |h h
+
+Puede cambiar el paginador que usa, con el comando C<o pager=...>.
+
+=item p expr
+X<debugger command, p>X<comando del depurador, p>
+
+Lo mismo que C<print {$DB::OUT} expr> en el paquete actual.  En particular, debido a que es justo la propia función C<print> de Perl, significa que no se vuelcan las estructuras de datos y objetos, a diferencia del comando C<x>.
+
+El identificador de archivo C<DB::OUT> se abre a F</dev/tty>, sin importar a dónde esté redirigido STDOUT.
+
+=item x [maxprofundidad] expr
+X<debugger command, x>X<comando del depurador, x>
+
+Evalúa su expresión en contexto lista y vuelca el resultado de forma elegante.  Las estructuras de datos anidadas se imprimen recursivamente, a diferencia de la función C<print> en Perl.  Cuando se vuelcan hashes, preferirá, probablemente, usar 'x \%h' en lugar de 'x %h'.
+Vea L<Dumpvalue> si quiere hacer esto usted mismo.
+
+El formato de salida se gobierna por medio de múltiples opciones descritas en L<"Opciones configurables">.
+
+Si se incluye C<maxprofundidad>, debe ser una cifra I<N>; el valor se vuelca solo I<N> niveles de profundidad, como si se hubiera establecido temporalmente la opción C<dumpDepth> a I<N>.
+
+=item V [paquete [vars]]
+X<debugger command, V>X<comando del depurador, V>
+
+Visualiza todas (o algunas de) las variables en el paquete (por defecto en C<main>) usando un formato elegante (los hashes muestran sus claves y valores, así que ve lo que es cada elemento, los caracteres de control son imprimibles, etc.).
+Asegúrese de que no pone el especificador de tipos (como C<$>), solo los nombres de los símbolos, como esto:
+
+    V DB nombre_archivo linea
+
+Use C<~patrón> y C<!patrón> para I<regex> positivos y negativos.
+
+Esto es similar a llamar al comando C<x> por cada variable aplicable.
+
+=item X [vars]
+X<debugger command, X>X<comando del depurador, X>
+
+Lo mismo que C<V paquete_actual [vars]>.
+
+=item y [nivel [vars]]
+X<debugger command, y>X<comando del depurador, y>
+
+Muestra todas (o algunas) de las variables léxicas (mnemónico: variables C<mY>) en el ámbito local o en el I<nivel> de ámbito más alto.  Puede limitar las variables que ve con I<vars> que funciona de la misma manera que con los comandos C<V> y C<X>.  Requiere una versión 0.08 o superior de C<PadWalker>; lanzará una advertencia si no está instalado.  La salida es impresa de forma bonita en el mismo estilo que C<V> y el formato se controla por las mismas opciones.
+
+=item T
+X<debugger command, T> X<backtrace> X<stack, backtrace> X<comando del depurador, T> X<pila, traza inversa> X<traza inversa>
+
+Produce una traza inversa de una pila.  Vea más abajo por los detalles de su salida.
+
+=item s [expr]
+X<debugger command, s> X<step> X<comando del depurador, s> X<paso>
+
+Un solo paso.  Se ejecuta hasta el comienzo de otra sentencia, entrando en las llamadas de las subrutinas.  Si se suministra una expresión que incluya llamadas a funciones, también avanzará un solo paso.
+
+=item n [expr]
+X<debugger command, n> X<comando del depurador, n>
+
+Siguiente.  Ejecuta las llamadas a las subrutinas (pero no entra dentro de ellas), hasta el comienzo de la siguiente sentencia.  Si se suministra una expresión que incluya llamadas a funciones, estas funciones se ejecutarán con paradas antes de cada sentencia.
+
+=item r
+X<debugger command, r> X<comando del depurador, r>
+
+Continúa hasta que se regresa de la subrutina actual.
+Vuelca el valor de retorno si se ha establecido (lo está por defecto) la opción C<PrintRet>.
+
+=item <CR>
+
+Repite el último comando C<n> o C<s>.
+
+=item c [línea|sub]
+X<debugger command, c> X<comando del depurador, c>
+
+Continúa, insertando opcionalmente un punto de parada de un-solo-uso en la línea o subrutina especificada.
+
+=item l
+X<debugger command, l> X<comando del depurador, l>
+
+Lista la siguiente ventana de líneas.
+
+=item l min+incr
+
+Lista C<incr+1> líneas comenzando en C<min>.
+
+=item l min-max
+
+Lista C<min> hasta C<max>.  C<l -> es sinónimo de C<->.
+
+=item l línea
+
+Lista una única línea.
+
+=item l subrutina
+
+Lista la primera ventana de líneas de la subrutina.  I<subrutina> puede ser una variable que contiene una referencia a un código.
+
+=item -
+X<debugger command, -> X<comando del depurador, ->
+
+Lista la anterior ventana de líneas.
+
+=item v [línea]
+X<debugger command, v> X<comando del depurador, v>
+
+Muestra unas pocas líneas de código alrededor de la línea actual.
+
+=item .
+X<debugger command, .> X<comando del depurador, .>
+
+Devuelve el puntero interno del depurador a la última línea ejecutada, y la imprime.
+
+=item f nombre_de_archivo
+X<debugger command, f> X<comando del depurador, f>
+
+Cambia a un archivo diferente, o a una sentencia C<eval>uada.  Si I<nombre_de_archivo> no es una ruta completa de las que se encuentra entre los valores de %INC, se considera que es una I<regex>.
+
+Se considera que son nombres de archivos las cadenas C<eval>uadas (cuando sean accesibles): C<f (eval 7)> y C<f eval 7\b> acceden al cuerpo de la séptima cadena C<eval>uada (en el orden de ejecución).  Los cuerpos del actual C<eval> ejecutado y de las cadenas C<eval>uadas que definan subrutinas se guardan y así quedan accesibles.
+
+=item /patrón/
+
+Busca el patrón hacia adelante (una I<regex> Perl); el último / es opcional.
+La búsqueda es insensible al tamaño de caja, por defecto.
+
+=item ?patrón?
+
+Busca el patrón hacia atrás; el último ? es opcional.
+La búsqueda es insensible al tamaño de caja, por defecto.
+
+=item L [abw]
+X<debugger command, L> X<comando del depurador, L>
+
+Lista (por defecto, todas las) acciones, puntos de parada y expresiones vigiladas
+
+=item S [[!]I<regex>]
+X<debugger command, S> X<comando del depurador, S>
+
+Lista los nombres de las subrutinas que [no] coincidan con la I<regex>.
+
+=item t [n]
+X<debugger command, t> X<comando del depurador, t>
+
+Intercambia el estado del modo traza (vea también la opción C<AutoTrace>).
+Un argumento opcional es el número máximo de niveles a trazar por debajo de la actual; cualquier otra cosa más profunda se silenciará.
+
+=item t [n] expr
+X<debugger command, t> X<comando del depurador, t>
+
+Traza a través de la ejecución de C<expr>.
+Un primer argumento opcional es el número máximo de niveles a trazar por debajo de la actual; cualquier otra cosa más profunda se silenciará.
+Vea ejemplos en L<perldebguts/"Ejemplos de salida de listados de cuadro">.
+
+=item b
+X<breakpoint> X<punto del parada>
+X<debugger command, b> X<comando del depurador, b>
+
+Establece el punto de parada en la línea actual.
+
+=item b [línea] [condición]
+X<breakpoint> X<punto de parada>
+X<debugger command, b> X<comando del depurador, b>
+
+Establece un punto de parada antes de la línea indicada.  Si se especifica una condición, se evalúa cada vez que se llegue a la sentencia: se ejecuta el punto de parada solo si la condición es verdadera.  Los puntos de parada solo se pueden establecer en líneas que comiencen por sentencias ejecutables.  Las condiciones no usan C<if>:
+
+    b 237 $x > 30
+    b 237 ++$contador237 < 11
+    b 33 /patrón/i
+
+Si el número de línea es C<.>, establece un punto de parada en la línea actual:
+
+    b . $n > 100
+
+=item b [archivo]:[línea] [condición]
+X<breakpoint> X<punto de parada>
+X<debugger command, b> X<comando del depurador, b>
+
+Establece un punto de parada antes de la línea indicada, en un (posiblemente diferente) archivo.  Si se especifica una condición, se evalúa cada vez que se llegue a la sentencia: se ejecuta el punto de parada solo si la condición es verdadera.  Los puntos de parada solo se pueden establecer en líneas que comiencen por sentencias ejecutables.  Las condiciones no usan C<if>:
+
+    b lib/MyModule.pm:237 $x > 30
+    b /usr/lib/perl5/site_perl/CGI.pm:100 ++$contador100 < 11
+
+=item b subrutina [condición]
+X<breakpoint> X<punto de parada>
+X<debugger command, b> X<comando del depurador, b>
+
+Establece un punto de ruptura antes de la primera línea de la subrutina indicada.  I<subrutina> puede ser una variable que contenga una referencia a un código (y, en este caso, no se soporta I<condición>).
+
+=item b postpone subrutina [condición]
+X<breakpoint> X<punto de parada>
+X<debugger command, b> X<comando del depurador, b>
+
+Establece un punto de parada en la primera línea de la subrutina después de compilarse.
+
+=item b load nombre_de_archivo
+X<breakpoint> X<punto de parada>
+X<debugger command, b> X<comando del depurador, b>
+
+Establece un punto de parada antes de la primera línea que se ejecuta en I<nombre_de_archivo>,
+que debería ser una ruta completa encontrada a lo largo de los valores de %INC.
+
+=item b compile subrutina
+X<breakpoint> X<punto de parada>
+X<debugger command, b> X<comando del depurador, b>
+
+Establece un punto de parada antes de la primera sentencia que se ejecuta antes de que se compile la subrutina especificada.
+
+=item B línea
+X<breakpoint> X<punto de parada>
+X<debugger command, B> X<comando del depurador, B>
+
+Borra un punto de parada de la línea especificada I<línea>.
+
+=item B *
+X<breakpoint> X<punto del parada>
+X<debugger command, B> X<comando del depurador, B>
+
+Borra todos los puntos de parada establecidos.
+
+=item disable [archivo]:[línea]
+X<breakpoint> X<punto de parada>
+X<debugger command, disable> X<disable> X<comando del depurador, disable>
+
+Desactiva el punto de parada, y por lo tanto no para la ejecución del programa. 
+Los puntos de parada están activados por defecto y pueden reactivarse usando el comando C<enable>.
+
+=item disable [línea]
+X<breakpoint> X<punto de parada>
+X<debugger command, disable> X<disable> X<comando del depurador, disable>
+
+Desactiva el punto de parada, y por lo tanto no para la ejecución del programa. 
+Los puntos de parada están activados por defecto y pueden reactivarse usando el comando C<enable>.
+
+Esto se hace para un punto de parada en el archivo actual.
+
+=item enable [archivo]:[línea]
+X<breakpoint> X<punto de parada>
+X<debugger command, enable> X<enable> X<comando del depurador, enable>
+
+Activa el punto de parada, y por lo tanto, parará la ejecución del programa. 
+
+=item enable [línea]
+X<breakpoint> X<punto de parada>
+X<debugger command, enable> X<enable> X<comando del depurador, enable>
+
+Activa el punto de parada, y por lo tanto, parará la ejecución del programa. 
+
+Esto se hace para un punto de parada en el archivo actual.
+
+=item a [línea] comando
+X<debugger command, a> X<comando del depurador, a>
+
+Establecer una acción que se debe realizar antes de que se ejecute la línea.  Si I<línea> se omite, establece la acción en la línea que se va a ejecutar.
+La secuencia de pasos tomados por el depurador es
+
+  1. comprueba que exista un punto de parada en esta línea
+  2. Imprime la línea, si es necesario (traza)
+  3. realiza cualquier acción asociada con esa línea
+  4. presenta un prompt al usuario si es un punto de parada o un paso simple
+  5. evalúa la línea
+
+Por ejemplo, esto imprimirá el valor de $foo cada vez que se pase por la línea 53:
+
+    a 53 print "Se encontró $foo\n"
+
+=item A [línea]
+X<debugger command, A> X<comando del depurador, A>
+
+Borrar una acción de la línea especificada.
+
+=item A *
+X<debugger command, A> X<comando del depurador, A>
+
+Borra todas las acciones instaladas.
+
+=item w expr
+X<debugger command, w> X<comando del depurador, w>
+
+Añade una expresión de vigilancia global. Siempre que cambie una vigilancia global, el depurador parará y mostrará los valores anteriores y nuevos.
+
+=item W expr
+X<debugger command, W> X<comando del depurador, W>
+
+Borra la expresión de vigilancia.
+
+=item W *
+X<debugger command, W> X<comando del depurador, W>
+
+Borra todas las expresiones de vigilancia.
+
+=item o
+X<debugger command, o> X<comando del depurador, o>
+
+Muestra todas las opciones.
+
+=item o opción_booleana ...
+X<debugger command, o> X<comando del depurador, o>
+
+Establece cada opción booleana indicada al valor C<1>.
+
+=item o cualquier_opción? ...
+X<debugger command, o> X<comando del depurador, o>
+
+Imprime el valor de una o más opciones.
+
+=item o option=valor ...
+X<debugger command, o> X<comando del depurador, o>
+
+Establece el valor de una o más opciones.  Si el valor tiene un espacio en blanco interno, tendrá que entrecomillarse.  Por ejemplo, podría establecer C<o pager="less -MQeicsNfr"> para llamar a B<less> con esas opciones específicas.
+Puede usar tanto comillas simples como dobles, pero si lo hace, debe escapar cualquier instancia interna de la misma clase que la comilla con la que empezó, así como escapar cualquier escape que preceda de forma inmediata a esa comilla pero que no signifique que esté escapando la propia comilla.  En otras palabras, sigue las reglas de entrecomillado simple independientemente del tipo de comilla; por ejemplo: C<o option='this isn\'t bad'> o C<o option="She said, \"Isn't
+it?\"">.
+
+Por razones históricas, C<=value> es opcional, pero por defecto es 1 solo cuando es seguro hacerlo -es decir, principalmente para opciones booleanas-.  Siempre es mejor asignar un valor específico usando C<=>.
+La C<option> se puede abreviar, pero por claridad, no debería hacerse.  Se pueden establecer varias opciones, juntas.  Vea L<"Opciones configurables"> para ver una lista de ellas.
+
+=item < ?
+X<debugger command, < >> X<comando del depurador, < >>
+
+Lista todas los comandos Perl de acciones, anteriores a la presentación del prompt.
+
+=item < [ comando ]
+X<< debugger command, < >> X<comando del depurador, < >>
+
+Establece una acción (comando Perl) para que se ejecute antes de todas las apariciones del prompt del depurador.
+Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea.
+
+=item < *
+X<< debugger command, < >> X<< comando del depurador, < >>
+
+Borra todas los comandos Perl de las acciones anteriores a la presentación del prompt.
+
+=item << comando
+X<< debugger command, << >> X<< comando del depurador, << >>
+
+Añade una acción (comando Perl) para que se ejecute antes de todas las apariciones del prompt del depurador.
+Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea.
+
+=item > ?
+X<< debugger command, > >> X<< comando del depurador, > >>
+
+Lista todas los comandos Perl de acciones, posteriores a la presentación del prompt.
+
+=item > comando
+X<< debugger command, > >> X<< comando del depurador, > >>
+
+Establece una acción (comando Perl) para que se ejecute después de que salga el prompt del depurador que sale justo después de regresar de ejecutar el script.  Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea (apostamos  que no la habría adivinado).
+
+=item > *
+X<< debugger command, > >> X<< comando del depurador, > >>
+
+Borra todas los comandos Perl de las acciones posteriores a la presentación del prompt.
+
+=item >> comando
+X<<< debugger command, >> >>> X<<< comando del depurador, >> >>>
+
+Añade una acción (comando Perl) para que se ejecute después de que salga el prompt del depurador que sale justo después de regresar de ejecutar el script.  Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea.
+
+=item { ?
+X<debugger command, {> X<comando del depurador, {>
+
+Lista los comandos del depurador antes del prompt.
+
+=item { [ comando ]
+
+Establece una acción (comando del depurador) para que se ejecute antes de todas las apariciones del prompt del depurador.
+Se puede entrar un comando de varias líneas de la forma acostumbrada.
+
+Ya que este comando es, en ciertos aspectos, nuevo, se emite una advertencia si parece que, en su lugar, y accidentalmente, entró un bloque.  Si esto es lo que quería hacer, escríbalo como C<;{ ... }> , o incluso C<do { ... }>.
+
+=item { *
+X<debugger command, {> X<comando del depurador, {>
+
+Borra todos los comandos del depurador antes del prompt.
+
+=item {{ comando
+X<debugger command, {{> X<comando del depurador, {{>
+
+Añade una acción (comando del depurador) para que se ejecute antes de todas las apariciones del prompt del depurador.
+Se puede entrar un comando de varias líneas si adivina cómo: véalo más arriba.
+
+=item ! número
+X<debugger command, !> X<comando del depurador, !>
+
+Vuelve ejecutar un comando anterior (por defecto, el comando anterior).
+
+=item ! -número
+X<debugger command, !> X<comando del depurador, !>
+
+Vuelve ejecutar el número-ésimo comando anterior.
+
+=item ! patrón
+X<debugger command, !> X<comando del depurador, !>
+
+Vuelve a ejecutar el último comando que empiece con ese patrón.
+Vea también C<o recallCommand>.
+
+=item !! cmd
+X<debugger command, !!> X<comando del depurador, !!>
+
+Ejecuta cmd en un subproceso (lee desde DB::IN, escriba hacia DB::OUT). Vea también C<o shellBang>.  Note que se utilizará el shell actual del usuario (bueno, su variable C<$ENV{SHELL}>), que puede interferir con una interpretación correcta del estado de salida o de la información de la señal o volcado del núcleo.
+
+=item source código
+X<debugger command, source> X<comando del depurador, source>
+
+Lee y ejecuta comando del depurador desde el archivo I<código>.
+I<código> puede, a su vez, contener comandos C<source>.
+
+=item H -n
+X<debugger command, H> X<comando del depurador, H>
+
+Muestra los últimos n comandos.  Solo se listan los comandos que tengan más de un carácter de longitud.  Si se omite I<n>, lista todos.
+
+=item q or ^D
+X<debugger command, q> X<comando del depurador, q>
+X<debugger command, ^D> X<comando del depurador, ^D>
+
+Sale.  ("quit" no funciona aquí, a menos que haya creado un alias). Esta es la única manera soportada de salir del depurador, aunque podría funcionar escribir C<exit> dos veces.
+
+Establece la opción C<inhibit_exit> a 0 si quiere ser capaz de pasar más allá del final del I<script>.  Puede también necesitar establecer $finished a 0 si quiere pasar a través del proceso de destrucción.
+
+=item R
+X<debugger command, R> X<comando del depurador, R>
+
+Reiniciar el depurador ejecutando C<exec()> en una nueva sesión.  Intentamos mantener su histórico a lo largo de este cambio, pero las opciones internas y opciones de líneas de comando se pueden perder.
+
+Se preservan las siguientes secciones: histórico, punto de parada, acciones, opciones del depurador, y las opciones de la línea de comando de Perl B<-w>, B<-I> y B<-e>.
+
+=item |dbcmd
+X<debugger command, |> X<comando del depurador, |>
+
+Ejecuta el comando del depurador, entubando DB::OUT en su paginador actual.
+
+=item ||dbcmd
+X<debugger command, ||> X<comando del depurador, ||>
+
+Lo mismo que C<|dbcmd> pero DB::OUT se selecciona (con C<select>) de forma temporal.
+
+=item = [alias valor]
+X<debugger command, => X<comando del depurador, =>
+
+Define un alias para el comando, como
+
+    = quit q
+
+o lista los alias actuales.
+
+=item comando
+
+Ejecuta el comando como una sentencia Perl.  Se suministrará un punto y coma, al final.  De lo contrario, si la sentencia Perl se pudiera confundir con comando del depurador de Perl, use también un punto y coma al inicio.
+
+=item m expr
+X<debugger command, m> X<comando del depurador, m>
+
+Lista qué métodos se pueden llamar en el resultado de la evaluación de la expresión.  La expresión se puede evaluar a una referencia a un objeto bautizado, o a un nombre de paquete.
+
+=item M
+X<debugger command, M> X<comando del depurador, M>
+
+Muestra todos los módulos cargados y sus versiones.
+
+=item man [página-de-manual]
+X<debugger command, man> X<comando del depurador, man>
+
+A pesar de su nombre, esto llama al visor de documentación por defecto de su sistema, para la página indicada, o al propio visor si se omite I<página-de-manual>.  Si este visor es B<man>, se usa la información actual de C<Config> para invocar B<man> usando la ruta MANPATH apropiada o la opción S<B<-M> I<página-de-manual>>.  Se reintentará buscar páginas conocidas del manual de la forma I<perlXXX> si no se encuentran páginas de la forma C<XXX>.  Esto le permite escribir C<man debug> o C<man op> desde el depurador.
+
+En sistemas donde, tradicionalmente, no acogen al comando B<man>, el depurador invoca B<perldoc>.  Ocasionalmente esta asunción es incorrecta, debido a los fabricantes recalcitrantes, o de forma más común, a los usuarios empresariales.  Si usted cae en alguna de esas categorías, simplemente ajuste manualmente la variable $DB::doccmd a cualquier visor de documentación Perl de su sistema.  Esto se puede establecer en un archivo rc, o a través de una asignación directa.  Seguimos esperando por un ejemplo funcional parecido a esto:
+
+    $DB::doccmd = 'netscape -remote http://algo.aquí/';
+
+=back
+
+=head2 Opciones configurables
+
+El depurador tiene numerosas opciones que se pueden establecer usando el comando C<o>, tanto de forma interactiva o a través del entorno o de un archivo rc.
+(./.perldb o ~/.perldb en Unix.)
+
+
+=over 12
+
+=item C<recallCommand>, C<ShellBang>
+X<debugger option, recallCommand> X<opción del depurador, recallCommand>
+X<debugger option, ShellBang> X<opción del depurador, ShellBang>
+
+Los caracteres utilizados para recordar un comando o lanzar una shell.  Por defecto, los dos se establecen a C<!>, que es algo desafortunado.
+
+=item C<pager>
+X<debugger option, pager> X<opción del depurador, pager>
+
+Programa que se usará para la salida entubada de comandos paginados (aquellos que comienzan con un carácter C<|>).  Por defecto, se usará C<$ENV{PAGER}>.
+Debido a que el depurador usa sus características de la terminal actual para las negritas y el subrayado, si el paginador elegido no pasa secuencias de escape sin traducir, la salida de algunos comandos del depurador no serán legibles cuando se les envíe a través del paginador.
+
+=item C<tkRunning>
+X<debugger option, tkRunning> X<opción del depurador, tkRunning>
+
+Ejecuta Tk mientras muestra el prompt (con ReadLine).
+
+=item C<signalLevel>, C<warnLevel>, C<dieLevel>
+X<debugger option, signalLevel> X<opción del depurador, signalLevel> X<debugger option, warnLevel> X<opción del depurador, warnLevel> X<debugger option, dieLevel> X<opción del depurador, dieLevel>
+
+Nivel de verbosidad.  Por defecto, el depurador deja a solas a sus excepciones y advertencias, porque alterarlas puede romper programas en ejecución.  Intentará imprimir un mensaje cuando detecte la llegada de las señales INT, BUS o SEGV.  (Pero vea la mención a las señales en L</BUGS>, más abajo).
+
+Para desactivar este (por defecto) modo seguro, establezca estos valores a valores superiores a 0.  Al nivel 1, obtiene trazas de pila a la llegada de cualquier clase de advertencia (esto es, a menudo, molesto) o excepción (esto a menudo es más valioso).  Desafortunadamente, el depurador no puede discernir las excepciones fatales de las que no lo son.  Si, además, C<dieLevel> es 1, entonces las excepciones no fatales también se trazan y, sin ceremonias, alteradas si vienen de cadenas C<eval>uadas o de cualquier clase de C<eval> dentro de los módulos que intenta cargar.  Si C<dieLevel> es 2, al depurador no le preocupa de dónde venga: usurpa su manejador de excepciones e imprime una traza, y luego modifica todas las excepciones con su propio embellecimiento.
+Esto, quizás, sea útil para algunos propósitos de trazado, pero tiende a destruir sin esperanza cualquier programa que se tome seriamente su gestión de excepciones.
+
+=item C<AutoTrace>
+X<debugger option, AutoTrace> X<opción del depurador, AutoTrace>
+
+Modo traza (similar al comando C<t>, pero se puede meter en C<PERLDB_OPTS>).
+
+=item C<LineInfo>
+X<debugger option, LineInfo> X<opción del depurador, LineInfo>
+
+Archivo o tubería hacia dónde imprimir la información del número de línea.  Si es una tubería (digamos, C<|visual_perl_db>), entonces se usa un mensaje corto.  Este es el mecanismo que se usa para interactuar con un editor esclavo o un depurador visual, como los enganches especiales con C<vi> o C<emacs>, o el depurador gráfico C<ddd>.
+
+=item C<inhibit_exit>
+X<debugger option, inhibit_exit> X<opción del depurador, inhibit_exit>
+
+Si es 0, permite I<pasar más allá> del final del I<script>.
+
+=item C<PrintRet>
+X<debugger option, PrintRet> X<opción del depurador, PrintRet>
+
+Si está activado (algo por defecto) imprime el valor de retorno después del comando C<r>.
+
+=item C<ornaments>
+X<debugger option, ornaments> X<opción del depurador, ornaments>
+
+Afecta a la apariencia de la línea de comandos en la pantalla (vea L<Term::ReadLine>).
+Actualmente, no hay forma de desactivarlos, que pueden mostrar alguna salida ilegible en algunas pantallas, o con algunos paginadores.
+Esto se considera un error.
+
+=item C<frame>
+X<debugger option, frame> X<opción del depurador, frame>
+
+Afecta a la impresión de mensajes a la entrada y a la salida de las subrutinas.  Si C<frame & 2> es falso, los mensajes solo se imprimen a la entrada. (Imprimir a la salida podría ser útil si se entremezcla con otros mensajes).
+
+Si C<frame & 4>, se imprimen los argumentos de las funciones, más la información de contexto y del llamador.  Si C<frame & 8>, sobrecarga C<stringify> y se activa C<tie> (enlaza) C<FETCH> en los argumentos impresos.  Si C<frame & 16>, se imprime el valor de retorno de la subrutina.
+
+La siguiente opción determina la longitud del truncamiento de la lista de argumentos:
+
+=item C<maxTraceLen>
+X<debugger option, maxTraceLen> X<opción del depurador, maxTraceLen>
+
+Longitud de donde truncar la lista de argumetnos cuando está activado el bit 4 de la opción C<frame>.
+
+=item C<windowSize>
+X<debugger option, windowSize> X<opción del depurador, windowSize>
+
+Cambia el tamaño de la ventana de listado de código (por defecto es 10 líneas).
+
+=back
+
+Las siguientes opciones afectan a lo que sucede con los comandos C<V>, C<X> y C<x>:
+
+=over 12
+
+=item C<arrayDepth>, C<hashDepth>
+X<debugger option, arrayDepth> X<debugger option, hashDepth>
+X<opción del depurador, arrayDepth> X<opción del depurador, hashDepth>
+
+Solo imprime los primeros N elementos ('' para todos).
+
+=item C<dumpDepth>
+X<debugger option, dumpDepth> X<opción del depurador, dumpDepth>
+
+Limita la profundidad de recursión a N niveles cuando se vuelcan estructuras.
+Los valores negativos se interpretan como infinito.  Por defecto: infinito.
+
+=item C<compactDump>, C<veryCompact>
+X<debugger option, compactDump> X<debugger option, veryCompact>
+X<opción del depurador, compactDump> X<opción del depurador, veryCompact>
+
+Cambia el estilo de la salida de los array y hash.  Si es C<compactDump>, los array se imprimirán en una línea.
+
+=item C<globPrint>
+X<debugger option, globPrint> X<opción del depurador, globPrint>
+
+Si se debe imprimir los contenidos de los globs.
+
+=item C<DumpDBFiles>
+X<debugger option, DumpDBFiles> X<opción del depurador, DumpDBFiles>
+
+Vuelca los arrays que almacenen archivos depurados.
+
+=item C<DumpPackages>
+X<debugger option, DumpPackages> X<opción del depurador, DumpPackages>
+
+Vuelca la tabla de símbolos de los paquetes.
+
+=item C<DumpReused>
+X<debugger option, DumpReused> X<opción del depurador, DumpReused>
+
+Vuelca los contenidos de las direcciones "reutilizadas".
+
+=item C<quote>, C<HighBit>, C<undefPrint>
+X<debugger option, quote> X<debugger option, HighBit>
+X<debugger option, undefPrint>
+X<opcion del depurador, quote> X<opcion del depurador, HighBit>
+X<opcion del depurador, undefPrint>
+
+Cambia el estilo del volcado de cadenas.  El valor por defecto para C<quote> es C<auto>; uno puede activar el formato de entrecomillado simple o doble estableciéndolo a C<"> o C<'>, respectivamente.  Por defecto, los caracteres con el bit alto activado, se imprimen tal cual.
+
+=item C<UsageOnly>
+X<debugger option, UsageOnly> X<opción del depurador, UsageOnly>
+
+Volcado rudimentario del uso de memoria, por paquete.  Calcula el tamaño total de las cadenas encontradas en las variables del paquete.  Esto no incluye las léxicas en el ámbito del archivo del módulo, o perdidas en las clausuras.
+
+=item C<HistFile>
+X<debugger option, history, HistFile> X<opción del depurador, historia, HistFile>
+
+La ruta del archivo desde donde se leerá la historia (asumiendo que por detrás exista un funcional Term::ReadLine) en el arranque del depurador, y donde se guardará en el apagado (para la persistencia entre sesiones). Similar en concepto al archivo C<.bash_history> de Bash.
+
+=item C<HistSize>
+X<debugger option, history, HistSize> X<opción del depurador, historia, HistSize>
+
+El contador de líneas guardadas en la historia (asumiendo el C<HistFile> anterior).
+
+=back
+
+Después de que se lea el archivo rc, el depurador lee la variable de entorno C<$ENV{PERLDB_OPTS}> y lo interpreta como si se hubiera entrado el resto de una línea "O ..." en el prompt del depurador.  Puede colocar allí las opciones de inicialización C<TTY>, C<noTTY>, C<ReadLine> y C<NonStop>.
+
+Si su archivo rc contiene:
+
+  parse_options("NonStop=1 LineInfo=db.out AutoTrace");
+
+entonces su I<script> se ejecutará sin intervención humana, poniendo información de traza en el archivo I<db.out>.  (Si lo interrumpe, es mejor reiniciar C<LineInfo> a F</dev/tty> si esperaba ver algo).
+
+=over 12
+
+=item C<TTY>
+X<debugger option, TTY> X<opción del depurador, TTY>
+
+El TTY a usar para depurar E/S.
+
+=item C<noTTY>
+X<debugger option, noTTY> X<opción del depurador, noTTY>
+
+Si está activado, el depurador entra en el modo C<NonStop> y no se conectará a ninguna TTY.  Si se interrumpe (o si el control lleva al depurador a través de una opción $DB::signal o $DB::single explícita desde el I<script> Perl), conecta con una TTY especificada en la opción C<TTY> en el arranque, o a un tty encontrado en tiempo de ejecución usando el módulo C<Term::Rendezvous> de su elección.
+
+Este módulo debe implementar un método llamado C<new> que devuelva un objeto con dos métodos: C<IN> y C<OUT>.  Estos deberían devolver gestores de archivo a usar, correspondientemente, por la entrada y salida de la depuración.  El método C<new> debe inspeccionar un argumento conteniendo un valor de C<$ENV{PERLDB_NOTTY}> en el arranque, o en otro caso, C<"$ENV{HOME}/.perldbtty$$"> .  No se inspecciona este archivo por si tiene una propiedad apropiada, así que es teóricamente posible que ocurran problemas de seguridad.
+
+=item C<ReadLine>
+X<debugger option, ReadLine> X<opción del depurador, ReadLine>
+
+Si es falso, se desactiva el soporte de readline en el depurador para poder depurar aplicaciones que por sí mismas usan ReadLine.
+
+=item C<NonStop>
+X<debugger option, NonStop> X<opción del depurador, NonStop>
+
+Si está activado, el depurador pasa al modo no-interactivo hasta que se interrumpa, o si se establece, por programa, $DB::signal o $DB::single.
+
+=back
+
+Aquí hay un ejemplo de cómo usar la variable C<$ENV{PERLDB_OPTS}>:
+
+    $ PERLDB_OPTS="NonStop frame=2" perl -d miprograma
+
+Eso ejecutará el I<script> B<miprograma> sin intervención humana, imprimiendo el árbol de llamadas con los puntos de entrada y salida.  Note que C<NonStop=1 frame=2> es equivalente a C<N f=2>, y que, originalmente, las opciones podrían abreviarse de forma única por la primera letra (opciones del módulo C<Dump*>).  No obstante, se recomienda que siembre las escriba de forma completa, por legibilidad y compatibilidad futura.
+
+Otros ejemplos son
+
+    $ PERLDB_OPTS="NonStop LineInfo=listing frame=2" perl -d miprograma
+
+que ejecuta el I<script> de forma no interactiva, imprimiendo información sobre cada entrada en una subrutina y cada línea ejecutada en el archivo de nombre F<listing>.
+(¡Si lo interrumpe, sería mejor que reiniciara C<LineInfo> a algo "interactivo"!).
+
+Otros ejemplos incluyen (usando la sintaxis de shell estándar para mostrar los valores de las variables de entorno):
+
+  $ ( PERLDB_OPTS="NonStop frame=1 AutoTrace LineInfo=tperl.out"
+      perl -d miprograma )
+
+que puede ser útil para la depuración de un programa que use por sí mismo C<Term::ReadLine>.  No olvide desenganchar su shell de la TTY en la ventana que corresponda a F</dev/ttyXX>, digamos, por medio de un comando como
+
+  $ sleep 1000000
+
+Vea L<perldebguts/"Interioridades del depurador"> para más detalles.
+
+=head2 Entrada/Salida del depurador
+
+=over 8
+
+=item Prompt
+
+El prompt del depurador es algo así
+
+    DB<8>
+
+o incluso
+
+    DB<<17>>
+
+donde ese número es el número de comando, y que puede utilizar para acceder al mecanismo incorporado de histórico, parecido al de un B<csh>.  Por ejemplo, C<!17> sería repetir el comando número 17.  La profundidad de los ángulos indica la profundidad de anidamiento del depurador.  Podría obtener más de un conjunto de delimitadores, por ejemplo, si estuviera realmente en un punto de parada, y entonces imprimiera el resultado de una llamada a una función que en sí mismo tiene un punto de parada, o si entra en una expresión por medio de un comando C<s/n/t
+expresión>.
+
+=item Comandos multilínea
+
+Si quiere entrar un comando multilínea, como una definición de una subrutina con diversas sentencias o un formato, escape el carácter de nueva línea que normalmente terminaría el comando del depurador, con una barra diagonal inversa.
+Aquí hay un ejemplo:
+
+      DB<1> for (1..4) {         \
+      cont:     print "ok\n";   \
+      cont: }
+      ok
+      ok
+      ok
+      ok
+
+Note que este negocio de escapar un carácter de nueva línea es específico de comandos interactivos escritos dentro del depurador.
+
+=item Trazado inverso
+X<backtrace> X<stack, backtrace> X<trazado inverso> X<pila, trazado inverso>
+
+Aquí hay un ejemplo del aspecto que podría tener un trazado inverso de pila por medio del comando C<T>:
+
+ $ = main::infested called from file 'Ambulation.pm' line 10
+ @ = Ambulation::legs(1, 2, 3, 4) called from file 'camel_flea'
+                                                          line 7
+ $ = main::pests('bactrian', 4) called from file 'camel_flea'
+                                                          line 4
+
+El carácter a la izquierda indica el contexto en que se llamó a la función, con C<$> y C<@> significando respectivamente contexto escalar y de lista, y C<.> significa contexto vacío (que es, realmente, una especie de contexto escalar).  La pantalla anterior dice que usted estaba en la función C<main::infested> cuando ejecutó el volcado de pila, y que se llamó en contexto escalar desde la línea 10 del archivo I<Ambulation.pm>, pero sin ningún argumento, significando que se llamó como C<&infested>.  El siguiente volcado de pila muestra que la función C<Ambulation::legs> se llamó en contexto lista desde el archivo I<camel_flea> con cuatro argumentos.  El último volcado de pila muestra que C<main::pests> se llamó en contexto escalar, también desde I<camel_flea>, pero desde la línea 4.
+
+Si ejecuta el comando C<T> desde el interior de una sentencia C<use> activa, la traza inversa contendrá tanto el volcado de un C<require> como el de un C<eval>.
+
+=item Formato de listado de líneas
+
+Esto muestra las distintas formas de salida que el comando C<l> puede producir:
+
+   DB<<13>> l
+ 101:        @i{@i} = ();
+ 102:b       @isa{@i,$pack} = ()
+ 103             if(exists $i{$prevpack} || exists $isa{$pack});
+ 104     }
+ 105
+ 106     next
+ 107==>      if(exists $isa{$pack});
+ 108
+ 109:a   if ($extra-- > 0) {
+ 110:        %isa = ($pack,1);
+
+Las líneas interrumpibles se marcan con C<:>.  Las líneas con puntos de parada se marcan con C<b> y las que tienen acciones, con C<a>.  La línea que está a punto de ejecutarse se marca con C<< ==> >>.
+
+Por favor, sea consciente que el código que se lista en el depurador puede no parecerse a su código fuente original.  Las directivas de líneas y los filtros de código fuente externos pueden alterar el código antes de que Perl lo vea, causando que el código se mueva de sus posiciones originales, o tomar formas completamente diferentes.
+
+=item Listado de cuadros
+
+Cuando está establecida la opción C<frame>, el depurador imprimirá las subrutinas comenzadas (y opcionalmente las terminadas) en estilos diferentes.  Consulte L<perldebguts> por ver unos increíblemente largos ejemplos de esto mismo.
+
+=back
+
+=head2 Sentencias de depuración en tiempo de compilación
+
+Si tiene sentencias ejecutables en tiempo de compilación (como el código que hay dentro de los bloques BEGIN, UNITCHECK y CHECK, o sentencias C<use>), éstas I<no> pararán el depurador, aunque lo hagan los bloque INIT y los C<require>, y las sentencias compiladas se pueden trazar estableciendo la opción C<AutoTrace> a C<PERLDB_OPTS>.  Desde su propio código Perl, sin embargo, puede transferir el control de vuelta al depurador usando las siguiente sentencia, que no tiene efecto si el depurador no se está ejecutando:
+
+    $DB::single = 1;
+
+Si establece C<$DB::single> a 2, es equivalente a escribir el comando C<n>, mientras que con el valor 1 significa el comando C<s>.  La variable C<$DB::trace> debería establecerse a 1 para simular que se ha escrito el comando C<t>.
+
+Otra forma de depurar código en tiempo de compilación es iniciar el depurador, establecer un punto de parada en la I<carga> de algún módulo:
+
+    DB<7> b load f:/perllib/lib/Carp.pm
+  Parará en la carga de 'f:/perllib/lib/Carp.pm'.
+
+y entonces reiniciar el depurador usando el comando C<R> (si es posible).  Uno puede usar C<b compile subrutina> para el mismo propósito.
+
+=head2 Personalización del depurador
+
+El depurador, probablemente, contiene suficientes enganches de configuración que nunca tendrá que modificarlo por sí mismo.  Puede cambiar el comportamiento del depurador desde dentro del propio depurador usando el comando C<o>, desde la línea de comando por medio de la variable de entorno C<PERLDB_OPTS>, y desde archivos de personalización.
+
+Puede hacer alguna personalización estableciendo un archivo F<.perldb>, que contiene código de inicialización.  Por ejemplo, podría hacer unos alias como estos (el último es que la gente esperaría que existiese):
+
+    $DB::alias{'len'}  = 's/^len(.*)/p length($1)/';
+    $DB::alias{'stop'} = 's/^stop (at|in)/b/';
+    $DB::alias{'ps'}   = 's/^ps\b/p scalar /';
+    $DB::alias{'quit'} = 's/^quit(\s*)/exit/';
+
+Puede cambiar las opciones desde F<.perldb> usando llamadas como esta:
+
+    parse_options("NonStop=1 LineInfo=db.out AutoTrace=1 frame=2");
+
+El código se ejecuta en el paquete C<DB>.  Note que F<.perldb> se procesa antes que se procese C<PERLDB_OPTS>.  Si F<.perldb> define la subrutina C<afterinit>, se llama a esa función después de que el depurador termine la inicialización.  F<.perldb> puede estar en el directorio actual, o en el directorio principal.  Debido a que este archivo se interpreta en Perl y puede contener comandos arbitrarios, por razones de seguridad, debería ser propiedad del superusuario o del usuario actual, y modificable por nadie más que su propietario.
+
+Puede simular una entrada TTY al depurador, añadiendo comandos arbitrarios a @DB::typeahead. Por ejemplo, su archivo F<.perldb> podría contener:
+
+    sub afterinit { push @DB::typeahead, "b 4", "b 6"; }
+
+El cual intentará establecer puntos de parada en las líneas 4 y 6 inmediatamente después de la inicialización del depurador. Note que @DB::typeahead no es un interfaz soportado, y está sujeto a cambios en el futuro.
+
+Si quiere modificar el depurador, haga una copia de F<perl5db.pl> en la biblioteca Perl y modifíquelo como desee.
+Entonces querrá estableces su variable de entorno C<PERL5DB> para que sea algo así:
+
+    BEGIN { require "miperl5db.pl" }
+
+Como último recurso, podría también usar C<PERL5DB> para personalizar el depurador estableciendo directamente variables internas o llamando a funciones del depurador.
+
+Note que cualesquiera variables y funciones que no estén descritas en este documento (o en L<perldebguts>) se consideran de uso exclusivamente interno, y que están sujetas a cambio sin previo aviso.
+
+=head2 Soporte de Readline / Histórico en el depurador
+
+Como se ha indicado, el único comando que se suministra relacionado con la historia de comandos es una única comprobación por la existencia de exclamaciones iniciales.  Sin embargo, si instala los módulos Term::ReadKey y Term::ReadLine desde CPAN (así como Term::ReadLine::Gnu, Term::ReadLine::Perl, ...) tendrá capacidades completas de edición, como las que ofrece el I<readline>(3) de GNU.
+Búsquelos en el directorio F<modules/by-module/Term> en CPAN.
+Sin embargo, no soportan el tradicional modo de edición de línea de comandos de B<vi>.
+
+También está disponible un rudimentario sistema de completado de línea de comandos, incluyendo variables léxicas en el ámbito actual, si el módulo C<PadWalker> está instalado.
+
+Sin el soporte de Readline verá símbolos como "^[[A", "^[[C", "^[[B",
+"^[[D"", "^H", ... cuando use las teclas de las flechas y la de retroceso.
+
+=head2 Soporte para editor para depuración
+
+Si tiene instalada la versión GNU de B<emacs> instalada en el sistema, puede interactuar con el depurador Perl, para proporcionar un entorno integrado de desarrollo de software, reminiscencia de los depuradores en C.
+
+Recientes versiones de Emacs vienen con un archivo de arranque para hacer que B<emacs> actúe como un editor basado en sintaxis, que entiende (algo de) la sintaxis de Perl.
+Vea L<perlfaq3>.
+
+Los usuarios de B<vi> deberían mirar también en B<vim> y B<gvim>, la versión ventosa y ratona, para tener el coloreado de palabras clave de Perl.
+
+Tenga en cuenta que solo perl puede interpretar verdaderamente Perl, así que todas las herramientas CASE se quedan un poco cortas, especialmente si usted no programa su Perl como lo haría un programador de C.
+
+=head2 El perfilador de Perl
+X<profile> X<profiling> X<profiler> X<perfil> X<perfilado> X<perfilador>
+
+Si desea suministrar un depurador alternativo para ejecutar Perl, invoque su I<script> con un carácter de dos puntos y un argumento de un paquete, junto con el indicador B<-d>.  Los depuradores alternativos de Perl incluyen un perfilador de Perl, L<Devel::NYTProf>, que está disponible de forma separada como una distribución CPAN.  Para perfilar su programa Perl en el archivo F<mycode.pl>, solo escriba.
+
+    $ perl -d:NYTProf mycode.pl
+
+Cuando el I<script> termina, el perfilador creará una base de datos con la información del perfil, que puede convertir en informes usando las herramientas del perfilador. Vea <perlperf> para más detalles.
+
+=head1 Depurando expresiones regulares
+X<regular expression, debugging> X<expresión regular, depurando>
+X<regex, debugging> X<regexp, debugging> X<regex, depurando> X<regexp, depurando>
+
+C<use re 'debug'> le permite ver las tripas de cómo funciona el motor de expresiones regulares  de Perl. Para entender esta, típicamente, voluminosa información, uno no solo debe tener idea sobre cómo funciona, en general, la coincidencia de expresiones, sino también cómo Perl compila internamente las expresiones regulares en un autómata. Estas cuestiones se explican con más detalle en L<perldebguts/"Depurando expresiones regulares">.
+
+=head1 Depurando el uso de memoria
+X<memory usage> X<uso de memoria>
+
+Perl contiene soporte interno para informar del uso de su propia memoria, pero esto es un concepto avanzado que requiere algo de entendimiento de cómo funciona la asignación de memoria.
+Vea L<perldebguts/"Depurando el uso de memoria de Perl"> para más detalles.
+
+=head1 VEA TAMBIÉN
+
+Tiene activado C<use strict> y C<use warnings>, ¿verdad?
+
+L<perldebtut>, L<perldebguts>, L<re>, L<DB>, L<Devel::NYTProf>, L<Dumpvalue>, y L<perlrun>.
+
+Cuando depure un I<script> que use #! y esto es algo que normalmente se encuentra en $PATH, la opción -S hace que perl lo busque dentro de él, así que no necesita escribir la ruta, o la sentencia C<which $nombre_script>.
+
+  $ perl -Sd foo.pl
+
+=head1 ERRORES
+
+No puede obtener información del volcado de pila o de cualquier función de depurado de moda si no se compiló por Perl, como las extensiones C o C++.
+
+Si altera sus argumentos @_ en una subrutina (como con C<shift> o C<pop>), el trazado inverso de pila no mostrará los valores originales.
+
+El depurador no funciona, actualmente, en conjunción con la opción de línea de comandos B<-W>, porque, en sí mismo, no está libre de advertencias.
+
+Si se encuentra en una llamada del sistema lenta (como C<wait>, C<accept>, o C<read> desde su teclado o un socket) y no ha establecido su propio gestor C<$SIG{INT}>, entonces no será capaz de hacer un CTRL-C para regresar al depurador, porque el propio gestor C<$SIG{INT}> del depurador no entiende que necesita levantar una excepción a longjmp(3) fuera de las llamadas de sistema lentas.
