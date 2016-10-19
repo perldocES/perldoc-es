@@ -47,7 +47,7 @@ La presencia de subrutinas llamadas C<::::> o C<::::::> ya no provoca cuelgues e
 
 =item *
 
-L<Pod::Perldoc> se ha actualizado de la versión 3.15_03 a la 3.15_04.
+Se ha actualizado L<Pod::Perldoc> de la versión 3.15_03 a 3.15_04.
 
 Corrije las rutas de búsqueda en VMS. [perl #90640]
 
