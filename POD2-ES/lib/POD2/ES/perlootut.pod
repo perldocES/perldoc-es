@@ -242,7 +242,7 @@ objeto I<más específico> que un objeto de la clase C<Archivo>. Todos los
 archivos mp3 son archivos, pero no todos los archivos son archivos mp3.
 
 A menudo se alude a las relaciones de herencia como relaciones
-B<primario-derivado> o C<superclase/subclase>. Algunas veces se dice que la
+B<primaria-derivada> o C<superclase>/C<subclase>. Algunas veces se dice que la
 clase derivada tiene una relación de tipo "es un" (B<is-a> en inglés) con su
 clase primaria.
 
@@ -278,7 +278,7 @@ clase C<Archivo>:
   my $minero = Archivo::MP3->new(
       ruta          => 'mp3/Soy-minero.mp3',
       contenido     => $datos_mp3,
-      hora_ult_mod  => 1304974868,
+      hora_ult_mod => 1304974868,
       titulo        => 'Soy minero',
   );
 
@@ -602,8 +602,8 @@ Si prueba C<Moose> y descubre que uno de los problemas mencionados le impide
 utilizarlo, le recomendamos que pruebe L<Moo>. C<Moo> implementa un subconjunto
 de la funcionalidad de C<Moose> en un paquete más sencillo. Para la mayoría
 de las características que implementa, la API para usuarios finales es
-I<identica> a la de C<Moose>. Esto hace que la transición de C<Moo> a C<Moose>
-sea muy sencilla.
+I<idéntica> a la de C<Moose>. Esto hace que la transición de C<Moo> a
+C<Moose> sea muy sencilla.
 
 C<Moo> no implementa la mayor parte de la API de introspección de C<Moose>,
 por lo que los módulos suelen cargarse más rápido. Además, ninguna de sus

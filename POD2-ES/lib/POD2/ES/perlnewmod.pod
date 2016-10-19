@@ -165,8 +165,8 @@ en el código que hace la llamada y no en su módulo. Por ejemplo, si escribe:
 
 el usuario verá algo similar a:
 
-    No se ha especificado un nombre de host en /usr/local/lib/perl5/site_perl/5.6.0/Net/Acme.pm
-    línea 123.
+ No se ha especificado un nombre de host at
+ /usr/local/lib/perl5/site_perl/5.6.0/Net/Acme.pm line 123.
 
 que parece indicar que su módulo ha producido un error. En lugar de ello,
 tiene que atribuir la culpa al usuario y decir esto:

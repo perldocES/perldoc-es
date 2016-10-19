@@ -109,10 +109,10 @@ La bendición no afecta a la variable que contiene la referencia al objeto bende
   my $bar = $foo;
 
   bless $foo, 'Clase';
-  print blessed( $bar );      # imprime "Clase"
+  print blessed( $bar ) // 'sin bendecir';   # imprime "Clase"
 
   $bar = "otro valor";
-  print blessed( $bar );      # imprime undef
+  print blessed( $bar ) // 'sin bendecir';   # imprime "sin bendecir"
 
 Cuando se produce la llamada a C<bless> con una variable, se bendice la estructura de datos subyacente a la que la variable hace referencia. No se bendicen ni la referencia en sí ni tampoco la variable que contiene la referencia. Esto es por lo que la segunda llamada a C<blessed( $bar )> devuelve falso. En ese momento C<$bar> ya no almacena una referencia a un objeto.
 
@@ -205,13 +205,13 @@ En una clase derivada se puede sobrescribir un método de la clase primaria. En 
 
 El modificador C<SUPER> I<solo> se puede usar para llamar a métodos. No se puede usar para llamadas normales a subrutinas ni para métodos de clase:
 
-  SUPER::guardar($algo);     # ERROR: busca la subrutina guardar() en el paquete SUPER
+  SUPER::guardar($algo);   # ERROR: busca la subrutina guardar() en el paquete SUPER
 
   SUPER->guardar($algo);   # ERROR: busca el método guardar() en la clase
-                           #       SUPER
+                           #        SUPER
 
   $algo->SUPER::guardar(); # CORRECTO: busca el método guardar() en las
-                           #       clases primarias
+                           #           clases primarias
 
 
 =head3 Forma de resolución de SUPER
@@ -622,7 +622,7 @@ El nombre completo del método llamado está disponible para su clase en la vari
       die "No existe el atributo $llamado"
           unless exists $self->{$llamado};
 
-      # si es así, devolverlo...
+      # Si es así, devolverlo...
       return $self->{$llamado};
   }
 

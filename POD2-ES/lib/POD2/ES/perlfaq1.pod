@@ -6,7 +6,7 @@ perlfaq1 - Preguntas generales sobre Perl
 
 =head1 VERSIÓN
 
-versión 5.021009
+versión 5.021010
 
 =head1 DESCRIPCIÓN
 
@@ -150,8 +150,8 @@ marzo de 1991), pero incluye diferencias importantes.
 
 Perl 6 es una reinvención de Perl. Es un lenguaje del mismo linaje, pero
 incompatible. Estos dos lenguajes no son mutuamente excluyentes, sino que se
-complementan. Perl 6 no sustituye a Perl 5, y viceversa. 
-Vea L</"¿Qué es Perl 6?"> a continuación para obtener más información.
+complementan. Perl 6 no sustituye a Perl 5, y viceversa. Vea 
+L</"¿Qué es Perl 6?"> a continuación para obtener más información.
 
 En L<perlhist> encontrará el historial de revisiones de Perl.
 
@@ -219,10 +219,9 @@ programa en BASIC, no le costará adaptarse.
 La mayoría de las tareas solo requieren conocer un pequeño subconjunto del
 lenguaje Perl. Uno de los lemas que guían el desarrollo de Perl es "se puede
 hacer de varias maneras", que es la traducción de "there's more than one way
-to do it" (o TMTOWTDI, que en inglés se suele pronunciar como "tim toady").
-Así, la curva de aprendizaje de Perl tiene una pendiente suave (es fácil de
-aprender) y larga (si desea seguir profundizando, puede aprender a hacer muchas
-cosas).
+to do it" (o TMTOWTDI, que en inglés se pronuncia como "tim toady"). Así, la
+curva de aprendizaje de Perl tiene una pendiente suave (es fácil de aprender)
+y larga (si desea seguir profundizando, puede aprender a hacer muchas cosas).
 
 Por último, como Perl es frecuentemente un lenguaje interpretado (aunque no
 siempre y, desde luego, no por definición), puede escribir sus programas y
@@ -249,8 +248,8 @@ en los que es bueno o malo suelen ser una opción personal.
 
 Al elegir un lenguaje también debe tener en cuenta los
 L<recursos|http://www.cpan.org/>, la 
-L<cultura de ejecución de pruebas (I<testing>)|http://www.cpantesters.org/> 
-y la L<comunidad|http://www.perl.org/community.html> del lenguaje.
+L<cultura de ejecución de pruebas (I<testing>)|http://www.cpantesters.org/> y 
+la L<comunidad|http://www.perl.org/community.html> del lenguaje.
 
 Para realizar comparaciones con otro lenguaje específico, lo mejor suele ser
 crear un proyecto pequeño en ambos lenguajes y analizar los resultados.

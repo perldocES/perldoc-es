@@ -1,5 +1,15 @@
 Revision history for Perl extension POD2::ES
 
+5.24.0.01 October 19, 2016
+
+          * Updated the latest release to v5.24.0
+
+5.22.0.03 September 27, 2016
+
+          * MANIFEST: Removed the names of two files not included in 
+            the distribution
+          * ES.pm: Commented out perlgit and perlre in pod_info
+
 5.22.0.02 May 9, 2016
 
            * Changes in Makefile.PL

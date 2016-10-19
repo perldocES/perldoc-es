@@ -159,6 +159,15 @@ at the end of the list, just before the closing "]".</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>"@INC" above is a reference to the built-in variable of the same name;
+see L&lt;perlvar&gt; for more information.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T160105Z" creationid="explorer" creationdate="20161019T160105Z">
+        <seg>El "@INC" anterior es una referencia a una variable integrada del mismo nombre; vea L&lt;perlvar&gt; para más información.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>"Content-Length: $byte_count"</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110212T162406Z">
@@ -7279,6 +7288,14 @@ change their meanings.)</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>(There are 2 books with this title)</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T190259Z" creationid="explorer" creationdate="20161019T190259Z">
+        <seg>(Hay dos libros con este mismo título)</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>(These used to live in
 t/op).</seg>
       </tuv>
@@ -8457,6 +8474,14 @@ boundary, just as it normally does in any double-quoted string.)</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>-----------------------------------------------------------------------</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T163401Z" creationid="explorer" creationdate="20161019T163401Z">
+        <seg>-----------------------------------------------------------------------</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>-------------------------------------------------------------------------</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110717T211245Z">
@@ -9359,6 +9384,14 @@ de llamada para C&lt;File::Find&gt;:</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20111008T175812Z">
         <seg>/usr/local/lib/perl5/CORE</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>/usr/local/lib/perl5/site_perl/5.6.0/Net/Acme.pm line 123.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T181133Z" creationid="explorer" creationdate="20161019T180615Z">
+        <seg>/usr/local/lib/perl5/site_perl/5.6.0/Net/Acme.pm, línea 123.</seg>
       </tuv>
     </tu>
     <tu>
@@ -10669,6 +10702,14 @@ de llamada para C&lt;File::Find&gt;:</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20111008T182945Z">
         <seg>2.945  3.003 251215   0.0000 0.0000  main::matches</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>2/10850 subtests failed,</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T163422Z" creationid="explorer" creationdate="20161019T163422Z">
+        <seg>2/10850 subtests failed,</seg>
       </tuv>
     </tu>
     <tu>
@@ -12967,6 +13008,14 @@ de llamada para C&lt;File::Find&gt;:</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110719T094721Z">
         <seg>9){</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>99.98% okay.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T163430Z" creationid="explorer" creationdate="20161019T163430Z">
+        <seg>99.98% okay.</seg>
       </tuv>
     </tu>
     <tu>
@@ -23456,6 +23505,30 @@ X&lt;HOME&gt;</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110717T224558Z">
         <seg>=item L&lt;http://perl.com/&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>=item L&lt;http://perlsphere.net/&gt;</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T181659Z" creationid="explorer" creationdate="20161019T181659Z">
+        <seg>=item L&lt;http://perlsphere.net/&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>=item L&lt;http://perlweekly.com/&gt;</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T181708Z" creationid="explorer" creationdate="20161019T181708Z">
+        <seg>=item L&lt;http://perlweekly.com/&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>=item L&lt;http://prepan.org/&gt;</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T183834Z" creationid="explorer" creationdate="20161019T183834Z">
+        <seg>=item L&lt;http://prepan.org/&gt;</seg>
       </tuv>
     </tu>
     <tu>
@@ -46185,6 +46258,16 @@ scalar value instead.</seg>
     <tu>
       <tuv lang="EN-US">
         <seg>For examples of MRO implementations, see C&lt;S_mro_get_linear_isa_c3()&gt;
+and the C&lt;BOOT:&gt; section of F&lt;ext/mro/mro.xs&gt;, and
+C&lt;S_mro_get_linear_isa_dfs()&gt; in F&lt;mro_core.c&gt;</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T181419Z" creationid="explorer" creationdate="20161019T181419Z">
+        <seg>Si desea ver ejemplos de implementaciones de orden de resolución de métodos, consulte C&lt;S_mro_get_linear_isa_c3()&gt; y la sección C&lt;BOOT:&gt; de F&lt;ext/mro/mro.xs&gt;; vea también C&lt;S_mro_get_linear_isa_dfs()&gt; en F&lt;mro_core.c&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>For examples of MRO implementations, see C&lt;S_mro_get_linear_isa_c3()&gt;
 and the C&lt;BOOT:&gt; section of F&lt;mro/mro.xs&gt;, and C&lt;S_mro_get_linear_isa_dfs()&gt;
 in F&lt;mro.c&gt;</seg>
       </tuv>
@@ -48715,6 +48798,14 @@ more complex like L&lt;File::Copy|File::Copy&gt;.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>I&lt;Higher-Order Perl&gt;: L&lt;http://hop.perl.plover.com/&gt;</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T185809Z" creationid="explorer" creationdate="20161019T185809Z">
+        <seg>I&lt;Higher-Order Perl&gt;: L&lt;http://hop.perl.plover.com/&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>I&lt;Higher-Order Perl&gt;: http://hop.perl.plover.com/</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110627T124958Z">
@@ -48728,6 +48819,14 @@ by O'Reilly and Associates.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20121231T094439Z">
         <seg>I&lt;Mastering Regular Expressions&gt; de Jeffrey Friedl, publicado por O'Reilly and Associates.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>I&lt;Modern Perl&gt;: L&lt;http://onyxneon.com/books/modern_perl/&gt;</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T185816Z" creationid="explorer" creationdate="20161019T185816Z">
+        <seg>I&lt;Modern Perl&gt;: L&lt;http://onyxneon.com/books/modern_perl/&gt;</seg>
       </tuv>
     </tu>
     <tu>
@@ -49246,6 +49345,14 @@ C&lt;pod2man | nroff -man | $PAGER&gt;.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="explorer" changedate="20150717T170128Z" creationid="explorer" creationdate="20150717T170128Z">
         <seg>ISBN 978-0-596-80251-6 [libro electrónico]</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>ISBN 978-1-118-01384-7</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T190118Z" creationid="explorer" creationdate="20161019T190118Z">
+        <seg>ISBN 978-1-118-01384-7</seg>
       </tuv>
     </tu>
     <tu>
@@ -56755,6 +56862,14 @@ L&lt;http://www.eki.ee/letter/&gt;</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>L&lt;mailto:perl5-porters@perl.org&gt;</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T185753Z" creationid="explorer" creationdate="20161019T185753Z">
+        <seg>L&lt;mailto:perl5-porters@perl.org&gt;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>L&lt;overload&gt;, L&lt;perlop&gt;</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110608T174614Z">
@@ -59200,6 +59315,16 @@ from C&lt;Moose&gt;.</seg>
     <tu>
       <tuv lang="EN-US">
         <seg>Most of these books are available online through Safari Books Online
+( L&lt;http://safaribooksonline.com/&gt; ).</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T185959Z" creationid="explorer" creationdate="20161019T185959Z">
+        <seg>La mayoría de estos libros están disponibles en línea a través de Safari Books Online
+( L&lt;http://safaribooksonline.com/&gt; ).</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>Most of these books are available online through Safari Books Online
 ( http://safaribooksonline.com/ ).</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110427T232213Z">
@@ -59710,6 +59835,14 @@ to find a valid match by advancing the start pointer will occur again.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20121230T132006Z">
         <seg>No habrá nuevos intentos para encontrar una coincidencia válida avanzando el puntero de inicio.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>No hostname given at</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T181122Z" creationid="explorer" creationdate="20161019T180625Z">
+        <seg>No se ha especificado un nombre de host en</seg>
       </tuv>
     </tu>
     <tu>
@@ -61976,6 +62109,15 @@ Regular Expression and Print it" (hacer una búsqueda global de una expresión r
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>Originally run by O'Reilly Media (the publisher of L&lt;the Camel Book|perlbook&gt;,
+this site provides quality articles mostly about technical details of Perl.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T184922Z" creationid="explorer" creationdate="20161019T184607Z">
+        <seg>En este sitio, dirigido originalmente por O'Reilly Media (la editorial del L&lt;libro del Camello|perlbook&gt;), se publican principalmente artículos de calidad sobre detalles técnicos de Perl.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>Originally, a script was a canned sequence of normally interactive
 commands--that is, a chat script.</seg>
       </tuv>
@@ -62883,6 +63025,15 @@ groups, including the hosting of mailing lists and web sites.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110405T102328Z">
         <seg>¿Y Perl Mongers?</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>Perl Weekly is a weekly mailing list that keeps you up to date on conferences,
+releases and notable blog posts.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T183426Z" creationid="explorer" creationdate="20161019T183249Z">
+        <seg>Perl Weekly es una lista de correo semanal que informa sobre conferencias, lanzamientos y artículos de blog destacados.</seg>
       </tuv>
     </tu>
     <tu>
@@ -64317,6 +64468,14 @@ mostrarle directamente la documentación de las funciones (con el modificador B&
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>Perlsphere is one of several aggregators of Perl-related blog feeds.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T184759Z" creationid="explorer" creationdate="20161019T184622Z">
+        <seg>Perlsphere es uno de los diversos agregadores disponibles de blogs sobre Perl.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>Permanent aliases are explicitly
 created in B&lt;packages&gt; by B&lt;importing&gt; symbols or by assignment to
 B&lt;typeglobs&gt;.</seg>
@@ -64702,6 +64861,15 @@ lowercase.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20121110T175550Z">
         <seg>Los nombres de pragmas se escriben en minúsculas.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>PrePAN is used as a place to discuss modules that you're considering uploading
+to the CPAN.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T184434Z" creationid="explorer" creationdate="20161019T184333Z">
+        <seg>Puede usar PrePAN para pedir que analicen un módulo nuevo suyo antes de subirlo a CPAN.</seg>
       </tuv>
     </tu>
     <tu>
@@ -78069,6 +78237,16 @@ buscando:</seg>
       <tuv lang="EN-US">
         <seg>There are probably very nice books published after this list
 was included in your Perl release, and you can check the latest
+released version at L&lt;http://perldoc.perl.org/perlbook.html&gt; .</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T190436Z" creationid="explorer" creationdate="20161019T190436Z">
+        <seg>Es probable que se hayan publicado libros muy interesantes desde que se incluyó la lista en esta versión de Perl. Si lo desea, puede consultar la versión más reciente de la lista en L&lt;http://perldoc.perl.org/perlbook.html&gt;.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>There are probably very nice books published after this list
+was included in your Perl release, and you can check the latest
 released version at http://perldoc.perl.org/perlbook.html .</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110604T233409Z">
@@ -78265,6 +78443,17 @@ which tracks and provides services for a variety of other community sites.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120414T175006Z">
         <seg>Existe un directorio central para la comunidad Perl, L&lt;http://perl.org&gt;, mantenido por la Fundación Perl (The Perl Foundation, L&lt;http://www.perlfoundation.org/&gt;), que además de prestar servicios a diversos sitios web de la comunidad, realiza un seguimiento de los mismos.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>There is a list
+of these books, some with extensive reviews, at
+L&lt;http://books.perl.org/&gt; .</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T185905Z" creationid="explorer" creationdate="20161019T185905Z">
+        <seg>En L&lt;http://books.perl.org/&gt;
+encontrará una lista de estos libros. De algunos de ellos se incluyen extensas reseñas.</seg>
       </tuv>
     </tu>
     <tu>
@@ -81515,6 +81704,19 @@ whether there is actually more to match in the string.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20121230T153253Z">
         <seg>Este patrón no coincide con nada y provoca el final de una coincidencia correcta en el lugar en que se detecta el patrón C&lt;(*ACCEPT)&gt;, independientemente de que haya más coincidencias en la cadena.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>This points to a closed subscription
+unarchived mailing list, which includes
+all the core committers, who will be able
+to help assess the impact of issues, figure out a resolution, and help
+co-ordinate the release of patches to mitigate or fix the problem across all
+platforms on which Perl is supported.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T183335Z" creationid="explorer" creationdate="20161019T183335Z">
+        <seg>fuzzy Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado.</seg>
       </tuv>
     </tu>
     <tu>
@@ -85106,6 +85308,16 @@ potato) but none caught on.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>We list some of the books here, and while
+listing a book implies our
+endorsement, don't think that not including a book means anything.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T185925Z" creationid="explorer" creationdate="20161019T185925Z">
+        <seg>En este documento se hace referencia a algunos de estos libros. Los que figuran en la lista son libros que recomendamos; no obstante, el que un libro no figure en la lista no quiere decir que sea malo.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>We list some of the books here, and while listing a book implies our
 endorsement, don't think that not including a book means anything.</seg>
       </tuv>
@@ -85173,6 +85385,16 @@ C&lt;superclass/subclass&gt; relationships.</seg>
       <tuv lang="ES-ES" changeid="zipf" changedate="20120628T225341Z">
         <seg>A menudo se alude a las relaciones de herencia como relaciones B&lt;primario-derivado&gt; o
 C&lt;superclase/subclase&gt;.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>We often refer to inheritance relationships as B&lt;parent-child&gt; or
+C&lt;superclass&gt;/C&lt;subclass&gt; relationships.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T173457Z" creationid="explorer" creationdate="20161019T173159Z">
+        <seg>A menudo se alude a las relaciones de herencia como relaciones B&lt;primaria-derivada&gt; o
+C&lt;superclase&gt;/C&lt;subclase&gt;.</seg>
       </tuv>
     </tu>
     <tu>
@@ -88183,6 +88405,14 @@ users the informal support will more than suffice.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110401T175416Z">
         <seg>Si lo desea, puede obtener soporte comercial para Perl, pero a la mayoría de los usuarios les bastará con el soporte informal.</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>You can get feedback on their design before you upload.</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T184414Z" creationid="explorer" creationdate="20161019T184414Z">
+        <seg>Recibirá comentarios sobre el diseño del módulo.</seg>
       </tuv>
     </tu>
     <tu>
@@ -91683,6 +91913,14 @@ http://www.ddj.com/184404580 .</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>by Curtis 'Ovid' Poe</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T190234Z" creationid="explorer" creationdate="20161019T190105Z">
+        <seg>Curtis "Ovid" Poe</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>by Damian Conway</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110428T162618Z">
@@ -91877,8 +92115,8 @@ http://www.ddj.com/184404580 .</seg>
       <tuv lang="EN-US">
         <seg>by Tom Christiansen, brian d foy, Larry Wall with Jon Orwant</seg>
       </tuv>
-      <tuv lang="ES-ES" changeid="explorer" changedate="20150513T111229Z" creationid="explorer" creationdate="20150513T111229Z">
-        <seg>por Tom Christiansen, brian d foy y Larry Wall, con Jon Orwant</seg>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T190455Z" creationid="explorer" creationdate="20150513T111229Z">
+        <seg>Tom Christiansen, brian d foy y Larry Wall, con Jon Orwant</seg>
       </tuv>
     </tu>
     <tu>
@@ -95439,6 +95677,14 @@ http://www.primate.wisc.edu/software/csh-tcsh-book/</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110608T172957Z">
         <seg>http://www.vim.org/</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>http://www.wrox.com/WileyCDA/WroxTitle/productCd-1118013840.html</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T190121Z" creationid="explorer" creationdate="20161019T190121Z">
+        <seg>http://www.wrox.com/WileyCDA/WroxTitle/productCd-1118013840.html</seg>
       </tuv>
     </tu>
     <tu>
@@ -101134,6 +101380,14 @@ system.</seg>
     </tu>
     <tu>
       <tuv lang="EN-US">
+        <seg>perl5203delta	Perl changes in version 5.20.3</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T155941Z" creationid="explorer" creationdate="20161019T155941Z">
+        <seg>perl5203delta    Cambios en la versión 5.20.3</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
         <seg>perl5210delta	Perl changes in version 5.21.0</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="explorer" changedate="20150905T143932Z" creationid="explorer" creationdate="20150905T143932Z">
@@ -101226,6 +101480,30 @@ system.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="explorer" changedate="20150905T143733Z" creationid="explorer" creationdate="20150905T143645Z">
         <seg>perl5219delta    Cambios en la versión 5.21.9</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>perl5220delta	Perl changes in version 5.22.0</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T155933Z" creationid="explorer" creationdate="20161019T155933Z">
+        <seg>perl5220delta    Cambios en la versión 5.22.0</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>perl5221delta	Perl changes in version 5.22.1</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T155919Z" creationid="explorer" creationdate="20161019T155919Z">
+        <seg>perl5221delta    Cambios en la versión 5.22.1</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>perl5222delta	Perl changes in version 5.22.2</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T155839Z" creationid="explorer" creationdate="20161019T155839Z">
+        <seg>perl5222delta    Cambios en la versión 5.22.2</seg>
       </tuv>
     </tu>
     <tu>
@@ -104500,6 +104778,22 @@ system.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="zipf" changedate="20110719T173431Z">
         <seg>print `cat /etc/termcap`;</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>print blessed( $bar ) // 'not blessed';    # prints "Class"</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T174721Z" creationid="explorer" creationdate="20161019T174721Z">
+        <seg>print blessed( $bar ) // 'sin bendecir';   # imprime "Clase"</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>print blessed( $bar ) // 'not blessed';    # prints "not blessed"</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20161019T174800Z" creationid="explorer" creationdate="20161019T174800Z">
+        <seg>print blessed( $bar ) // 'sin bendecir';   # imprime "sin bendecir"</seg>
       </tuv>
     </tu>
     <tu>
@@ -109422,6 +109716,14 @@ stable version for which the test case passes.</seg>
       </tuv>
       <tuv lang="ES-ES" changeid="explorer" changedate="20150905T110514Z" creationid="explorer" creationdate="20150905T110514Z">
         <seg>versión 5.021009</seg>
+      </tuv>
+    </tu>
+    <tu>
+      <tuv lang="EN-US">
+        <seg>version 5.021010</seg>
+      </tuv>
+      <tuv lang="ES-ES" changeid="explorer" changedate="20160918T085008Z" creationid="explorer" creationdate="20160918T085008Z">
+        <seg>versión 5.021010</seg>
       </tuv>
     </tu>
     <tu>

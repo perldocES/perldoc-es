@@ -6,8 +6,8 @@ perl - El intérprete del lenguaje Perl 5
 
 =head1 SINOPSIS
 
-B<perl> S<[ B<-sTtuUWX> ]>  S<[ B<-hv> ] [ B<-V>[:I<var_config>] ]> 
-S<[B<-cw> ] [ B<-d>[B<t>][:I<depurador>] ] [ B<-D>[I<número/lista>] ]>    S<[
+B<perl> S<[ B<-sTtuUWX> ]>  S<[ B<-hv> ] [ B<-V>[:I<var_config>] ]>     S<[
+B<-cw> ] [ B<-d>[B<t>][:I<depurador>] ] [ B<-D>[I<número/lista>] ]>    S<[
 B<-pna> ] [ B<-F>I<patrón> ] [ B<-l>[I<octal>] ] [ B<-0>[I<octal/hexadecimal>]
 ]>  S<[ B<-I>I<dir> ] [ B<-m>[B<->]I<módulo> ] [ B<-M>[B<->]I<'módulo...'> ]
 [ B<-f> ]>   S<[ B<-C [I<número/lista>] >]>     S<[ B<-S> ]>    S<[
@@ -90,8 +90,8 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
     perlop           Operadores y precedencia
     perlsub          Subrutinas
     perlfunc         Funciones predefinidas
-    perlopentut      Tutorial de open()
-    perlpacktut      Tutorial de pack() y unpack()
+      perlopentut    Tutorial de open()
+      perlpacktut    Tutorial de pack() y unpack()
     perlpod          Documentación en texto simple (POD)
     perlpodspec      Especificación del formato POD
     perlpodstyle     Guía de estilo para POD
@@ -107,7 +107,7 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
     perlform         Formatos
     perlobj          Objetos
     perltie          Objetos Perl ocultos en variables simples
-    perldbmfilter    Filtros DBM
+      perldbmfilter  Filtros DBM
 
     perlipc          Comunicación entre procesos
     perlfork         Información sobre fork()
@@ -178,18 +178,10 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
 
     perlhist         Registros históricos de Perl
     perldelta        Cambios con respecto a la versión anterior
-    perl52111delta   Cambios en la versión 5.21.11
-    perl52110delta   Cambios en la versión 5.21.10
-    perl5219delta    Cambios en la versión 5.21.9
-    perl5218delta    Cambios en la versión 5.21.8
-    perl5217delta    Cambios en la versión 5.21.7
-    perl5216delta    Cambios en la versión 5.21.6
-    perl5215delta    Cambios en la versión 5.21.5
-    perl5214delta    Cambios en la versión 5.21.4
-    perl5213delta    Cambios en la versión 5.21.3
-    perl5212delta    Cambios en la versión 5.21.2
-    perl5211delta    Cambios en la versión 5.21.1
-    perl5210delta    Cambios en la versión 5.21.0
+    perl5222delta    Cambios en la versión 5.22.2
+    perl5221delta    Cambios en la versión 5.22.1
+    perl5220delta    Cambios en la versión 5.22.0
+    perl5203delta    Cambios en la versión 5.20.3
     perl5202delta    Cambios en la versión 5.20.2
     perl5201delta    Cambios en la versión 5.20.1
     perl5200delta    Cambios en la versión 5.20.0
@@ -356,7 +348,10 @@ escriba un mensaje a la dirección perl-thanks@perl.org .
 
 =head1 ARCHIVOS
 
- "@INC"                     ubicación de bibliotecas de Perl
+ "@INC"    ubicación de bibliotecas de Perl
+
+El "@INC" anterior es una referencia a una variable integrada del mismo nombre;
+vea L<perlvar> para más información.
 
 =head1 VEA TAMBIÉN
 

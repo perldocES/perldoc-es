@@ -37,11 +37,19 @@ Los sitios web sobre Perl son de diversos tipos, pero se engloban en dos grandes
 
 =item L<http://perl.com/>
 
-Dirigido por O'Reilly Media (la editorial del L<libro del Camello|perlbook>, entre muchos otros libros sobre Perl), perl.com ofrece noticias de actualidad Perl, artículos y recursos para desarrolladores de Perl, así como un directorio de otros sitios web útiles.
+En este sitio, dirigido originalmente por O'Reilly Media (la editorial del L<libro del Camello|perlbook>), se publican principalmente artículos de calidad sobre detalles técnicos de Perl.
 
 =item L<http://blogs.perl.org/>
 
 Muchos miembros de la comunidad tienen un blog sobre Perl en este sitio. Puede apuntarse gratuitamente.
+
+=item L<http://perlsphere.net/>
+
+Perlsphere es uno de los diversos agregadores disponibles de blogs sobre Perl.
+
+=item L<http://perlweekly.com/>
+
+Perl Weekly es una lista de correo semanal que informa sobre conferencias, lanzamientos y artículos de blog destacados.
 
 =item L<http://use.perl.org/>
 
@@ -60,6 +68,10 @@ PerlMonks es uno de los mayores foros de Perl, y se describe como "Un lugar que 
 =item L<http://stackoverflow.com/>
 
 Stack Overflow es un sitio para programadores en el que todos pueden hacer preguntas o contestarlas. No se centra exclusivamente en Perl, pero tiene un grupo activo de usuarios que hacen lo posible por ayudar a personas que tienen dudas sobre programación en Perl.
+
+=item L<http://prepan.org/>
+
+Puede usar PrePAN para pedir que analicen un módulo nuevo suyo antes de subirlo a CPAN.  Recibirá comentarios sobre el diseño del módulo.
 
 =back
 

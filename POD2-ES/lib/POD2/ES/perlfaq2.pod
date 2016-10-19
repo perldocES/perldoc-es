@@ -42,10 +42,10 @@ Vea L<Adaptaciones de Perl en CPAN|http://www.cpan.org/ports/>
 
 =head2 No dispongo de un compilador de C. ¿Cómo puedo compilar mi propio intérprete de Perl?
 
-Para Windows, use una versión binaria de Perl. L<Strawberry
-Perl|http://strawberryperl.com/> y
-L<ActivePerl|http://www.activestate.com/activeperl> incluyen un compilador de
-C.
+Para Windows, use una versión binaria de Perl. 
+L<Strawberry Perl|http://strawberryperl.com/> y
+L<ActivePerl|http://www.activestate.com/activeperl> incluyen un compilador
+de C.
 
 Si prefiere compilar Perl, lo primero que debe hacer es obtener una versión
 binaria de C<gcc> para su sistema. Use un motor de búsqueda para averiguar la
@@ -133,8 +133,8 @@ en una sección posterior de L<perlfaq2>.
 
 Anteriormente, Perl.com ( L<http://www.perl.com/> ) formaba parte de O'Reilly
 Network, una subsidiaria de O'Reilly Media. Aunque conserva la mayor parte del
-contenido original de O'Reilly Network, ahora se hospeda en L<The Perl
-Foundation|http://www.perlfoundation.org/>.
+contenido original de O'Reilly Network, ahora se hospeda en 
+L<The Perl Foundation|http://www.perlfoundation.org/>.
 
 The Perl Foundation es una organización que respalda al lenguaje Perl y
 mantiene el sitio web L<http://www.perl.org/> como recurso general de apoyo a
@@ -164,23 +164,24 @@ usuarios de Perl: cómo unirse a un grupo, cómo iniciar un grupo o cómo
 solicitar servicios para un grupo.
 
 CPAN, o Comprehensive Perl Archive Network ( L<http://www.cpan.org/> ), es un
-repositorio de software Perl replicado en todo el mundo. Vea L<¿Qué es CPAN?|/"¿Qué módulos y extensiones están disponibles para Perl? ¿Qué es CPAN?">.
+repositorio de software Perl replicado en todo el mundo. Vea
+L<¿Qué es CPAN?|/"¿Qué módulos y extensiones están disponibles para Perl? ¿Qué es CPAN?">.
 
 =head2 ¿Dónde puedo publicar preguntas?
 
 Existen muchas L<listas de correo|lists.perl.org> sobre diversos temas
-relacionados con Perl. En concreto, la L<lista para
-principiantes|http://lists.perl.org/list/beginners.html> puede resultar útil
+relacionados con Perl. En concreto, la 
+L<lista para principiantes|http://lists.perl.org/list/beginners.html> puede resultar útil
 cuando se empieza.
 
-Otros lugares en los que puede hacer consultas son el L<sitio de
-PerlMonks|http://www.perlmonks.org/> y
+Otros lugares en los que puede hacer consultas son el 
+L<sitio de PerlMonks|http://www.perlmonks.org/> y
 L<stackoverflow|http://stackoverflow.com/questions/tagged/perl>.
 
 =head2 Libros sobre Perl
 
-Se han publicado muchos L<libros sobre
-Perl|http://www.perl.org/books/library.html> de gran calidad.
+Se han publicado muchos 
+L<libros sobre Perl|http://www.perl.org/books/library.html> de gran calidad.
 
 =head2 ¿En qué revistas puedo encontrar artículos sobre Perl?
 
@@ -245,7 +246,7 @@ específicos, como usar un sistema de seguimiento de errores de Github o Google
 Code, por lo que es recomendable consultar también la documentación de los
 módulos.
 
-=head1 AUTOR Y COPYRIGHT
+e=head1 AUTOR Y COPYRIGHT
 
 Copyright (c) 1997-2010 Tom Christiansen, Nathan Torkington y otros autores
 indicados. Todos los derechos reservados.

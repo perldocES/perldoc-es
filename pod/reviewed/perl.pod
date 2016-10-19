@@ -116,9 +116,9 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
     perllocale       Compatibilidad con la configuración regional
     perluniintro     Introducción a Unicode
     perlunicode      Compatibilidad con Unicode
-    perlunicook    Recetario de Unicode en Perl
+    perlunicook      Recetario de Unicode en Perl
     perlunifaq       Preguntas más frecuentes sobre Unicode
-    perluniprops    Índice de propiedades Unicode en Perl
+    perluniprops     Índice de propiedades Unicode en Perl
     perlunitut       Tutorial de Unicode
     perlebcdic       Ejecución de Perl en plataformas EBCDIC
 
@@ -175,18 +175,10 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
 
     perlhist         Registros históricos de Perl
     perldelta        Cambios con respecto a la versión anterior
-    perl52111delta    Cambios en la versión 5.21.11
-    perl52110delta    Cambios en la versión 5.21.10
-    perl5219delta    Cambios en la versión 5.21.9
-    perl5218delta    Cambios en la versión 5.21.8
-    perl5217delta    Cambios en la versión 5.21.7
-    perl5216delta    Cambios en la versión 5.21.6
-    perl5215delta    Cambios en la versión 5.21.5
-    perl5214delta    Cambios en la versión 5.21.4
-    perl5213delta    Cambios en la versión 5.21.3
-    perl5212delta    Cambios en la versión 5.21.2
-    perl5211delta    Cambios en la versión 5.21.1
-    perl5210delta    Cambios en la versión 5.21.0
+    perl5222delta    Cambios en la versión 5.22.2
+    perl5221delta    Cambios en la versión 5.22.1
+    perl5220delta    Cambios en la versión 5.22.0
+    perl5203delta    Cambios en la versión 5.20.3
     perl5202delta    Cambios en la versión 5.20.2
     perl5201delta    Cambios en la versión 5.20.1
     perl5200delta    Cambios en la versión 5.20.0
@@ -203,7 +195,7 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
     perl5142delta    Cambios en la versión 5.14.2
     perl5141delta    Cambios en la versión 5.14.1
     perl5140delta    Cambios en la versión 5.14.0
-    perl5125delta   Cambios en la versión 5.12.5
+    perl5125delta    Cambios en la versión 5.12.5
     perl5124delta    Cambios en la versión 5.12.4
     perl5123delta    Cambios en la versión 5.12.3
     perl5122delta    Cambios en la versión 5.12.2
@@ -226,7 +218,7 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
     perl5005delta    Cambios en la versión 5.005
     perl5004delta    Cambios en la versión 5.004
 
-    perlexperiment    Lista de funcionalidades experimentales de Perl
+    perlexperiment   Lista de funcionalidades experimentales de Perl
 
     perlartistic     Licencia Artistic de Perl
     perlgpl          Licencia GNU General Public License
@@ -244,7 +236,7 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
 
     perlaix          Notas para AIX
     perlamiga        Notas para AmigaOS
-    perlandroid    Notas para Android
+    perlandroid      Notas para Android
     perlbs2000       Notas para POSIX-BC BS2000
     perlce           Notas para WinCE
     perlcygwin       Notas para Cygwin
@@ -267,7 +259,7 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
     perlriscos       Notas para RISC OS
     perlsolaris      Notas para Solaris
     perlsymbian      Notas para Symbian
-    perlsynology    Notas sobre Synology para Perl
+    perlsynology     Notas sobre Synology para Perl
     perltru64        Notas para Tru64
     perlvms          Notas para VMS
     perlvos          Notas para Stratus VOS
@@ -333,7 +325,9 @@ Si considera que sus éxitos con Perl y sus testimonios pueden ayudar a otros pr
 
 =head1 ARCHIVOS
 
- "@INC"			ubicación de bibliotecas de Perl
+ "@INC"    ubicación de bibliotecas de Perl
+
+El "@INC" anterior es una referencia a una variable integrada del mismo nombre; vea L<perlvar> para más información.
 
 =head1 VEA TAMBIÉN
 

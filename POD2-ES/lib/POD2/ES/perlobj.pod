@@ -150,10 +150,10 @@ I<referente>). Esto se ilustra mejor con el código siguiente:
   my $bar = $foo;
 
   bless $foo, 'Clase';
-  print blessed( $bar );      # imprime "Clase"
+  print blessed( $bar ) // 'sin bendecir';   # imprime "Clase"
 
   $bar = "otro valor";
-  print blessed( $bar );      # imprime undef
+  print blessed( $bar ) // 'sin bendecir';   # imprime "sin bendecir"
 
 Cuando se produce la llamada a C<bless> con una variable, se bendice la
 estructura de datos subyacente a la que la variable hace referencia. No se
@@ -257,8 +257,8 @@ en dicho paquete. Si hay un objeto, entonces Perl busca el método en el
 paquete usado para bendecirlo.
 
 Si no hay ni un nombre de paquete ni un objeto, entonces la llamada al método
-producirá un error; consulte la sección 
-L</Variantes en las llamadas a los métodos> para obtener más información.
+producirá un error; consulte la sección L</Variantes en las llamadas a los métodos> 
+para obtener más información.
 
 =head2 Herencia
 X<inheritance> X<herencia>
@@ -300,13 +300,13 @@ seudoclase C<SUPER>.
 El modificador C<SUPER> I<solo> se puede usar para llamar a métodos. No se
 puede usar para llamadas normales a subrutinas ni para métodos de clase:
 
-  SUPER::guardar($algo);     # ERROR: busca la subrutina guardar() en el paquete SUPER
+  SUPER::guardar($algo);   # ERROR: busca la subrutina guardar() en el paquete SUPER
 
   SUPER->guardar($algo);   # ERROR: busca el método guardar() en la clase
-                           #       SUPER
+                           #        SUPER
 
   $algo->SUPER::guardar(); # CORRECTO: busca el método guardar() en las
-                           #       clases primarias
+                           #           clases primarias
 
 
 =head3 Forma de resolución de SUPER
@@ -872,7 +872,7 @@ mediante C<strict 'vars'>, debe declararla.
       die "No existe el atributo $llamado"
           unless exists $self->{$llamado};
 
-      # si es así, devolverlo...
+      # Si es así, devolverlo...
       return $self->{$llamado};
   }
 
