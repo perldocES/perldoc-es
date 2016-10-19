@@ -155,7 +155,7 @@ Por ejemplo, podríamos crear una clase C<Archivo::MP3> que B<herede>
 de C<Archivo>. Un objeto de la clase C<Archivo::MP3> es un (B<is-a>) tipo de objeto I<más específico> que un objeto de la clase C<Archivo>.
 Todos los archivos mp3 son archivos, pero no todos los archivos son archivos mp3.
 
-A menudo se alude a las relaciones de herencia como relaciones B<primario-derivado> o
+A menudo se alude a las relaciones de herencia como relaciones B<primaria-derivada> o
 C<superclase>/C<subclase>. Algunas veces se dice que la clase derivada tiene una relación de tipo "es un" (B<is-a> en inglés) con su clase primaria.
 
 C<Archivo> es una B<superclase> de C<Archivo::MP3> y C<Archivo::MP3> es una
