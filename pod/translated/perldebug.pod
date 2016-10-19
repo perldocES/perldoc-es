@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 X<debug> X<debugger>
 
 perldebug - Depuración en Perl
