@@ -109,10 +109,10 @@ La bendición no afecta a la variable que contiene la referencia al objeto bende
   my $bar = $foo;
 
   bless $foo, 'Clase';
-  print blessed( $bar ) // 'no blessed';     # imprime "Clase"
+  print blessed( $bar ) // 'sin bendecir';   # imprime "Clase"
 
   $bar = "otro valor";
-  print blessed( $bar ) // 'no blessed';     # imprime "no blessed"
+  print blessed( $bar ) // 'sin bendecir';   # imprime "sin bendecir"
 
 Cuando se produce la llamada a C<bless> con una variable, se bendice la estructura de datos subyacente a la que la variable hace referencia. No se bendicen ni la referencia en sí ni tampoco la variable que contiene la referencia. Esto es por lo que la segunda llamada a C<blessed( $bar )> devuelve falso. En ese momento C<$bar> ya no almacena una referencia a un objeto.
 

@@ -45,9 +45,9 @@ Ningún cambio
 
 =item *
 
-L<CPAN> se ha actualizado de la versión 1.9600 a la 1.9600_01.
+Se ha actualizado L<CPAN> de la versión 1.9600 a la versión 1.9600_01.
 
-L<CPAN::Distribution> se ha actualizado de la versión 1.9602 a la 1.9602_01.
+Se ha actualizado L<CPAN::Distribution> de la versión 1.9602 a la versión 1.9602_01.
 
 Portadas las correcciones de errores de la versión CPAN 1.9800.  Garantiza la detección adecuada de los prerequisitos C<configure_requires> desde los archivos Meta de CPAN en el caso de que C<dynamic_config> sea verdadero.  [rt.cpan.org #68835]
 
@@ -55,19 +55,19 @@ También asegura que C<configure_requires> sólo es comprobado en los archivos M
 
 =item *
 
-L<Encode> se ha actualizado de la versión 2.42 a la 2.42_01.
+Se ha actualizado L<Encode> desde la versión 2.42 a la versión 2.42_01.
 
 Vea L</Seguridad>.
 
 =item *
 
-L<File::Glob> se ha actualizado de la versión 1.12 a la 1.13.
+Se ha actualizado L<File::Glob> desde la versión 1.12 a la versión 1.13.
 
 Vea L</Seguridad>.
 
 =item *
 
-L<PerlIO::scalar> se ha actualizado de la versión 0.11 a la 0.11_01.
+Se ha actualizado L<PerlIO::scalar> de la versión 0.11 a la versión 0.11_01.
 
 Se corrige un problema con C<< open my $fh, ">", \$escalar >>, al no funciona si C<$escalar> es un escalar con copia-en-escritura.
 
