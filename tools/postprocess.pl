@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright 2011-2012 by Enrique Nell
+# Copyright 2011-2016 by Enrique Nell
 #
 # Requires Pod::Simple::HTML
 
@@ -19,16 +19,17 @@ use Unicode::Collate::Locale;
 
 $|++;
 
-my (@names, $nohtml, $diff);
+my (@names, $nohtml, $diff, $notrev);
 
 my $result = GetOptions(
                         "pod=s"   => \@names,
                         "nohtml"  => \$nohtml,
                         "diff"    => \$diff,
+                        "notrev"  => \$notrev,
                        );
 
 
-die "Usage: perl postprocess.pl --pod <pod_name1> <pod_name2> ... [--nohtml] [--diff]\n" 
+die "Usage: perl postprocess.pl --pod <pod_name1> <pod_name2> ... [--nohtml] [--diff][--notrev]\n" 
     unless $names[0];
 
 
@@ -62,6 +63,16 @@ Readonly my $DIFF_HEADER   => <<"END_HEADER";
 <body>
 END_HEADER
 
+# File Not Reviewed Warning
+Readonly my $NOT_REVIEWED => <<"END_WARNING";
+=begin HTML
+
+<p style="color:red"><strong>ADVERTENCIA: ESTE DOCUMENTO NO ESTÁ REVISADO.</br> 
+Se incluye en la distribución como borrador útil e informativo, pero su lectura puede 
+resultar dura para las almas con mayor sensibilidad lingüística.</strong></p>
+
+=end HTML
+END_WARNING
 
 # Read team from __DATA__ section
 my (%team, %files);
@@ -89,11 +100,11 @@ close DATA;
 
 
 # Copy work memory to clean project => clean memory
-copy($MEM_PATH, $CLEANM_PATH);
+copy($MEM_PATH, $CLEANM_PATH) unless $notrev;
 
 # Copy work memory to /memory/work in repository 
 # and rename it as perlspanish-omegat.zipf.tmx
-copy($MEM_PATH, $WORK_PATH);
+copy($MEM_PATH, $WORK_PATH) unless $notrev;
 
 
 
@@ -142,27 +153,32 @@ foreach my $pod_name (@names) {
     }
 
 
-    # Copy source file to clean project => clean memory
-    copy($source, $clean);
+    # Copy source file to clean project => clean memory (unless file is not reviewed)
+    copy($source, $clean) unless $notrev;
         
-    # Copy generated file to git archive (won't go through postprocessing)
-    copy($target, $rev_pod);
+    # Copy generated file to git archive ((unless file is not reviewed); won't go through postprocessing
+    copy($target, $rev_pod) unless $notrev;
 
     # Copy generated file to distribution
     copy($target, $distr);
 
     
 
-    # Replace double-spaces after full-stop with single space
+    # Slurp the distribution file to implement several fixes
     open my $dirty, '<:encoding(UTF-8)', $distr; # OmegaT generates UTF-8 files
    
     my $text = do { local $/; <$dirty> };
     
     close $dirty;
 
+    # Replace double-spaces after full-stop with single space
     $text =~ s/(?<=\.)  (?=[A-Z])/ /g; # two white spaces after full stop
     # TO DO: add more checks
     
+    
+    # Add a warning in case the file is not reviewed
+    $text =~ s/=head1 NOMBRE\K(.+?)(?==head1 )/$1\n\n$NOT_REVIEWED\n\n/s if $notrev;
+
     # Check if there is a =encoding command
     my $encoding;
     if ( $text =~ /^=encoding (\S+)/m ) {
@@ -186,7 +202,7 @@ foreach my $pod_name (@names) {
 
     }
     
-
+    # Save the fixed file
     open my $fixed, ">:encoding(UTF-8)", $distr;
     
     if ( $readme ) {
@@ -245,7 +261,7 @@ foreach my $pod_name (@names) {
     $translators_section .= "=back\n\n";
     
     print $out $translators_section;
-    
+
     close $out;
 
 
@@ -275,8 +291,19 @@ foreach my $pod_name (@names) {
     unless ( $nohtml ) {
 
         say "Generating HTML version of POD file...";
+        
+        my $html;
 
-        my $html = "$REVPOD_PATH/$name$suffix.html";
+        if ($notrev) {    
+
+            $html = "$TRANSPOD_PATH/$name$suffix.html";
+        
+        } else {
+        
+            $html = "$REVPOD_PATH/$name$suffix.html";
+        
+        }
+
         system("perl -MPod::Simple::HTML -e Pod::Simple::HTML::go $distr > $html");
 
     }
