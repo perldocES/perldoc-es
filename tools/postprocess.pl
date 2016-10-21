@@ -159,10 +159,18 @@ foreach my $pod_name (@names) {
     # Copy generated file to git archive ((unless file is not reviewed); won't go through postprocessing
     copy($target, $rev_pod) unless $notrev;
 
-    # Copy generated file to distribution
-    copy($target, $distr);
+    # Copy translated file to distribution
+    if ( $notrev ) {
 
-    
+        # copy translated file (not yet reviewed) from the repository /translated folder
+        copy($trans_pod, $distr);
+
+    } else {
+        
+        # copy reviewed file from OmegaT /target folder
+        copy($target, $distr);
+
+    }
 
     # Slurp the distribution file to implement several fixes
     open my $dirty, '<:encoding(UTF-8)', $distr; # OmegaT generates UTF-8 files
