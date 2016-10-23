@@ -212,7 +212,7 @@ PrePAN es un sitio dedicado a hablar de ideas sobre módulos CPAN con otros desa
 
 También debería tratar de conseguir comentarios positivos de las personas que ya están familiarizadas con el dominio de aplicación del módulo y el sistema de nombres de CPAN.  Los autores de módulos similares, o módulos con nombres similares, pueden ser un buen lugar para comenzar, así como en sitios de la comunidad como L<Perl Monks|http://www.perlmonks.org>
 
-=head1 DISEÑANDO Y ESCRIBIENDO SU MÓDULO
+=head1 DISEÑAR Y ESCRIBIENDO SU MÓDULO
 
 Consideraciones para el diseño y codificación del módulo:
 
@@ -374,7 +374,7 @@ Como alternativa a lo anterior, es posible que prefiera lanzar excepciones utili
 
 Una gestión configurable de errores puede ser muy útil para los usuarios.  Considere la posibilidad de ofrecer una selección de niveles de alerta y mensajes de depuración, una opción para enviar mensajes a un archivo separado, una forma de especificar una rutina de control de errores, o de otras características.  Asegúrese de que todas estas opciones estén puestas, por defecto, para el uso más común.
 
-=head1 DOCUMENTANDO SU MÓDULO
+=head1 DOCUMENTAR SU MÓDULO
 
 =head2 POD
 
@@ -575,7 +575,7 @@ Vea L<perlgpl> y L<perlartistic>.
 
 =head1 ERRORES COMUNES
 
-=head2 Reinventando la rueda
+=head2 Reinventar la rueda
 
 Hay ciertos espacios de aplicación que ya están muy, muy bien servidos por CPAN.  Un ejemplo es el sistema de plantillas, otro son los módulos de fecha y hora, y hay muchos más.  Si bien es un rito de paso escribir su propia versión de estas cosas, por favor, considere cuidadosamente si el mundo de Perl realmente lo necesita.
 

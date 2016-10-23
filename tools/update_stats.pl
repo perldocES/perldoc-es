@@ -13,7 +13,7 @@
 # TODO: ¿Es posible automatizar los comandos git, o seguimos a mano? Mejor a mano... de momento.
 
 # Joaquín Ferrero. 20110130
-# Última versión:  20161023 13:15
+# Última versión:  dom 23 oct 2016 13:35:38 CEST
 #
 # Se supone que se debe ejecutar este programa después de haber ejecutado la orden
 # de generar los ficheros finales en el OmegaT, pero no es imprescindible.
@@ -39,18 +39,23 @@ use POSIX qw'strftime locale_h';
 my $perl_version   = 'v5.24.0';
 my $user           = 'explorer';			# TMX user file
 
+# Ruta a los ficheros
+my $DIR_ROOT	   = '<ruta al directorio base de todo el proyecto>';
+
+my $DIR_PROJECT	   = "$DIR_ROOT/perlspanish-work";	# ruta al proyecto OmegaT
+my $DIR_GIT	   = "$DIR_ROOT/perldoc-es";		# ruta al repositorio local Github
+
+my $FILE_STATS     = "$DIR_PROJECT/omegat/project_stats.txt";
+my $FILE_LIST      = "$DIR_PROJECT/files.lst";
+
+my $DIR_GIT_TRANS  = "$DIR_GIT/pod/translated";
+my $DIR_GIT_REVIEW = "$DIR_GIT/pod/reviewed";
+my $DIR_GIT_TMX    = "$DIR_GIT/memory/work";
+
 # Acceso a Google
 my $google_libro   = 'PerlDoc-ES.Traducción';
 my $google_hoja    = $perl_version;
 
-# Ruta a los ficheros
-my $DIR_PROJECT	   = '/home/explorer/Documentos/Desarrollo/perlspanish-work';
-my $DIR_GIT	   = '/home/explorer/Documentos/Desarrollo/perldoc-es';
-my $DIR_GIT_TRANS  = "$DIR_GIT/pod/translated";
-my $DIR_GIT_REVIEW = "$DIR_GIT/pod/reviewed";
-my $DIR_GIT_TMX    = "$DIR_GIT/memory/work";
-my $FILE_STATS     = "$DIR_PROJECT/omegat/project_stats.txt";
-my $FILE_LIST      = "$DIR_PROJECT/files.lst";
 ## Fin de configuración -------------------------------------------------------
 
 ## Comprobación ---------------------------------------------------------------
@@ -103,14 +108,14 @@ if ($l) {
 # and enable your API i.e.: APIs & auth -> APIs -> Google Apps APIs > Drive API
 #
 my $oauth2 = Net::Google::DataAPI::Auth::OAuth2->new(
-    client_id     => '48781485103-us28tj7busq85lvhh3pee40ivaiaes20.apps.googleusercontent.com',
-    client_secret => 'lLmmvwjCIpmf9sU',
+    client_id     => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com',
+    client_secret => 'xxxxxxxxxxxxxxxxxxx',
     scope         => ['http://spreadsheets.google.com/feeds/'],
 );
 #you can skip URL if you have your token saved and continue from RESTORE label
 
 # RESTORE:
-my $session_file = '/home/explorer/Documentos/Desarrollo/perlspanish/tools/google_spreadsheet.session';
+my $session_file = "$DIR_PROJECT/<ruta al archivo de Google>/google_spreadsheet.session";
 my $session;
 -f $session_file and $session = retrieve($session_file);
 
@@ -203,13 +208,13 @@ for my $i (0 .. $#filas) {
 
 	# actualizar la hoja
 	if ($hay_cambios) {
- 	    #print "$fichero: [", $fila_ref->{'seg'}, "]\n";
- 	    if ($fila_ref->{'seg'} >= 100) {
- 		$archivos_traducidos_cambios{$fichero} = 1;
- 	    }
- 	    else {
- 		$archivos_cambios{$fichero} = 1;
- 	    }
+	    #print "$fichero: [", $fila_ref->{'seg'}, "]\n";
+	    if ($fila_ref->{'seg'} >= 100) {
+		$archivos_traducidos_cambios{$fichero} = 1;
+	    }
+	    else {
+		$archivos_cambios{$fichero} = 1;
+	    }
 
 	    $fila->param(\%cambios);
 	    say "Actualizando $fichero";

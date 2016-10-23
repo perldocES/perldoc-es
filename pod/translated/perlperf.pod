@@ -44,7 +44,7 @@ Cada caso tiene una aplicación específica y una o más excepciones, y no hay s
 
 Aquí hay algunos ejemplos para demostrar el uso de las herramientas de medición de rendimiento de Perl.
 
-=head2  Asignando y desreferenciando variables.
+=head2 Asignar y desreferenciar variables.
 
 Estoy seguro de que la mayoría de nosotros ha visto código que se parece a (o es peor que) esto:
 
@@ -826,7 +826,7 @@ Veamos lo que hace C<Benchmark> con esto:
 
 En el caso primero, el código, que hace exactamente lo mismo que sacar cualquier información de depuración, en otras palabras, nada, le lleva 14 segundos; y en el otro caso al código le lleva una centésima de segundo.  Parece que, con justicia, es definitivo.  Use una variable C<$DEBUG> ANTES de llamar a la subrutina, en lugar de confiar en la inteligencia funcional de su interior.
 
-=head2 Registrando if DEBUG (constante)
+=head2 Registrar if DEBUG (constante)
 
 Es posible llevar la idea anterior un poco más lejos, usando una constante C<DEBUG> en tiempo de compilación.
 

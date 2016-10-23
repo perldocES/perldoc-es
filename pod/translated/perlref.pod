@@ -33,7 +33,7 @@ Las referencias son fáciles de usar en Perl.  Sólo hay un principio fundamenta
 Cuando un escalar almacena una referencia, siempre se comporta como un simple escalar.
 No lo convierte en un array o hash o subrutina; usted tiene que decirle explícitamente que lo haga, desreferenciandolo.
 
-=head2 Creando referencias
+=head2 Crear referencias
 X<reference, creation> X<referencing>
 X<referencia, creación> X<referenciando>
 
@@ -214,7 +214,7 @@ Su ventaja es que tiene menos riesgo de embrollarse más de lo que pasaría con 
 
 =back
 
-=head2 Usando referencias
+=head2 Usar referencias
 X<reference, use> X<dereferencing> X<dereference>
 X<referencia, uso> X<desreferenciando> X<desreferencia>
 
@@ -439,7 +439,7 @@ puede forzar la interpretación como palabra reservada mediante la adición de c
 El pragma C<use warnings> o la opción B<-w> le avisarán si se interpreta una palabra reservada como una cadena.
 Pero ya no se le advertirá sobre el uso de palabras en minúsculas, porque la cadena estará, de forma efectiva, entrecomillada.
 
-=head2 Pseudo-hashes: Usando un array como un hash
+=head2 Pseudo-hashes: Usar un array como un hash
 X<pseudo-hash> X<pseudo hash> X<pseudohash>
 
 Los pseudo-hashes se han eliminado de Perl.  El pragma 'fields' sigue estando disponible.
@@ -560,7 +560,7 @@ La partición de pares clave/valor, añadido en 5.20.0 y documentado en L<la sec
 
 Igual que con la desreferencia posfija de array, la desreferencia posfija de porciones de valores se I<puede> usar en la interpolación de cadenas (comillas dobles o con el operador C<qq>), pero sólo si se activa la L<feature> (característica) C<postderef_qq>.
 
-=head1 Asignando a referencias
+=head1 Asignar a referencias
 
 A partir de v5.22.0, se puede asignar valores al operador de referencia.  Realiza una operación de alias, por lo que el nombre de la variable referenciada en la parte izquierda se convierte en un alias de la cosa referenciada en la parte derecha:
 

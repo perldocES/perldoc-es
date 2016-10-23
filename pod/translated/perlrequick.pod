@@ -89,7 +89,7 @@ Con todas estas I<regex> que hemos visto, si la I<regex> coincide en alguna part
     "ama de casa\n" =~ /casa$/;        # coincide
     "ama de casa" =~ /^ama de casa$/;  # coincide
 
-=head2 Usando clases de caracteres
+=head2 Usar clases de caracteres
 
 Una B<clase de caracteres> permite que un conjunto de caracteres, en lugar de uno solo, coincidan en un punto en particular en una I<regex>.
 Las clases de caracteres se indican con corchetes C<[...]>, con el conjunto de caracteres que pueden, posiblemente, encontrarse en su interior.  Aquí hay algunos ejemplos:
@@ -198,7 +198,7 @@ Para el procesado de lenguaje natural (para que, por ejemplo, los apóstrofes se
 
     "don't" =~ / .+? \b{wb} /x;  # coincide con toda la cadena
 
-=head2 Coincidiendo con esto o aquello
+=head2 Coincidir con esto o aquello
 
 Podemos hacer coincidir diferentes cadenas de caracteres con el metacarácter de B<alternancia> C<'|'>.  Para que coincida con C<perro> o C<gato>, formamos la I<regex> C<perro|gato>.  Al igual que antes, Perl tratará de hacer coincidir la I<regex> en el primer punto de coincidencia en la cadena.  En cada posición de carácter, Perl intentará hacer coincidir en primer lugar con la primera alternativa, C<perro>.  Si C<perro> no coincide, Perl entonces intentará la siguiente alternativa, C<gato>.
 Si C<gato> tampoco corresponde, entonces la búsqueda falla y Perl se mueve a la siguiente posición en la cadena.  Algunos ejemplos:
@@ -213,7 +213,7 @@ Aunque C<perro> es la primera alternativa en la segunda I<regex>, C<gato> coinci
 
 En una determinada posición de carácter, la primera alternancia que permite que la I<regex> tenga éxito será la que corresponda. Aquí, todas las alternancias coinciden con la primera posición de la cadena, así que los primeros caracteres serán la coincidencia.
 
-=head2 Agrupando cosas y jerarquía de coincidencia
+=head2 Agrupar cosas y jerarquía de coincidencia
 
 Los metacaracteres de B<agrupación> C<()> permite a una parte de una I<regex> que se trate como una unidad.  Partes de una I<regex> se agrupan encerrándolas entre paréntesis.  La I<regex> C<gat(o|era)> significa que coincide con C<gat> seguido tanto por C<o> o C<era>.  Algunos ejemplos más
 
@@ -227,7 +227,7 @@ Los metacaracteres de B<agrupación> C<()> permite a una parte de una I<regex> q
     "20" =~ /(19|20|)\d\d/;  # coincide con la alternancia nula '()\d\d',
                              # porque '20\d\d' no coincide
 
-=head2 Extrayendo coincidencias
+=head2 Extraer coincidencias
 
 Los metacaracteres de agrupación C<()> permiten también la extracción de partes de una cadena que hayan sido encontradas.  Para cada grupo, la parte que coincide se almacena en las variables especiales C<$1>, C<$2>, etc.
 Se pueden utilizar como variables ordinarias:
@@ -253,7 +253,7 @@ Asociado con las variables de emparejamiento C<$1> C<$2>, ... son las B<retrorre
 
 C<$1>, C<$2>, ... solo se debería utilizar fuera de la I<regex>, y C<\g1>, C<\g2>, ... solo dentro de la I<regex>.
 
-=head2 Coincidiendo con repeticiones
+=head2 Coincidir con repeticiones
 
 Los metacaracteres B<cuantificadores> C<?> C<*> C<+> C<{}> nos permiten determinar el número de repeticiones de una parte de una I<regex> que queremos considerar como coincidencia.  Los cuantificadores se colocan inmediatamente después del carácter, clase de caracteres, o agrupación que desee especificar.  Tienen los siguientes significados:
 

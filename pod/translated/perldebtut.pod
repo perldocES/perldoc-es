@@ -58,7 +58,7 @@ Ahora hacemos (siempre es una buena idea) una comprobación de sintaxis antes de
 Y ahora cuando lo ejecutamos, seguimos obteniendo "\n", pero al menos sabemos por qué.  Solo con haber compilado este I<script> ha expuesto la variable '$varl' (con la letra 'l') y, simplemente, cambiando $varl a $var1 soluciona el problema.
 
 
-=head1 Mirando a los datos y a -w y v
+=head1 Mirar a los datos y a -w y v
 
 Ok, pero ¿qué pasa cuando realmente quiere ver sus datos, qué es lo que hay en esa variable dinámica, justo antes de usarla?
 

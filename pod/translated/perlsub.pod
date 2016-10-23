@@ -1271,7 +1271,7 @@ La advertencia se considera lo suficientemente severa como para no resultar afec
 
     sub not_inlined () { return 23 }
 
-=head2 Reescribiendo funciones incorporadas
+=head2 Reescribir funciones incorporadas
 X<incorporado> X<sobrecarga> X<CORE> X<CORE::GLOBAL>
 
 Se pueden reescribir muchas funciones incorporadas, aunque esto solo debería intentarse de forma ocasional y por una muy buena razón.  Típicamente, esto se podría usar por un paquete que intente la emulación de funcionalidad incorporada que falte en un sistema diferente a Unix.

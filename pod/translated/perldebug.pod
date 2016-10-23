@@ -27,7 +27,7 @@ Note que hemos dicho que C<eval> está atado a un alcance implícito. Como resul
 
 Se elimina cualquier espacio en blanco remanente al principio o al final del texto que se entre en el prompt del depurador, antes de realizar cualquier procesamiento.  Si un comando del depurador coincide con alguna función en su propio programa, simplemente preceda a la función con algo que no parezca un comando del depurador, como un C<;> al principio, o quizás un C<+>, o envolviendo todo con paréntesis o llaves.
 
-=head2 Llamando al depurador
+=head2 Llamar al depurador
 
 Existen diversas formas de llamar al depurador:
 
@@ -896,13 +896,13 @@ Si desea suministrar un depurador alternativo para ejecutar Perl, invoque su I<s
 
 Cuando el I<script> termina, el perfilador creará una base de datos con la información del perfil, que puede convertir en informes usando las herramientas del perfilador. Vea <perlperf> para más detalles.
 
-=head1 Depurando expresiones regulares
+=head1 Depurar expresiones regulares
 X<regular expression, debugging> X<expresión regular, depurando>
 X<regex, debugging> X<regexp, debugging> X<regex, depurando> X<regexp, depurando>
 
 C<use re 'debug'> le permite ver las tripas de cómo funciona el motor de expresiones regulares  de Perl. Para entender esta, típicamente, voluminosa información, uno no solo debe tener idea sobre cómo funciona, en general, la coincidencia de expresiones, sino también cómo Perl compila internamente las expresiones regulares en un autómata. Estas cuestiones se explican con más detalle en L<perldebguts/"Depurando expresiones regulares">.
 
-=head1 Depurando el uso de memoria
+=head1 Depurar el uso de memoria
 X<memory usage> X<uso de memoria>
 
 Perl contiene soporte interno para informar del uso de su propia memoria, pero esto es un concepto avanzado que requiere algo de entendimiento de cómo funciona la asignación de memoria.

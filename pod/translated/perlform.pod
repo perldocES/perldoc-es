@@ -114,13 +114,13 @@ La variable I<no> será restaurada.
             línea 3
 
 
-=head2 Especificando valores
+=head2 Especificar valores
 X<format, specifying values>X<format, especificando valores>
 
 Los valores se especifican en la siguiente línea de formato, en el mismo orden que indiquen los campos de la línea de dibujo.  Las expresiones que proporcionan los valores se deben separar con comas.  Se evalúan todos en contexto de lista antes de que se procese la línea, así que una única expresión de lista podría producir múltiples elementos de lista.  Las expresiones se pueden extender por más de una línea si se encierran entre llaves.  Así, la llave de apertura debe ser el primer elemento de la primera línea.  Si una expresión evalúa a un número con una parte decimal, y si la correspondiente línea de dibujo especifica que la parte decimal debe aparecer en la salida (es decir, cualquier línea de dibujo excepto múltiples caracteres "#" B<sin> un "." incrustado), el carácter utilizado para el punto decimal se determina por el valor de LC_NUMERIC de la configuración regional si está en activo C<use locale>.  Esto significa que, si, por ejemplo, en el entorno en tiempo de ejecución se especifica una configuración regional en Alemán, se usará "," en lugar del valor por defecto ".".  Vea L<perllocale> y L<"WARNINGS"> para más información.
 
 
-=head2 Usando el modo de relleno
+=head2 Usar el modo de relleno
 X<format, fill mode>X<format, modo de relleno>
 
 En campos de texto el circunflejo habilita una clase de modo relleno.  En lugar de una expresión arbitraria, el valor suministrado debe ser una variable escalar que contiene una cadena de texto.  Perl pone la siguiente parte del texto en el campo, y entonces recorta la parte frontal de la cadena, para que la próxima vez que se referencia a la variable, se imprima el resto del texto.  (Sí, esto significa que la variable queda alterada durante la ejecución de la llamada write(), y no es restaurada).  La siguiente porción del texto se determina por un algoritmo muy simple de ruptura de líneas. Puede usar el carácter de retorno de carro (C<\r>) para forzar una ruptura de línea. Puede cambiar el qué caracteres son legales para la ruptura cambiando la variable C<$:> (es decir, $FORMAT_LINE_BREAK_CHARACTERS si usa el módulo English) a una lista de los caracteres deseados.
@@ -134,7 +134,7 @@ X<format, suppressing lines>X<format, suprimiendo líneas>
 Usando campos circunflejos puede producir líneas donde todos los campos son blancos. Puede suprimir tales líneas poniendo un carácter "~" (tilde) en cualquier parte de la línea.  La tilde se traducirá a un espacio, en la salida.
 
 
-=head2 Repitiendo líneas de formato
+=head2 Repetir líneas de formato
 X<format, repeating lines>X<format, repitiendo líneas>
 
 Si pone dos caracteres tilde consecutivos "~~" en cualquier parte de la línea, la línea se repetirá hasta que se agoten todos los campos en la línea, es decir, hasta que quede indefinida. Para los campos de texto especiales (circunflejo) esto ocurrirá tarde o temprano, pero si usa un campo de texto de la variedad arroba, ¡la expresión que suministre es mejor que no devuelva siempre lo mismo! (C<shift(@f)> es un ejemplo sencillo que podría funcionar).  No use un campo numérico normal (arroba) en tales líneas, porque nunca dejará de imprimir.

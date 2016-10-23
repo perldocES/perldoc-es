@@ -49,7 +49,7 @@ Volveremos a este problema de ciudades-países más tarde, después de que veamo
 
 Hay justo dos maneras para hacer una referencia, y justo dos maneras de usarla.
 
-=head2 Creando referencias
+=head2 Crear referencias
 
 =head3 B<Regla de creación 1>
 
@@ -96,7 +96,7 @@ Si solo escribe C<[]>, obtiene un nuevo y vacío array anónimo.
 Si solo escribe C<{}>, obtiene un nuevo y vacío hash anónimo.
 
 
-=head2 Usando referencias
+=head2 Usar referencias
 
 ¿Qué puede hacer con una referencia una vez que la tiene?  Es un valor escalar, y hemos visto que puede almacenarse como un escalar y recuperarlo como cualquier otro escalar.  Hay otras dos formas de usarlas:
 

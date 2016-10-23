@@ -14,7 +14,7 @@ Este documentos describe varias características del sistema operativo OS/400 de
 
 Con mucho, la forma más fácil de generar Perl para OS/400 es utilizar el PASE (I<Portable Application Solutions Environment>), para obtener más información, vea L<http://www.iseries.ibm.com/developer/factory/pase/index.html> Este entorno permite la utilización de las API de AIX en la programación, y proporciona un tiempo de ejecución que permite a los binarios AIX ejecutarse directamente en los PowerPC iSeries.
 
-=head2 Compilando Perl para OS/400 PASE
+=head2 Compilar Perl para OS/400 PASE
 
 La forma recomendada de generar Perl para PASE OS/400 es generar el código fuente de Perl 5 (versión 5.8.1 o posterior) en AIX.
 
@@ -32,7 +32,7 @@ Si no desea instalar el Perl compilado en AIX en /QOpenSys (para ser empaquetado
 
 Si se genera de forma nativa en PASE, por favor, hágalo en el directorio /QOpenSys, ya que Perl es más feliz cuando se genera en un sistema de archivos que es sensible a las mayúsculas y minúsculas.
 
-=head2 Instalando Perl en OS/400 PASE
+=head2 Instalar Perl en OS/400 PASE
 
 Si está compilando en AIX, simplemente haga un "make install" en la caja AIX.
 Una vez que finalice la instalación, pase el directorio /QOpenSys/perl por un tar.  Transfiera el empaquetado tar al OS/400 usando FTP con los siguientes comandos:
@@ -47,7 +47,7 @@ Si está compilando en PASE, entonces "make install" es lo único que necesitar�
 
 La ruta por defecto para el binario perl es /QOpenSys/perl/bin/perl.  Querrá hacer un enlace simbólico de /QOpenSys/usr/bin/perl a este archivo, por lo que no tiene que modificar su ruta.
 
-=head2 Usando Perl en OS/400 PASE
+=head2 Usar Perl en OS/400 PASE
 
 Perl en PASE se puede usar de la misma manera en que usaría Perl en AIX.
 

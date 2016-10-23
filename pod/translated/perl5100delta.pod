@@ -394,7 +394,7 @@ Cuando perl se ejecuta bajo el modo contaminado, C<printf()> y C<sprintf()> rech
 
 Indefiniendo o borrando un controlador de señales con C<undef $SIG{FOO}> es ahora equivalente a ponerlo a C<'DEFAULT'>. (Rafael Garcia-Suarez)
 
-=head2 estado estricto y desreferenciando en defined()
+=head2 estado estricto y desreferencia en defined()
 
 C<use strict 'refs'> hace caso omiso de una referencia dura en un argumento para defined(), como en:
 
@@ -450,9 +450,9 @@ En 5.10.0 y posteriores, el código advierte cuando principal contiene C<use war
 
 =head1 Módulos y pragmas
 
-=head2 Actualizando módulos principales de forma individual
+=head2 Actualizar módulos principales de forma individual
 
-Aún más módulos básicos están ahora también disponibles por separado a través del CPAN.  Si desea actualizar uno de estos módulos, no es necesario esperar a una nueva versión de Perl.  Desde dentro de la shell de cpan, ejecutando el comando 'r' presentará un informe de los módulos con actualizaciones disponibles.  Vea C<perldoc CPAN> para más información.
+Ahora hay más módulos básicos disponibles a través de CPAN.  Si desea actualizar uno de estos módulos, no es necesario esperar a una nueva versión de Perl.  Desde dentro de la shell de cpan, ejecutando el comando 'r' presentará un informe de los módulos con actualizaciones disponibles.  Vea C<perldoc CPAN> para más información.
 
 =head2 Cambios en la prágmata
 
@@ -732,7 +732,7 @@ La longeva característica de expresiones regulares C</(?{...})/> que actualiza 
 
 =head1 Mejoras en el rendimiento
 
-=head2 Ordenando in-situ
+=head2 Ordenar in-situ
 
 Ordenar arrays en el mismo sitio C<@a = sort @a> ha sido optimizado para evitar crear una copia temporal del array.
 
@@ -912,7 +912,7 @@ DynaLoader::dl_unload_file() ahora funciona en Windows.
 
 C<strict> no estaba en vigor en bloques evaluados en las regexp (C</(?{...})/>).
 
-=item Llamando a CORE::require()
+=item Llamar a CORE::require()
 
 CORE::require() y CORE::do() eran siempre interpretadas como require() y do() cuando eran sobreescritas. Esto ha sido arreglado.
 
@@ -950,12 +950,12 @@ En Windows, ahora se comprueba la contaminación de la variable de entorno PERL5
 
 Los test de archivos C<stat()> y C<-X> ahora trata a los identificadores de archivo *FILE{IO} como identificadores de archivo *FILE. (Steve Peters)
 
-=item Sobrecargando y re-bendiciendo
+=item Sobrecargar y re-bendecir
 
 La sobrecarga ahora funciona cuando las referencias son re-bendecidas en otra clase.
 Internamente, esto se ha llevado a cabo moviendo la indicación de la "sobrecarga" de la referencia al referente, que, lógicamente, es donde siempre debería haber estado. (Nicholas Clark)
 
-=item Sobrecargando y UTF-8
+=item Sobrecargar y UTF-8
 
 Algunos errores relacionados con UTF-8 manipulando objetos que tienen sobrecargada la conversión en cadenas de caracteres, han sido corregidos. (Nicholas Clark)
 
@@ -994,7 +994,7 @@ Cuando un módulo o un archivo se carga a través de un enganche en @INC, y cuan
 
 Las opciones C<-w> y C<-t> ahora se pueden utilizar juntas sin alterar qué categorías de alertas están activadas o no. (Rafael)
 
-=item Duplicando identificadores de archivo UTF-8
+=item Duplicar identificadores de archivo UTF-8
 
 Duplicando un identificador de archivo que tiene la capa PerlIO C<:utf8> activada, ahora activará correctamente esa capa en el identificador de archivo duplicado. (Rafael)
 
@@ -1077,7 +1077,7 @@ En general, el código fuente de perl ha sido refactorizado, enlazado, y optimiz
 
 Al compilar el núcleo de perl con gcc, se activan todas las indicaciones de advertencias de gcc como sea posible para esa plataforma.  (Esta búsqueda de la limpieza no se extiende al código XS, porque no podemos garantizar la pulcritud de código que no escribimos).  Se han sido añadido o reforzado indicadores similares que activan codificación estricta para otros compiladores de C.
 
-=head2 Reordenando constantes de SVt_*
+=head2 Reordenar constantes de SVt_*
 
 El orden relativo de las constantes que definen los diferentes tipos de C<SV> ha sido cambiados; en particular, C<SVt_PVGV> ha sido movido antes de C<SVt_PVLV>, C<SVt_PVAV>, C<SVt_PVHV> y C<SVt_PVCV>.  Es poco probable que no haya ninguna diferencia a menos que tenga algún código que, explícitamente, haga suposiciones con respecto a este ordenamiento. (La jerarquía de la herencia de los objetos C<B::*> ha sido cambiada para reflejar esto).
 

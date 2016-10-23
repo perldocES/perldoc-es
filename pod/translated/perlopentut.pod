@@ -50,9 +50,9 @@ La mayor parte de la complejidad de la función C<open> reside en los muchos pos
 
 Una última cosa antes de que le mostremos cómo usar open: abrir archivos en Perl no les bloquea de forma automática (normalmente).  Vea L<perlfaq5> para ver cómo bloquear.
 
-=head1 Abriendo archivos de texto
+=head1 Abrir archivos de texto
 
-=head2 Abriendo archivos de texto para lectura
+=head2 Abrir archivos de texto para lectura
 
 Si quiere leer desde un archivo de texto, primero ábralo en modo de solo lectura, así:
 
@@ -105,7 +105,7 @@ Una vez hecho esto, puede omitir sin problemas la parte de la codificación en e
 Pero nunca use el sencillo C<< "<" >> sin haber puesto primero una codificación por defecto.  Si no, Perl no puede saber cuál de los muchos, muchos, muchos sabores posibles de archivos de texto tiene usted, y Perl no tendrá ni idea de cómo mapear correctamente los datos de su archivo en caracteres reales con los que pueda trabajar.  Otros formatos comunes de codificación son C<"ASCII">, C<"ISO-8859-1">, C<"ISO-8859-15">, C<"Windows-1252">, C<"MacRoman"> e incluso C<"UTF-16LE">.
 Vea L<perlunitut> para más información sobre codificaciones.
 
-=head2 Abriendo archivos de texto para escritura
+=head2 Abrir archivos de texto para escritura
 
 Cuando quiera escribir a un archivo, primero tiene que decidir qué hacer sobre los contenidos actuales de ese archivo.  Aquí tiene dos opciones básicas: preservar o sobreescribir.
 
@@ -137,7 +137,7 @@ Así como el modo añadir, cuando abre el archivo en modo de solo escritura, pue
 
 ¿Qué hay sobre el modo de solo lectura?  Quizás pretenda hacer que no existe, porque abriendo archivos de texto en modo de solo lectura es muy probable que no es lo que le querría hacer.  Vea L<perlfaq5> para más detalles.
 
-=head1 Abriendo archivos binarios
+=head1 Abrir archivos binarios
 
 Si el archivo que se va a abrir contiene datos binarios en lugar de caracteres de texto, entonces el argumento C<MODO> a C<open> es un poco más diferente.  En vez de especificar la codificación, le dice a Perl que sus dato son bytes crudos.
 
@@ -199,7 +199,7 @@ Aquí hay un ejemplo de cómo copiar un archivo binario:
     close($in_fh)       || die "no puedo cerrar $nombre_ent: $!";
     close($out_fh)      || die "no puedo cerrar $nombre_sal: $!";
 
-=head1 Abriendo tuberías
+=head1 Abrir tuberías
 
 Se anunciará.
 

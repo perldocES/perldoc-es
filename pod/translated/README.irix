@@ -8,7 +8,7 @@ perlirix - Perl versión 5 en sistemas Irix
 
 Este documentos describe varias características de Irix que afectarán a cómo Perl versión 5 (de ahora en adelante sólo Perl) es compilado y/o ejecutado.
 
-=head2 Generando Perl de 32 bit en Irix
+=head2 Compilar Perl de 32 bit en Irix
 
 Use
 
@@ -18,7 +18,7 @@ para compilar Perl de 32 bit.  No se moleste en poner -n32 a menos que tenga un 
 
 (Generar 'cc -n32' está por defecto)
 
-=head2 Generando Perl de 64 bit en Irix
+=head2 Compilar Perl de 64 bit en Irix
 
 Use
 
@@ -57,7 +57,7 @@ Si recibe problemas sobre so_locations entonces busque en el archivo hints/irix_
 
 No intente usar el malloc de Perl, esto le conducirá a errores muy misteriosos (especialmente con -Duse64bitall)
 
-=head2 Generando con hilos en Irix
+=head2 Compilar con hilos en Irix
 
 Ejecute Configure con -Duseithreads que configurará Perl con hilos de ejecución Perl 5.8.0 a nivel de intérprete; vea L<threads>.
 

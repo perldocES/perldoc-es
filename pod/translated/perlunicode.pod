@@ -1140,7 +1140,7 @@ Perl v5.18 es capaz de manejar todas las versiones anteriores.
 
 Descargue los archivos de la versión deseada de Unicode del sitio web de Unicode L<http://www.unicode.org>).  Deberían reemplazar los archivos existentes en F<lib/unicore> en el árbol de código fuente de Perl.  Siga las instrucciones en F<README.perl> en ese directorio para cambiar algunos nombres, y entonces compile perl (vea L<INSTALL>).
 
-=head2 Portando código desde perl-5.6.X
+=head2 Portar código desde perl-5.6.X
 
 Versiones de Perl a partir de 5.8 tienen un modelo diferente de Unicode que el de 5.6. En 5.6 se requería que el programador usase el I<pragma> C<utf8> para declarar que en un ámbito dado se esperaba que se gestionarán datos Unicode, y asegurarse que esos datos Unicode quedaban en ese ámbito. Si tiene código que trabaja en 5.6, necesitará hacer alguno de los siguientes ajustes. Los ejemplos se escriben de tal forma que el código seguirá trabajando bajo 5.6, así que puede probarlos con seguridad.
 

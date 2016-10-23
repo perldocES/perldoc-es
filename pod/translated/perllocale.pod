@@ -98,7 +98,7 @@ B<La aplicación debe ajustar su propia configuración regional> usando el méto
 
 =back
 
-=head1 USANDO CONFIGURACIONES REGIONALES
+=head1 USAR CONFIGURACIONES REGIONALES
 
 =head2 El pragma C<"use locale">
 
@@ -286,7 +286,7 @@ Si C<set_locale()> falla por alguna razón (por ejemplo, un intento para activar
 
 Para más información acerca de las categorías, consulte L<setlocale(3)>.
 
-=head2 Buscando configuraciones regionales
+=head2 Buscar configuraciones regionales
 
 Para conocer la lista de configuraciones regionales disponibles en su sistema, consulte también L<setlocale(3)> para ver si contiene una lista de configuraciones regionales disponibles (busque por la sección I<VEA TAMBIÉN>).  Si eso no funciona, pruebe las siguientes líneas de comando:
 
@@ -333,7 +333,7 @@ Puede encontrarse con el siguiente mensaje de advertencia, al arrancar Perl:
 Significa que sus valores de configuración regional tenían C<LC_ALL> puesto a "En_US", y que LANG existía pero que no tenía ningún valor.  Perl intentó creerle, pero no pudo.
 En vez de eso, Perl se dio por vencido y regresó a la configuración regional "C", la configuración regional predeterminada que se supone que funciona, sin importar lo que pase.  (En Windows, primero intenta regresar a la configuración regional por defecto del sistema).  Esto, generalmente, significa que sus ajustes de la configuración regional estaban mal, pues mencionan configuraciones regionales del que su sistema nunca ha oído hablar, o la instalación de la configuración regional en su sistema tiene problemas (por ejemplo, algunos archivos del sistema están rotos o faltan).  Hay soluciones rápidas y temporales para estos problemas, así como soluciones más minuciosas y duraderas.
 
-=head2 Comprobando configuraciones regionales rotas
+=head2 Comprobar configuraciones regionales rotas
 
 Si está generando Perl, el archivo de prueba F<lib/locale.t> se puede usar para comprobar las configuraciones regionales en su sistema.
 Ajustando la variable de entorno C<PERL_DEBUG_FULL_TEST> a 1 hará que salgan resultados más detallados.  Por ejemplo, en Linux, podría decir
@@ -342,7 +342,7 @@ Ajustando la variable de entorno C<PERL_DEBUG_FULL_TEST> a 1 hará que salgan re
 
 Además de muchas otras pruebas, probará cada configuración regional que encuentre en su sistema para ver si es conforme con el estándar POSIX.  Si alguna tiene errores, incluirá un resumen cerca del final de la salida donde las configuraciones regionales pasan todos las pruebas, y cuáles fallaron, y por qué.
 
-=head2 Arreglando temporalmente los problemas de las configuraciones regionales
+=head2 Arreglar temporalmente los problemas de las configuraciones regionales
 
 Los dos arreglos más rápidos son: hacer que Perl silencie las incoherencias de la configuración regional o ejecutar Perl bajo la configuración regional predeterminada "C".
 
@@ -386,7 +386,7 @@ Esto es cuando se ve algo como esto:
 
 pero entonces no ve ese "En_US" listado por los comandos mencionados anteriormente.  Puede que vea cosas como "en_US.ISO8859-1", pero no es lo mismo.  En este caso, pruebe a ejecutar bajo una configuración regional que pueda enumerar y que de alguna manera coincida con lo que intentó antes.  Las reglas para nombres de configuraciones regionales son un poco vagas, porque no existe una fuerte normalización en esta área.  Vea de nuevo L<Buscando configuraciones regionales> acerca de cómo son las reglas generales.
 
-=head2 Arreglando la configuración regional del sistema
+=head2 Arreglar la configuración regional del sistema
 
 Póngase en contacto con el administrador del sistema (preferentemente el suyo propio) e infórmele del mensaje de error exacto que recibe, y pídale que lea esta misma documentación que ahora usted está leyendo.  Deberían ser capaces de comprobar si algo está mal en la configuración regional del sistema.  La sección L<Buscando configuraciones regionales> es, por desgracia, un poco vaga acerca de los comandos y los lugares exactos, porque estas cosas no están estandarizadas.
 

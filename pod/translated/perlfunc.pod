@@ -263,7 +263,7 @@ L<C<shmctl>|/shmctl ID,CMD,ARG>, L<C<shmget>|/shmget KEY,SIZE,FLAGS>,
 L<C<shmread>|/shmread ID,VAR,POS,SIZE>,
 L<C<shmwrite>|/shmwrite ID,STRING,POS,SIZE>
 
-=item Obteniendo información de usuarios y grupos
+=item Obtener información de usuarios y grupos
 X<user> X<group> X<password> X<uid> X<gid> X<passwd> X</etc/passwd> X<usuario> X<grupo> X<contraseña>
 
 =for Pod::Functions =User
@@ -276,7 +276,7 @@ L<C<getpwent>|/getpwent>, L<C<getpwnam>|/getpwnam NAME>,
 L<C<getpwuid>|/getpwuid UID>, L<C<setgrent>|/setgrent>,
 L<C<setpwent>|/setpwent>
 
-=item Obteniendo información de la red
+=item Obtener información de la red
 X<network> X<protocol> X<host> X<hostname> X<IP> X<address> X<service> X<red> X<protocolo> X<servidor> X<dirección> X<servicio>
 
 =for Pod::Functions =Network

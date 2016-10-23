@@ -16,7 +16,7 @@ La salida del comando interno dump se ha mejorado, de modo que los caracteres no
 
 =head1 Mejoras en los componentes
 
-=head2 Envolviendo a Malloc
+=head2 Envolver a Malloc
 
 Perl ahora pueden ser compilado para que detecte los intentos de reservar bloques patológicamente grandes de memoria.  Previamente, tales asignaciones podrían verse afectados por la pasada de vuelta de los enteros en los cálculos del tamaño, que causa una mala distribución, que provocaría una caída de perl, y teóricamente podrían ser utilizados para realizar ataques de "ruptura de pila".  La envoltura por defecto está activa en plataformas en las que sabemos que funciona (la mayoría de las configuraciones de AIX, BSDi, Darwin, DEC OSF/1, FreeBSD, HP/UX, GNU Linux, OpenBSD, Solaris, VMS y la mayor parte de los compiladores Win32) y por defecto queda desactivado en otras plataformas.
 

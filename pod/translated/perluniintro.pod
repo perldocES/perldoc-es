@@ -87,7 +87,7 @@ El soporte Unicode es un poco más complejo de implementar ya que son necesarias
 
 En plataformas EBCDIC, la forma de codificación Unicode interna es UTF-EBCDIC en lugar de UTF-8.  La diferencia es que como UTF-8 es "ASCII-seguro" en que los caracteres ASCII se codifican tal cual en UTF-8, mientras que UTF-EBCDIC es "EBCDIC-seguro", en que todos los caracteres básicos (que incluye a todos los que tengan equivalentes en ASCII (como C<"A">, C<"0">, C<"%">, I<etc.>) son los mismos tanto en EBCDIC como en UTF-EBCDIC.  A menudo, la documentación usará el término "UTF-8" para significar igual que UTF-EBCDIC.  Es el caso para este documento.
 
-=head2 Creando Unicode
+=head2 Crear Unicode
 
 Esta sección se aplica completamente a los Perl a partir de v5.22.  Los problemas de las versiones anteriores están en la subsección más abajo L</Problemas en las versiones anteriores>.
 
@@ -145,7 +145,7 @@ C<charnames::string_vianame()> se presentó en v5.14.  Antes de eso, C<charnames
  my $alef_hebreo_por_nombre
                   = pack("U", charnames::vianame("HEBREW LETTER ALEF"));
 
-=head2 Gestionando Unicode
+=head2 Gestionar Unicode
 
 Gestionar Unicode es, en la mayor parte del tiempo, transparente: simplemente use las cadenas de caracteres de la forma habitual.  Funciones como C<index()>, C<length()> y C<substr()> funcionarán con caracteres Unicode; expresiones regulares funcionarán con caracteres Unicode (vea L<perlunicode> y L<perlretut>).
 
@@ -263,7 +263,7 @@ Si ejecuta este código dos veces, los contenidos del F<file> se codificarán do
 
 B<NOTA>: las características C<:utf8> y C<:encoding> solo funcionan si Perl se ha compilado con L<PerlIO>, que es por defecto en la mayor parte de los sistemas.
 
-=head2 Mostrando Unicode como texto
+=head2 Mostrar Unicode como texto
 
 Algunas veces querrá mostrar escalares de Perl que contengan Unicode como texto simple en ASCII (o EBCDIC).  La siguiente subrutina convierte su argumento de tal manera que los caracteres Unicode con puntos de código superiores a 255 se muestran como C<\x{...}>, caracteres de control (como C<\n>) se muestran como C<\x..>, y el resto de caracteres tal como son:
 

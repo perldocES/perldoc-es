@@ -2000,7 +2000,7 @@ En la RE anterior, que está intencionalmente ofuscada para su ilustración, el 
 
 Este paso es el último para todas las construcciones, salvo las expresiones regulares, que son procesadas más adelante.
 
-=item analizando expresiones regulares
+=item analizar expresiones regulares
 X<regexp, parse> X<regex, análisis>
 
 Se realizaron algunos pasos previos durante la compilación del código Perl, pero éste sucede en tiempo de ejecución, aunque puede ser optimizado para ser valorado en tiempo de compilación, si procede.  Después del proceso previo descrito anteriormente, y posiblemente después de la evaluación, por si la concatenación, unión, traducción de tamaño de caja, o metaentrecomillado estuvieran involucradas, la cadena resultante es pasada al motor de RE para su compilación.

@@ -179,7 +179,7 @@ La primera I<regex> no coincide porque la cadena es más larga que C<ama>.  Ya q
 
 Naturalmente, en el caso de una cadena literal, uno podría usar, simplemente, la comparación de cadenas S<C<$cadena eq 'bert'>> y sería más eficiente.   La I<regex> C<^...$> se convierte en algo verdaderamente útil cuando le añadimos más herramientas poderosas, como veremos a continuación.
 
-=head2 Usando clases de caracteres
+=head2 Usar clases de caracteres
 
 Aunque se puede hacer un montón de cosas con expr. reg. y cadenas literales, solo hemos rascado la superficie de la tecnología de expresiones regulares.  En esta y las siguientes secciones introduciremos conceptos de I<regex> (y notaciones de los metacaracteres asociados) que permitirá a una I<regex> no solo representar secuencias de más de un carácter, sino una I<clase entera> de ellos.
 
@@ -357,7 +357,7 @@ La mayor parte del tiempo, el comportamiento por defecto es lo que se espera, pe
 
 Ahora sabemos cómo crear elecciones entre clases de caracteres en una I<regex>.  ¿Qué hay sobre elegir entre palabras o cadenas de caracteres? Esas elecciones se describen en la sección siguiente.
 
-=head2 Coincidiendo con esto o aquello
+=head2 Coincidir con esto o aquello
 
 Algunas veces nos gustaría que nuestra I<regex> fuera capaz de encontrar diferentes palabras o cadenas de caracteres.  Esto se puede cumplir usando el metacarácter de I<alternancia> C<|>.  Para que coincida con C<perro> o C<gato>, formamos la I<regex> C<perro|gato>.  Al igual que antes, Perl tratará de hacer coincidir la I<regex> en el primer punto de coincidencia en la cadena.  En cada posición de carácter, Perl intentará hacer coincidir en primer lugar con la primera alternativa, C<perro>.  Si C<perro> no coincide, Perl entonces intentará la siguiente alternativa, C<gato>.  Si C<gato> tampoco corresponde, entonces la búsqueda falla y Perl se mueve a la siguiente posición en la cadena.  Algunos ejemplos:
 
@@ -376,7 +376,7 @@ Aquí, todas las alternancias coinciden con la primera posición de la cadena, a
 
 El último ejemplo muestra cómo las clases de caracteres son como alternativas de caracteres.  En una determinada posición de carácter, la primera alternativa que permita que la I<regex> tenga éxito será la primera con la que coincida.
 
-=head2 Agrupando cosas y jerarquía de coincidencia
+=head2 Agrupar cosas y jerarquía de coincidencia
 
 La alternancia permite a una I<regex> elegir entre varias alternativas, pero no es suficiente, por sí misma.  La razón es que cada alternativa es una I<regex>, pero algunas veces queremos alternativas para solo una parte de una I<regex>.  Por ejemplo, suponga que queremos buscar casero o casetas.  La I<regex> C<casero|casetas> funciona sin problemas, pero es ineficiente porque tenemos que escribir C<case> dos veces.  Sería mejor que algunas partes de la I<regex> sea constante, como C<case>, y otras partes como alternativas, como C<ro|tas>.
 
@@ -449,7 +449,7 @@ Hay un par de cosas que hay que notar sobre este análisis.  Primero, la tercera
 
 Incluso con todo este trabajo, la coincidencia I<regex> sucede extraordinariamente rápido.  Para acelerar las cosas, Perl compila la I<regex> en una secuencia compacta de códigos de operación que pueden, a menudo, caber dentro de la caché de un procesador.  Cuando el código se ejecuta, esos códigos de operación pueden entonces correr a toda velocidad y buscar la coincidencia muy deprisa.
 
-=head2 Extrayendo coincidencias
+=head2 Extraer coincidencias
 
 Los metacaracteres de agrupación C<()> también sirve para otra función completamente diferente: permite la extracción de las partes de la cadena que coincidan.  Esto es muy útil para encontrar lo que coincide y para el procesamiento de texto en general.  Para cada grupo, la parte que coincide dentro se almacena en las variables especiales C<$1>, C<$2>, etc. Se pueden usar como variables ordinarias:
 
@@ -611,7 +611,7 @@ En Perl 5.22 y siguientes, todos los grupos dentro de una I<regex> pueden establ
 
 Vea L<perlre/"n"> para más información.
 
-=head2 Coincidiendo con repeticiones
+=head2 Coincidir con repeticiones
 
 Los ejemplos de la sección anterior muestran una molesta debilidad.  Solo estamos buscando palabras de tres letras, o trozos de palabras de cuatro letras o menos.  Queremos ser capaces de buscar palabras, o de forma más general, cadenas de cualquier longitud, sin tener que escribir tediosas alternancias como C<\w\w\w\w|\w\w\w|\w\w|\w>.
 
@@ -999,13 +999,13 @@ y optimizando la última I<regex> combinada.
 
 Estos también son los pasos típicos que intervienen en la escritura de programas de ordenador.  Esto tiene sentido, porque las expresiones regulares son, esencialmente, programas escritos en un pequeño lenguaje de ordenador que especifica patrones.
 
-=head2 Usando expresiones regulares en Perl
+=head2 Usar expresiones regulares en Perl
 
 El último tema de la Parte 1 cubre brevemente cómo se usan las I<regex> en los programas Perl.  ¿Dónde encajan en la sintaxis Perl?
 
 Ya presentamos el operador de coincidencia, tanto en su forma por defecto C</regexp/> como con delimitadores arbitrarios C<m!regexp!>.  Hemos utilizado el operador de relación C<=~> y su negación C<!~> para comprobar coincidencias con cadenas.  Asociado con el operador de coincidencia, ya hemos hablado de los modificadores de una sola línea C<//s>, multi-línea C<//m>, insensible al tamaño de caja C<//i> y escritura extendida C<//x>.  Hay unas cuantas cosas más que podría querer saber sobre los operadores de coincidencia.
 
-=head3 Prohibiendo sustituciones
+=head3 Prohibir sustituciones
 
 Si cambia el C<$patrón> después de que ocurra la primera sustitución, Perl lo ignorará.  Si no quiere que ocurra ninguna sustitución de forma absoluta, use el delimitador especial C<m''>:
 
@@ -1312,7 +1312,7 @@ Como si todas estas clases no fueran suficientes, Perl también define clases de
 
 ¡Menos mal! Esto es todo lo que quedaba de los caracteres y las clases de carácter.
 
-=head2 Compilando y guardando expresiones regulares
+=head2 Compilar y guardar expresiones regulares
 
 En Parte 1 mencionamos que Perl compila una I<regex> en una secuencia compacta de I<opcodes> (códigos de operación).  Así, una I<regex> compilada es una estructura de datos que puede almacenarse y usarse una y otra vez.  El entrecomillado de I<regex> C<qr//> hace exactamente eso: C<qr/cadena/> compila la C<cadena> como una I<regex> y transforma el resultado en una forma que se puede asignar a una variable:
 
@@ -1357,7 +1357,7 @@ Las I<regex> precompiladas son útiles para crear coincidencias dinámicas que n
 Almacenar I<regex> precompiladas en un array C<@compilada> nos permite, simplemente usar todas las I<regex> sin ninguna recompilación, ganando flexibilidad sin sacrificar velocidad.
 
 
-=head2 Componiendo expresiones regulares en tiempo de ejecución
+=head2 Componer expresiones regulares en tiempo de ejecución
 
 Volver hacia atrás es más eficiente que intentos repetidos con diferentes expresiones regulares.  Si existen varias expresiones regulares y es aceptable la coincidencia con cualquiera de ellas, entonces es posible combinarlas en un conjunto de alternativas.  Si las expresiones individuales son datos de entrada, esto se puede hacer programando una operación de unión.  Explotaremos esta idea en una versión mejorada del programa C<simple_grep>: un programa que busca en múltiples patrones:
 

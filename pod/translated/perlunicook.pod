@@ -307,7 +307,7 @@ Además del módulo L<Unicode::CaseFold> disponible en CPAN, la nueva función C
  fc("tschüß")  eq fc("TSCHÜSS")
  fc("Σίσυφος") eq fc("ΣΊΣΥΦΟΣ")
 
-=head2 ℞ 22: Buscando secuencias de ruptura de línea Unicode con expresiones regulares
+=head2 ℞ 22: Buscar secuencias de ruptura de línea Unicode con expresiones regulares
 
 Una ruptura de línea Unicode coincide con el grafema de dos caracteres CRLF o con cualquiera de los siete caracteres verticales de espacio en blanco.
 Esto es útil para manejarse con ficheros de texto que viene de diferentes sistemas operativos.
@@ -491,7 +491,7 @@ Algunas configuraciones regionales tienen reglas especiales de ordenación.
 
 El programa I<ucsort> mencionado antes acepta un parámetro C<--locale>.
 
-=head2 ℞ 38: Haciendo que C<cmp> trabaje con texto en lugar de con códigos de carácter
+=head2 ℞ 38: Hacer que C<cmp> trabaje con texto en lugar de con códigos de carácter
 
 Así que en vez de esto:
 

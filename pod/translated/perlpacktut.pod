@@ -33,7 +33,7 @@ La operación inversa -empaquetar conjuntos de bytes desde una cadena de dígito
 
 Ya que alimentamos una lista de 10 parejas de cadenas de dígitos hexadecimales a C<pack>, la plantilla debe contener 10 códigos empaquetados. Si se corre esto en un ordenador con una codificación ASCII, imprimirá C<0123456789>.
 
-=head1 Empaquetando texto
+=head1 Empaquetar texto
 
 Suponga que ha leído datos desde un archivo, como estos:
 
@@ -200,7 +200,7 @@ empaqueta todo C<$uno> en el primer C<A*> y entonces todo el C<$dos> en el segun
 
 
 
-=head1 Empaquetando números
+=head1 Empaquetar números
 
 Ya está bien para datos de texto. Vayamos al meollo del asunto en que C<pack> y C<unpack> son mejores: manejo de formatos binarios para números. Existen, naturalmente, varios formatos binarios -la vida sería demasiado sencilla- pero Perl hará todo el trabajo melindroso por usted.
 
@@ -250,7 +250,7 @@ Cada uno de los códigos de empaquetado C<sSlLqQ> resulta en un número fijo de 
 Los códigos C<i!> y C<I!> son iguales que C<i> y C<I>; se toleran para tener el conjunto completo.
 
 
-=head2 Desempaquetando un volcado de pila
+=head2 Desempaquetar un volcado de pila
 
 Solicitar una determinada ordenación de byte puede ser necesario cuando trabaja con datos binarios que llegan de una arquitectura específica mientras que su programa podría ejecutarse en un sistema completamente diferente. Como ejemplo, asuma que tiene 24 bytes que contienen un volcado de pila como los que suceden en un Intel 8086:
 
@@ -375,7 +375,7 @@ Otra letra en el alfabeto de las plantillas es C<u>, que empaqueta una "cadena u
 Un contador de repetición después de C<u> establece el número de bytes a poner en la línea uuencodificada, que tiene, por defecto, un máximo de 45, pero podría establecerse a un entero (más pequeño) múltiplo de tres. C<unpack> simplemente ignora el contador de repetición.
 
 
-=head2 Haciendo sumas
+=head2 Hacer sumas
 
 Un código de plantilla incluso más extraño es C<%>E<lt>I<número>E<gt>. Primero, porque se usa como prefijo para otro código de plantilla. Segundo, porque no se puede usar en absoluto en C<pack>, y tercero, en C<unpack>, no devuelve los datos definidos por el código de plantilla que le precede. En lugar de eso, le dará un I<número> entero de bits que se calcula a partir del valor que resulta de la suma de los datos. Para códigos de desempaquetado numérico, no hay que hacer una gran hazaña:
 
@@ -680,7 +680,7 @@ Esto es, ciertamente, mejor, pero seguimos teniendo que saber cómo de largo son
   my $gappy = pack( 'c x![s] s c x![l!] l!', $c1, $s, $c2, $l );
 
 
-=head2 Tratando con Endian-ness
+=head2 Tratar con Endian-ness
 
 Ahora, imagine que queremos empaquetar los datos para una máquina con un orden diferente de los bytes. Primero, tendremos que representar cómo de grande son realmente los tipos de datos en la máquina destino. Asumamos que los long son de 32 bit, y que los short son de 16 bit de ancho. Entonces puede escribir la plantilla así:
 

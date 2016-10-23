@@ -74,7 +74,7 @@ Todos los identificadores abiertos están dup()licados en los pseudo-procesos, a
 
 A los ojos del sistema operativo, los pseudo-procesos creados a través de la emulación fork() son simplemente hebras del mismo proceso.  Esto significa que cualquier limitación a nivel de proceso impuesta por el sistema operativo se aplica a todos los pseudo-procesos tomados en conjunto.  Esto incluye cualquier límite impuesto por el sistema operativo en el número de identificadores de archivos, directorios y I<sockets> abiertos, límites en el espacio usado en disco, límites en la utilización de la CPU, etc.
 
-=head2 Matando al proceso padre
+=head2 Matar al proceso padre
 
 Si se mata al proceso padre (usando tanto el kill() incrustado en Perl, o por algún medio externo) también se mueren todos los pseudo-procesos, y todo el proceso termina.
 
