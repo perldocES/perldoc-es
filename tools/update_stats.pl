@@ -13,7 +13,7 @@
 # TODO: ¿Es posible automatizar los comandos git, o seguimos a mano? Mejor a mano... de momento.
 
 # Joaquín Ferrero. 20110130
-# Última versión:  20160320 18:40
+# Última versión:  20161023 13:15
 #
 # Se supone que se debe ejecutar este programa después de haber ejecutado la orden
 # de generar los ficheros finales en el OmegaT, pero no es imprescindible.
@@ -36,7 +36,7 @@ use POSIX qw'strftime locale_h';
 
 
 ## Configuración --------------------------------------------------------------
-my $perl_version   = 'v5.22.0';
+my $perl_version   = 'v5.24.0';
 my $user           = 'explorer';			# TMX user file
 
 # Acceso a Google
