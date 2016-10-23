@@ -115,7 +115,7 @@ my $oauth2 = Net::Google::DataAPI::Auth::OAuth2->new(
 #you can skip URL if you have your token saved and continue from RESTORE label
 
 # RESTORE:
-my $session_file = "$DIR_PROJECT/<ruta al archivo de Google>/google_spreadsheet.session";
+my $session_file = "$DIR_ROOT/<ruta al archivo de Google>/google_spreadsheet.session";
 my $session;
 -f $session_file and $session = retrieve($session_file);
 
