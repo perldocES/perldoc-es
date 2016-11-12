@@ -283,7 +283,7 @@ Si su rutina cambia su comportamiento de manera significativa sobre la base de s
 
 =item Separe la funcionalidad de la salida.  
 
-Muestre los resultados en su forma más genérica posible y permita al usuario elegir la forma de utilizarlos.  La forma más genérica posible, es por lo general una estructura de datos Perl, que puede ser utilizado para generar un informe de texto, HTML, XML, una consulta de base de datos o cualquier otra cosa que necesiten los usuarios.
+Muestre los resultados en su forma más genérica posible y permita al usuario elegir la forma de utilizarlos.  La forma más genérica posible, es por lo general una estructura de datos Perl, que puede utilizarse para generar un informe de texto, HTML, XML, una consulta de base de datos o cualquier otra cosa que necesiten los usuarios.
 
 Si la rutina se repite a través de algún tipo de lista (por ejemplo, una lista de archivos o registros en una base de datos), puede considerar la posibilidad de una retrollamada (I<callback>) para que los usuarios puedan manipular cada elemento de la lista cada vez.
 File::Find ofrece un ejemplo de esto con su sintaxis C<find(\&buscado, $dir)>.
@@ -551,7 +551,7 @@ Asegúrese de especificar los requisitos de la versión de Perl, tanto en Makefi
 
 =head2 Pruebas
 
-Todos los módulos deben ser probados antes de su distribución (con "make disttest"), y las pruebas también deben estar disponibles para la gente que instala los módulos (con "make test").  
+Todos los módulos deben probarse antes de su distribución (con "make disttest"), y las pruebas también deben estar disponibles para la gente que instala los módulos (con "make test").  
 Para Module::Build debe utilizar el equivalente de C<make test>: C<perl Build test>.
 
 La importancia de estas pruebas es proporcional a la supuesta estabilidad de un módulo.  Un módulo que pretende ser estable o que se espera lograr un uso amplio debe cumplir con un régimen estricto de pruebas tanto como sea posible.

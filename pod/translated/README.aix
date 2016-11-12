@@ -11,7 +11,7 @@ Este documento describe varias características del sistema operativo UNIX AIX d
 
 =head2 Compilar Perl 5 en AIX
 
-Para obtener información sobre los compiladores en las versiones anteriores de AIX, vea L<Compilando Perl 5 en versiones anteriores de AIX hasta la 4.3.3>.
+Para obtener información sobre los compiladores en las versiones anteriores de AIX, vea L<Compilar Perl 5 en versiones AIX anteriores a la 4.3.3>.
 
 Al compilar Perl, debe utilizar un compilador ANSI C. AIX no incluye por defecto un compilador de ANSI C compatible con AIX, pero las generaciones binarias de gcc para AIX están ampliamente disponibles. Una versión de gcc también se incluye en la caja de herramientas AIX (AIX Toolbox) que se incluye con AIX.
 
@@ -35,7 +35,7 @@ El PTF para APAR IZ35785 que soluciona este problema está disponible desde IBM 
 
 Si elige I<XL C/C++ V11> necesitará que esté instalado el I<April 2010 PTF> (o más reciente), o de lo contrario no obtendrá una versión funcional de Perl.
 
-Perl puede ser compilado tanto con el compilador de ANSI C de IBM C o con gcc.
+Perl puede compilarse tanto con el compilador de ANSI C de IBM C o con gcc.
 El primero es lo recomendado, ya que no sólo puede compilar Perl sin ninguna dificultad, sino que también puede tomar ventaja de las características que se enumeran más adelante que requieren el uso de opciones en línea de comandos específicos del compilador de IBM.
 
 Si decide usar gcc, asegúrese de que su instalación es reciente y completa, y asegúrese de leer el archivo INSTALL de Perl para más detalles específicos de gcc. Por favor, reporte cualquier rodeo que tuvo que solventar, al equipo de desarrollo.
@@ -69,7 +69,7 @@ Si la versión de la biblioteca gdbm de AIX Toolbox instalada en su sistema es m
 
 Probado con éxito significa que todo el "make test" funciona terminando con un resultado del 100 % correcto (I<OK>). Todas las pruebas se realizaron con -Duseshrplib activado.
 
-Todas las pruebas se llevaron a cabo con el nivel de soporte tecnológico de AIX más antiguo, con el último paquete de parcheo aplicado. Si la versión de AIX que ha sido probada ya no tiene soporte (AIX 4.3.3, 5.1, 5.2), entonces se usa el último nivel de soporte disponible.
+Todas las pruebas se llevaron a cabo con el nivel de soporte tecnológico de AIX más antiguo, con el último paquete de parcheo aplicado. Si la versión de AIX que se ha probado ya no tiene soporte (AIX 4.3.3, 5.1, 5.2), entonces se usa el último nivel de soporte disponible.
 
 =head2 Generar Extensiones Dinámicas en AIX
 
@@ -181,9 +181,9 @@ Si elige a gcc para compilar un Perl de 64-bit, entonces necesita agregar la sig
 Una regresión en AIX 7 causa un fallo en el make test en Time::Piece durante los momentos de ahorro energético (DST).  APAR IV16514 ofrece un arreglo para esto.  Una prueba rápida para ver si se requiere, asumiendo que estamos en tiempo de ahorro energético en la zona horario Eastern Time, sería ejecutar C< TZ=EST5 date +%Z >.  Esto normalmente devolverá C<EST>, pero nada si hay algún problema.
 
 
-=head2 Compilar Perl 5 en versiones AIX anteriores a 4.3.3
+=head2 Compilar Perl 5 en versiones AIX anteriores a la 4.3.3
 
-Debido al hecho de que AIX 4.3.3 llegó al final de su servicio efectivo el 31 de diciembre de 2003, esta información se proporciona tal cual. Las versiones anteriores de Perl a Perl 5.8.9 pueden ser compiladas en AIX 4.3.3 con las siguientes opciones activadas (su experiencia puede variar):
+Debido al hecho de que AIX 4.3.3 llegó al final de su servicio efectivo el 31 de diciembre de 2003, esta información se proporciona tal cual. Las versiones anteriores de Perl a Perl 5.8.9 pueden compilarse en AIX 4.3.3 con las siguientes opciones activadas (su experiencia puede variar):
 
 Al compilar Perl, debe utilizar un compilador ANSI C. AIX no incluye por defecto un compilador de ANSI C compatible con AIX, pero las generaciones binarias de gcc para AIX están ampliamente disponibles.
 
@@ -198,7 +198,7 @@ tenga en cuenta que xlC tiene la versión del sistema operativo en el nombre de 
 
 subversiones no son lo mismo que "las últimas" en todas las versiones del S.O. Por ejemplo, la última xlC-5 en aix41 es 5.0.2.9, mientras que en aix43, es 5.0.2.7.
 
-Perl puede ser compilado tanto con el compilador de ANSI C de IBM C o con gcc.
+Perl puede compilarse tanto con el compilador de ANSI C de IBM C o con gcc.
 El primero es lo recomendado, ya que no sólo puede compilar Perl sin ninguna dificultad, sino que también puede tomar ventaja de las características que se enumeran más adelante que requieren el uso de opciones en línea de comandos específicos del compilador de IBM.
 
 El parche del compilador de IBM niveles 5.0.0.0 y 5.0.1.0 tienen errores de optimización en el compilador, que afectan a la compilación de perl.c y regcomp.c, respectivamente.  Si la configuración de Perl detecta estos parches del compilador, la optimización quedará desactivada para esos archivos del código fuente.
@@ -236,7 +236,7 @@ Tenga en cuenta que a partir de Perl 5.7.2 (y en consecuencia 5.8.0) y AIX 4.3 o
 
 Puede usarse todos los valores predeterminados de Configure.
 
-Si ha optado por utilizar vac 4, asegúrese de ejecutar 4.4.0.3. Las versiones anteriores se vuelven más desagradables. Para vac 5 asegúrese que ejecuta al menos 5.0.1.0, pero vac 5.0.2.6 o superior es altamente recomendado. Tenga en cuenta que desde que IBM ha eliminado vac 5.0.2.1 a 5.0.2.5 del almacén de software, estas versiones deben ser consideradas obsoletas.
+Si ha optado por utilizar vac 4, asegúrese de ejecutar 4.4.0.3. Las versiones anteriores se vuelven más desagradables. Para vac 5 asegúrese que ejecuta al menos 5.0.1.0, pero vac 5.0.2.6 o superior es altamente recomendado. Tenga en cuenta que desde que IBM ha eliminado vac 5.0.2.1 a 5.0.2.5 del almacén de software, estas versiones deben considerarse obsoletas.
 
 Esto es una pequeña guía de cómo actualizar el compilador a su última versión.  Por supuesto, esto está sujeto a cambios.  Sólo puede actualizar las versiones con las actualizaciones disponibles con el ftp si los tres primeros grupos de dígitos son iguales (en donde puede saltarse numeración intermedia a diferencia de los parches en las instantáneas de desarrollo de Perl), o a una versión donde la "base" se encuentre disponible.  En otras palabras, los parches del compilador AIX son acumulativos.
 

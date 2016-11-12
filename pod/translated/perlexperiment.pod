@@ -92,7 +92,7 @@ Se incluyó en Perl 5.22.0
 
 Usar esta característica dispara advertencias en la categoría C<experimental::re_strict>.
 
-Vea L<re/'strict' mode>
+Vea L<re/modo 'strict'>
 
 =item Operadores de bit específicos para cadenas y números
 
@@ -285,7 +285,7 @@ Se eliminó en Perl 5.24.0
 
 Usar esta característica disparaba advertencias en la categoría C<experimental::autoderef>.
 
-Superada por L</Postfix dereference syntax>.
+Superada por L</Sintaxis de desreferencia postfija>.
 
 Se incluyó en Perl 5.14.0
 

@@ -229,7 +229,7 @@ Los metacaracteres de B<agrupación> C<()> permite a una parte de una I<regex> q
 
 =head2 Extraer coincidencias
 
-Los metacaracteres de agrupación C<()> permiten también la extracción de partes de una cadena que hayan sido encontradas.  Para cada grupo, la parte que coincide se almacena en las variables especiales C<$1>, C<$2>, etc.
+Los metacaracteres de agrupación C<()> permiten también la extracción de partes de una cadena que se haya encontrado.  Para cada grupo, la parte que coincide se almacena en las variables especiales C<$1>, C<$2>, etc.
 Se pueden utilizar como variables ordinarias:
 
     # extraer horas, minutos, segundos
@@ -406,7 +406,7 @@ Debido a que el primer carácter de $x coincidía con la I<regex>, C<split> ante
 
 Nuevo en v5.22, aplica reglas más estrictas de lo normal cuando se compilan patrones de expresiones regulares.  Puede encontrar cosas que, aún siendo legales, puede que no sean lo que se pretende.
 
-Vea L<'strict' en re|modo re/'strict'>.
+Vea L<'strict' en re|re/modo 'strict'>.
 
 =head1 ERRORES
 

@@ -12,7 +12,7 @@ Este documento describe las diferencias entre la versión 5.8.7 y la versión 5.
 
 No hay cambios intencionadamente incompatibles con 5.8.7. Si los hay, los errores e informes serán bienvenidos.
 
-=head1 Mejoras en los componentes
+=head1 Mejoras en el núcleo principal
 
 =over
 
@@ -70,7 +70,7 @@ C<B> actualizado a la versión 1.09_01
 
 =item *
 
-La jerarquía de la herencia de los módulos C<B::> ha sido corregida; C<B::NV> ahora hereda desde C<B::SV> (en lugar de C<B::IV>).
+La jerarquía de la herencia de los módulos C<B::> se ha corregido; C<B::NV> ahora hereda desde C<B::SV> (en lugar de C<B::IV>).
 
 =back
 
@@ -154,7 +154,7 @@ C<charnames> actualizado a la versión 1.05
 
 =item *
 
-C<viacode()> ahora acepta cadenas hexadecimales y ha sido optimizado.
+C<viacode()> ahora acepta cadenas hexadecimales y se ha optimizado.
 
 =back
 
@@ -588,7 +588,7 @@ Se actualizó C<Getopt::Long> a la versión 2.35
 
 =item *
 
-C<prefix_pattern> ha sido complementado por una nueva opción de configuración, C<long_prefix_pattern>, que permite al usuario especificar qué patrones de prefijo deben tener aplicado un estilo semántico para opciones largas.
+C<prefix_pattern> se ha complementado por una nueva opción de configuración, C<long_prefix_pattern>, que permite al usuario especificar qué patrones de prefijo deben tener aplicado un estilo semántico para opciones largas.
 
 =item *
 
@@ -1391,7 +1391,7 @@ Perl 5.8.4 introducía un cambio para que las asignaciones de C<undef> a un esca
 Usando la función sprintf() con algunos formatos podría dar lugar a un desbordamiento de búfer, en algunos casos específicos. Esto se ha corregido, junto con otros errores, sobre todo en la comprobación de los límites.
 
 En arreglos relacionados, era posible, para código mal escrito que no siguiera la documentación de C<Sys::Syslog>, tener vulnerabilidades en el formateo.
-C<Sys::Syslog> ha sido cambiado para proteger a los usuarios de la pobre calidad del código de terceros.
+C<Sys::Syslog> se ha cambiado para proteger a los usuarios de la pobre calidad del código de terceros.
 
 =head2 Enlentecimiento del depurador y de Unicode
 
@@ -1411,7 +1411,7 @@ Varias fugas de memoria en ithreads fueron cerradas. Una mejor implementación d
 
 =item *
 
-Los espacios finales de C<$!> y C<$^E> ahora son recortados.
+Los espacios finales de C<$!> y C<$^E> ahora se recortan.
 
 =item *
 
@@ -1439,7 +1439,7 @@ La optimización de C<for (reverse @a)> introducido en perl 5.8.6 puede portarse
 
 =item *
 
-Algunas coincidencias insensibles al tamaño de caja de los caracteres, entre datos codificados en UTF-8 y expresiones regulares de 8 bits, y viceversa, podría dar advertencias sobre caracteres incorrectos. Esto ha sido solventado por Dave Mitchell e Yves Orton.
+Algunas coincidencias insensibles al tamaño de caja de los caracteres, entre datos codificados en UTF-8 y expresiones regulares de 8 bits, y viceversa, podría dar advertencias sobre caracteres incorrectos. Esto se ha solventado por Dave Mitchell e Yves Orton.
 
 =item *
 
@@ -1462,7 +1462,7 @@ Esta es una nueva advertencia, en situaciones como ésta:
 
 =head2 Non-string passed as bitmask
 
-Esta es una nueva advertencia, producida cuando un número ha sido pasado como un argumento a select(), en vez de una máscara de bits.
+Esta es una nueva advertencia, producida cuando un número se ha pasado como un argumento a select(), en vez de una máscara de bits.
 
     # Incorrecto, mostrará un aviso
     $rin = fileno(STDIN);
@@ -1481,7 +1481,7 @@ Este error de sintaxis indica que el analizador léxico no pudo encontrar el del
 
 Se ha hecho una buena cantidad de refactorizaciones del código fuente C<C>, en parte para que sea más ordenado y más fácil de mantener. El código objeto resultante y el C<perl> binario pueden ser menores que 5.8.7, en particular, debido a un cambio aportado por Dave Mitchell, que rehízo el código de las advertencias para que fuera significativamente menor. Además de ser má pequeño y, posiblemente, más rápido, no debería haber cambios detectables por el usuario.
 
-Andy Lester suministró muchas mejoras para determinar qué parámetros de las funciones y qué variables locales podrían realmente ser declaradas C<const> para el compilador de C. Steve Peters proporcionó nuevas macros C<*_set> y rediseñó el núcleo para utilizar éstas en lugar de asignar a macros en contexto VALOR-IZQUIERDA.
+Andy Lester suministró muchas mejoras para determinar qué parámetros de las funciones y qué variables locales podrían realmente declararse C<const> para el compilador de C. Steve Peters proporcionó nuevas macros C<*_set> y rediseñó el núcleo para utilizar éstas en lugar de asignar a macros en contexto VALOR-IZQUIERDA.
 
 Dave Mitchell mejoró la salida de depura del analizador léxico con C<-DT>
 
@@ -1489,13 +1489,13 @@ Nicholas Clark cambió la asignación del búfer de cadena de texto por lo que a
 
 El array de C<HV> de los C<HE*> es ahora asignado al correcto (y mínimo) tamaño, gracias a un nuevo cambio de Nicholas Clark. Compile con C<-DPERL_USE_LARGE_HV_ALLOC> para usar el viejo, descuidado, valor por defecto.
 
-Para XS o con fines de depuración embebida, si perl es compilado con C<-DDEBUG_LEAKING_SCALARS_FORK_DUMP>, además de C<-DDEBUG_LEAKING_SCALARS> entonces un proceso hijo es creado con C<fork> justo antes de la destrucción global, y es utilizado para mostrar los valores de cualquier escalar que sea encontrado y que tenga que ser eliminado al final de la destrucción global. Sin esto, los escalares ya habrían sido liberados, de tal manera, que se haría imposible producir cualquier descarga significativa de sus contenidos.  Esta característica se implementó por el infatigable Nicholas Clark, basado en una idea de Mike Giroux.
+Para XS o con fines de depuración embebida, si perl se compila con C<-DDEBUG_LEAKING_SCALARS_FORK_DUMP>, además de C<-DDEBUG_LEAKING_SCALARS> entonces un proceso hijo se crea con C<fork> justo antes de la destrucción global, y se utiliza para mostrar los valores de cualquier escalar que se encuentra y que tenga que eliminarse al final de la destrucción global. Sin esto, los escalares ya habrían liberado, de tal manera, que se haría imposible producir cualquier descarga significativa de sus contenidos.  Esta característica se implementó por el infatigable Nicholas Clark, basado en una idea de Mike Giroux.
 
 =head1 Problemas en plataformas específicas
 
 El optimizador en HP-UX 11.23 (Itanium 2) está ahora, en parte, desactivado (reducido a +O1) cuando se usa en HP C-ANSI-C; la causa de los problemas en los niveles más altos de optimización aún no está clara.
 
-Hay un puñado de pruebas fallidas que quedan en VMS, sobre todo debido a la corrección de pruebas y ajustes menores con demasiadas dependencias como para poder integrarse en esta versión de la secuencia de desarrollo, donde todos ellas han sido corregidas.  La siguiente es una lista de los errores esperados con el número de parche de la corrección en el que se conocen:
+Hay un puñado de pruebas fallidas que quedan en VMS, sobre todo debido a la corrección de pruebas y ajustes menores con demasiadas dependencias como para poder integrarse en esta versión de la secuencia de desarrollo, donde todos ellas se han corregido.  La siguiente es una lista de los errores esperados con el número de parche de la corrección en el que se conocen:
 
     ext/Devel/PPPort/t/ppphtest.t  #26913
     ext/List/Util/t/p_tainted.t    #26912

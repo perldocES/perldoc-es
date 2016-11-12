@@ -16,7 +16,7 @@ Perl B<toma prestada la sintaxis> y conceptos de muchos lenguajes: awk, sed, C, 
 =head2 Declaraciones
 X<declaration> X<undef> X<undefined> X<uninitialized> X<declaración> X<indefinido> X<no inicializado>
 
-Los únicos elementos que necesita declarar en Perl son los informes y las subrutinas (y algunas veces ni siquiera las subrutinas).  Una variable escalar almacena el valor indefinido (C<undef>) hasta que se le asigna un valor definido, que es cualquier otra cosa distinta de C<undef>.  Cuando se usa como un número, C<undef> es tratado como si fuera C<0>; cuando se usa como una cadena de caracteres (I<string>), se trata como la cadena vacía, C<"">; y cuando se usa como una referencia que no ha sido asignada, es tratado como un error.  Si ha activado los avisos (warnings), será notificado de un valor no inicializado cada vez que trate a C<undef> como si fuera una cadena o número.  Bueno, normalmente.  En contextos booleanos, como en:
+Los únicos elementos que necesita declarar en Perl son los informes y las subrutinas (y algunas veces ni siquiera las subrutinas).  Una variable escalar almacena el valor indefinido (C<undef>) hasta que se le asigna un valor definido, que es cualquier otra cosa distinta de C<undef>.  Cuando se usa como un número, C<undef> es tratado como si fuera C<0>; cuando se usa como una cadena de caracteres (I<string>), se trata como la cadena vacía, C<"">; y cuando se usa como una referencia que no se ha asignado, se trata como un error.  Si ha activado los avisos (warnings), será notificado de un valor no inicializado cada vez que trate a C<undef> como si fuera una cadena o número.  Bueno, normalmente.  En contextos booleanos, como en:
 
     if ($a) {}
 
@@ -29,7 +29,7 @@ están también exentos de tales avisos.
 
 Una declaración puede ponerse en cualquier sitio, como si fuera una instrucción, pero no tiene efecto en la ejecución de la secuencia de instrucciones principal: todas las declaraciones toman efecto en tiempo de compilación.  Todas las declaraciones se suelen poner al principio o al final del script.  Sin embargo, si está usando variables privadas en un contexto local creadas con C<my()>, C<state()> u C<our()>, deberá asegurarse que su definición de formato o subrutina están dentro del mismo bloque que el C<my> si quiere acceder a estas variables privadas.
 
-Declarar una subrutina permite que su nombre sea usado como si fuera un operador de lista, desde el punto de vista del programa.  Puede declarar una subrutina sin definirla diciendo C<sub nombre>, como: X<subrutina, declaración>
+Declarar una subrutina permite que su nombre se use como si fuera un operador de lista, desde el punto de vista del programa.  Puede declarar una subrutina sin definirla diciendo C<sub nombre>, como: X<subrutina, declaración>
 
     sub mi_nombre;
     $yo = mi_nombre $0          or die "no puedo obtener mi_name";
@@ -96,7 +96,7 @@ C<until> hace lo opuesto, repite la instrucción I<hasta> que la condición sea 
     print $i++ while $i <= 10;
     print $j++ until $j >  10;
 
-Los modificadores C<while> y C<until> tienen la usual semántica de los "bucles C<while>" (la condición se evalúa primero), excepto cuando se aplica a un bloque C<do> (o a la subrutina de Perl 4 C<do>), en cuyo caso el bloque se ejecuta una vez antes de que sea evaluada la condición.
+Los modificadores C<while> y C<until> tienen la usual semántica de los "bucles C<while>" (la condición se evalúa primero), excepto cuando se aplica a un bloque C<do> (o a la subrutina de Perl 4 C<do>), en cuyo caso el bloque se ejecuta una vez antes de que se evalúe la condición.
 
 De esa manera puede escribir bucles como este:
 
@@ -141,7 +141,7 @@ X<my>
 El modificador C<when> es una característica experimental que apareció por primera vez en Perl 5.14.  Para usarlo, debe incluir una declaración C<use v5.14>.
 (Técnicamente, se requiere sólo la característica C<switch>, pero este detalle no estaba disponible antes de 5.14).  Solo es operativo desde dentro de un bucle C<foreach> o un bloque C<given>, y se ejecuta la sentencia sólo si es cierta la coincidencia inteligente C<< $_ ~~ I<EXPR> >>.  Si la instrucción se ejecuta, es seguida por un C<next> desde el interior de un C<foreach> y por un C<break> desde el interior de un C<given>.
 
-En la implementación actual, el bucle C<foreach> puede estar en cualquier lugar dentro del ámbito dinámico del modificador C<when>, pero debe estar dentro del ámbito léxico del bloque C<given>.  Esta restricción puede ser relajada en una futura versión.  Vea a continuación L</"Instrucciones Switch">.
+En la implementación actual, el bucle C<foreach> puede estar en cualquier lugar dentro del ámbito dinámico del modificador C<when>, pero debe estar dentro del ámbito léxico del bloque C<given>.  Esta restricción puede relajarse en una futura versión.  Vea a continuación L</"Instrucciones Switch">.
 
 =head2 Instrucciones compuestas
 X<statement, compound> X<block> X<bracket, curly> X<curly bracket> X<brace>
@@ -153,7 +153,7 @@ Algunas veces un bloque está delimitado por el archivo que lo contiene (en el c
 Pero generalmente, un bloque está delimitado por llaves.
 Llamaremos a esta construcción sintáctica un BLOQUE.
 
-Las siguientes instrucciones compuestas pueden ser usadas para controlar el flujo:
+Las siguientes instrucciones compuestas pueden usarse para controlar el flujo:
 
     if (EXPR) BLOQUE
     if (EXPR) BLOQUE else BLOQUE
@@ -203,7 +203,7 @@ La instrucción C<until> ejecuta el bloque mientras la expresión sea falsa.
 La ETIQUETA es opcional, y si está presente, consiste en un identificador seguido por el carácter dos puntos.  La ETIQUETA identifica el bucle para las instrucciones de control de bucle C<next>, C<last> y C<redo>.
 Si la ETIQUETA se omite, las instrucciones de control de bucle se refieren al bucle más interior en que se encuentren.  Esto puede incluir el analizar la pila de llamadas, de forma dinámica, en tiempo real, para encontrar la ETIQUETA.  Tal desesperado comportamiento lanzará un aviso si usa el pragma C<use warnings> o la opción B<-w>.
 
-Si existe un BLOQUE C<continue>, siempre es ejecutado justo antes de que la condición sea evaluada de nuevo.  Así, puede ser usada para incrementar una variable de bucle, incluso cuando el ciclo ha sido parado por medio de la instrucción C<next>.
+Si existe un BLOQUE C<continue>, siempre es ejecutado justo antes de que la condición se evalúe de nuevo.  Así, puede usarse para incrementar una variable de bucle, incluso cuando el ciclo se ha parado por medio de la instrucción C<next>.
 
 Cuando un bloque es precedido por una palabra clave de fase de compilación como C<BEGIN>,
 C<END>, C<INIT>, C<CHECK>, o C<UNITCHECK>, entonces el bloque se ejecutará solo durante la correspondiente fase de ejecución.  Vea L<perlmod> para más detalles.
@@ -408,7 +408,7 @@ X<block> X<bloque>
 
 Un BLOQUE por sí mismo (etiquetado o no) es semánticamente equivalente a un bucle que se ejecuta una vez.  Así que puede usar cualquiera de las instrucciones de control de bucle dentro de él para salir o reiniciarlo.  (Note que esto I<NO> es verdad en C<eval{}>, C<sub{}>, y contrariamente a la creencia popular, bloques C<do{}>, que I<NO> cuentan como bucles).  El bloque C<continue> es opcional.
 
-La construcción BLOQUE puede ser usada para emular estructuras I<switch>.
+La construcción BLOQUE puede usarse para emular estructuras I<switch>.
 
     SWITCH: {
         if (/^abc/) { $abc = 1; last SWITCH; }
@@ -496,7 +496,7 @@ X<goto>
 
 Aunque no sea muy querido, Perl soporta la instrucción C<goto>.  Existen tres formas: C<goto>-ETIQUETA, C<goto>-EXPR y C<goto>-&NOMBRE.  La ETIQUETA de un bucle no es realmente un destino válido para un C<goto>; sólo es el nombre del bucle.
 
-La forma C<goto>-ETIQUETA busca la instrucción etiquetada con ETIQUETA y continua la ejecución desde allí.  No puede ser usado en ninguna construcción que requiera inicialización, como una subrutina o un bucle C<foreach>.  Tampoco puede ir en una construcción que sea optimizada.  Puede ser utilizada para ir a casi cualquier sitio que esté dentro del ámbito dinámico, incluyendo fuera de las subrutinas, pero es normalmente mucho mejor otras construcciones como C<last> o C<die>.  El autor de Perl nunca ha sentido la necesidad de usar esta forma de C<goto> (en Perl, desde luego. C es otra historia).
+La forma C<goto>-ETIQUETA busca la instrucción etiquetada con ETIQUETA y continua la ejecución desde allí.  No puede usarse en ninguna construcción que requiera inicialización, como una subrutina o un bucle C<foreach>.  Tampoco puede ir en una construcción que esté optimizada.  Puede utilizarse para ir a casi cualquier sitio que esté dentro del ámbito dinámico, incluyendo fuera de las subrutinas, pero es normalmente mucho mejor otras construcciones como C<last> o C<die>.  El autor de Perl nunca ha sentido la necesidad de usar esta forma de C<goto> (en Perl, desde luego. C es otra historia).
 
 La forma C<goto>-EXPR espera un nombre de etiqueta, cuyo ámbito será resuelto dinámicamente.  Esto permite crear C<goto> calculados como en FORTRAN, pero no está necesariamente recomendado si usted está optimizando, durante el mantenimiento:
 
@@ -764,7 +764,7 @@ usará coincidencia inteligente (sólo el primer operando es considerado), mient
 
 pondrá a prueba sólo la expresión regular, lo que hace que ambos operandos sean tratados como booleanos.  Tenga cuidado con esto, porque una referencia a un array es siempre un valor verdadero, lo que, efectivamente, es redundante.  No es una buena idea.
 
-Los operadores booleanos tautológicos siguen teniendo que ser optimizados.  No caiga en la tentación de escribir
+Los operadores booleanos tautológicos siguen teniendo que optimizarse.  No caiga en la tentación de escribir
 
     when ("foo" or "bar") { ... }
 

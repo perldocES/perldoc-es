@@ -39,10 +39,10 @@ Pasado implícitamente a través de la entrada estándar.  Esto sólo funciona s
 
 Con los métodos 2 y 3, Perl inicia el análisis del archivo de entrada desde el comienzo, a menos que haya especificado una opción B<-x>, en cuyo caso escanea por la primera línea que comience por C<#!> y contenga la palabra "perl", y arrancará desde allí.  Esto es útil para ejecutar un programa incorporado en un correo grande.  (En este caso se indicará el final del programa, utilizando el I<token> C<__END__>).
 
-La línea C<#!> es siempre examinada para buscar las opciones mientras la línea está siendo analizada.  Por lo tanto, si está en una máquina que sólo permite un argumento con la línea C<#!>, o peor aún, ni siquiera reconoce la línea C<#!>, todavía puede obtener un comportamiento consistente de las opciones independientemente de cómo Perl haya sido invocado, incluso si B<-x> fue utilizado para encontrar el inicio del programa.
+La línea C<#!> es siempre examinada para buscar las opciones mientras la línea está siendo analizada.  Por lo tanto, si está en una máquina que sólo permite un argumento con la línea C<#!>, o peor aún, ni siquiera reconoce la línea C<#!>, todavía puede obtener un comportamiento consistente de las opciones independientemente de cómo Perl se haya invocado, incluso si B<-x> fue utilizado para encontrar el inicio del programa.
 
-Debido a que, históricamente, algunos sistemas operativos cortan, silenciosamente, la interpretación de la línea C<#!> después de 32 caracteres, algunas opciones puede ser pasadas a la línea de comandos, y algunas otras, no; incluso se podría obtener un "-" sin su carácter, si no tiene cuidado.
-Probablemente querrá asegurarse de que todos las opciones caigan antes del límite de 32 caracteres.  La mayoría de las opciones, en realidad, no les importa si son procesadas ​​de forma redundante, pero obtener un "-" en lugar de una opción completa podría hacer que Perl intente ejecutar la entrada estándar, en lugar de su programa.  Y una opción B<-I> parcial también podría causar resultados extraños.
+Debido a que, históricamente, algunos sistemas operativos cortan, silenciosamente, la interpretación de la línea C<#!> después de 32 caracteres, algunas opciones pueden pasarse a la línea de comandos, y algunas otras, no; incluso se podría obtener un "-" sin su carácter, si no tiene cuidado.
+Probablemente querrá asegurarse de que todos las opciones caigan antes del límite de 32 caracteres.  La mayoría de las opciones, en realidad, no les importa si son procesadas de forma redundante, pero obtener un "-" en lugar de una opción completa podría hacer que Perl intente ejecutar la entrada estándar, en lugar de su programa.  Y una opción B<-I> parcial también podría causar resultados extraños.
 
 Algunas opciones son importantes por si son procesadas dos veces, como por ejemplo, combinaciones de B<-l> y B<-0>.  Puede poner todos las opciones después del límite de 32 caracteres (si procede), o reemplazar el uso de B<-0>I<dígitos> por C<BEGIN{ $/ = "\0dígitos"; }>.
 
@@ -71,7 +71,7 @@ Si el programa es sintácticamente correcto, es ejecutado.  Si el programa se ej
 =head2 #! y entrecomillado en sistemas distintos del Unix
 X<hashbang> X<#!>
 
-La técnica C<#!> del Unix puede ser simulada en otros sistemas:
+La técnica C<#!> del Unix puede simularse en otros sistemas:
 
 =over 4
 
@@ -143,7 +143,7 @@ o si solo quiere ejecutar una cierta versión, coloca una instrucción como esta
 =head2 Opciones de comando
 X<perl, opciones comando> X<opciones comando>
 
-Como con todos los comandos estándares, una opción de un sólo carácter puede ser agrupado con la siguiente opción, si la hubiera.
+Como con todos los comandos estándares, una opción de un sólo carácter puede agruparse con la siguiente opción, si la hubiera.
 
     #!/usr/bin/perl -spi.orig	# lo mismo que -s -p -i.orig
 
@@ -163,7 +163,7 @@ especifica el delimitador de registros de entrada (C<$/>) como un número en oct
 El valor especial 00 hará que Perl succione archivos en modo párrafo.
 Cualquier valor igual o superior a 0400 hará que Perl succione todo el archivo, pero, por convención, para este propósito se usa de forma normal el valor 0777.
 
-También puede especificar el carácter separador usando notación hexadecimal: B<-0xI<HHH...>>, donde C<I<H>> son dígitos hexadecimales válidos.  A diferencia de con la forma octal, ésta puede ser usada para especificar cualquier carácter Unicode, incluso lo que están más allá de 0xFF.  Así que si I<verdaderamente> quiere usar un separador de registro 0777, especifíquelo como B<-0x1FF>.  (Esto significa que no puede usar la opción B<-x> con un nombre de directorio que consista en dígitos hexadecimales, o sino, Perl pensará que ha especificado un número hex relativo a B<-0>).
+También puede especificar el carácter separador usando notación hexadecimal: B<-0xI<HHH...>>, donde C<I<H>> son dígitos hexadecimales válidos.  A diferencia de con la forma octal, ésta puede usarse para especificar cualquier carácter Unicode, incluso lo que están más allá de 0xFF.  Así que si I<verdaderamente> quiere usar un separador de registro 0777, especifíquelo como B<-0x1FF>.  (Esto significa que no puede usar la opción B<-x> con un nombre de directorio que consista en dígitos hexadecimales, o sino, Perl pensará que ha especificado un número hex relativo a B<-0>).
 
 =item B<-a>
 X<-a> X<autosplit>
@@ -227,7 +227,7 @@ La variable mágica de solo lectura C<${^UNICODE}> refleja el valor numérico de
 (En Perl anteriores a 5.8.1, la opción B<-C> solo era una opción solo Win32 que activaba el uso de las "wide system call" de la API de Win32 relativo a la codificación Unicode.
 Esta característica, sin embargo, y en la práctica, no era usada, por lo que esta opción ha sido "reciclada").
 
-B<Nota:> Desde perl 5.10.1, si la opción B<-C> es usada en la línea C<#!>, también debe ser especificada en la línea de comando, debido a que los flujos estándar son inicializados en ese punto, en la ejecución del intérprete perl.
+B<Nota:> Desde perl 5.10.1, si la opción B<-C> es usada en la línea C<#!>, también debe especificarse en la línea de comando, debido a que los flujos estándares son inicializados en ese punto, en la ejecución del intérprete perl.
 También puede usar binmode() para establecer la codificación de un flujo de E/S.
 
 =item B<-c>
@@ -312,7 +312,7 @@ Vea L<perldebug> para más detalles y variaciones.
 =item B<-e> I<línea de comando>
 X<-e>
 
-puede ser usado para entrar un programa de una línea.  Si se indica B<-e>, Perl no mirará por un nombre de archivo en la lista de argumentos.  Se pueden indicar múltiples comandos B<-e> para generar un script multilínea.  Asegúrese de usar caracteres de punto y coma tal y como haría con un programa normal.
+puede usarse para entrar un programa de una línea.  Si se indica B<-e>, Perl no mirará por un nombre de archivo en la lista de argumentos.  Se pueden indicar múltiples comandos B<-e> para generar un script multilínea.  Asegúrese de usar caracteres de punto y coma tal y como haría con un programa normal.
 
 =item B<-E> I<línea de comandos>
 X<-E>
@@ -326,7 +326,7 @@ Desactiva la ejecución de F<$Config{sitelib}/sitecustomize.pl> en el arranque.
 
 Se puede compilar Perl para que, por defecto, intentará ejecutar F<$Config{sitelib}/sitecustomize.pl> en el arranque (en el bloque BEGIN).
 Esto es un enganche que permite al administrador del sistema personalizar el comportamiento de Perl.
-Puede, por ejemplo, ser usado para añadir entradas al array @INC para hacer que Perl busque módulos en lugares no estándares.
+Puede, por ejemplo, usarse para añadir entradas al array @INC para hacer que Perl busque módulos en lugares no estándares.
 
 Perl realmente inserta el siguiente código:
 
@@ -341,7 +341,7 @@ El valor de C<$Config{sitelib}> también está determinado en el código C, no l
 
 El código es ejecutado I<muy> prontamente. Por ejemplo, cualquier cambio hecho a C<@INC> se mostrará en la salida de `perl -V`. Naturalmente, los bloques C<END> serán igualmente ejecutados muy tardíamente.
 
-Para determinar en tiempo de ejecución si esta capacidad ha sido compilada en su perl, puede comprobar el valor de C<$Config{usesitecustomize}>.
+Para determinar en tiempo de ejecución si esta capacidad se ha compilado en su perl, puede comprobar el valor de C<$Config{usesitecustomize}>.
 
 =item B<-F>I<patrón>
 X<-F>
@@ -358,7 +358,7 @@ imprime un resumen de las opciones.
 =item B<-i>[I<extensión>]
 X<-i> X<in situ>
 
-especifica que los archivos procesados por la construcción C<E<lt>E<gt>> han de ser editados in situ.  Lo hace renombrando el archivo de entrada, abriendo el archivo de salida con el nombre original, y seleccionando este archivo de salida como el de por defecto para las instrucciones print().  La extensión, si es suministrada, es usada para modificar el nombre del viejo archivo para hacer una copia de seguridad, siguiendo estas reglas:
+especifica que los archivos procesados por la construcción C<E<lt>E<gt>> han de editarse in situ.  Lo hace renombrando el archivo de entrada, abriendo el archivo de salida con el nombre original, y seleccionando este archivo de salida como el de por defecto para las instrucciones print().  La extensión, si es suministrada, es usada para modificar el nombre del viejo archivo para hacer una copia de seguridad, siguiendo estas reglas:
 
 Si no se suministra ninguna extensión, y su sistema lo soporta, el I<archivo> original se mantiene abierto, sin nombre, mientras que la salida se redirige a un archivo nuevo con el I<nombre> original.  Cuándo perl salga, limpiamente o no, se elimina el I<archivo> original.
 
@@ -440,7 +440,7 @@ Perl no expande C<~> en los nombres de archivo, lo cual está bien, desde que al
 
 Tenga en cuenta que debido a que B<-i> renombra o elimina el archivo original antes de crear un archivo nuevo con el mismo nombre, los enlaces tipo Unix, blandos y duros, no serán preservados.
 
-Finalmente, la opción B<-i> no impide la ejecución cuándo no se indica ningún archivo en la línea de comandos.  En este caso, no se realiza ninguna copia de seguridad (el archivo original no puede, naturalmente, ser determinado) y el procesamiento procede de STDIN a STDOUT, que es lo esperado.
+Finalmente, la opción B<-i> no impide la ejecución cuándo no se indica ningún archivo en la línea de comandos.  En este caso, no se realiza ninguna copia de seguridad (el archivo original no puede, naturalmente, determinarse) y el procesamiento procede de STDIN a STDOUT, que es lo esperado.
 
 =item B<-I>I<directorio>
 X<-I> X<@INC>
@@ -502,7 +502,7 @@ Aquí hay una manera eficaz de eliminar todos los archivos que no hayan sido mod
 Esto es más rápido que utilizar la opción B<-exec> de I<find> porque no tiene que arrancar un proceso por cada nombre de archivo encontrado (pero no es más rápido que usar la opción B<-delete>, disponible en las nuevas versiones de I<find>).
 Adolece del error de perder los caracteres de nueva línea en los nombres de las rutas de archivos, que puede arreglar si sigue el ejemplo que hay en B<-0>.
 
-Los bloques C<BEGIN> y C<END> pueden ser usados para capturar el control antes de o después del
+Los bloques C<BEGIN> y C<END> pueden usarse para capturar el control antes de o después del
 bucle de programa implícito, como se hace en I<awk>.
 
 =item B<-p>
@@ -520,7 +520,7 @@ hace que Perl asuma el bucle siguiente alrededor de su programa, el cual hace it
 
 Si un archivo nombrado por un argumento no puede ser abierto por alguna razón, Perl se lo advierte y pasa al archivo siguiente.  Note que las líneas son impresas automáticamente.  Un error que ocurra durante la impresión es tratado como fatal.  Para suprimir la impresión use la opción B<-n>.  Una opción B<-p> sobrescribe una B<-n>.
 
-Los bloques C<BEGIN> y C<END> pueden ser usados para capturar el control antes de o después del bucle implícito, como se hace en I<awk>.
+Los bloques C<BEGIN> y C<END> pueden usarse para capturar el control antes de o después del bucle implícito, como se hace en I<awk>.
 
 =item B<-s>
 X<-s>
@@ -556,14 +556,14 @@ El shell ejecuta la segunda línea como un comando shell normal, y así arranca 
 
 Si el nombre del archivo suministrado contiene separadores de directorios (y por lo tanto es una ruta absoluta o relativa), y si ese archivo no es encontrado, las plataformas que añaden extensiones de archivo lo harán, y tratarán de buscar el archivo con estas extensiones añadidas, una a una.
 
-En plataformas DOS, si el programa no contiene separadores de directorios, en primer lugar se buscará en el directorio actual antes de ser buscado en el PATH.  En plataformas Unix, el programa se buscará estrictamente en PATH.
+En plataformas DOS, si el programa no contiene separadores de directorios, en primer lugar se buscará en el directorio actual antes de buscarse en el PATH.  En plataformas Unix, el programa se buscará estrictamente en PATH.
 
 =item B<-t>
 X<-t>
 
 Al igual que B<-T>, pero las comprobaciones de contaminación emitirán advertencias en lugar de errores fatales.  Estas advertencias se pueden controlar de forma normal con C<no warnings qw(taint)>.
 
-B<Nota: ¡Esto no es un sustituto de C<-T>!> Su destino es ser utilizada I<sólo> como una ayuda temporal para el desarrollo, mientras asegura código heredado: para el código en producción real y para nuevo código seguro escrito desde cero, utilice siempre el verdadero B<-T>.
+B<Nota: ¡Esto no es un sustituto de C<-T>!> Su destino es utilizarse I<sólo> como una ayuda temporal para el desarrollo, mientras asegura código heredado: para el código en producción real y para nuevo código seguro escrito desde cero, utilice siempre el verdadero B<-T>.
 
 =item B<-T>
 X<-T>
@@ -619,7 +619,7 @@ Un carácter dos puntos precedente elimina la parte "name =" de la respuesta, pe
     $ echo "goodvfork="`./perl -Ilib -V::usevfork`
     goodvfork=false;
 
-Caracteres dos puntos precedentes y finales puedes ser usados conjuntamente si necesita valores de parámetros posicionales sin los nombres.  Note que, en el caso siguiente, los parámetros C<PERL_API> se devuelven en orden alfabético.
+Caracteres dos puntos precedentes y finales pueden usarse conjuntamente si necesita valores de parámetros posicionales sin los nombres.  Note que, en el caso siguiente, los parámetros C<PERL_API> se devuelven en orden alfabético.
 
     $ echo generado_ahora_en `perl -V::osname: -V::PERL_API_.*:`
     generado_ahora_en 'linux' '5' '1' '9'
@@ -627,7 +627,7 @@ Caracteres dos puntos precedentes y finales puedes ser usados conjuntamente si n
 =item B<-w>
 X<-w>
 
-imprime advertencias sobre construcciones dudosas, como nombres de variables mencionadas sólo una vez y variables escalares utilizadas antes de ser declaradas; subrutinas redefinidas; referencias a identificadores de archivo indefinidos; identificadores de archivo abiertos en sólo lectura mientras que está intentando escribir en ellos; valores utilizados como un número que no I<parecen> números; utilizando un array como si se tratara de un escalar; si sus subrutinas tienen más de 100 niveles de profundidad de recursión; y un sinnúmero de otras cosas.
+imprime advertencias sobre construcciones dudosas, como nombres de variables mencionadas sólo una vez y variables escalares utilizadas antes de declararse; subrutinas redefinidas; referencias a identificadores de archivo indefinidos; identificadores de archivo abiertos en sólo lectura mientras que está intentando escribir en ellos; valores utilizados como un número que no I<parecen> números; utilizando un array como si se tratara de un escalar; si sus subrutinas tienen más de 100 niveles de profundidad de recursión; y un sinnúmero de otras cosas.
 
 Esta opción, en realidad, sólo activa la variable global C<$^W>; normalmente, es preferible usar el pragma de ámbito léxico C<use warnings>. Puede desactivar o promover en errores fatales, advertencias específicas utilizando enganches C<__WARN__>, como se describe en L<perlvar> y L<perlfunc/warn>.
 Vea también L<perldiag> y L<perltrap>.  También está disponible una muy detallada facilidad de advertencias si quiere manipular clases enteras de advertencias; vea L<warnings>.
@@ -657,7 +657,7 @@ Entonces, una advertencia en la línea 2 del programa, que está en la línea 10
 Esto se puede anular mediante el uso de la directiva C<#line>.
 (Vea L<perlsyn/"Viejos y simples comentarios (¡No!)">)
 
-Si un nombre de directorio es especificado, Perl cambiará a ese directorio antes de ejecutar el programa.  La opción B<-x> controla sólo la eliminación de la basura inicial.  El programa debe terminar con C<__END__> si hay detrás la basura que debe ser ignorada; el programa puede procesar cualquier o toda la basura posterior a través del identificador de archivo C<DATA>, si así lo desea.
+Si un nombre de directorio es especificado, Perl cambiará a ese directorio antes de ejecutar el programa.  La opción B<-x> controla sólo la eliminación de la basura inicial.  El programa debe terminar con C<__END__> si detrás hay basura que debe ignorarse; el programa puede procesar cualquier o toda la basura a través del identificador de archivo C<DATA>, si así se desea.
 
 El directorio, si se especifica, debe aparecer inmediatamente después de B<-x>, sin espacios en blanco entremedias.
 
@@ -698,7 +698,7 @@ Cuando ejecuta test de contaminación, ya sea porque el programa se estaba ejecu
 =item PERL5OPT
 X<PERL5OPT>
 
-Opciones en línea de comandos.  Las opciones en esta variable son tratadas como si estuvieran en cada línea de comandos Perl.  Solo se permiten las opciones B<-[CDIMUdmtwW]>.  Cuando se ejecutan test de contaminación (ya sea porque el programa se estaba ejecutando setuid o setgid, o especificadas las opciones B<-T> o B<-t>), esta variable es ignorada.  Si PERL5OPT comienza con B<-T>, la contaminación se activa, y se ignoran las opciones siguientes.  Si PERL5OPT comienza con B<-t>, la contaminación será activada, un modificable punto eliminado de @INC, y las posteriores opciones tenidas en cuenta.
+Opciones en línea de comandos.  Las opciones en esta variable se tratan como si estuvieran en cada línea de comandos Perl.  Solo se permiten las opciones B<-[CDIMUdmtwW]>.  Cuando se ejecutan test de contaminación (ya sea porque el programa se estaba ejecutando setuid o setgid, o especificadas las opciones B<-T> o B<-t>), esta variable es ignorada.  Si PERL5OPT comienza con B<-T>, la contaminación se activa, y se ignoran las opciones siguientes.  Si PERL5OPT comienza con B<-t>, la contaminación será activada, un modificable punto eliminado de @INC, y las posteriores opciones tenidas en cuenta.
 
 =item PERLIO
 X<PERLIO>
@@ -764,7 +764,7 @@ Capa de bajo nivel que llama a C<read>, C<write>, C<lseek>, etc.
 =item :utf8
 X<:utf8>
 
-Una pseudocapa que activa un indicador en la capa inferior para avisar a Perl que la salida debe ser en utf8 y que la entrada debe ser considerada como que ya está en una forma válida de utf8. B<AVISO: no comprueba la validez y debe ser gestionada con extrema cautela para la entrada, debido a que pueden ocurrir violaciones de seguridad, con codificaciones UTF-8 no acortadas, etc.> Por lo general, C<:encoding(utf8)> es la mejor opción al leer datos codificados en UTF-8.
+Una pseudocapa que activa un indicador en la capa inferior para avisar a Perl que la salida debe ser en utf8 y que la entrada debe considerarse como que ya está en una forma válida de utf8. B<AVISO: no comprueba la validez y debe gestionarse con extrema cautela para la entrada, debido a que pueden ocurrir violaciones de seguridad, con codificaciones UTF-8 no acortadas, etc.> Por lo general, C<:encoding(utf8)> es la mejor opción al leer datos codificados en UTF-8.
 
 =item :win32
 X<:win32>

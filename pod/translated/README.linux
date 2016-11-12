@@ -10,7 +10,7 @@ En este documento se describen diversas características de Linux que afectan a 
 
 =head2 Soporte Experimental para compiladores Sun Studio para sistemas operativos Linux
 
-Sun Microsystems ha lanzado una versión adaptada de sus compiladores Sun Studio para Linux.  En noviembre de 2005, sólo ha sido lanzada una versión alfa.  
+Sun Microsystems ha lanzado una versión adaptada de sus compiladores Sun Studio para Linux.  En noviembre de 2005, sólo se ha lanzado una versión alfa.  
 Hasta que una liberación de estos compiladores sea hecha, el soporte para la compilación de Perl con estas herramientas es experimental.
 
 Además, algunas instrucciones especiales para la construcción de Perl con Sun Studio en Linux.

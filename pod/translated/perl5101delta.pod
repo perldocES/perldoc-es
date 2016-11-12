@@ -12,7 +12,7 @@ Si está actualizando desde una versión anterior como la 5.8.8, primero lea L<p
 
 =head2 Cambios en la instrucción Switch
 
-El manejo de expresiones complejas por C<given>/C<when> de la instrucción switch ha sido mejorado. Hay dos nuevos casos en el que ahora C<when> interpreta su argumento como un valor booleano, en lugar de una expresión que se utiliza en una coincidencia inteligente:
+El manejo de expresiones complejas por C<given>/C<when> de la instrucción switch se ha mejorado. Hay dos nuevos casos en el que ahora C<when> interpreta su argumento como un valor booleano, en lugar de una expresión que se utiliza en una coincidencia inteligente:
 
 =over 4
 
@@ -46,7 +46,7 @@ El operador de coincidencia inteligente C<~~> ya no es conmutativo. El comportam
 
 =item *
 
-Ya no son tratadas de forma especial las referencias a código con un prototipo vacío.
+Ya no se tratan de forma especial las referencias a código con un prototipo vacío.
 Se les pasa un argumento como a otras referencias de código (incluso si deciden ignorarlo).
 
 =item *
@@ -55,7 +55,7 @@ C<%hash ~~ sub {}> y C<@array ~~ sub {}> ahora prueban que la subrutina devuelva
 
 =item *
 
-Debido a la rotura de la conmutatividad, las referencias a código ya no se tratan de forma especial cuando aparecen a la izquierda del operador C<~~>, sino que son tratadas como cualquier otro valor escalar.
+Debido a la rotura de la conmutatividad, las referencias a código ya no se tratan de forma especial cuando aparecen a la izquierda del operador C<~~>, sino que se tratan como cualquier otro valor escalar.
 
 =item *
 
@@ -82,7 +82,7 @@ C<~~> rechazará funcionar en objetos que no lo sobrecarguen (para no depender d
 =item *
 
 La semántica de C<use feature :5.10*> ha cambiado ligeramente.
-Vea L<"Módulos y Pragmata"> para más información.
+Vea L<"Módulos y pragmas"> para más información.
 
 =item *
 
@@ -103,7 +103,7 @@ Vea L</"Módulos actualizados"> para más detalles.
 
 =item *
 
-Como parte de la actualización de C<ExtUtils::MakeMaker>, los módulos C<ExtUtils::MakeMaker::bytes> y C<ExtUtils::MakeMaker::vmsish> han sido eliminados de esta distribución.
+Como parte de la actualización de C<ExtUtils::MakeMaker>, los módulos C<ExtUtils::MakeMaker::bytes> y C<ExtUtils::MakeMaker::vmsish> se han eliminado de esta distribución.
 
 =item *
 
@@ -120,11 +120,11 @@ Una corrección de errores relacionados con el manejo del modificador C</m> y C<
 
 =back
 
-=head1 Mejoras en los componentes
+=head1 Mejoras en el núcleo principal
 
 =head2 Unicode Character Database 5.1.0
 
-La copia de la base de datos de caracteres Unicode incluidos en Perl 5.10.1 ha sido actualizada desde la 5.0.0 a la 5.1.0. Vea L<http://www.unicode.org/versions/Unicode5.1.0/#Notable_Changes> para consultar los cambios principales.
+La copia de la base de datos de caracteres Unicode incluidos en Perl 5.10.1 se ha actualizado desde la 5.0.0 a la 5.1.0. Vea L<http://www.unicode.org/versions/Unicode5.1.0/#Notable_Changes> para consultar los cambios principales.
 
 =head2 Una interfaz adecuada para un Método de Resolución de Órdenes
 
@@ -399,7 +399,7 @@ Actualizado desde la versión 1.44 a la 1.54.
 
 Actualizado desde la versión 6.42 a la 6.55_02.
 
-Note que C<ExtUtils::MakeMaker::bytes> y C<ExtUtils::MakeMaker::vmsish> han sido eliminados de esta distribución.
+Note que C<ExtUtils::MakeMaker::bytes> y C<ExtUtils::MakeMaker::vmsish> se han eliminado de esta distribución.
 
 =item C<ExtUtils::Manifest>
 
@@ -695,7 +695,7 @@ Actualizado desde la versión 0.18 a la 0.20.
 
 Actualizado desde la versión 2.64 a la 3.17.
 
-Tenga en cuenta que un efecto secundario de la 2.x para actualizar a la 3.x es que el módulo experimental C<Test::Harness::Straps> (y sus módulos de apoyo C<Assert>, C<Iterator>, C<Point> y C<Results>) ha sido eliminado. Si todavía lo necesita, están disponibles en la distribución (no mantenida) C<Test-Harness-Straps> en CPAN.
+Tenga en cuenta que un efecto secundario de la 2.x para actualizar a la 3.x es que el módulo experimental C<Test::Harness::Straps> (y sus módulos de apoyo C<Assert>, C<Iterator>, C<Point> y C<Results>) se ha eliminado. Si todavía lo necesita, están disponibles en la distribución (no mantenida) C<Test-Harness-Straps> en CPAN.
 
 =item C<Test::Simple>
 
@@ -835,9 +835,9 @@ Esto describe la nueva utilidad F<perlthanks>.
 
 =head1 Cambios en la documentación actual
 
-Los grandes archivos C<Changes*> (que listaban todos los cambios realizados a perl en los últimos 18 años) han sido eliminados y reemplazados por un pequeño archivo, también llamado C<Changes>, que sólo explica cómo esa misma información puede ser extraída del sistema de control de versiones git.
+Los grandes archivos C<Changes*> (que listaban todos los cambios realizados a perl en los últimos 18 años) se han eliminado y reemplazado por un pequeño archivo, también llamado C<Changes>, que sólo explica cómo esa misma información puede extraerse del sistema de control de versiones git.
 
-El archivo F<Porting/patching.pod> ha sido eliminado, ya que principalmente describe la interacción con el antiguo repositorio basado en Perforce, que ya está obsoleto.
+El archivo F<Porting/patching.pod> se ha eliminado, ya que principalmente describe la interacción con el antiguo repositorio basado en Perforce, que ya está obsoleto.
 La información que sigue siendo relevante ha sido movida a L<perlrepository>.
 
 L<perlapi>, L<perlintern>, L<perlmodlib> y L<perltoc> se crean ahora en tiempo de generación, en lugar de empaquetarse como parte de la distribución.
@@ -864,9 +864,9 @@ Ya no se llaman los métodos C<DESTROY> vacíos.
 
 =head2 Reorganización de F<ext/>
 
-La disposición de los directorios en F<ext> ha sido revisada. En concreto, todas las extensiones ahora son planas, y en el nivel superior, con la C</> en las rutas reemplazada por C<->, de modo que F<ext/Data/Dumper/> ahora es F<ext/Data-Dumper/>, etc. Los nombres de las extensiones, como se especifica en F<Configure>, y según lo informado por C<%Config::Config>, bajo las claves C<dynamic_ext>, C<known_extensions>, C<nonxs_ext> y C<static_ext> no han cambiado, y siguen utilizando C</>. Por lo tanto, este cambio no tendrá ningún efecto una vez se haya instalado perl. Sin embargo, C<Attribute::Handlers>, C<Safe> y C<mro> se han convertido en extensiones por derecho propio, por lo que si se ejecuta F<Configure> con opciones para especificar una lista exacta de las extensiones a ser generadas, tendrá que cambiarla para tenerlo en cuenta.
+La disposición de los directorios en F<ext> se ha revisado. En concreto, todas las extensiones ahora son planas, y en el nivel superior, con la C</> en las rutas reemplazada por C<->, de modo que F<ext/Data/Dumper/> ahora es F<ext/Data-Dumper/>, etc. Los nombres de las extensiones, como se especifica en F<Configure>, y según lo informado por C<%Config::Config>, bajo las claves C<dynamic_ext>, C<known_extensions>, C<nonxs_ext> y C<static_ext> no han cambiado, y siguen utilizando C</>. Por lo tanto, este cambio no tendrá ningún efecto una vez se haya instalado perl. Sin embargo, C<Attribute::Handlers>, C<Safe> y C<mro> se han convertido en extensiones por derecho propio, por lo que si se ejecuta F<Configure> con opciones para especificar una lista exacta de las extensiones a generarse, tendrá que cambiarla para tenerlo en cuenta.
 
-Por 5.10.2, se prevé que muchos módulos con una doble vida se muevan desde F<lib> a F<ext>; de nuevo, esto no tendrá ningún efecto en un perl ya instalado, pero importará si llama a F<Configure> con una lista de extensiones pre-enlatadas para ser generadas.
+Por 5.10.2, se prevé que muchos módulos con una doble vida se muevan desde F<lib> a F<ext>; de nuevo, esto no tendrá ningún efecto en un perl ya instalado, pero importará si llama a F<Configure> con una lista de extensiones pre-enlatadas para generarse.
 
 =head2 Mejoras en la configuración
 
@@ -898,7 +898,7 @@ Cambios adecuados significa que AIX 4.2 debería funcionar de nuevo.
 
 =item Cygwin
 
-En Cygwin ahora quitamos el último número de la DLL. Este ha sido el comportamiento en la generación de cygwin.com, desde hace años. Los archivos de pistas han sido actualizados.
+En Cygwin ahora quitamos el último número de la DLL. Este ha sido el comportamiento en la generación de cygwin.com, desde hace años. Los archivos de pistas se han actualizado.
 
 =item FreeBSD
 
@@ -910,7 +910,7 @@ Ahora trabajamos en torno a un fallo extraño del preprocesador en el compilador
 
 =item Haiku
 
-Los parches de los responsables de Haiku han sido fusionados. Perl ahora debería generarse en Haiku.
+Los parches de los responsables de Haiku se han fusionado. Perl ahora debería generarse en Haiku.
 
 =item MirOS BSD
 
@@ -922,7 +922,7 @@ Los consejos ahora son compatibles con las versiones 5.*.
 
 =item Stratus VOS
 
-Varios cambios desde Stratus han sido mezclados.
+Varios cambios desde Stratus se han mezclado.
 
 =item Symbian
 
@@ -935,7 +935,7 @@ Un mejor manejo de ventana de mensajes significa que los mensajes C<alarm> y C<k
 =item VMS
 
 Lecturas de los archivos temporales que estén en la memoria de C<PerlIO::scalar> fallan si C<$/> se estableció a una referencia numérica (para indicar lecturas estilo registro).
-Esto ha sido arreglado.
+Esto se ha arreglado.
 
 VMS ahora soporta C<getgrgid>.
 
@@ -951,7 +951,7 @@ Habilitando el nombre lógico C<PERL_VMS_POSIX_EXIT> se codifica un estado de sa
 
 =item *
 
-5.10.0, inadvertidamente, desactivaba una optimización, lo que provocó una caída de rendimiento apreciable en la asignación de listas, que a menudo se utiliza para asignar parámetros de función a C<@_>. La optimización ha sido reinstalado, y arreglada la regresión de rendimiento.
+5.10.0, inadvertidamente, desactivaba una optimización, lo que provocó una caída de rendimiento apreciable en la asignación de listas, que a menudo se utiliza para asignar parámetros de función a C<@_>. La optimización se ha reinstalado, y se arregló la regresión de rendimiento.
 
 =item *
 
@@ -999,7 +999,7 @@ C<< $object-E<gt>isa('Foo') >> podría reportar falso si el paquete C<Foo> no ex
 
 =item *
 
-Varios errores en el nuevo código mro en 5.10.0, activados al manipular C<@ISA>, han sido encontrados y arreglados.
+Varios errores en el nuevo código mro en 5.10.0, activados al manipular C<@ISA>, se han encontrado y arreglado.
 
 =item *
 
@@ -1077,11 +1077,11 @@ El uso de un array C<tie> en el interior de un array C<tie> podría provocar SEG
 
 =item *
 
-Una condición de carrera dentro de C<PerlIOStdio_close()> ha sido identificado y solucionado. Esto solía provocar diversos problemas de subprocesamiento, incluyendo SEGV.
+Una condición de carrera dentro de C<PerlIOStdio_close()> se ha identificado y solucionado. Esto solía provocar diversos problemas de subprocesamiento, incluyendo SEGV.
 
 =item *
 
-En C<unpack>, el uso de grupos C<()> en contexto escalar, hacían que fueran internamente colocados en una lista en la pila del intérprete, que se manifiesta de varias maneras, incluyendo SEGV.  Esto ha sido arreglado [RT #50256].
+En C<unpack>, el uso de grupos C<()> en contexto escalar, hacían que fueran internamente colocados en una lista en la pila del intérprete, que se manifiesta de varias maneras, incluyendo SEGV.  Esto se ha arreglado [RT #50256].
 
 =item *
 
@@ -1172,11 +1172,11 @@ Este nuevo error fatal se produce cuando a la rutina de C C<Perl_sv_chop()> se l
 
 =item C<Can't locate package %s for the parents of %s>
 
-Esta advertencia ha sido eliminada. En general, sólo se generaba en conjunto con otras advertencias, y su eliminación permitía añadir una optimización de búsqueda de ISA.
+Esta advertencia se ha eliminado. En general, sólo se generaba en conjunto con otras advertencias, y su eliminación permitía añadir una optimización de búsqueda de ISA.
 
 =item C<v-string in use/require is non-portable>
 
-Esta advertencia ha sido eliminada.
+Esta advertencia se ha eliminado.
 
 =item C<Deep recursion on subroutine "%s">
 
@@ -1190,7 +1190,7 @@ Ahora es posible cambiar el umbral de profundidad de esta advertencia de la de p
 
 =item *
 
-Las citas de J.R.R. Tolkien al principio del archivo fuente en C han sido verificadas y añadido referencias apropiadas, gracias a un parche de Tom Christiansen.
+Las citas de J.R.R. Tolkien al principio del archivo fuente en C se han verificado y añadido referencias apropiadas, gracias a un parche de Tom Christiansen.
 
 =item *
 
@@ -1234,11 +1234,11 @@ La función C<Perl_croak_xs_usage> ha sido añadida como una envoltura para la C
 
 =item *
 
-Ahora son exportadas las funciones C<PerlIO_find_layer> y C<PerlIO_list_alloc>.
+Ahora se exportan las funciones C<PerlIO_find_layer> y C<PerlIO_list_alloc>.
 
 =item *
 
-C<PL_na> ha sido exterminada del código principal, reemplazado por STRLEN locales temporales, o llamadas C<*_nolen()>. Cualquiera de estos enfoques es más rápido que C<PL_na>, que es una desreferencia de un puntero en la estructura del intérprete bajo ithreads, y una variable global en caso contrario.
+C<PL_na> se ha exterminado del código principal, reemplazado por STRLEN locales temporales, o llamadas C<*_nolen()>. Cualquiera de estos enfoques es más rápido que C<PL_na>, que es una desreferencia de un puntero en la estructura del intérprete bajo ithreads, y una variable global en caso contrario.
 
 =item *
 
@@ -1280,7 +1280,7 @@ El uso de la estructura privada C<mro_meta> ha cambiado ligeramente. De todos mo
 
 =item *
 
-Una nueva herramienta, F<Porting/expand-macro.pl> ha sido añadida, que permite ver cómo una macro del preprocesador C será ampliada cuando sea compilada.
+Una nueva herramienta, F<Porting/expand-macro.pl> ha sido añadida, que permite ver cómo una macro del preprocesador C será ampliada cuando se compile.
 Esto es útil cuando se trata de descifrar el infierno de macros del que perl goza.
 
 =back
@@ -1432,7 +1432,7 @@ Los siguientes artículos son ahora obsoletos.
 
 =item *
 
-C<Switch> es defectuoso y debe ser evitado. De Perl 5.11.0 en adelante, se pretende que el uso de la versión principal de este módulo emita una advertencia, y que el módulo, con el tiempo, sea eliminado del núcleo principal (probablemente en perl 5.14.0). Vea L<perlsyn/"Instrucciones Switch"> para ver sus reemplazos.
+C<Switch> es defectuoso y debe evitarse. De Perl 5.11.0 en adelante, se pretende que el uso de la versión principal de este módulo emita una advertencia, y que el módulo, con el tiempo, se elimine del núcleo principal (probablemente en perl 5.14.0). Vea L<perlsyn/"Instrucciones Switch"> para ver sus reemplazos.
 
 =item *
 
@@ -1442,9 +1442,9 @@ C<suidperl> será eliminado en 5.12.0. Esto proporciona un mecanismo para emular
 
 =head1 Agradecimientos
 
-Parte del trabajo realizado en esta publicación ha sido financiado con una ayuda de la TPF.
+Parte del trabajo realizado en esta publicación se ha financiado con una ayuda de la TPF.
 
-Nicholas Clark se retiró oficialmente del mantenimiento calabacero a finales de 2008, pero en realidad él ha puesto mucho esfuerzo desde entonces para ayudar a 5.10.1 a llegar a un estado apto para ser publicado, incluyendo la redacción de una parte considerable de este perldelta.
+Nicholas Clark se retiró oficialmente del mantenimiento calabacero a finales de 2008, pero en realidad él ha puesto mucho esfuerzo desde entonces para ayudar a 5.10.1 a llegar a un estado apto para publicarse, incluyendo la redacción de una parte considerable de este perldelta.
 
 Steffen Mueller y David Golden, en particular, ayudaron a obtener módulos CPAN pulidos y sincronizados con sus correspondientes versiones incluidas en la distribución.
 
@@ -1462,7 +1462,7 @@ Si usted encuentra algo que piensa que es un error, podría verificar los artíc
 
 Si usted cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
 
-Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para ser enviado a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. fuzzy Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. fuzzy Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
 
 =head1 VEA TAMBIÉN
 

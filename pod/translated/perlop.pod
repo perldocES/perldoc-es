@@ -22,7 +22,7 @@ I<Asociatividad de operadores> define qué sucede si una secuencia de los mismos
 
 Los operadores Perl tienen la asociatividad y precedencia siguientes, enumerados de mayor a menor prioridad.  Los operadores tomados del C mantienen la misma relación de precedencia entre sí, incluso donde la precedencia de C está ligeramente chiflada.  (Esto hace el aprendizaje de Perl más fácil para la gente de C).  Con pocas excepciones, todas éstas operan solamente en valores escalares, no en valores de array.
 
-    izquierda	términos y operadores de listas (por la izquierda)
+    izquierda	términos y operadores de lista (por la izquierda)
     izquierda	->
     no asoc.	++ --
     derecha	**
@@ -51,7 +51,7 @@ En las secciones siguientes, estos operadores están descritos en orden de prece
 
 Muchos operadores pueden ser sobrecargados por objetos.  Ver L<sobrecarga>.
 
-=head2 Términos y Operadores de listas (por la izquierda)
+=head2 Términos y operadores de lista (por la izquierda)
 X<list operator> X<operator, list> X<term> X<operador lista> X<operador, lista> X<término>
 
 Un TÉRMINO tiene la mayor precedencia en Perl.  Esto incluye a las variables, comillas y operadores de comillas, cualquier expresión entre paréntesis, y cualquier función cuyos argumentos estén entre paréntesis.  En realidad, no son realmente funciones en ese sentido, solo son operadores de lista y operadores unarios que se comportan como funciones porque usted pone paréntesis a los argumentos.  Están todas documentadas en L<perlfunc>.
@@ -93,7 +93,7 @@ Ver L<Operadores unarios con nombre> para una discusión más sobre esto.
 
 También se analizan como términos las construcciones S<C<do {}>> y S<C<eval {}>>, así como subrutina y llamadas a métodos, y los constructores anónimos C<[]> y C<{}>.
 
-Vea también L<Comillas y Operadores de comillas> hacia el final de esta sección, así como L</"Operadores E/S">.
+Vea también L<Comillas y operadores de comillas> hacia el final de esta sección, así como L</"Operadores E/S">.
 
 =head2 El operador flecha
 X<arrow> X<dereference> X<< -> >> X<flecha> X<desreferencia>
@@ -278,7 +278,7 @@ pero, debido a que C<"*"> es de mayor precedencia que los operadores con nombre:
 En cuanto a la precedencia, los operadores de pruebas de archivos, como C<-f>, C<-M>, etc, se tratan como operadores unarios con nombre, pero no siguen esta regla funcional de los paréntesis.  Esto significa, por ejemplo, que C<-f($archivo).".bak"> es equivalente a S<C<-f "$archivo.bak">>.
 X<-X> X<filetest> X<operator, filetest> X<operador, test archivo>
 
-Vea también L<"Términos y Operadores de listas (por la izquierda)">.
+Vea también L<"Términos y operadores de lista (por la izquierda)">.
 
 =head2 Operadores relacionales
 X<relational operator> X<operator, relational> X<operador relacional> X<operador, relacional>
@@ -575,7 +575,7 @@ Esto se debe a que trata C<$fh> como una cadena como C<"IO::Handle=glob(0x8039e0
 =head2 And binario
 X<operator, bitwise, and> X<bitwise and> X<&> X<operador, binario, and> X<binario and>
 
-El binario C<"&"> devuelve la operación AND, bit a bit, de sus operandos.  A pesar de que no se levante en este momento ninguna advertencia, el resultado no está bien definido cuando esta operación actúa en operandos que no son ni números (vea L<Aritmética entera>) ni cadenas de bits (vea L<Operadores de cadenas de bits>).
+El binario C<"&"> devuelve la operación AND, bit a bit, de sus operandos.  A pesar de que no se levante en este momento ninguna advertencia, el resultado no está bien definido cuando esta operación actúa en operandos que no son ni números (vea L<Aritmética entera>) ni cadenas de bits (vea L<Operadores de bit en cadenas>).
 
 Tenga en cuenta que C<"&"> tiene una menor prioridad que los operadores relacionales, así que, por ejemplo, los paréntesis son esenciales en una prueba como
 
@@ -590,7 +590,7 @@ El binario C<"|"> devuelve la operación OR, bit a bit, de sus operandos.
 
 El binario C<"^"> devuelve la operación XOR, bit a bit, de sus operandos.
 
-A pesar de que no se levante en este momento ninguna advertencia, los resultados no están bien definidos cuando esta operación actúa en operandos que no son ni números (vea L<Aritmética entera>) ni cadenas de bits (vea L<Operadores de cadenas de bits>).
+A pesar de que no se levante en este momento ninguna advertencia, los resultados no están bien definidos cuando esta operación actúa en operandos que no son ni números (vea L<Aritmética entera>) ni cadenas de bits (vea L<Operadores de bit en cadenas>).
 
 Tenga en cuenta que C<"|"> y C<"^"> tienen menor prioridad que los operadores relacionales, así que, por ejemplo, los paréntesis son esenciales en una prueba como
 
@@ -889,7 +889,7 @@ en cuyo caso puede también acabar utilizando el operador más habitual C<"||">:
 
     open(HANDLE, "< :utf8", "archivo") || die "No puedo abrir: $!\n";
 
-Vea también la discusión de los Operadores de lista en L</Términos y Operadores de listas (por la izquierda)>.
+Vea también la discusión de los Operadores de lista en L</Términos y operadores de lista (por la izquierda)>.
 
 =head2 Not lógico
 X<operator, logical, not> X<not> X<operador, lógico, not> X<not> X<no>
@@ -953,7 +953,7 @@ Operador de Forzado de tipo.
 
 =back
 
-=head2 Comillas y Operadores de comillas
+=head2 Comillas y operadores de comillas
 X<operator, quote> X<operator, quote-like> X<q> X<qq> X<qx> X<qw> X<m>
 X<qr> X<s> X<tr> X<'> X<''> X<"> X<""> X<//> X<`> X<``> X<<< << >>>
 X<escape sequence> X<escape> X<escapado> X<operador, comilla> X<operador, entrecomillado>
@@ -1147,11 +1147,11 @@ Para el patrón de los operadores I<regex> (C<qr//>, C<m//> y C<s///>), el efect
 
 Debido a que C<$> o C<@> disparan la interpolación, tendrá que usar algo como C</\Quser\E\@\Qhost/> para coincidir con ellos literalmente.
 
-Los patrones están sujetos a un nivel adicional de interpretación como una expresión regular.  Esto se hace como un segundo paso, después de que las variables sean interpoladas, así las expresiones regulares pueden ser incorporadas en patrones desde las variables.  Si no es esto lo que quiere hacer, use C<\Q> para interpolar una variable literalmente.
+Los patrones están sujetos a un nivel adicional de interpretación como una expresión regular.  Esto se hace como un segundo paso, después de que las variables sean interpoladas, así las expresiones regulares pueden incorporarse en patrones desde las variables.  Si no es esto lo que quiere hacer, use C<\Q> para interpolar una variable literalmente.
 
 Además de los comportamientos descritos anteriormente, Perl no expande múltiples niveles de interpolación.  En particular, contrariamente a las expectativas de los programadores de shell, las comillas invertidas I<NO> interpolan entre comillas dobles, ni las comillas simples impiden la evaluación de las variables cuando se usan dentro de comillas dobles.
 
-=head2 Operadores I<Regex> entrecomillados
+=head2 Operadores I<regex> entrecomillados
 X<operator, regexp> X<operador, regex>
 
 Aquí están los operadores, parecidos a los de entrecomillado, que se aplican a las actividades relacionadas con la coincidencia.
@@ -1174,7 +1174,7 @@ es equivalente a
 
     s/mi.CADENA/foo/is;
 
-El resultado puede ser utilizado como un sub-patrón en una coincidencia:
+El resultado puede utilizarse como un sub-patrón en una coincidencia:
 
     $re = qr/$patron/;
     $cadena =~ /foo${re}bar/;	# se puede interpolar en otros
@@ -1243,7 +1243,7 @@ Si C<"/"> es el delimitador entonces la inicial C<m> es opcional.  Con la C<m> p
 Cuando se utiliza un carácter delimitador que puede ser válido en un identificador, se requiere un espacio en blanco después de la C<m>.
 
 I<PATRÓN> puede contener variables, que serán interpoladas cada vez que se evalúe el patrón de búsqueda, a excepción de cuando el delimitador sea una comilla simple.  (Tenga en cuenta que C<$(>, C<$)>, y C<$|> no son interpoladas porque tienen la apariencia de test de final-de-cadena).
-Perl no recompilará el patrón a menos que cambie una variable que vaya a ser interpolada.  Puede forzar a Perl para saltar el test y nunca volver a recompilar, mediante la adición de un C</o> (que significa "una vez") después del delimitador final.
+Perl no recompilará el patrón a menos que cambie una variable que vaya a interpolarse.  Puede forzar a Perl para saltar el test y nunca volver a recompilar, mediante la adición de un C</o> (que significa "una vez") después del delimitador final.
 Hace algún tiempo, Perl hubiera recompilado expresiones regulares innecesariamente, y este modificador era útil para decirle que no lo hiciese, en aras de aumentar la velocidad.  Pero ahora, las únicas razones para utilizar C</o> son una de estas:
 
 =over
@@ -1441,7 +1441,7 @@ Si la opción C</r> (no destructiva) es utilizada, entonces llevará a cabo la s
 
 Si no se especifica una cadena a través de los operadores C<=~> o C<!~>, se utiliza la variable C<$_> para la búsqueda y la modificación.  A menos que se use la opción C</r>, la cadena especificada debe ser una variable escalar, un elemento de un array, un elemento hash, o una asignación a una de estas; es decir, algún tipo de valor-izquierda escalar.
 
-Si el delimitador elegido es una comilla simple, no se realiza ninguna interpolación, ni en el I<PATRÓN> ni en el I<REEMPLAZO>.  De lo contrario, si el I<PATRÓN> contiene un C<$> que parece más una variable que una marca de fin de cadena, la variable se interpolará en el patrón, en tiempo de ejecución.  Si desea que el patrón sea compilado solo la primera vez que la variable sea interpola, utilice la opción C</o>.  Si el patrón se evalúa a la cadena vacía, se utiliza en su lugar la última expresión regular ejecutada con éxito.  Vea L<perlre> para una explicación más detallada sobre esto.
+Si el delimitador elegido es una comilla simple, no se realiza ninguna interpolación, ni en el I<PATRÓN> ni en el I<REEMPLAZO>.  De lo contrario, si el I<PATRÓN> contiene un C<$> que parece más una variable que una marca de fin de cadena, la variable se interpolará en el patrón, en tiempo de ejecución.  Si desea que el patrón se compile solo la primera vez que la variable se interpole, utilice la opción C</o>.  Si el patrón se evalúa a la cadena vacía, se utiliza en su lugar la última expresión regular ejecutada con éxito.  Vea L<perlre> para una explicación más detallada sobre esto.
 
 Las opciones son como las de C<m//> con la adición de las específicas opciones de reemplazo siguientes:
 
@@ -1670,7 +1670,7 @@ A menos que se use la opción C</r>, la cadena especificada con C<=~> debe ser u
 Un intervalo de caracteres se puede especificar con un guión, por lo que C<tr/A-J/0-9/> es la sustitución de C<tr/ACEGIBDFHJ/0246813579/>.
 Para los devotos de B<sed>, C<y> se ofrece como un sinónimo de C<tr>.  Si la I<LISTA_BÚSQUEDA> está delimitada por sus propios delimitadores, la I<LISTA_REEMPLAZO> tiene su propio par de delimitadores, que pueden o no ser los mismos delimitadores que los primeros. Por ejemplo, C<tr[aeiouy][yuoiea]> o C<tr(+\-*/)/ABCD/>.
 
-Los caracteres pueden ser literales o cualquier secuencia de escape aceptada en las cadenas de caracteres doblemente entrecomilladas.  Pero no hay interpolación, así que C<"$"> y C<"@"> son tratados literalmente.  Un guión al comienzo o final, o precedido por una barra diagonal inversa, se considera un literal.  Los detalles sobre las secuencias de escape están en L<la tabla cerca del comienzo de esta sección/Comillas y operadores de comillas>.
+Los caracteres pueden ser literales o cualquier secuencia de escape aceptada en las cadenas de caracteres doblemente entrecomilladas.  Pero no hay interpolación, así que C<"$"> y C<"@"> son tratados literalmente.  Un guión al comienzo o final, o precedido por una barra diagonal inversa, se considera un literal.  Los detalles sobre las secuencias de escape están en L<la tabla cerca del comienzo de esta sección|/Comillas y operadores de comillas>.
 
 Tenga en cuenta que C<tr> B<no> usa expresiones regulares de clases de caracteres, tales como C<\d> o C<\pL>.  El operador C<tr> no es equivalente a la utilidad C<L<tr(1)>>.  Si desea mapear cadenas entre minúsculas/mayúsculas, vea L<perlfunc/lc> y L<perlfunc/uc>; y, en general, considere usar el operador C<s> si necesita usar expresiones regulares.  Las secuencias de escapado en la interpolación de cadenas (C<\U>, C<\u>, C<\L>, y C<\l>) en el lado derecho de un operador de sustitución realizará un correcto mapeado entre mayúsculas y minúsculas, pero C<tr[a-z][A-Z]>, no (excepto en algunos viejos sistemas de 7 bits).
 
@@ -1924,7 +1924,7 @@ Tenga en cuenta que la combinación C<\\> se mantiene intacta, ya que no están 
 =item  C<m''> y el patrón de C<s'''>
 
 No se realiza interpolación en esta etapa.
-Cualquier secuencia de barras diagonales inversas, incluyendo C<\\>, se tratan en la fase L</"analizando expresiones regulares">.
+Cualquier secuencia de barras diagonales inversas, incluyendo C<\\>, se tratan en la fase L</"analizar expresiones regulares">.
 
 =item C<''>, C<q//>, C<tr'''>, C<y'''> y el reemplazo de C<s'''>
 
@@ -2160,7 +2160,7 @@ salvo que la expansión realmente se hace internamente usando la extensión est�
 
     chmod 0644, <*.c>;
 
-Una expansión evalúa sus argumentos (incorporados) sólo cuando está iniciando una nueva lista.  Todos los valores deben ser leídos antes de empezar de nuevo.  En contexto de lista, esto no es importante, ya que, de todos modos, los obtiene automáticamente.  Sin embargo, en contexto escalar el operador devuelve el siguiente valor cada vez que se le llama, o C<undef> cuando la lista se ha agotado.  Al igual que cuando un identificador de archivo lee, un C<defined> es generado cuando la expansión se produce en la parte de prueba de un C<while>, porque una expansión legal así lo devuelve (por ejemplo, un archivo llamado F<0>), o de otra manera, terminaría el bucle.  Una vez más, C<undef> sólo se devuelve una vez.  Así que si está esperando un único valor de una expansión, es mucho mejor escribir
+Una expansión evalúa sus argumentos (incorporados) sólo cuando está iniciando una nueva lista.  Todos los valores deben leerse antes de empezar de nuevo.  En contexto de lista, esto no es importante, ya que, de todos modos, los obtiene automáticamente.  Sin embargo, en contexto escalar el operador devuelve el siguiente valor cada vez que se le llama, o C<undef> cuando la lista se ha agotado.  Al igual que cuando un identificador de archivo lee, un C<defined> es generado cuando la expansión se produce en la parte de prueba de un C<while>, porque una expansión legal así lo devuelve (por ejemplo, un archivo llamado F<0>), o de otra manera, terminaría el bucle.  Una vez más, C<undef> sólo se devuelve una vez.  Así que si está esperando un único valor de una expansión, es mucho mejor escribir
 
     ($archivo) = <loquesea*>;
 
@@ -2203,7 +2203,7 @@ Perl, oficialmente, no tiene un operador de no-operación, pero las constantes s
 X<operator, bitwise, string> X<&.> X<|.> X<^.> X<~.>
 X<operador, binario, cadena>
 
-Cadenas de bits de cualquier tamaño pueden ser manipuladas por los operadores binarios (C<~ | & ^>).
+Cadenas de bits de cualquier tamaño pueden manipularse por los operadores binarios (C<~ | & ^>).
 
 Si los operandos a una operación bit a bit binaria son cadenas de diferentes tamaños, los operadores B<|> y B<^> actúan como si el operando más corto tuviera más bits cero a la derecha, mientras que el operador B<&> actúa como si el operando más largo fuera truncado a la longitud de la menor.
 La granularidad para dicha extensión o truncamiento es de uno o más bytes.
@@ -2285,7 +2285,7 @@ No es una buena idea comprobar la igualdad o la desigualdad exacta de números e
 El módulo POSIX (parte de la distribución estándar de Perl) implementa C<ceil()>, C<floor()>, y otras funciones matemáticas y trigonométricas.
 El módulo C<L<Math::Complex>> (parte de la distribución estándar de Perl) define funciones matemáticas que funcionan tanto para reales como números imaginarios.  C<Math::Complex> no es tan eficiente como POSIX, pero POSIX no puede trabajar con números complejos.
 
-El redondeo en las aplicaciones financieras puede tener consecuencias graves, y el método de redondeo utilizado debe ser descrito con precisión.  En estos casos, es mejor no confiar en el sistema de redondeo que está siendo utilizado por Perl, sino que en su lugar deba implementar la función de redondeo que necesite.
+El redondeo en las aplicaciones financieras puede tener consecuencias graves, y el método de redondeo utilizado debe ser descrito con precisión.  En estos casos, es mejor no confiar en el sistema de redondeo que está utilizando Perl, sino que en su lugar deba implementar la función de redondeo que necesite.
 
 =head2 Grandes números
 X<number, arbitrary precision> X<número, precisión arbitraria>

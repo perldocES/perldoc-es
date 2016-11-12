@@ -25,7 +25,7 @@ Lea L<Unicode Security Considerations|http://www.unicode.org/reports/tr36>.
 
 =item Más seguro si usa C<use feature 'unicode_strings'>
 
-En orden de preservar la retrocompatibilidad, Perl no da un soporte Unicode interno completo a menos que se especifique el I<pragma> L<S<C<use feature 'unicode_strings'>>|feature/La característica 'unicode_strings'>.  (Esto es lo que se selecciona automáticamente si usa S<C<use 5.012>> o superior).  Fallar en esto puede provocar sorpresas inesperadas.  Vea L</El "Error Unicode">, más abajo.
+En orden de preservar la retrocompatibilidad, Perl no da un soporte Unicode interno completo a menos que se especifique el I<pragma> L<S<C<use feature 'unicode_strings'>>|feature/La característica 'unicode_strings'>.  (Esto es lo que se selecciona automáticamente si usa S<C<use 5.012>> o superior).  Fallar en esto puede provocar sorpresas inesperadas.  Vea L</El "Error de Unicode">, más abajo.
 
 Este pragma no afecta a la E/S.  No cambia la representación interna de las cadenas, solo su interpretación.  Existen todavía diversos lugares dodne Unicode no se soporta completamente, como el caso de los nombres de los archivos.
 
@@ -154,7 +154,7 @@ B<T>ransformation B<F>ormat>, de 8 bit), entonces todas las cadenas dentro de é
 
 Dentro del ámbito de L<S<C<use feature 'unicode_strings'>>|feature/La característica 'unicode_strings'>
 
-Este I<pragma> se creó para que pueda indicar explícitamente a Perl que las operaciones a ejecutar dentro de su ámbito deben seguir las reglas Unicode.  Los nuevos perl tendrán más operaciones afectadas.  Vea L</El "Bug Unicode">.
+Este I<pragma> se creó para que pueda indicar explícitamente a Perl que las operaciones a ejecutar dentro de su ámbito deben seguir las reglas Unicode.  Los nuevos perl tendrán más operaciones afectadas.  Vea L</El "Error de Unicode">.
 
 =item *
 
@@ -224,7 +224,7 @@ C<\w> se puede usar para coincidir con ideogramas japoneses, por ejemplo; y C<[[
 
 Las propiedades Unicode con nombre, scripts, y rangos de bloques se pueden usar (como las clases de carácter entre corchetes) usando la construcción C<\p{}> ("coincide con la propiedad") y la negación C<\P{}>, ("no coincide con la propiedad").
 
-Vea L</"Propiedades de caracteres Unicode"> para más detalles.
+Vea L</"Propiedades de carácter Unicode"> para más detalles.
 
 Puede definir sus propias propiedades de caracteres y usarlas en expresiones regulares con las construcciones C<\p{}> o C<\P{}>.
 Vea L</"Propiedades de carácter definidas por el usuario"> para más detalles.
@@ -684,7 +684,7 @@ Nivel 1 - Soporte básico de Unicode
 
 =item [2] C<\p{...}> C<\P{...}>
 
-=item [3] soporte no solo las listas mínimas, sino todas las propiedades de caracteres Unicode (vea Propiedades de caracteres Unicode, más arriba)
+=item [3] soporte no solo las listas mínimas, sino todas las propiedades de caracteres Unicode (vea Propiedades de carácter Unicode, más arriba)
 
 =item [4] C<\d> C<\D> C<\s> C<\S> C<\w> C<\W> C<\X> C<[:I<prop>:]>
 C<[:^I<prop>:]>
@@ -1022,7 +1022,7 @@ Vea L<perllocale/Unicode y UTF-8>
 
 Existen muchos lugares donde Unicode (en alguna codificación o cualquier otra) se podrían indicar como argumentos o recibirlos como resultados, o ambos, en Perl, pero no es así, a pesar de Perl tiene muchas maneras de sacar o recibir Unicode, y unos pocos "puntos de entrada" como el array C<@ARGV> (que algunas veces se interpretan como UTF-8).
 
-Lo siguiente son tales interfaces.  También, vea L</El "Bug Unicode">.
+Lo siguiente son tales interfaces.  También, vea L</El "Error de Unicode">.
 Para todas estas interfaces, actualmente, Perl (hasta v5.16.0) simplemente asume cadenas de bytes tanto en los argumentos como en los resultados, o cadenas UTF-8 si se usa el (obsoleto) I<pragma> C<encoding>.
 
 Una razón por la que Perl no intenta resolver el rol de Unicode en estas situaciones es que las respuestas son altamente dependientes del sistema operativo y el sistema de archivo(s).  Por ejemplo, entre que los nombres de los archivos pueden estar en Unicode y exactamente qué clase de codificación, no es exactamente un concepto portable.  De forma similar para C<qx> y C<system>: ¿cómo de bien "el interfaz de la línea de comandos" (¿y cuál de ellas?) manejará Unicode?
@@ -1056,13 +1056,13 @@ C<readdir>, C<readlink>
 
 =back
 
-=head2 El "Bug Unicode"
+=head2 El "Error de Unicode"
 
 El término "I<bug Unicode>" (error Unicode) se ha aplicado a una inconsistencia con los puntos de código en el bloque C<Latin-1 Supplement>, esto es, entre 128 y 255.  Si no se especifica una localización, a diferencia de todos los demás caracteres o puntos de código, estos caracteres pueden tener muchas semánticas diferentes dependiendo de las reglas que están en activo.  (Los caracteres cuyos puntos de código están por encima del 255 fuerza las reglas Unicode; mientras tanto, las reglas para los caracteres ASCII son las mismas tanto para las reglas ASCII como Unicode).
 
 Bajo las reglas Unicode, estos caracteres por encima del Latin1 se interpretan como puntos de código Unicode, que significa que tienen la misma semántica que Latin-1 (ISO-8859-1) y los controles C1.
 
-Como se ha explicado en L</Regls ASCII contra reglas Unicode>, bajo las reglas ASCII, se consideran que son caracteres sin asignar.
+Como se ha explicado en L</Reglas ASCII contra reglas Unicode>, bajo las reglas ASCII, se consideran que son caracteres sin asignar.
 
 Esto puede llevar a resultados inesperados.  Por ejemplo, la semántica de una cadena puede cambiar de repente si se le añade un punto de código por encima del 255, que cambia las reglas de ASCII a Unicode.  Como un ejemplo, considere el siguiente programa y su salida:
 
@@ -1121,7 +1121,7 @@ Para Perl anteriores que los descrito antes, o cuando se pase una cadena a una f
 
 =head2 Forzar Unicode en Perl (o no forzar Unicode en Perl)
 
-Algunas veces (vea L</"Cuando Unicode no hace lo que queremos"> o L</El "Bug Unicode">) existen situaciones donde, simplemente, necesita forzar que una cadena de bytes se convierta en UTF-8, o viceversa.  El módulo estándar L<Encode> se puede usar para esto, o las llamadas de bajo nivel L<C<utf8::upgrade($bytestring)>|utf8/Funciones de utilidad> y L<C<utf8::downgrade($utf8string[, FAIL_OK])>|utf8/Funciones de utilidad>.
+Algunas veces (vea L</"Cuando Unicode no hace lo que queremos"> o L</El "Error de Unicode">) existen situaciones donde, simplemente, necesita forzar que una cadena de bytes se convierta en UTF-8, o viceversa.  El módulo estándar L<Encode> se puede usar para esto, o las llamadas de bajo nivel L<C<utf8::upgrade($bytestring)>|utf8/Funciones de utilidad> y L<C<utf8::downgrade($utf8string[, FAIL_OK])>|utf8/Funciones de utilidad>.
 
 Note que C<utf8::downgrade()> puede fallar si la cadena contiene caracteres que no encajan en un byte.
 
@@ -1234,7 +1234,7 @@ Escalares que solo contienen ASCII y que se marcan como UTF-8 son algunas veces 
 
 =head1 ERRORES
 
-Vea también L</El "Bug Unicode"> más arriba.
+Vea también L</El "Error de Unicode"> más arriba.
 
 =head2 Interacción con extensiones
 

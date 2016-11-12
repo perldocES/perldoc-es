@@ -13,7 +13,7 @@ Este documento proporciona instrucciones para la construcción de Perl para sist
 Necesita tener instalado y funcionando un compilador cruzado gccsdk L<http://gccsdk.riscos.info/> y REXEN L<http://www.cp15.org/programming/>
 
 En primer lugar, copiar el código fuente y crear una copia nativa de perl de su sistema principal.
-Luego, en el código fuente para ser compilado de forma cruzada:
+Luego, en el código fuente para compilarse de forma cruzada:
 
 =over 4
 

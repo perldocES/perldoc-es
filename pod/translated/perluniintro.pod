@@ -54,7 +54,7 @@ utf8>: si su propio script Perl está codificado en UTF-8, puede usar UTF-8 en l
 
 =head2 Modelo Unicode de Perl
 
-Perl soporta tanto las cadenas pre-5.6 de los bytes nativos de ocho bits, como las cadenas de caracteres Unicode.  El principio general es que Perl intenta mantener sus datos como bytes de ocho bits tanto como sea posible, pero tan pronto como la "Unicodidad" sea inevitable, los datos son actualizados a Unicode de forma transparente.  Antes de Perl v5.14.0, la actualización no era completamente transparente (vea L<perlunicode/El "Error Unicode">), y para mantener la compatibilidad con lo anterior, no se obtiene la total transparencia a menos que se seleccione C<use feature 'unicode_strings'> (vea L<feature>) o C<use 5.012> (o superior).
+Perl soporta tanto las cadenas pre-5.6 de los bytes nativos de ocho bits, como las cadenas de caracteres Unicode.  El principio general es que Perl intenta mantener sus datos como bytes de ocho bits tanto como sea posible, pero tan pronto como la "Unicodidad" sea inevitable, los datos son actualizados a Unicode de forma transparente.  Antes de Perl v5.14.0, la actualización no era completamente transparente (vea L<perlunicode/El "Error de Unicode">), y para mantener la compatibilidad con lo anterior, no se obtiene la total transparencia a menos que se seleccione C<use feature 'unicode_strings'> (vea L<feature>) o C<use 5.012> (o superior).
 
 Internamente, Perl usa actualmente el conjunto de caracteres nativa de ocho bits de la plataforma (por ejemplo, Latin-1), usando por defecto UTF-8, para codificar las cadenas Unicode. Específicamente, si todos los puntos de código en la cadena son C<0xFF> o o menor, Perl usa el conjunto de caracteres nativo de ocho bits.  De otra forma, usa UTF-8.
 
@@ -89,7 +89,7 @@ En plataformas EBCDIC, la forma de codificación Unicode interna es UTF-EBCDIC e
 
 =head2 Crear Unicode
 
-Esta sección se aplica completamente a los Perl a partir de v5.22.  Los problemas de las versiones anteriores están en la subsección más abajo L</Problemas en las versiones anteriores>.
+Esta sección se aplica completamente a los Perl a partir de v5.22.  Los problemas de las versiones anteriores están en la subsección más abajo L</Problemas de las versiones anteriores>.
 
 Para crear caracteres Unicode en literales, use la notación C<\N{...}> en las cadenas doblemente entrecomilladas.
 
@@ -522,7 +522,7 @@ Para otras localizaciones, a partir de Perl 5.16, puede especificar
 
     use locale ':not_characters';
 
-para que Perl funcione bien con ellos.  El problema es que usted mismo tiene que traducir el conjunto de caracteres de la localización a/desde Unicode.  Vea L</Unicode EE<sol>S> más arriba, para ver como
+para que Perl funcione bien con ellos.  El problema es que usted mismo tiene que traducir el conjunto de caracteres de la localización a/desde Unicode.  Vea L</EE<sol>S Unicode> más arriba, para ver como
 
     use open ':locale';
 

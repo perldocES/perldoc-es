@@ -67,7 +67,7 @@ devuelve su valor.  Si la última sentencia es una estructura de control de bucl
 X<subrutina, valor de retorno> X<valor de retorno> X<return>
 
 Aparte de una característica experimental (véase L</Firmas> más abajo),
-Perl no tiene parámetros formales con nombre.  En la práctica todo lo que usted hace es asignarles a una lista C<my()>.  Las variables que no se declaren como privadas serán variables globales.  Para más detalles escabrosos sobre la creación de variables privadas, vea L<"Variables privadas vía my()"> y L<"Valores temporales vía local()">.  Para crear ambientes protegidos para un conjunto de funciones en un paquete separado (y probablemente en un archivo separado), vea L<perlmod/"Paquetes">.
+Perl no tiene parámetros formales con nombre.  En la práctica todo lo que usted hace es asignarles a una lista C<my()>.  Las variables que no se declaren como privadas serán variables globales.  Para más detalles escabrosos sobre la creación de variables privadas, vea L<"Variables privadas con my()"> y L<"Valores temporales vía local()">.  Para crear ambientes protegidos para un conjunto de funciones en un paquete separado (y probablemente en un archivo separado), vea L<perlmod/"Paquetes">.
 X<parámetro formal> X<parámetro, formal>
 
 Ejemplo:
@@ -320,7 +320,7 @@ Tiene que haber tantas claves como valores: si hay un argumento impar entonces s
 	print $filtro->($_, $entradas{$_}) foreach sort keys %entradas;
     }
 
-Un parámetro sorbedor hash puede no llevar nombre, igual que otras clases de parámetros.  Insistirá en que el número de argumentos disponible sea par, incluso aunque no vayan a ser almacenados en la variable.
+Un parámetro sorbedor hash puede no llevar nombre, igual que otras clases de parámetros.  Insistirá en que el número de argumentos disponible sea par, incluso aunque no vayan a almacenarse en la variable.
 
     sub foo ($cosa, %) {
 	print $cosa;
@@ -352,7 +352,7 @@ Es enteramente posible, para una subrutina tener a la vez un prototipo y una fir
 
 El atributo I<prototype>, y cualquier otro atributo, se pone después de la firma.
 
-=head2 Variables Privadas a través de my()
+=head2 Variables privadas con my()
 X<my> X<variable, lexical> X<lexical> X<lexical variable> X<scope, lexical>
 X<lexical scope> X<attributes, my>
 
@@ -1129,7 +1129,7 @@ X<grep>
 Alguna gente preferiría prototipos completamente alfanuméricos.  Los alfanuméricos se han dejado fuera intencionadamente por el propósito expreso de que algún día, en el futuro, se añadan parámetros formales, con nombres.  El objetivo principal del mecanismo actual es permitir a los autores de módulos ofrecer mejores diagnósticos a los usuarios de los módulos.  Larry siente que la notación es, realmente, comprensible para los programadores de Perl, y que no estorbará grandemente en el meollo del módulo, ni que sea más difícil de leer.  El ruido de línea está visualmente encapsulada en una pequeña píldora que es fácil de tragar.
 
 Si intenta usar una secuencia alfanumérica en un prototipo generará una advertencia opcional -"Illegal character in prototype..." ("Carácter ilegal en prototipo...")-.
-Desafortunadamente, las versiones anteriores de Perl permitían que el prototipo que fuera tan largo como su prefijo, fuera un prototipo válido.  La advertencia se puede actualizar a un error fatal en una futura versión de Perl una vez que la mayor parte del código sea arreglado.
+Desafortunadamente, las versiones anteriores de Perl permitían que el prototipo que fuera tan largo como su prefijo, fuera un prototipo válido.  La advertencia se puede actualizar a un error fatal en una futura versión de Perl una vez que la mayor parte del código se arregle.
 
 Probablemente sea mejor prototipar nuevas funciones, en lugar de reajustar el prototipado a las viejas.  Esto es porque debería ser especialmente cuidadoso sobre las imposiciones silenciosas de los contextos escalar versus lista.  Por ejemplo, si decide que una función debería tomar un parámetro, como esta:
 

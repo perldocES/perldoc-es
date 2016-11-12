@@ -156,7 +156,7 @@ En algunos sistemas operativos (pero no todos) asignar a C<$0> modifica la zona 
 
 Tenga en cuenta que existen limitaciones específicas de la plataforma sobre la longitud máxima de C<$0>.  En el caso más extremo puede estar limitado al espacio ocupado por el C<$0> original.
 
-En algunas plataformas puede existir una cantidad arbitraria de relleno, por ejemplo caracteres de espacio, después del nombre modificado al ser mostrado por C<ps>.
+En algunas plataformas puede existir una cantidad arbitraria de relleno, por ejemplo caracteres de espacio, después del nombre modificado al mostrarse por C<ps>.
 En algunas plataformas el relleno puede extenderse por todo el largo de la longitud original del área de argumentos, sin importar lo que haga (este es el caso, por ejemplo, de Linux 2.2).
 
 Nota para los usuarios de BSD: modificar C<$0> no elimina por completo "perl" de la salida de ps(1).  Por ejemplo, la modificación de C<$0> en C<"foobar"> puede resultar C<"perl: foobar (perl)"> (el que salga el prefijo C<"perl:"> y el sufijo "(perl)" depende de la variante y de versión exacta de BSD).  Esta es una característica del sistema operativo, Perl no puede evitarlo.
@@ -198,7 +198,7 @@ Del mismo modo, un valor asignado a C<$)> también debe ser una lista de número
 Puede cambiar tanto el gid efectivo y el gid real, al mismo tiempo, mediante el uso de C<POSIX::setgid()> (utilice únicamente un solo argumento numérico).
 Cambios en C<$)> requieren de una verificación de C<$!> para detectar posibles errores después de un intento de cambio.
 
-C<< $< >>, C<< $> >>, C<$(> y C<$)> solo pueden ser establecidos en máquinas que soporten la correspondiente rutina I<set[re][ug]id()>.  C<$(> y C<$)> pueden ser intercambiados en máquinas con soporte de C<setregid()>.
+C<< $< >>, C<< $> >>, C<$(> y C<$)> solo pueden ser establecidos en máquinas que soporten la correspondiente rutina I<set[re][ug]id()>.  C<$(> y C<$)> pueden intercambiarse en máquinas con soporte de C<setregid()>.
 
 Mnemónico: los paréntesis se utilizan para I<agrupar> cosas.  El gid efectivo es el grupo que es el I<correcto> para usted, si usted está ejecutando setgid.
 
@@ -227,7 +227,7 @@ El uid efectivo de este proceso.  Por ejemplo:
 
 Puede cambiar tanto el uid real y el uid efectivo al mismo tiempo, mediante el uso de C<POSIX::setuid()>.  Cambios en C<< $> >> requieren de una verificación de C<$!> para detectar posibles errores después de un intento de cambio.
 
-C<< $< >> y C<< $> >> pueden ser intercambiados en máquinas con soporte de C<setregid()>.
+C<< $< >> y C<< $> >> pueden intercambiarse en máquinas con soporte de C<setregid()>.
 
 Mnemónico: es el uid al que usted I<va>, si se está ejecutando con setuid.
 
@@ -266,7 +266,7 @@ Mnemónico: la coma (el separador sintáctico de subíndices) es un punto y coma
 X<$a> X<$b>
 
 Variables especiales del paquete cuando se usa C<sort()>; vea L<perlfunc/sort>.
-Debido a su carácter especial, C<$a> y C<$b> no tienen que ser declaradas (usando C<use vars>, u C<our()>) incluso cuando se utiliza el pragma C<strict 'vars'>.  No las localice C<my $a> o C<my $b> si quiere utilizarlos en el bloque o función de comparación de C<sort()>.
+Debido a su carácter especial, C<$a> y C<$b> no tienen que declararse (usando C<use vars>, u C<our()>) incluso cuando se utiliza el pragma C<strict 'vars'>.  No las localice C<my $a> o C<my $b> si quiere utilizarlos en el bloque o función de comparación de C<sort()>.
 
 =item %ENV
 X<%ENV>
@@ -307,7 +307,7 @@ Esta variable se puede usar para determinar si el intérprete de Perl que ejecut
 
 Cuando compare C<$]>, los operadores de comparación de cadenas son B<altamente recomendados>.  Las limitaciones inherentes de la representación de punto flotante puede, algunas veces, llevar a comparaciones incorrectas para algunos números en algunas arquitecturas.
 
-Vea también la documentación de C<use VERSION> y C<require VERSION>; allí hay una forma conveniente de cómo fallar si el intérprete de Perl en ejecución es demasiado viejo.
+Vea también la documentación de C<use VERSIÓN> y C<require VERSIÓN>; allí hay una forma conveniente de cómo fallar si el intérprete de Perl en ejecución es demasiado viejo.
 
 Vea L</$^V> para una representación de la versión de Perl como un objeto L<version>, que permite comparaciones de cadena más flexibles.
 
@@ -332,7 +332,7 @@ El array C<@F> contiene los campos de cada línea leída cuando se activa el mod
 =item @INC
 X<@INC>
 
-El array C<@INC> contiene la lista de lugares en que las construcciones C<do EXPR>, C<require>, o C<use> buscan sus archivos de biblioteca.  En un principio se compone de los argumentos de cualquier opción B<-I> en la línea de comandos, seguido de la biblioteca Perl predeterminada, probablemente F</usr/local/lib/perl>, seguido por ".", para representar el directorio actual.  (no se añadirá "." si el modo I<taint> -contaminado- está activo, tanto por C<-T> como por C<-t>).  Si necesita modificar este comportamiento en tiempo de ejecución, debe utilizar el pragma C<use lib> para conseguir que la biblioteca dependiente de la máquina sea cargada correctamente:
+El array C<@INC> contiene la lista de lugares en que las construcciones C<do EXPR>, C<require>, o C<use> buscan sus archivos de biblioteca.  En un principio se compone de los argumentos de cualquier opción B<-I> en la línea de comandos, seguido de la biblioteca Perl predeterminada, probablemente F</usr/local/lib/perl>, seguido por ".", para representar el directorio actual.  (no se añadirá "." si el modo I<taint> -contaminado- está activo, tanto por C<-T> como por C<-t>).  Si necesita modificar este comportamiento en tiempo de ejecución, debe utilizar el pragma C<use lib> para conseguir que la biblioteca dependiente de la máquina se cargue correctamente:
 
     use lib '/miruta/dirbiblioteca/';
     use AlgunModulo;
@@ -426,7 +426,7 @@ Como el enganche C<'IGNORE'> no está soportado por C<__WARN__>, puede deshabili
 
     local $SIG{__WARN__} = sub {};
 
-La rutina indicada por C<$SIG{__DIE__}> se llama cuando una excepción grave está a punto de ser lanzada.  El mensaje de error se pasa como primer argumento.  Cuando una rutina enganchada en C<__DIE__> regresa, el procesamiento de la excepción continúa como si no existiera el enganche, a menos que la rutina enganchada termine a través de un C<goto &sub>, la salida de un bucle, o un C<die()>.  El gestor de C<__DIE__> está explícitamente inhabilitado durante la llamada, para que pueda morir desde un controlador C<__DIE__>.  Lo mismo para C<__WARN__>.
+La rutina indicada por C<$SIG{__DIE__}> se llama cuando una excepción grave está a punto de lanzarse.  El mensaje de error se pasa como primer argumento.  Cuando una rutina enganchada en C<__DIE__> regresa, el procesamiento de la excepción continúa como si no existiera el enganche, a menos que la rutina enganchada termine a través de un C<goto &sub>, la salida de un bucle, o un C<die()>.  El gestor de C<__DIE__> está explícitamente inhabilitado durante la llamada, para que pueda morir desde un controlador C<__DIE__>.  Lo mismo para C<__WARN__>.
 
 Debido a un fallo de implementación, el enganche C<$SIG{__DIE__}> se llama incluso dentro de un C<eval()>.  No lo utilice para volver a reescribir una excepción pendiente en C<$@>, o como un sustituto extraño para sobreescribir C<CORE::GLOBAL::die()>.  Esta acción extraña se arreglará en una futura versión de manera que C<$SIG{__DIE__}> sólamente se llamará si el programa está a punto de terminar, como era la intención original.  Cualquier otro uso es obsoleto.
 
@@ -468,7 +468,7 @@ Mientras que la sobrecarga de la conversión a cadena de objetos de versión, pa
 
     printf "versión es v%vd\n", $^V;  # Versión de Perl
 
-Consulte la documentación de C<use VERSION> y C<require VERSION> para ver una forma correcta de cómo fallar si el intérprete de Perl es demasiado viejo.
+Consulte la documentación de C<use VERSIÓN> y C<require VERSIÓN> para ver una forma correcta de cómo fallar si el intérprete de Perl es demasiado viejo.
 
 Vea también C<$]> para una representación decimal de la versión de Perl.
 
@@ -510,7 +510,7 @@ No es seguro usar el valor de C<$^X> como un nombre de ruta de un archivo, ya qu
 	  unless $este_perl =~ m/$Config{_exe}$/i;
 	}
 
-Debido a que muchos sistemas operativos permiten a cualquier persona con acceso de lectura al archivo de programa en Perl para hacer una copia de él, parchear la copia y, a continuación, ejecutar la copia, el programador de Perl consciente de la seguridad debe tener cuidado de invocar la copia instalada de perl, no la copia referenciada por C<$^X>.  Las siguientes declaraciones logran este objetivo, y producen una ruta que puede ser invocada como un comando o referenciada como un archivo.
+Debido a que muchos sistemas operativos permiten a cualquier persona con acceso de lectura al archivo de programa en Perl para hacer una copia de él, parchear la copia y, a continuación, ejecutar la copia, el programador de Perl consciente de la seguridad debe tener cuidado de invocar la copia instalada de perl, no la copia referenciada por C<$^X>.  Las siguientes declaraciones logran este objetivo, y producen una ruta que puede invocarse como un comando o referenciada como un archivo.
 
     use Config;
     my $ruta_segura_perl= $Config{perlpath};
@@ -1059,7 +1059,7 @@ Las variables especiales para formatos son un subconjunto de los identificadores
 X<$^A> X<$ACCUMULATOR>
 
 El valor actual del acumulador C<write()> para las líneas C<format()>.
-Un formato contiene llamadas C<formline()> que ponen su resultado en C<$^A>.  Después de llamar a su formato, C<write()> imprime el contenido de C<$^A> y se vacía.  Así que nunca, realmente, va a ver el contenido de C<$^A> a menos que llame a C<formline()> usted mismo y mire dentro de él.  Vea L<perlform> y L<perlfunc/"formline FORMA,LISTA">.
+Un formato contiene llamadas C<formline()> que ponen su resultado en C<$^A>.  Después de llamar a su formato, C<write()> imprime el contenido de C<$^A> y se vacía.  Así que nunca, realmente, va a ver el contenido de C<$^A> a menos que llame a C<formline()> usted mismo y mire dentro de él.  Vea L<perlform> y L<perlfunc/"formline DIBUJO,LISTA">.
 
 =item IO::Handle->format_formfeed(EXPR)
 
@@ -1171,7 +1171,7 @@ Para obtener más detalles, consulte las descripciones individuales en C<$@>, C<
 =item ${^CHILD_ERROR_NATIVE}
 X<$^CHILD_ERROR_NATIVE>
 
-El estado nativo devuelto por la última tubería cerrada, acento grave (C<``>) de comandos, llamada con éxito a C<wait()> o C<waitpid()>, o del operador C<system()>.  En sistemas tipo POSIX este valor puede ser decodificado con las funciones WEXITSTATUS, WIFEXITED, WIFSIGNALED, WTERMSIG, WIFSTOPPED, WSTOPSIG, y WIFCONTINUED proporcionadas por el módulo L<POSIX>.
+El estado nativo devuelto por la última tubería cerrada, acento grave (C<``>) de comandos, llamada con éxito a C<wait()> o C<waitpid()>, o del operador C<system()>.  En sistemas tipo POSIX este valor puede decodificarse con las funciones WEXITSTATUS, WIFEXITED, WIFSIGNALED, WTERMSIG, WIFSTOPPED, WSTOPSIG, y WIFCONTINUED proporcionadas por el módulo L<POSIX>.
 
 Bajo VMS esto refleja el estado real de la salida VMS; es decir, es lo mismo que C<$?> cuando está en vigor el pragma C<use vmsish 'status'>.
 
@@ -1333,7 +1333,7 @@ Esta variable se incorporó en Perl 5.6.0.
 =item $^D
 X<$^D> X<$DEBUGGING>
 
-El valor actual de los indicadores de depuración.  Puede ser leído o modificado.  Como su equivalente de la L<línea de comandos|perlrun/B<-D>I<letras>>, puede usar los valores numéricos o los simbólicos, p. ej. C<$^D = 10> o C<$^D = "st">.  Consulte L<perlrun/B<-D>I<números>>.  Los contenidos de esta variable también afecta a la operación del depurador.  Vea L<perldebguts/Interioridades del depurador>.
+El valor actual de los indicadores de depuración.  Puede leerse o modificarse.  Como su equivalente de la L<línea de comandos|perlrun/B<-D>I<letras>>, puede usar los valores numéricos o los simbólicos, p. ej. C<$^D = 10> o C<$^D = "st">.  Consulte L<perlrun/B<-D>I<números>>.  Los contenidos de esta variable también afecta a la operación del depurador.  Vea L<perldebguts/Interioridades del depurador>.
 
 Mnemónico: valor de la opción B<-D>.
 
@@ -1367,7 +1367,7 @@ Los valores posibles son:
 
 =item CONSTRUCT
 
-El C<PerlInterpreter*> se ha construido a través de C<perl_construct>.  Este valor está aquí principalmente para complementar y para uso a través de la variable subyacente de C C<PL_phase>.  No es realmente posible ser ejecutado el código Perl a no ser que la construcción del intérprete esté terminada.
+El C<PerlInterpreter*> se ha construido a través de C<perl_construct>.  Este valor está aquí principalmente para complementar y para uso a través de la variable subyacente de C C<PL_phase>.  No es realmente posible ejecutar el código Perl a no ser que la construcción del intérprete esté terminada.
 
 =item START
 
@@ -1515,7 +1515,7 @@ Depurar a la entrada/salida de una subrutina.
 
 =item 0x02
 
-Depuración línea a línea.  Hace que la subrutina C<DB::DB()> sea llamada por cada instrucción ejecutada.  También hace que se almacenen las líneas del código fuente (como 0x400).
+Depuración línea a línea.  Hace que la subrutina C<DB::DB()> se llame por cada instrucción ejecutada.  También hace que se almacenen las líneas del código fuente (como 0x400).
 
 =item 0x04
 
@@ -1626,7 +1626,7 @@ Retirada en Perl 5.10.0.
 =item $*
 X<$*>
 
-C<$*> era una variable que podría ser utilizada para habilitar concordancia multilínea.
+C<$*> era una variable que podría utilizarse para habilitar concordancia multilínea.
 Después de un ciclo de obsolescencia, su magia se eliminó en Perl 5.10.0.
 Usarla ahora dispara un aviso: C<$* is no longer supported> (C<$* ya no está soportada>). 
 En su lugar debe usar los modificadores de exp. reg. C</s> y C</m>.

@@ -6,7 +6,7 @@ perlfunc - Funciones predefinidas en Perl
 =head1 DESCRIPCIÓN
 
 Las funciones de esta sección pueden servir como términos en una expresión.
-Se agrupan en dos categorías principales: operadores de listas y operadores unarios con nombre.  Difieren en su relación de precedencia cuando son seguidos por una coma.  (Vea la tabla de precedencia, en L<perlop>).  Los operadores de listas toman más de un argumento, mientras que los operadores unarios nunca toman más de un argumento.  Así, una coma determina al argumento de un operador unario, pero sólo sirve de separación entre argumentos en un operador de listas.  Un operador unario generalmente proveé de un contexto escalar a su argumento, mientras que un operador de listas puede proveer tanto de un contexto escalar o de un contexto de lista, a sus argumentos.  Si aparecen ambos, los argumentos escalares van antes que el argumento de lista, y a continuación solo puede existir un argumento de lista.  Por ejemplo, L<C<splice>|/splice ARRAY,OFFSET,LENGTH,LIST> tiene tres argumentos escalares seguidos por una lista, mientras que L<C<gethostbyname>|/gethostbyname NAME> tiene cuatro argumentos escalares.
+Se agrupan en dos categorías principales: operadores de listas y operadores unarios con nombre.  Difieren en su relación de precedencia cuando son seguidos por una coma.  (Vea la tabla de precedencia, en L<perlop>).  Los operadores de lista toman más de un argumento, mientras que los operadores unarios nunca toman más de un argumento.  Así, una coma determina al argumento de un operador unario, pero sólo sirve de separación entre argumentos en un operador de listas.  Un operador unario generalmente proveé de un contexto escalar a su argumento, mientras que un operador de listas puede proveer tanto de un contexto escalar o de un contexto de lista, a sus argumentos.  Si aparecen ambos, los argumentos escalares van antes que el argumento de lista, y a continuación solo puede existir un argumento de lista.  Por ejemplo, L<C<splice>|/splice ARRAY,DESPLAZAMIENTO,LONGITUD,LISTA> tiene tres argumentos escalares seguidos por una lista, mientras que L<C<gethostbyname>|/gethostbyname NOMBRE> tiene cuatro argumentos escalares.
 
 En las descripciones sintácticas que siguen a continuación, los operadores de listas que esperan una lista (y proveen de un contexto lista para los elementos de la lista) se muestran con un argumento así: LISTA.  Tal lista puede consistir en cualquier combinación de argumentos escalares o valores de lista; los valores de lista serán incluidos en la lista como si cada elemento individual fuera interpolado en ese punto en la lista, formando un largo y unidimensional valor de lista.
 Las comas deberían separar elementos literales de la LISTA.
@@ -35,7 +35,7 @@ X<contexto>
 
 Un array con nombre, en contexto escalar, es muy diferente de lo que en un primer vistazo pudiera ser una lista en contexto escalar.  No puede conseguir que una lista como C<(1,2,3)> se convierta en contexto escalar porque el compilador conoce el contexto en tiempo de compilación.  Se generará aquí el operador coma, no la versión de concatenación de listas de la propia coma.  Esto significa que nunca será una lista.
 
-En general, funciones en Perl que sirven como envoltorios para llamadas al sistema ("syscalls") del mismo nombre (como L<chown(2)>, L<fork(2)>, L<closedir(2)>, etc.) devuelven verdadero cuando tienen éxito, y L<C<undef>|/undef EXPR> en otro caso, como se menciona en las siguientes descripciones.  Esto es diferente de las interfaces en C, que devuelven C<-1> en caso de error.  Excepciones a esta regla incluyen a L<C<wait>|/wait>, L<C<waitpid>|/waitpid PID,FLAGS> y L<C<syscall>|/syscall NUMBER, LIST>.  Llamadas al sistema también actualizan la variable especial L<C<$!>|perlvar/$!> en caso de error.  Otras funciones no, excepto accidentalmente.
+En general, funciones en Perl que sirven como envoltorios para llamadas al sistema ("syscalls") del mismo nombre (como L<chown(2)>, L<fork(2)>, L<closedir(2)>, etc.) devuelven verdadero cuando tienen éxito, y L<C<undef>|/undef EXPR> en otro caso, como se menciona en las siguientes descripciones.  Esto es diferente de las interfaces en C, que devuelven C<-1> en caso de error.  Excepciones a esta regla incluyen a L<C<wait>|/wait>, L<C<waitpid>|/waitpid PID,INDICADORES> y L<C<syscall>|/syscall NÚMERO, LISTA>.  Llamadas al sistema también actualizan la variable especial L<C<$!>|perlvar/$!> en caso de error.  Otras funciones no, excepto accidentalmente.
 
 Hay módulos con expansiones que también pueden engancharse en el intérprete Perl para definir nuevas clases de expresiones basadas en palabras clave.  Pueden parecerse a funciones, pero también pueden ser complementamente diferentes.  La sintaxis que sigue al identificador se define enteramente por la expansión.  Si es usted un implantador, mire L<perlapi/PL_keyword_plugin> para informarse sobre este mecanismo.  Si está usando un módulo así, mire la documentación del módulo para ver los detalles de la sintaxis que define.
 
@@ -52,17 +52,17 @@ X<scalar> X<string> X<character> X<escalar> X<cadena> X<carácter>
 =for Pod::Functions =String
 
 L<C<chomp>|/chomp VARIABLE>, L<C<chop>|/chop VARIABLE>,
-L<C<chr>|/chr NUMBER>, L<C<crypt>|/crypt PLAINTEXT,SALT>,
+L<C<chr>|/chr NÚMERO>, L<C<crypt>|/crypt TEXTOPLANO,SALTO>,
 L<C<fc>|/fc EXPR>, L<C<hex>|/hex EXPR>,
-L<C<index>|/index STR,SUBSTR,POSITION>, L<C<lc>|/lc EXPR>,
+L<C<index>|/index CADENA,SUBCADENA,POSICIÓN>, L<C<lc>|/lc EXPR>,
 L<C<lcfirst>|/lcfirst EXPR>, L<C<length>|/length EXPR>,
 L<C<oct>|/oct EXPR>, L<C<ord>|/ord EXPR>,
-L<C<pack>|/pack TEMPLATE,LIST>,
-L<C<qE<sol>E<sol>>|/qE<sol>STRINGE<sol>>,
-L<C<qqE<sol>E<sol>>|/qqE<sol>STRINGE<sol>>, L<C<reverse>|/reverse LIST>,
-L<C<rindex>|/rindex STR,SUBSTR,POSITION>,
-L<C<sprintf>|/sprintf FORMAT, LIST>,
-L<C<substr>|/substr EXPR,OFFSET,LENGTH,REPLACEMENT>,
+L<C<pack>|/pack PLANTILLA,LISTA>,
+L<C<qE<sol>E<sol>>|/qE<sol>CADENAE<sol>>,
+L<C<qqE<sol>E<sol>>|/qqE<sol>CADENAE<sol>>, L<C<reverse>|/reverse LISTA>,
+L<C<rindex>|/rindex CADENA,SUBCADENA,POSICIÓN>,
+L<C<sprintf>|/sprintf FORMATO, LISTA>,
+L<C<substr>|/substr EXPR,DESPLAZAMIENTO,LONGITUD,REEMPLAZO>,
 L<C<trE<sol>E<sol>E<sol>>|/trE<sol>E<sol>E<sol>>, L<C<uc>|/uc EXPR>,
 L<C<ucfirst>|/ucfirst EXPR>,
 L<C<yE<sol>E<sol>E<sol>>|/yE<sol>E<sol>E<sol>>
@@ -74,19 +74,19 @@ X<regular expression> X<regex> X<regexp> X<expresión regular>
 
 =for Pod::Functions =Regexp
 
-L<C<mE<sol>E<sol>>|/mE<sol>E<sol>>, L<C<pos>|/pos SCALAR>,
-L<C<qrE<sol>E<sol>>|/qrE<sol>STRINGE<sol>>,
+L<C<mE<sol>E<sol>>|/mE<sol>E<sol>>, L<C<pos>|/pos ESCALAR>,
+L<C<qrE<sol>E<sol>>|/qrE<sol>CADENAE<sol>>,
 L<C<quotemeta>|/quotemeta EXPR>,
 L<C<sE<sol>E<sol>E<sol>>|/sE<sol>E<sol>E<sol>>,
-L<C<split>|/split E<sol>PATTERNE<sol>,EXPR,LIMIT>,
-L<C<study>|/study SCALAR>
+L<C<split>|/split E<sol>PATRÓNE<sol>,EXPR,LÍMITE>,
+L<C<study>|/study ESCALAR>
 
 =item Funciones numéricas
 X<numeric> X<number> X<trigonometric> X<trigonometry> X<numérico> X<número> X<trigonométrica> X<trigonomía>
 
 =for Pod::Functions =Math
 
-L<C<abs>|/abs VALUE>, L<C<atan2>|/atan2 Y,X>, L<C<cos>|/cos EXPR>,
+L<C<abs>|/abs VALOR>, L<C<atan2>|/atan2 Y,X>, L<C<cos>|/cos EXPR>,
 L<C<exp>|/exp EXPR>, L<C<hex>|/hex EXPR>, L<C<int>|/int EXPR>,
 L<C<log>|/log EXPR>, L<C<oct>|/oct EXPR>, L<C<rand>|/rand EXPR>,
 L<C<sin>|/sin EXPR>, L<C<sqrt>|/sqrt EXPR>, L<C<srand>|/srand EXPR>
@@ -97,19 +97,19 @@ X<array>
 =for Pod::Functions =ARRAY
 
 L<C<each>|/each HASH>, L<C<keys>|/keys HASH>, L<C<pop>|/pop ARRAY>,
-L<C<push>|/push ARRAY,LIST>, L<C<shift>|/shift ARRAY>,
-L<C<splice>|/splice ARRAY,OFFSET,LENGTH,LIST>,
-L<C<unshift>|/unshift ARRAY,LIST>, L<C<values>|/values HASH>
+L<C<push>|/push ARRAY,LISTA>, L<C<shift>|/shift ARRAY>,
+L<C<splice>|/splice ARRAY,DESPLAZAMIENTO,LONGITUD,LISTA>,
+L<C<unshift>|/unshift ARRAY,LISTA>, L<C<values>|/values HASH>
 
 =item Funciones para lista de datos
 X<list> X<lista>
 
 =for Pod::Functions =LIST
 
-L<C<grep>|/grep BLOCK LIST>, L<C<join>|/join EXPR,LIST>,
-L<C<map>|/map BLOCK LIST>, L<C<qwE<sol>E<sol>>|/qwE<sol>STRINGE<sol>>,
-L<C<reverse>|/reverse LIST>, L<C<sort>|/sort SUBNAME LIST>,
-L<C<unpack>|/unpack TEMPLATE,EXPR>
+L<C<grep>|/grep BLOQUE LISTA>, L<C<join>|/join EXPR,LISTA>,
+L<C<map>|/map BLOQUE LISTA>, L<C<qwE<sol>E<sol>>|/qwE<sol>CADENAE<sol>>,
+L<C<reverse>|/reverse LISTA>, L<C<sort>|/sort NOMBRE_SUB LISTA>,
+L<C<unpack>|/unpack PLANTILLA,EXPR>
 
 =item Funciones %HASH reales
 X<hash>
@@ -125,7 +125,7 @@ X<I/O> X<input> X<output> X<dbm> X<entrada> X<salida>
 
 =for Pod::Functions =I/O
 
-L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA>, L<C<close>|/close IDENTIFICADOR_ARCHIVO>, L<C<closedir>|/closedir IDENTIFICADOR_DIR>, L<C<dbmclose>|/dbmclose HASH>, L<C<dbmopen>|/dbmopen HASH,BASE_DATOS,MASK>, L<C<die>|/die LISTA>, L<C<eof>|/eof IDENTIFICADOR_ARCHIVO>, L<C<fileno>|/fileno IDENTIFICADOR_ARCHIVO>, L<C<flock>|/flock IDENTIFICADOR_ARCHIVO,OPERACIÓN>, L<C<format>|/format>, L<C<getc>|/getc IDENTIFICADOR_ARCHIVO>, L<C<print>|/print IDENTIFICADOR_ARCHIVO LISTA>, L<C<printf>|/printf IDENTIFICADOR_ARCHIVO FORMATO, LISTA>, L<C<read>|/read IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<readdir>|/readdir IDENTIFICADOR_DIR>, L<C<readline>|/readline EXPR>, L<C<rewinddir>|/rewinddir IDENTIFICADOR_DIR>, L<C<say>|/say IDENTIFICADOR_ARCHIVO LISTA>, L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, L<C<seekdir>|/seekdir IDENTIFICADOR_DIR,POS>, L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT>, L<C<syscall>|/syscall NÚMERO, LISTA>, L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<sysseek>|/sysseek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<tell>|/tell IDENTIFICADOR_ARCHIVO>, L<C<telldir>|/telldir IDENTIFICADOR_DIR>, L<C<truncate>|/truncate IDENTIFICADOR_ARCHIVO,LONGITUD>, L<C<warn>|/warn LISTA>, L<C<write>|/write IDENTIFICADOR_ARCHIVO>
+L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA>, L<C<close>|/close IDENTIFICADOR_ARCHIVO>, L<C<closedir>|/closedir IDENTIFICADOR_DIR>, L<C<dbmclose>|/dbmclose HASH>, L<C<dbmopen>|/dbmopen HASH,NOMBRE_BASE_DATOS,MÁSCARA>, L<C<die>|/die LISTA>, L<C<eof>|/eof IDENTIFICADOR_ARCHIVO>, L<C<fileno>|/fileno IDENTIFICADOR_ARCHIVO>, L<C<flock>|/flock IDENTIFICADOR_ARCHIVO,OPERACIÓN>, L<C<format>|/format>, L<C<getc>|/getc IDENTIFICADOR_ARCHIVO>, L<C<print>|/print IDENTIFICADOR_ARCHIVO LISTA>, L<C<printf>|/printf IDENTIFICADOR_ARCHIVO FORMATO, LISTA>, L<C<read>|/read IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<readdir>|/readdir IDENTIFICADOR_DIR>, L<C<readline>|/readline EXPR>, L<C<rewinddir>|/rewinddir IDENTIFICADOR_DIR>, L<C<say>|/say IDENTIFICADOR_ARCHIVO LISTA>, L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, L<C<seekdir>|/seekdir IDENTIFICADOR_DIR,POSICIÓN>, L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA>, L<C<syscall>|/syscall NÚMERO, LISTA>, L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<sysseek>|/sysseek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<tell>|/tell IDENTIFICADOR_ARCHIVO>, L<C<telldir>|/telldir IDENTIFICADOR_DIR>, L<C<truncate>|/truncate IDENTIFICADOR_ARCHIVO,LONGITUD>, L<C<warn>|/warn LISTA>, L<C<write>|/write IDENTIFICADOR_ARCHIVO>
 
 L<C<say>|/say IDENTIFICADOR_ARCHIVO LISTA> sólo está disponible si la característica L<C<"say">|feature/La característica 'say'> está habilitada o si está prefijada con C<CORE::>.  La característica L<C<"say">|feature/La característica 'say'> se activa automáticamente con una declaración C<use v5.10> (o superior) en el ámbito actual.
 
@@ -140,20 +140,20 @@ X<file> X<filehandle> X<directory> X<pipe> X<link> X<symlink> X<archivo> X<ident
 
 =for Pod::Functions =File
 
-L<C<-I<X>>|/-X FILEHANDLE>, L<C<chdir>|/chdir EXPR>,
-L<C<chmod>|/chmod LIST>, L<C<chown>|/chown LIST>,
-L<C<chroot>|/chroot FILENAME>,
-L<C<fcntl>|/fcntl FILEHANDLE,FUNCTION,SCALAR>, L<C<glob>|/glob EXPR>,
-L<C<ioctl>|/ioctl FILEHANDLE,FUNCTION,SCALAR>,
-L<C<link>|/link OLDFILE,NEWFILE>, L<C<lstat>|/lstat FILEHANDLE>,
-L<C<mkdir>|/mkdir FILENAME,MASK>, L<C<open>|/open FILEHANDLE,EXPR>,
-L<C<opendir>|/opendir DIRHANDLE,EXPR>, L<C<readlink>|/readlink EXPR>,
-L<C<rename>|/rename OLDNAME,NEWNAME>, L<C<rmdir>|/rmdir FILENAME>,
-L<C<select>|/select FILEHANDLE>, L<C<stat>|/stat FILEHANDLE>,
-L<C<symlink>|/symlink OLDFILE,NEWFILE>,
-L<C<sysopen>|/sysopen FILEHANDLE,FILENAME,MODE>,
-L<C<umask>|/umask EXPR>, L<C<unlink>|/unlink LIST>,
-L<C<utime>|/utime LIST>
+L<C<-I<X>>|/-X IDENTIFICADOR_ARCHIVO>, L<C<chdir>|/chdir EXPR>,
+L<C<chmod>|/chmod LISTA>, L<C<chown>|/chown LISTA>,
+L<C<chroot>|/chroot NOMBRE_ARCHIVO>,
+L<C<fcntl>|/fcntl IDENTIFICADOR_ARCHIVO,FUNCIÓN,ESCALAR>, L<C<glob>|/glob EXPR>,
+L<C<ioctl>|/ioctl IDENTIFICADOR_ARCHIVO,FUNCIÓN,ESCALAR>,
+L<C<link>|/link ARCHIVO_VIEJO,ARCHIVO_NUEVO>, L<C<lstat>|/lstat IDENTIFICADOR_ARCHIVO>,
+L<C<mkdir>|/mkdir NOMBRE_ARCHIVO,MÁSCARA>, L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR>,
+L<C<opendir>|/opendir IDENTIFICADOR_DIR,EXPR>, L<C<readlink>|/readlink EXPR>,
+L<C<rename>|/rename NOMBRE_VIEJO,NOMBRE_NUEVO>, L<C<rmdir>|/rmdir NOMBRE_DIRECTORIO>,
+L<C<select>|/select IDENTIFICADOR_ARCHIVO>, L<C<stat>|/stat IDENTIFICADOR_ARCHIVO>,
+L<C<symlink>|/symlink ARCHIVO_VIEJO,ARCHIVO_NUEVO>,
+L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO>,
+L<C<umask>|/umask EXPR>, L<C<unlink>|/unlink LISTA>,
+L<C<utime>|/utime LISTA>
 
 =item Palabras clave relativas al control de flujo de su programa Perl
 X<control flow> X<control de flujo>
@@ -161,18 +161,18 @@ X<control flow> X<control de flujo>
 =for Pod::Functions =Flow
 
 L<C<break>|/break>, L<C<caller>|/caller EXPR>,
-L<C<continue>|/continue BLOCK>, L<C<die>|/die LIST>, L<C<do>|/do BLOCK>,
-L<C<dump>|/dump LABEL>, L<C<eval>|/eval EXPR>,
+L<C<continue>|/continue BLOQUE>, L<C<die>|/die LISTA>, L<C<do>|/do BLOQUE>,
+L<C<dump>|/dump ETIQUETA>, L<C<eval>|/eval EXPR>,
 L<C<evalbytes>|/evalbytes EXPR> L<C<exit>|/exit EXPR>,
-L<C<__FILE__>|/__FILE__>, L<C<goto>|/goto LABEL>,
-L<C<last>|/last LABEL>, L<C<__LINE__>|/__LINE__>,
-L<C<next>|/next LABEL>, L<C<__PACKAGE__>|/__PACKAGE__>,
-L<C<redo>|/redo LABEL>, L<C<return>|/return EXPR>,
-L<C<sub>|/sub NAME BLOCK>, L<C<__SUB__>|/__SUB__>,
+L<C<__FILE__>|/__FILE__>, L<C<goto>|/goto ETIQUETA>,
+L<C<last>|/last ETIQUETA>, L<C<__LINE__>|/__LINE__>,
+L<C<next>|/next ETIQUETA>, L<C<__PACKAGE__>|/__PACKAGE__>,
+L<C<redo>|/redo ETIQUETA>, L<C<return>|/return EXPR>,
+L<C<sub>|/sub NOMBRE BLOQUE>, L<C<__SUB__>|/__SUB__>,
 L<C<wantarray>|/wantarray>
 
 L<C<break>|/break> sólo está disponible si se activa la característica experimental L<C<"switch">|feature/La característica 'switch'> o usando el prefijo C<CORE::>.  La característica L<C<"switch"> feature|feature/The 'switch' feature> también habilita las sentencias C<default>, C<given> y C<when>, que están documentadas en L<perlsyn/"Sentencias Switch">.
-La característica L<C<"switch"> feature|feature/The 'switch' feature> se activa automáticamente con una declaración C<use v5.10> (o superior) en el ámbito actual.  En Perl v5.14 y anteriores, L<C<continue>|/continue BLOCK> requería de la característica L<C<"switch"> feature|feature/The 'switch' feature>, al igual que las otras palabras clave.
+La característica L<C<"switch"> feature|feature/The 'switch' feature> se activa automáticamente con una declaración C<use v5.10> (o superior) en el ámbito actual.  En Perl v5.14 y anteriores, L<C<continue>|/continue BLOQUE> requería de la característica L<C<"switch"> feature|feature/The 'switch' feature>, al igual que las otras palabras clave.
 
 L<C<evalbytes>|/evalbytes EXPR> sólo está disponible con la característica L<C<"evalbytes"> feature|feature/Las características 'unicode_eval' y 'evalbytes'> (vea L<feature>) o si está prefijada con C<CORE::>.  L<C<__SUB__>|/__SUB__> sólo está disponible con la característica L<C<"current_sub">|feature/La característica 'current_sub'> o si está prefijada con C<CORE::>.  Tanto la característica L<C<"evalbytes">|feature/Las características 'unicode_eval' y 'evalbytes'> como la L<C<"current_sub">|feature/La característica 'current_sub'> se activan de forma automática con una declaración C<use v5.16> (o superior) en el ámbito actual.
 
@@ -180,19 +180,19 @@ L<C<evalbytes>|/evalbytes EXPR> sólo está disponible con la característica L<
 
 =for Pod::Functions =Namespace
 
-L<C<caller>|/caller EXPR>, L<C<import>|/import LIST>,
-L<C<local>|/local EXPR>, L<C<my>|/my VARLIST>, L<C<our>|/our VARLIST>,
-L<C<package>|/package NAMESPACE>, L<C<state>|/state VARLIST>,
-L<C<use>|/use Module VERSION LIST>
+L<C<caller>|/caller EXPR>, L<C<import>|/import LISTA>,
+L<C<local>|/local EXPR>, L<C<my>|/my LISTAVAR>, L<C<our>|/our LISTAVAR>,
+L<C<package>|/package ESPACIO_NOMBRES>, L<C<state>|/state LISTAVAR>,
+L<C<use>|/use Módulo VERSIÓN LISTA>
 
-L<C<state>|/state VARLIST> sólo está disponible si la característica L<C<"state"> feature|feature/The 'state' feature> está habilitada o si está prefijada con C<CORE::>.  La característica L<C<"state"> feature|feature/The 'state' feature> se activa automáticamente con una declaración C<use v5.10> (o superior) en el ámbito actual.
+L<C<state>|/state LISTAVAR> sólo está disponible si la característica L<C<"state"> feature|feature/The 'state' feature> está habilitada o si está prefijada con C<CORE::>.  La característica L<C<"state"> feature|feature/The 'state' feature> se activa automáticamente con una declaración C<use v5.10> (o superior) en el ámbito actual.
 
 =item Funciones varias
 
 =for Pod::Functions =Misc
 
-L<C<defined>|/defined EXPR>, L<C<formline>|/formline PICTURE,LIST>,
-L<C<lock>|/lock THING>, L<C<prototype>|/prototype FUNCTION>,
+L<C<defined>|/defined EXPR>, L<C<formline>|/formline DIBUJO,LISTA>,
+L<C<lock>|/lock COSA>, L<C<prototype>|/prototype FUNCIÓN>,
 L<C<reset>|/reset EXPR>, L<C<scalar>|/scalar EXPR>,
 L<C<undef>|/undef EXPR>
 
@@ -201,67 +201,67 @@ X<process> X<pid> X<process id> X<proceso> X<id proceso>
 
 =for Pod::Functions =Process
 
-L<C<alarm>|/alarm SECONDS>, L<C<exec>|/exec LIST>, L<C<fork>|/fork>,
+L<C<alarm>|/alarm SEGUNDOS>, L<C<exec>|/exec LISTA>, L<C<fork>|/fork>,
 L<C<getpgrp>|/getpgrp PID>, L<C<getppid>|/getppid>,
-L<C<getpriority>|/getpriority WHICH,WHO>, L<C<kill>|/kill SIGNAL, LIST>,
-L<C<pipe>|/pipe READHANDLE,WRITEHANDLE>,
-L<C<qxE<sol>E<sol>>|/qxE<sol>STRINGE<sol>>,
+L<C<getpriority>|/getpriority CUÁL,QUIÉN>, L<C<kill>|/kill SEÑAL, LISTA>,
+L<C<pipe>|/pipe IDENTIFICADOR_LECTURA,IDENTIFICADOR_ESCRITURA>,
+L<C<qxE<sol>E<sol>>|/qxE<sol>CADENAE<sol>>,
 L<C<readpipe>|/readpipe EXPR>, L<C<setpgrp>|/setpgrp PID,PGRP>,
-L<C<setpriority>|/setpriority WHICH,WHO,PRIORITY>,
-L<C<sleep>|/sleep EXPR>, L<C<system>|/system LIST>, L<C<times>|/times>,
-L<C<wait>|/wait>, L<C<waitpid>|/waitpid PID,FLAGS>
+L<C<setpriority>|/setpriority CUÁL,QUIÉN,PRIORIDAD>,
+L<C<sleep>|/sleep EXPR>, L<C<system>|/system LISTA>, L<C<times>|/times>,
+L<C<wait>|/wait>, L<C<waitpid>|/waitpid PID,INDICADORES>
 
 =item Palabras clave relativas a los módulos Perl
 X<module> X<módulo>
 
 =for Pod::Functions =Modules
 
-L<C<do>|/do EXPR>, L<C<import>|/import LIST>,
-L<C<no>|/no MODULE VERSION LIST>, L<C<package>|/package NAMESPACE>,
-L<C<require>|/require VERSION>, L<C<use>|/use Module VERSION LIST>
+L<C<do>|/do EXPR>, L<C<import>|/import LISTA>,
+L<C<no>|/no Módulo VERSIÓN LISTA>, L<C<package>|/package ESPACIO_NOMBRES>,
+L<C<require>|/require VERSIÓN>, L<C<use>|/use Módulo VERSIÓN LISTA>
 
 =item Palabras clave relativas a las clases y orientación a objetos
 X<object> X<class> X<package> X<objeto> X<clase> X<paquete>
 
 =for Pod::Functions =Objects
 
-L<C<bless>|/bless REF,CLASSNAME>, L<C<dbmclose>|/dbmclose HASH>,
-L<C<dbmopen>|/dbmopen HASH,DBNAME,MASK>,
-L<C<package>|/package NAMESPACE>, L<C<ref>|/ref EXPR>,
-L<C<tie>|/tie VARIABLE,CLASSNAME,LIST>, L<C<tied>|/tied VARIABLE>,
-L<C<untie>|/untie VARIABLE>, L<C<use>|/use Module VERSION LIST>
+L<C<bless>|/bless REF,NOMBRE_CLASE>, L<C<dbmclose>|/dbmclose HASH>,
+L<C<dbmopen>|/dbmopen HASH,NOMBRE_BASE_DATOS,MÁSCARA>,
+L<C<package>|/package ESPACIO_NOMBRES>, L<C<ref>|/ref EXPR>,
+L<C<tie>|/tie VARIABLE,NOMBRE_CLASE,LISTA>, L<C<tied>|/tied VARIABLE>,
+L<C<untie>|/untie VARIABLE>, L<C<use>|/use Módulo VERSIÓN LISTA>
 
 =item Funciones de bajo nivel de sockets
 X<socket> X<sock>
 
 =for Pod::Functions =Socket
 
-L<C<accept>|/accept NEWSOCKET,GENERICSOCKET>,
-L<C<bind>|/bind SOCKET,NAME>, L<C<connect>|/connect SOCKET,NAME>,
+L<C<accept>|/accept NUEVOSOCKET,SOCKETGENÉRICO>,
+L<C<bind>|/bind SOCKET,NOMBRE>, L<C<connect>|/connect SOCKET,NOMBRE>,
 L<C<getpeername>|/getpeername SOCKET>,
 L<C<getsockname>|/getsockname SOCKET>,
-L<C<getsockopt>|/getsockopt SOCKET,LEVEL,OPTNAME>,
-L<C<listen>|/listen SOCKET,QUEUESIZE>,
-L<C<recv>|/recv SOCKET,SCALAR,LENGTH,FLAGS>,
-L<C<send>|/send SOCKET,MSG,FLAGS,TO>,
-L<C<setsockopt>|/setsockopt SOCKET,LEVEL,OPTNAME,OPTVAL>,
-L<C<shutdown>|/shutdown SOCKET,HOW>,
-L<C<socket>|/socket SOCKET,DOMAIN,TYPE,PROTOCOL>,
-L<C<socketpair>|/socketpair SOCKET1,SOCKET2,DOMAIN,TYPE,PROTOCOL>
+L<C<getsockopt>|/getsockopt SOCKET,NIVEL,OPCIÓN>,
+L<C<listen>|/listen SOCKET,TAMAÑO_COLA>,
+L<C<recv>|/recv SOCKET,ESCALAR,LONGITUD,INDICADORES>,
+L<C<send>|/send SOCKET,MSG,INDICADORES,DESTINO>,
+L<C<setsockopt>|/setsockopt SOCKET,NIVEL,OPCIÓN_NOMBRE,OPCIÓN_VALOR>,
+L<C<shutdown>|/shutdown SOCKET,CÓMO>,
+L<C<socket>|/socket SOCKET,DOMINIO,TIPO,PROTOCOLO>,
+L<C<socketpair>|/socketpair SOCKET1,SOCKET2,DOMINIO,TIPO,PROTOCOLO>
 
 =item Funciones de comunicación interprocesos System V
 X<IPC> X<System V> X<semaphore> X<shared memory> X<memory> X<message> X<semáforo> X<memoria compartida> X<memoria> X<mensaje>
 
 =for Pod::Functions =SysV
 
-L<C<msgctl>|/msgctl ID,CMD,ARG>, L<C<msgget>|/msgget KEY,FLAGS>,
-L<C<msgrcv>|/msgrcv ID,VAR,SIZE,TYPE,FLAGS>,
-L<C<msgsnd>|/msgsnd ID,MSG,FLAGS>,
+L<C<msgctl>|/msgctl ID,CMD,ARG>, L<C<msgget>|/msgget CLAVE,INDICADORES>,
+L<C<msgrcv>|/msgrcv ID,VAR,TAMAÑO,TIPO,INDICADORES>,
+L<C<msgsnd>|/msgsnd ID,MSG,INDICADORES>,
 L<C<semctl>|/semctl ID,SEMNUM,CMD,ARG>,
-L<C<semget>|/semget KEY,NSEMS,FLAGS>, L<C<semop>|/semop KEY,OPSTRING>,
-L<C<shmctl>|/shmctl ID,CMD,ARG>, L<C<shmget>|/shmget KEY,SIZE,FLAGS>,
-L<C<shmread>|/shmread ID,VAR,POS,SIZE>,
-L<C<shmwrite>|/shmwrite ID,STRING,POS,SIZE>
+L<C<semget>|/semget CLAVE,NSEMS,INDICADORES>, L<C<semop>|/semop CLAVE,OPSTRING>,
+L<C<shmctl>|/shmctl ID,CMD,ARG>, L<C<shmget>|/shmget CLAVE,TAMAÑO,INDICADORES>,
+L<C<shmread>|/shmread ID,VAR,POSICIÓN,TAMAÑO>,
+L<C<shmwrite>|/shmwrite ID,CADENA,POSICIÓN,TAMAÑO>
 
 =item Obtener información de usuarios y grupos
 X<user> X<group> X<password> X<uid> X<gid> X<passwd> X</etc/passwd> X<usuario> X<grupo> X<contraseña>
@@ -271,8 +271,8 @@ X<user> X<group> X<password> X<uid> X<gid> X<passwd> X</etc/passwd> X<usuario> X
 L<C<endgrent>|/endgrent>, L<C<endhostent>|/endhostent>,
 L<C<endnetent>|/endnetent>, L<C<endpwent>|/endpwent>,
 L<C<getgrent>|/getgrent>, L<C<getgrgid>|/getgrgid GID>,
-L<C<getgrnam>|/getgrnam NAME>, L<C<getlogin>|/getlogin>,
-L<C<getpwent>|/getpwent>, L<C<getpwnam>|/getpwnam NAME>,
+L<C<getgrnam>|/getgrnam NOMBRE>, L<C<getlogin>|/getlogin>,
+L<C<getpwent>|/getpwent>, L<C<getpwnam>|/getpwnam NOMBRE>,
 L<C<getpwuid>|/getpwuid UID>, L<C<setgrent>|/setgrent>,
 L<C<setpwent>|/setpwent>
 
@@ -282,19 +282,19 @@ X<network> X<protocol> X<host> X<hostname> X<IP> X<address> X<service> X<red> X<
 =for Pod::Functions =Network
 
 L<C<endprotoent>|/endprotoent>, L<C<endservent>|/endservent>,
-L<C<gethostbyaddr>|/gethostbyaddr ADDR,ADDRTYPE>,
-L<C<gethostbyname>|/gethostbyname NAME>, L<C<gethostent>|/gethostent>,
-L<C<getnetbyaddr>|/getnetbyaddr ADDR,ADDRTYPE>,
-L<C<getnetbyname>|/getnetbyname NAME>, L<C<getnetent>|/getnetent>,
-L<C<getprotobyname>|/getprotobyname NAME>,
-L<C<getprotobynumber>|/getprotobynumber NUMBER>,
+L<C<gethostbyaddr>|/gethostbyaddr DIRECCIÓN,TIPODIR>,
+L<C<gethostbyname>|/gethostbyname NOMBRE>, L<C<gethostent>|/gethostent>,
+L<C<getnetbyaddr>|/getnetbyaddr DIRECCIÓN,TIPODIR>,
+L<C<getnetbyname>|/getnetbyname NOMBRE>, L<C<getnetent>|/getnetent>,
+L<C<getprotobyname>|/getprotobyname NOMBRE>,
+L<C<getprotobynumber>|/getprotobynumber NÚMERO>,
 L<C<getprotoent>|/getprotoent>,
-L<C<getservbyname>|/getservbyname NAME,PROTO>,
-L<C<getservbyport>|/getservbyport PORT,PROTO>,
-L<C<getservent>|/getservent>, L<C<sethostent>|/sethostent STAYOPEN>,
-L<C<setnetent>|/setnetent STAYOPEN>,
-L<C<setprotoent>|/setprotoent STAYOPEN>,
-L<C<setservent>|/setservent STAYOPEN>
+L<C<getservbyname>|/getservbyname NOMBRE,PROTOCOLO>,
+L<C<getservbyport>|/getservbyport PUERTO,PROTOCOLO>,
+L<C<getservent>|/getservent>, L<C<sethostent>|/sethostent SIGUEABIERTO>,
+L<C<setnetent>|/setnetent SIGUEABIERTO>,
+L<C<setprotoent>|/setprotoent SIGUEABIERTO>,
+L<C<setservent>|/setservent SIGUEABIERTO>
 
 =item Funciones relacionadas con el tiempo
 X<time> X<date>
@@ -321,58 +321,58 @@ X<portability> X<Unix> X<portable> X<portabilidad>
 
 Perl nació en Unix y por eso puede acceder a todas las llamadas normales del sistema Unix.  En entornos no Unix, la funcionalidad de algunas llamadas del sistema Unix pueden no estar disponibles, o los detalles de la funcionalidad disponible pueden diferir ligeramente.  Las funciones Perl afectadas por esto son:
 
-L<C<-I<X>>|/-X FILEHANDLE>, L<C<binmode>|/binmode FILEHANDLE, LAYER>,
-L<C<chmod>|/chmod LIST>, L<C<chown>|/chown LIST>,
-L<C<chroot>|/chroot FILENAME>, L<C<crypt>|/crypt PLAINTEXT,SALT>,
-L<C<dbmclose>|/dbmclose HASH>, L<C<dbmopen>|/dbmopen HASH,DBNAME,MASK>,
-L<C<dump>|/dump LABEL>, L<C<endgrent>|/endgrent>,
+L<C<-I<X>>|/-X IDENTIFICADOR_ARCHIVO>, L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA>,
+L<C<chmod>|/chmod LISTA>, L<C<chown>|/chown LISTA>,
+L<C<chroot>|/chroot NOMBRE_ARCHIVO>, L<C<crypt>|/crypt TEXTOPLANO,SALTO>,
+L<C<dbmclose>|/dbmclose HASH>, L<C<dbmopen>|/dbmopen HASH,NOMBRE_BASE_DATOS,MÁSCARA>,
+L<C<dump>|/dump ETIQUETA>, L<C<endgrent>|/endgrent>,
 L<C<endhostent>|/endhostent>, L<C<endnetent>|/endnetent>,
 L<C<endprotoent>|/endprotoent>, L<C<endpwent>|/endpwent>,
-L<C<endservent>|/endservent>, L<C<exec>|/exec LIST>,
-L<C<fcntl>|/fcntl FILEHANDLE,FUNCTION,SCALAR>,
-L<C<flock>|/flock FILEHANDLE,OPERATION>, L<C<fork>|/fork>,
+L<C<endservent>|/endservent>, L<C<exec>|/exec LISTA>,
+L<C<fcntl>|/fcntl IDENTIFICADOR_ARCHIVO,FUNCIÓN,ESCALAR>,
+L<C<flock>|/flock IDENTIFICADOR_ARCHIVO,OPERACIÓN>, L<C<fork>|/fork>,
 L<C<getgrent>|/getgrent>, L<C<getgrgid>|/getgrgid GID>,
-L<C<gethostbyname>|/gethostbyname NAME>, L<C<gethostent>|/gethostent>,
+L<C<gethostbyname>|/gethostbyname NOMBRE>, L<C<gethostent>|/gethostent>,
 L<C<getlogin>|/getlogin>,
-L<C<getnetbyaddr>|/getnetbyaddr ADDR,ADDRTYPE>,
-L<C<getnetbyname>|/getnetbyname NAME>, L<C<getnetent>|/getnetent>,
+L<C<getnetbyaddr>|/getnetbyaddr DIRECCIÓN,TIPODIR>,
+L<C<getnetbyname>|/getnetbyname NOMBRE>, L<C<getnetent>|/getnetent>,
 L<C<getppid>|/getppid>, L<C<getpgrp>|/getpgrp PID>,
-L<C<getpriority>|/getpriority WHICH,WHO>,
-L<C<getprotobynumber>|/getprotobynumber NUMBER>,
+L<C<getpriority>|/getpriority CUÁL,QUIÉN>,
+L<C<getprotobynumber>|/getprotobynumber NÚMERO>,
 L<C<getprotoent>|/getprotoent>, L<C<getpwent>|/getpwent>,
-L<C<getpwnam>|/getpwnam NAME>, L<C<getpwuid>|/getpwuid UID>,
-L<C<getservbyport>|/getservbyport PORT,PROTO>,
+L<C<getpwnam>|/getpwnam NOMBRE>, L<C<getpwuid>|/getpwuid UID>,
+L<C<getservbyport>|/getservbyport PUERTO,PROTOCOLO>,
 L<C<getservent>|/getservent>,
-L<C<getsockopt>|/getsockopt SOCKET,LEVEL,OPTNAME>,
-L<C<glob>|/glob EXPR>, L<C<ioctl>|/ioctl FILEHANDLE,FUNCTION,SCALAR>,
-L<C<kill>|/kill SIGNAL, LIST>, L<C<link>|/link OLDFILE,NEWFILE>,
-L<C<lstat>|/lstat FILEHANDLE>, L<C<msgctl>|/msgctl ID,CMD,ARG>,
-L<C<msgget>|/msgget KEY,FLAGS>,
-L<C<msgrcv>|/msgrcv ID,VAR,SIZE,TYPE,FLAGS>,
-L<C<msgsnd>|/msgsnd ID,MSG,FLAGS>, L<C<open>|/open FILEHANDLE,EXPR>,
-L<C<pipe>|/pipe READHANDLE,WRITEHANDLE>, L<C<readlink>|/readlink EXPR>,
-L<C<rename>|/rename OLDNAME,NEWNAME>,
-L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT>,
+L<C<getsockopt>|/getsockopt SOCKET,NIVEL,OPCIÓN>,
+L<C<glob>|/glob EXPR>, L<C<ioctl>|/ioctl IDENTIFICADOR_ARCHIVO,FUNCIÓN,ESCALAR>,
+L<C<kill>|/kill SEÑAL, LISTA>, L<C<link>|/link ARCHIVO_VIEJO,ARCHIVO_NUEVO>,
+L<C<lstat>|/lstat IDENTIFICADOR_ARCHIVO>, L<C<msgctl>|/msgctl ID,CMD,ARG>,
+L<C<msgget>|/msgget CLAVE,INDICADORES>,
+L<C<msgrcv>|/msgrcv ID,VAR,TAMAÑO,TIPO,INDICADORES>,
+L<C<msgsnd>|/msgsnd ID,MSG,INDICADORES>, L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR>,
+L<C<pipe>|/pipe IDENTIFICADOR_LECTURA,IDENTIFICADOR_ESCRITURA>, L<C<readlink>|/readlink EXPR>,
+L<C<rename>|/rename NOMBRE_VIEJO,NOMBRE_NUEVO>,
+L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA>,
 L<C<semctl>|/semctl ID,SEMNUM,CMD,ARG>,
-L<C<semget>|/semget KEY,NSEMS,FLAGS>, L<C<semop>|/semop KEY,OPSTRING>,
-L<C<setgrent>|/setgrent>, L<C<sethostent>|/sethostent STAYOPEN>,
-L<C<setnetent>|/setnetent STAYOPEN>, L<C<setpgrp>|/setpgrp PID,PGRP>,
-L<C<setpriority>|/setpriority WHICH,WHO,PRIORITY>,
-L<C<setprotoent>|/setprotoent STAYOPEN>, L<C<setpwent>|/setpwent>,
-L<C<setservent>|/setservent STAYOPEN>,
-L<C<setsockopt>|/setsockopt SOCKET,LEVEL,OPTNAME,OPTVAL>,
-L<C<shmctl>|/shmctl ID,CMD,ARG>, L<C<shmget>|/shmget KEY,SIZE,FLAGS>,
-L<C<shmread>|/shmread ID,VAR,POS,SIZE>,
-L<C<shmwrite>|/shmwrite ID,STRING,POS,SIZE>,
-L<C<socket>|/socket SOCKET,DOMAIN,TYPE,PROTOCOL>,
-L<C<socketpair>|/socketpair SOCKET1,SOCKET2,DOMAIN,TYPE,PROTOCOL>,
-L<C<stat>|/stat FILEHANDLE>, L<C<symlink>|/symlink OLDFILE,NEWFILE>,
-L<C<syscall>|/syscall NUMBER, LIST>,
-L<C<sysopen>|/sysopen FILEHANDLE,FILENAME,MODE>,
-L<C<system>|/system LIST>, L<C<times>|/times>,
-L<C<truncate>|/truncate FILEHANDLE,LENGTH>, L<C<umask>|/umask EXPR>,
-L<C<unlink>|/unlink LIST>, L<C<utime>|/utime LIST>, L<C<wait>|/wait>,
-L<C<waitpid>|/waitpid PID,FLAGS>
+L<C<semget>|/semget CLAVE,NSEMS,INDICADORES>, L<C<semop>|/semop CLAVE,OPSTRING>,
+L<C<setgrent>|/setgrent>, L<C<sethostent>|/sethostent SIGUEABIERTO>,
+L<C<setnetent>|/setnetent SIGUEABIERTO>, L<C<setpgrp>|/setpgrp PID,PGRP>,
+L<C<setpriority>|/setpriority CUÁL,QUIÉN,PRIORIDAD>,
+L<C<setprotoent>|/setprotoent SIGUEABIERTO>, L<C<setpwent>|/setpwent>,
+L<C<setservent>|/setservent SIGUEABIERTO>,
+L<C<setsockopt>|/setsockopt SOCKET,NIVEL,OPCIÓN_NOMBRE,OPCIÓN_VALOR>,
+L<C<shmctl>|/shmctl ID,CMD,ARG>, L<C<shmget>|/shmget CLAVE,TAMAÑO,INDICADORES>,
+L<C<shmread>|/shmread ID,VAR,POSICIÓN,TAMAÑO>,
+L<C<shmwrite>|/shmwrite ID,CADENA,POSICIÓN,TAMAÑO>,
+L<C<socket>|/socket SOCKET,DOMINIO,TIPO,PROTOCOLO>,
+L<C<socketpair>|/socketpair SOCKET1,SOCKET2,DOMINIO,TIPO,PROTOCOLO>,
+L<C<stat>|/stat IDENTIFICADOR_ARCHIVO>, L<C<symlink>|/symlink ARCHIVO_VIEJO,ARCHIVO_NUEVO>,
+L<C<syscall>|/syscall NÚMERO, LISTA>,
+L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO>,
+L<C<system>|/system LISTA>, L<C<times>|/times>,
+L<C<truncate>|/truncate IDENTIFICADOR_ARCHIVO,LONGITUD>, L<C<umask>|/umask EXPR>,
+L<C<unlink>|/unlink LISTA>, L<C<utime>|/utime LISTA>, L<C<wait>|/wait>,
+L<C<waitpid>|/waitpid PID,INDICADORES>
 
 Para más información sobre la portabilidad de estas funciones, ver L<perlport> y cualquier otra documentación específica de la plataforma que esté disponible.
 
@@ -448,15 +448,15 @@ Estos operadores están exentos de la regla "se parece a una función" descrita 
 
 La interpretación de los operadores de permisos de archivo C<-r>, C<-R>, C<-w>, C<-W>, C<-x> y C<-X> es por defecto basado solamente en el modo del archivo y en los uid y gid del usuario.  Puede haber otras razones por las que realmente no pueda leer, escribir o ejecutar un archivo: por ejemplo, controles de acceso a sistemas de archivos en red, ACL (listas de control de acceso), sistemas de archivos de solo lectura, y formatos irreconocibles de ejecutables.  Note que el uso de seis operadores específicos para verificar si cierta operación es posible, es usualmente una equivocación, porque puede ser el inicio de bloqueos de carrera.
 
-También note que, para el superusuario en el sistema de archivos local, los test C<-r>, C<-R>, C<-w> y C<-W> siempre devuelven 1, y C<-x> y C<-X> devuelven 1 si cualquier bit de ejecución está puesto en el modo del archivo.  Los scripts que ejecuta el superusuario pueden necesitar hacer un L<C<stat>|/stat FILEHANDLE> para determinar el modo real del archivo, o temporalmente poner su uid efectivo a otro valor.
+También note que, para el superusuario en el sistema de archivos local, los test C<-r>, C<-R>, C<-w> y C<-W> siempre devuelven 1, y C<-x> y C<-X> devuelven 1 si cualquier bit de ejecución está puesto en el modo del archivo.  Los scripts que ejecuta el superusuario pueden necesitar hacer un L<C<stat>|/stat IDENTIFICADOR_ARCHIVO> para determinar el modo real del archivo, o temporalmente poner su uid efectivo a otro valor.
 
-Si está usando ACL, hay un pragma que se llama L<C<filetest>|filetest> que puede producir resultados más precisos que los simples bits de modo de L<C<stat>|/stat FILEHANDLE>.
+Si está usando ACL, hay un pragma que se llama L<C<filetest>|filetest> que puede producir resultados más precisos que los simples bits de modo de L<C<stat>|/stat IDENTIFICADOR_ARCHIVO>.
 Cuando esté bajo C<use filetest 'access'>, las comprobaciones de archivo mencionadas antes comprobarán cuándo los permisos pueden (o no) ser concedidos usando la familia de llamadas del sistema L<access(2)>.  Note también que las pruebas C<-x> y C<-X> pueden, bajo este pragma, devolver valores verdaderos incluso si los bits de permiso de ejecución no están puestos (ni cualquier permiso ACL extra de ejecución).  Este comportamiento tan extraño es debido a las definiciones subyacentes de las llamadas del sistema.  Note también que, debido a la implementación de C<use filetest 'access'>, el identificador de archivo especial C<_> no almacenará los resultados de los test de archivo mientras este pragma esté activo.  Para más información, lea la documentación del pragma L<C<filetest>|filetest>.
 
 Las pruebas C<-T> y C<-B> funcionan como se explica a continuación.  El primer bloque o así del archivo, se examina para ver si es UTF-8 válido, por lo que incluye caracteres no ASCII.  Si lo es, es un archivo C<-T>.  Se examina el primer bloque (aprox.) del archivo, para buscar caracteres extraños como códigos de control o caracteres con el bit alto activo.  Si más de un tercio de los caracteres son extraños, es un archivo C<-B>; de lo contrario es un archivo C<-T>.
 También, cualquier archivo que contenga un byte cero en la porción examinada se considera que es un archivo binario.  (Si se ejecuta dentro del ámbito de un L<S<use locale>|perllocale>, que incluye C<LC_CTYPE>, caracteres extraños son cualquiera que no sean imprimibles ni espacios en la configuración regional actual).  Si C<-T> o C<-B> se usan con un identificador de archivo, la memoria intermedia actual de IO es examinada en vez del primer bloque.  Ambos, C<-T> y C<-B>, devuelven verdadero en un archivo vacío o en un archivo en el EOF (marca de fin de archivo) cuando se analiza un identificador de archivo.  Debido a que tiene que leer el archivo para hacer el test C<-T>, en la mayoría de las ocasiones querrá usar primero C<-f>, como en C<next unless -f $archivo && -T $archivo>.
 
-Si a cualquiera de los test de archivo (o cualquiera de los operadores L<C<stat>|/stat IDENTIFICADOR> o L<C<lstat>|/lstat IDENTIFICADOR>) se les da el identificador de archivo especial consistente en un solitario guión bajo, entonces se usa la estructura stat del archivo del test anterior (o el operador L<C<stat>|/stat IDENTIFICADOR>), ahorrando una llamada del sistema.  (Esto no funciona con C<-t>, y necesita recordar que L<C<lstat()>|/lstat IDENTIFICADOR> y C<-l> dejarán valores en la estructura stat del enlace simbólico, no del archivo real).  (También, si la memoria intermedia de stat se rellenó con una llamada L<C<lstat>|/lstat IDENTIFICADOR>, C<-T> y C<-B> se reinicializarán con los resultados de C<stat _>).
+Si a cualquiera de los test de archivo (o cualquiera de los operadores L<C<stat>|/stat IDENTIFICADOR_ARCHIVO> o L<C<lstat>|/lstat IDENTIFICADOR_ARCHIVO>) se les da el identificador de archivo especial consistente en un solitario guión bajo, entonces se usa la estructura stat del archivo del test anterior (o el operador L<C<stat>|/stat IDENTIFICADOR_ARCHIVO>), ahorrando una llamada del sistema.  (Esto no funciona con C<-t>, y necesita recordar que L<C<lstat()>|/lstat IDENTIFICADOR_ARCHIVO> y C<-l> dejarán valores en la estructura stat del enlace simbólico, no del archivo real).  (También, si la memoria intermedia de stat se rellenó con una llamada L<C<lstat>|/lstat IDENTIFICADOR_ARCHIVO>, C<-T> y C<-B> se reinicializarán con los resultados de C<stat _>).
 Ejemplo:
 
     print "Puedo hacerlo.\n" if -r $a || -w _ || -x _;
@@ -511,7 +511,7 @@ Ordena mandar una señal SIGALRM al proceso actual después de que haya pasado e
 Sólo un temporizador puede estar contando cada vez.  Cada llamada desactiva el temporizador anterior, y se puede indicar un argumento C<0> para cancelar el temporizador anterior sin empezar uno nuevo.  El valor devuelto es la cantidad de tiempo restante del temporizador anterior.
 
 Para lapsos de tiempo inferiores a un segundo, el módulo L<Time::HiRes> (en CPAN, y a partir de Perl 5.8 como parte de la distribución estándar) ofrece L<C<ualarm>|Time::HiRes/ualarm_($useconds [, $interval_useconds ] )>.
-Puede también usar la versión de L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT> de cuatro argumentos, dejando los tres primeros indefinidos, o puede usar la interfaz L<C<syscall>|/syscall NÚMERO, LISTA> para acceder a L<setitimer(2)> si su sistema lo soporta.  Vea L<perlfaq8> para más detalles.
+Puede también usar la versión de L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA> de cuatro argumentos, dejando los tres primeros indefinidos, o puede usar la interfaz L<C<syscall>|/syscall NÚMERO, LISTA> para acceder a L<setitimer(2)> si su sistema lo soporta.  Vea L<perlfaq8> para más detalles.
 
 Normalmente, es un error entremezclar llamadas a L<C<alarm>|/alarm SEGUNDOS> y L<C<sleep>|/sleep EXPR>, porque L<C<sleep>|/sleep EXPR> se puede, internamente, implementar en su sistema con L<C<alarm>|/alarm SEGUNDOS>.
 
@@ -566,7 +566,7 @@ X<binmode> X<binary> X<text> X<DOS> X<Windows> X<binario> X<texto>
 
 Ordena que el modo de lectura o escritura para el IDENTIFICADOR_ARCHIVO sea en "binario" o "texto" en sistemas donde las bibliotecas en tiempo de ejecución distingan entre archivos binarios y de texto.  Si IDENTIFICADOR_ARCHIVO es una expresión, el valor es tomado como el nombre del identificador.  Devuelve verdadero en caso de éxito; de lo contrario devuelve L<C<undef>|/undef EXPR> y establece L<C<$!>|perlvar/$!> (errno).
 
-En algunos sistemas (en general, sistemas basados en DOS y Windows) es necesario usar L<C<binmode>/binmode IDENTIFICADOR_ARCHIVO, CAPA> cuando no esté trabajando con un archivo de texto.  Para una mejor portabilidad es siempre una buena idea usarlo cuando sea apropiado, y nunca usarlo cuando no sea apropiado.  También, la gente puede establecer su E/S para que esté codificado, por defecto, en Unicode UTF-8, y no en bytes.
+En algunos sistemas (en general, sistemas basados en DOS y Windows) es necesario usar L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> cuando no esté trabajando con un archivo de texto.  Para una mejor portabilidad es siempre una buena idea usarlo cuando sea apropiado, y nunca usarlo cuando no sea apropiado.  También, la gente puede establecer su E/S para que esté codificado, por defecto, en Unicode UTF-8, y no en bytes.
 
 En otras palabras: indiferentemente de la plataforma, use L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> en datos binarios, como imágenes, por ejemplo.
 
@@ -579,12 +579,12 @@ Note que, a pesar de estar implícito en I<"Programming Perl"> (el dromedario, 3
 
 C<:bytes>, C<:crlf>, C<:utf8>, y cualquier otra directiva de la forma C<:...>, se llaman I<capas> I/O.  El I<pragma> L<open> se puede usar para establecer las capas E/S por defecto.
 
-I<El parámetro CAPA de la función L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> se describe como "DISCIPLINA" en "I<Programming Perl, 3rd Edition>".  Sin embargo, desde la publicación de ese libro, conocido por muchos como "I<Camel III>", el consenso sobre el nombre de esta funcionalidad ha cambiado desde "disciplina" a "capa".  Toda documentación desde esta versión de Perl se refiere a "capas" en vez de a "disciplinas".  Ahora volvamos a la documentación normal...>
+I<El parámetro CAPA de la función L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> se describe como "DISCIPLINA" en "I<Programming Perl, 3rd Edition>".  Sin embargo, desde la publicación de ese libro, conocido por muchos como "Camel III", el consenso sobre el nombre de esta funcionalidad ha cambiado desde "disciplina" a "capa".  Toda documentación desde esta versión de Perl se refiere a "capas" en vez de a "disciplinas".  Ahora volvamos a la documentación normal...>
 
 Para indicar IDENTIFICADOR_ARCHIVO como UTF-8, use C<:utf8> o C<:encoding(UTF-8)>.
 C<:utf8> solo marca los datos como UTF-8 sin más comprobaciones ulteriores, mientras que C<:encoding(UTF-8)> comprueba que los datos sean realmente UTF-8 válidos.  Más detalles se pueden encontrar en L<PerlIO::encoding>.
 
-En general, L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> se debe llamar después de L<C<open>|/open IDENTIFICADOR_ARCHIVO, EXPR> pero antes de que cualquier E/S se realice sobre el identificador de archivo.  Llamando a L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA>, normalmente vaciará cualquier dato pendiente que esté almacenado en la salida (y quizás datos pendientes a la entrada) del identificador de archivo.  Una excepción a esto es la capa C<:encoding> que cambia la codificación por defecto del identificador de archivo.
+En general, L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> se debe llamar después de L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> pero antes de que cualquier E/S se realice sobre el identificador de archivo.  Llamando a L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA>, normalmente vaciará cualquier dato pendiente que esté almacenado en la salida (y quizás datos pendientes a la entrada) del identificador de archivo.  Una excepción a esto es la capa C<:encoding> que cambia la codificación por defecto del identificador de archivo.
 La capa C<:encoding> algunas veces necesita ser llamada en mitad del flujo de datos y no lo vacía.  C<:encoding> también se coloca, implícitamente, por encima de la capa C<:utf8> porque Perl, internamente, opera con caracteres Unicode codificados en UTF-8.
 
 El sistema operativo, controladores de dispositivos, bibliotecas C y Perl en tiempo de ejecución conspiran al unísono para permitirle al programador tratar un simple carácter (C<\n>) como el final de línea, independientemente de su representación externa.  En muchos sistemas operativos, la representación nativa de un archivo texto coincide con su representación interna, pero en algunas plataformas la representación externa de C<\n> se realiza con más de un carácter.
@@ -593,22 +593,22 @@ Todas las variantes de Unix, Mac OS (viejo y nuevo) y los archivos Stream_LF sob
 
 Otra consecuencia de usar L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> (en algunos sistemas) es que las marcas especiales de fin-de-archivo se verán como parte del flujo de datos.  Para los sistemas de la familia Microsoft esto significa que si sus datos binarios contienen C<\cZ>, el subsistema de E/S lo considerará como el fin del archivo, a menos que use L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA>.
 
-L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> es importante no solo para las operaciones L<C<readline>|/readline EXPR> y L<C<print>|/print IDENTIFICADOR_ARCHIVO LISTA>, sino también cuando se usa L<C<read>|/read IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> y L<C<tell>|/tell IDENTIFICADOR_ARCHIVO> (vea L<perlport> para más detalles).  Consulte las variables L<C<$E<sol>>|perlvar/$E<sol>> y L<C<$\>|/perlvar/$\> en L<perlvar> para ver cómo establecer manualmente sus secuencias de fin de línea en su entrada y salida.
+L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> es importante no solo para las operaciones L<C<readline>|/readline EXPR> y L<C<print>|/print IDENTIFICADOR_ARCHIVO LISTA>, sino también cuando se usa L<C<read>|/read IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> y L<C<tell>|/tell IDENTIFICADOR_ARCHIVO> (vea L<perlport> para más detalles).  Consulte las variables L<C<$E<sol>>|perlvar/$E<sol>> y L<C<$\>|perlvar/$\> en L<perlvar> para ver cómo establecer manualmente sus secuencias de fin de línea en su entrada y salida.
 
 Cuestiones de portabilidad: L<perlport/binmode>.
 
-=item bless REF,NOMBRECLASE
+=item bless REF,NOMBRE_CLASE
 X<bless>
 
 =item bless REF
 
 =for Pod::Functions create an object
 
-Esta función dice que la cosa referenciada por REF es ahora un objeto del paquete NOMBRECLASE (I<bless> es bendición en inglés, que se podría traducir mejor por bautizar, en el sentido de 'dar un nombre' al objeto).  Si se omite NOMBRECLASE, se usa el paquete actual.  Como un L<C<bless>|/bless REF,NOMBRECLASE> a menudo es la última cosa que hace un constructor, devuelve la referencia por conveniencia.
+Esta función dice que la cosa referenciada por REF es ahora un objeto del paquete NOMBRE_CLASE (I<bless> es bendición en inglés, que se podría traducir mejor por bautizar, en el sentido de 'dar un nombre' al objeto).  Si se omite NOMBRE_CLASE, se usa el paquete actual.  Como un L<C<bless>|/bless REF,NOMBRE_CLASE> a menudo es la última cosa que hace un constructor, devuelve la referencia por conveniencia.
 Siempre use la versión de dos argumentos si una clase derivada puede heredar el método con una nueva bendición.  Vea L<perlobj> para más información sobre la bendición (y las bendiciones) de los objetos.
 
-Considerar siempre bautizar objetos de NOMBRECLASE que mezcle mayúsculas y minúsculas.
-El espacio de nombres en minúsculas se considera reservado para los I<pragmas> de Perl.  Los tipos predefinidos tienen todos sus nombres en mayúscula.  Para evitar confusiones, evite nombres de paquete también de esta manera.  Asegúrese de que NOMBRECLASE es un valor verdadero.
+Considerar siempre bautizar objetos de NOMBRE_CLASE que mezcle mayúsculas y minúsculas.
+El espacio de nombres en minúsculas se considera reservado para los I<pragmas> de Perl.  Los tipos predefinidos tienen todos sus nombres en mayúscula.  Para evitar confusiones, evite nombres de paquete también de esta manera.  Asegúrese de que NOMBRE_CLASE es un valor verdadero.
 
 Ver L<perlmod/"Módulos Perl">.
 
@@ -627,7 +627,7 @@ X<caller> X<call stack> X<stack> X<stack trace> X<llamador> X<pila de llamdas> X
 
 =for Pod::Functions get context of the current subroutine call
 
-Devuelve el contexto de la llamada a la subrutina actual.  En contexto escalar, devuelve el nombre del paquete del llamante si aquel I<es> un llamante, es decir, si estamos en una subrutina, L<C<eval>|/eval EXPR> o L<C<require>|/requiere VERSIÓN>, y el valor indefinido en otro caso.
+Devuelve el contexto de la llamada a la subrutina actual.  En contexto escalar, devuelve el nombre del paquete del llamante si aquel I<es> un llamante, es decir, si estamos en una subrutina, L<C<eval>|/eval EXPR> o L<C<require>|/require VERSIÓN>, y el valor indefinido en otro caso.
 caller nunca devuelve subrutinas XS, y son obviadas.  La próxima sub escrita en perl aparecerá en lugar de la sub XS en los valores devueltos por caller.  En contexto de lista, devuelve
 
        # 0         1         2
@@ -642,7 +642,7 @@ Con EXPR, devuelve alguna información extra que el depurador usa para imprimir 
     $wantarray, $evaltext, $is_require, $hints, $bitmask, $hinthash)
   = caller($i);
 
-Aquí, $subrutina es la función que caller llamó (en lugar de la función que contiene a caller).  Note que la $subrutina puede ser C<(eval)> si el marco de llamada no es una llamada a una subrutina, sino un L<C<eval>|/eval EXPR>.  En tal caso, se añaden los nuevos elementos $evaltext y C<$is_require>: C<$is_require> es verdadero si el marco se crea con una sentencia L<C<require>|/requiere VERSIÓN> o L<C<use>|/use Módulo VERSIÓN LISTA>; $evaltext contiene el texto de la sentencia C<eval EXPR>.
+Aquí, $subrutina es la función que caller llamó (en lugar de la función que contiene a caller).  Note que la $subrutina puede ser C<(eval)> si el marco de llamada no es una llamada a una subrutina, sino un L<C<eval>|/eval EXPR>.  En tal caso, se añaden los nuevos elementos $evaltext y C<$is_require>: C<$is_require> es verdadero si el marco se crea con una sentencia L<C<require>|/require VERSIÓN> o L<C<use>|/use Módulo VERSIÓN LISTA>; $evaltext contiene el texto de la sentencia C<eval EXPR>.
 En particular, para una sentencia C<eval BLOQUE>, $subrutina es C<(eval)>, pero $evaltext es indefinido.  (Note también que cada instrucción L<C<use>|/use Módulo VERSIÓN LISTA> crea un marco L<C<require>|/require VERSIÓN> dentro de un marco C<eval EXPR>).
 $subrutina puede ser también C<(unknown)> (desconocida) si esta subrutina en particular parece haberse borrado de la tabla de símbolos.  C<$hasargs> es verdadero si una nueva instancia de L<C<@_>|perlvar/@_> se creó para este marco.
 C<$hints> y C<$bitmask> contienen detalles para los cuales caller fue compilado.  C<$hints> corresponde a L<C<$^H>|perlvar/$^H>, y C<$bitmask> corresponde a L<C<${^WARNING_BITS}>|perlvar/${^WARNING_BITS}>.  Los valores C<$hints> y C<$bitmask> están sujetos a cambios entre versiones de Perl y no se espera que se utilicen para uso externo.
@@ -708,7 +708,7 @@ X<chomp> X<INPUT_RECORD_SEPARATOR> X<$/> X<newline> X<eol> X<nueva línea>
 
 =for Pod::Functions remove a trailing record separator from a string
 
-Esta versión segura de L<C<chop>|chop VARIABLE>, quita cualquier cadena restante que corresponda al valor actual de L<C<$E<sol>>|perlvar/$E<sol>> (también conocido como $INPUT_RECORD_SEPARATOR -separador de registros en entrada- en el módulo L<C<English>|English>).  Devuelve el número total de caracteres eliminados de todos sus argumentos.  Se utiliza a menudo para eliminar el carácter de nueva línea del final de un registro de entrada cuando es importante que el registro al final le pueda faltar ese carácter.  En modo párrafo (C<$/ = ''>), elimina todos los caracteres de nueva línea de la cadena.
+Esta versión segura de L<C<chop>|/chop VARIABLE>, quita cualquier cadena restante que corresponda al valor actual de L<C<$E<sol>>|perlvar/$E<sol>> (también conocido como $INPUT_RECORD_SEPARATOR -separador de registros en entrada- en el módulo L<C<English>|English>).  Devuelve el número total de caracteres eliminados de todos sus argumentos.  Se utiliza a menudo para eliminar el carácter de nueva línea del final de un registro de entrada cuando es importante que el registro al final le pueda faltar ese carácter.  En modo párrafo (C<$/ = ''>), elimina todos los caracteres de nueva línea de la cadena.
 En modo chupón (C<$/ = undef>) o en modo de registros de longitud fija (L<C<$E<sol>>|perlvar/$E<sol>> es una referencia a un entero o algo parecido; ver L<perlvar>), L<C<chomp>|/chomp VARIABLE> no elimina nada.
 Si se omite VARIABLE, usa L<C<$_>|perlvar/$_>.  Ejemplo:
 
@@ -809,9 +809,9 @@ X<chroot> X<root>
 
 =for Pod::Functions make directory new root for path lookups
 
-Esta funcion trabaja como la llamada del sistema del mismo nombre: hace que el directorio indicado sea el directorio raíz de los siguientes caminos que comiencen por un C</> en su proceso y todos sus hijos.  (No cambia su actual directorio de trabajo actual, que no queda afectado).  Por razones de seguridad, esta llamada está reservada al superusuario.  Si se omite ARCHIVO, hace un L<C<chroot>|/chroot ARCHIVO> a L<C<$_>|perlvar/$_>.
+Esta funcion trabaja como la llamada del sistema del mismo nombre: hace que el directorio indicado sea el directorio raíz de los siguientes caminos que comiencen por un C</> en su proceso y todos sus hijos.  (No cambia su actual directorio de trabajo actual, que no queda afectado).  Por razones de seguridad, esta llamada está reservada al superusuario.  Si se omite ARCHIVO, hace un L<C<chroot>|/chroot NOMBRE_ARCHIVO> a L<C<$_>|perlvar/$_>.
 
-B<NOTA:> Es una buena práctica de seguridad hacer C<chdir("/")> (L<C<chdir>|/chdir EXPR> a la raíz del directorio) inmediatamente después de un L<C<chroot>|/chroot ARCHIVO>.
+B<NOTA:> Es una buena práctica de seguridad hacer C<chdir("/")> (L<C<chdir>|/chdir EXPR> a la raíz del directorio) inmediatamente después de un L<C<chroot>|/chroot NOMBRE_ARCHIVO>.
 
 Cuestiones de portabilidad: L<perlport/chroot>.
 
@@ -824,7 +824,7 @@ X<close>
 
 Cierra el archivo o tubería asociada con el identificador de archivo, limpiando los búfer de E/S, y cierra el descriptor del archivo en el sistema.  Devuelve verdadero si las operaciones han tenido éxito y si ningún error fue reportado por alguna capa PerlIO.  Cierra el identificador de archivo actualmente seleccionado si se omite el argumento.
 
-No tiene por qué cerrar el IDENTIFICADOR_ARCHIVO si inmediatamente va a hacer otro L<C<open>|/open IDENTIFICADOR_ARCHIVO, EXPR> sobre él mismo, porque L<C<open>|/open IDENTIFICADOR_ARCHIVO, EXPR> lo cierra por usted.  (Vea L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR>). Sin embargo, un L<C<close>|/close IDENTIFICADOR_ARCHIVO> explícito en un archivo de entrada reinicia el contador de líneas (L<C<$.>|perlvar/$.>), mientras que un cierre implícito hecho por L<C<open>|/open IDENTIFICADOR_ARCHIVO>, no.
+No tiene por qué cerrar el IDENTIFICADOR_ARCHIVO si inmediatamente va a hacer otro L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> sobre él mismo, porque L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> lo cierra por usted.  (Vea L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR>). Sin embargo, un L<C<close>|/close IDENTIFICADOR_ARCHIVO> explícito en un archivo de entrada reinicia el contador de líneas (L<C<$.>|perlvar/$.>), mientras que un cierre implícito hecho por L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR>, no.
 
 Si el identificador de archivo proviene de una tubería abierta, L<C<close>|/close IDENTIFICADOR_ARCHIVO> adicionalmente devolverá falso si alguna de las otras llamadas del sistema implicadas falla, o si el programa termina con un valor de estado distinto de cero.  Si el único problema fue que el programa salió con un valor distinto de cero, L<C<$!>|perlvar/$!> se establecerá a C<0>.
 El proceso de cierre de una tubería también espera por el proceso de ejecución en la tubería antes de salir -en caso de que desee ver después la salida de la tubería- e, implícitamente, pone el valor de estado de salida de ese comando en L<C<$?>|perlvar/$?> y en L<C<${^CHILD_ERROR_NATIVE}>|perlvar/${^CHILD_ERROR_NATIVE}>.
@@ -851,7 +851,7 @@ X<closedir>
 
 =for Pod::Functions close directory handle
 
-Cierra un directorio abierto por L<C<opendir>|opendir IDENTIFICADOR_DIR,EXPR> y devuelve el éxito de la llamada del sistema.
+Cierra un directorio abierto por L<C<opendir>|/opendir IDENTIFICADOR_DIR,EXPR> y devuelve el éxito de la llamada del sistema.
 
 =item connect SOCKET,NOMBRE
 X<connect>
@@ -953,14 +953,14 @@ Rompe la ligadura entre un archivo DBM y un hash.
 
 Cuestiones de portabilidad: L<perlport/dbmclose>.
 
-=item dbmopen HASH,DBNAME,MÁSCARA
+=item dbmopen HASH,NOMBRE_BASE_DATOS,MÁSCARA
 X<dbmopen> X<dbm> X<ndbm> X<sdbm> X<gdbm>
 
 =for Pod::Functions create binding on a tied dbm file
 
-[Esta función ha sido largamente supeditada por la función L<C<tie>|/tie VARIABLE,CLASE,LISTA>].
+[Esta función se ha superado de largo por la función L<C<tie>|/tie VARIABLE,NOMBRE_CLASE,LISTA>].
 
-Liga un archivo L<dbm(3)>, L<ndbm(3)>, L<sdbm(3)>, L<gdbm(3)> o Berkeley DB a un hash.  HASH es el nombre del hash.  (A diferencia de un L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> normal, el primer argumento I<no> es un identificador de archivo, aunque lo parezca).  NOMBREDB es el nombre de la base de datos (sin la extensión F<.dir> o F<.pag> si las tuviera).  Si la base de datos no existe, se crea con la protección especificada por MÁSCARA (y modificada por L<C<umask>|/umask EXPR>).  Para evitar la creación de la base de datos en caso de que no existiera, es posible especificar MODO 0, y la función devolverá un valor falso si no puede encontrar una base de datos existente.  Si su sistema sólo soporta las viejas funciones DBM, sólo puede realizar una llamada L<C<dbmopen>|/dbmopen HASH,DBNAME,MÁSCARA> en su programa.  En las versiones anteriores de Perl, si su sistema no tiene ni DBM ni ndbm, llamar a L<C<dbmopen>|/dbmopen HASH,DBNAME,MÁSCARA> produce un error fatal; ahora lo reintentará con L<sdbm(3)>.
+Liga un archivo L<dbm(3)>, L<ndbm(3)>, L<sdbm(3)>, L<gdbm(3)> o Berkeley DB a un hash.  HASH es el nombre del hash.  (A diferencia de un L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> normal, el primer argumento I<no> es un identificador de archivo, aunque lo parezca).  NOMBREDB es el nombre de la base de datos (sin la extensión F<.dir> o F<.pag> si las tuviera).  Si la base de datos no existe, se crea con la protección especificada por MÁSCARA (y modificada por L<C<umask>|/umask EXPR>).  Para evitar la creación de la base de datos en caso de que no existiera, es posible especificar MODO 0, y la función devolverá un valor falso si no puede encontrar una base de datos existente.  Si su sistema sólo soporta las viejas funciones DBM, sólo puede realizar una llamada L<C<dbmopen>|/dbmopen HASH,NOMBRE_BASE_DATOS,MÁSCARA> en su programa.  En las versiones anteriores de Perl, si su sistema no tiene ni DBM ni ndbm, llamar a L<C<dbmopen>|/dbmopen HASH,NOMBRE_BASE_DATOS,MÁSCARA> produce un error fatal; ahora lo reintentará con L<sdbm(3)>.
 
 Si no tiene permiso de escritura al archivo DBM, sólo podrá leer las variables hash, pero no asignarlas.  Si quiere comprobar si puede escribir, use pruebas de archivo o intente asignar una entrada hash ficticia dentro de un L<C<eval>|/eval EXPR> para atrapar el error.
 
@@ -975,7 +975,7 @@ Note que las funciones como L<C<keys>|/keys HASH> y L<C<values>|/values HASH> pu
 
 Ver también L<AnyDBM_File> para una descripción más general de los pros y contras de las distintas formas dbm, así como L<DB_File> para ver una implementación particularmente rica.
 
-Puede controlar qué biblioteca DBM usará cargando la biblioteca antes de llamar a L<C<dbmopen>|/dbmopen HASH,DBNAME,MÁSCARA>:
+Puede controlar qué biblioteca DBM usará cargando la biblioteca antes de llamar a L<C<dbmopen>|/dbmopen HASH,NOMBRE_BASE_DATOS,MÁSCARA>:
 
     use DB_File;
     dbmopen(%NS_Hist, "$ENV{HOME}/.netscape/history.db")
@@ -994,9 +994,9 @@ Devuelve un valor booleano indicando si EXPR tiene un valor que no sea el valor 
 
 Muchas operaciones devuelven L<C<undef>|/undef EXPR> para indicar un error, fin de archivo, error del sistema, variable no inicializada u otras condiciones excepcionales.  Esta función le permite distinguir L<C<undef>|/undef EXPR> de otros valores.  (Un simple test booleano no distinguirá entre L<C<undef>|/undef EXPR>, cero, la cadena vacía y C<"0">, que son todos iguales a falso).  Note que como L<C<undef>|/undef EXPR> es un escalar válido, su presencia no indica I<necesariamente> una condición excepcional: L<C<pop>|/pop ARRAY> devuelve L<C<undef>|/undef EXPR> cuando su argumento es un array vacío, I<o> cuando el elemento a devolver sea un L<C<undef>|/undef EXPR>.
 
-Puede usar también C<defined(&func)> para comprobar si la subrutina C<func> se ha definido.  No se afecta el valor devuelto debido a ninguna declaración posterior de C<func>.  Una subrutina que no ha sido definida puede ser ejecutada: su paquete puede tener un método C<AUTOLOAD> que la hace aparecer la primera vez que es llamada; ver L<perlsub>.
+Puede usar también C<defined(&func)> para comprobar si la subrutina C<func> se ha definido.  No se afecta el valor devuelto debido a ninguna declaración posterior de C<func>.  Una subrutina que no se ha definido puede aún así ejecutarse: su paquete puede tener un método C<AUTOLOAD> que la hace aparecer la primera vez que es llamada; ver L<perlsub>.
 
-Se desaconseja el uso de L<C<defined>|/defined EXPR> sobre datos agregados (hashes y arrays).  Se usó para informar si la memoria para los datos agregados había sido reservada.  Este comportamiento puede desaparecer en futuras versiones de Perl.
+Se desaconseja el uso de L<C<defined>|/defined EXPR> sobre datos agregados (hashes y arrays).  Se usó para informar si la memoria para los datos agregados se había reservado.  Este comportamiento puede desaparecer en futuras versiones de Perl.
 Utilize en su lugar una comprobación de tamaño:
 
     if (@un_array) { print "tiene elementos array\n"  }
@@ -1082,7 +1082,7 @@ X<die> X<throw> X<exception> X<raise> X<$@> X<abort> X<excepción> X<levantar> X
 
 =for Pod::Functions raise an exception or bail out
 
-L<C<die>|/die LIST> lanza una excepción.  Dentro de un L<C<eval>|/eval EXPR>, el mensaje de error se coloca en L<C<$@>|perlvar/$@> y el L<C<eval>|/eval EXPR> termina con el valor I<undef> (indefinido).  Si la excepción está fuera de un L<C<eval>|/eval EXPR>, entonces la excepción no capturada imprime LISTA al C<STDERR> y sale con un valor no nulo.  Si necesita terminar el proceso con un valor de salida específico, vea L<C<exit>|/exit EXPR>.
+L<C<die>|/die LISTA> lanza una excepción.  Dentro de un L<C<eval>|/eval EXPR>, el mensaje de error se coloca en L<C<$@>|perlvar/$@> y el L<C<eval>|/eval EXPR> termina con el valor I<undef> (indefinido).  Si la excepción está fuera de un L<C<eval>|/eval EXPR>, entonces la excepción no capturada imprime LISTA al C<STDERR> y sale con un valor no nulo.  Si necesita terminar el proceso con un valor de salida específico, vea L<C<exit>|/exit EXPR>.
 
 Ejemplos equivalentes:
 
@@ -1119,9 +1119,9 @@ Si se produce una excepción no detectada en la salida del intérprete, el códi
 
 Cuando se llega a L<C<exit>|/exit EXPR>, se establece L<C<$?>|perlvar/$?> antes de que se desmantele la pila de llamadas; cualquier gestor C<DESTROY> o C<END> puede entonces alterar este valor, y así, el código de salida de Perl.
 
-La intención es comprimir la mayor información posible sobre la causa probable en el limitado espacio del código de salida del sistema.  Sin embargo, como L<C<$!>|perlvar/$!> es el valor de C de C<errno>, que se puede establecer por cualquier llamada al sistema, esto significa que el valor del código de salida utilizada por C<die> puede no ser predecible, por lo que no debe confiarse en él, aparte de cuando sea distinto de cero.
+La intención es comprimir la mayor información posible sobre la causa probable en el limitado espacio del código de salida del sistema.  Sin embargo, como L<C<$!>|perlvar/$!> es el valor de C de C<errno>, que se puede establecer por cualquier llamada al sistema, esto significa que el valor del código de salida utilizada por L<C<die>|/die LISTA> puede no ser predecible, por lo que no debe confiarse en él, aparte de cuando sea distinto de cero.
 
-También puede llamar a L<C<die>|/die LIST> con una referencia como argumento, y si éste queda atrapado en un L<C<eval>|/eval EXPR>, L<C<$@>|perlvar/$@> contiene esa referencia.  Esto permite un manejo de las excepciones más elaborado que usando objetos que mantengan un estado arbitrario sobre la naturaleza de la excepción.  Tal esquema es algunas veces preferible a emparejar ciertas cadenas de valores de L<C<$@>|perlvar/$@> usando expresiones regulares.  Dado que L<C<$@>|perlvar/$@> es una variable global y L<C<eval>|/eval EXPR> se puede usar dentro de las implementaciones de objetos, tenga el cuidado que al analizar el objeto error no sustituya la referencia en la variable global.  Es más fácil hacer una copia local de la referencia antes de cualquier manipulación.
+También puede llamar a L<C<die>|/die LISTA> con una referencia como argumento, y si éste queda atrapado en un L<C<eval>|/eval EXPR>, L<C<$@>|perlvar/$@> contiene esa referencia.  Esto permite un manejo de las excepciones más elaborado que usando objetos que mantengan un estado arbitrario sobre la naturaleza de la excepción.  Tal esquema es algunas veces preferible a emparejar ciertas cadenas de valores de L<C<$@>|perlvar/$@> usando expresiones regulares.  Dado que L<C<$@>|perlvar/$@> es una variable global y L<C<eval>|/eval EXPR> se puede usar dentro de las implementaciones de objetos, tenga el cuidado que al analizar el objeto error no sustituya la referencia en la variable global.  Es más fácil hacer una copia local de la referencia antes de cualquier manipulación.
 Aquí hay un ejemplo:
 
     use Scalar::Util "blessed";
@@ -1139,13 +1139,13 @@ Aquí hay un ejemplo:
 
 Como Perl convertirá en cadena de caracteres los mensajes de excepción no capturados antes de mostrarlos, quizás quiera sobrecargar las operaciones de conversión a cadena en objetos de excepción.  Ver L<overload> para los detalles sobre esto.
 
-Puede disponer que una retrollamada se ejecute antes de que L<C<die>|/die LIST> haga sus funciones, actualizando el enganche L<C<$SIG{__DIE__}>|perlvar/%SIG>.  El identificador de archivo asociado es llamado con el texto del error y puede cambiar el mensaje de error, si le parece, llamando de nuevo a L<C<die>|/die LISTA>.  Ver L<perlvar/%SIG> para los detalles sobre cómo colocar entradas L<C<%SIG>|perlvar/%SIG> y L<C<eval>|/eval EXPR> para algunos ejemplos.  Aunque esta característica está preparada para ser ejecutada sólo antes de que el programa termine, así no es cómo se hace ahora: el enganche L<C<$SIG{__DIE__}>|perlvar/%SIG>, ¡se llama incluso desde dentro de cadenas y bloques L<C<eval>|/eval EXPR>uados!  Si uno quiere que el enganche no haga nada en estas situaciones, ponga
+Puede disponer que una retrollamada se ejecute antes de que L<C<die>|/die LISTA> haga sus funciones, actualizando el enganche L<C<$SIG{__DIE__}>|perlvar/%SIG>.  El identificador de archivo asociado es llamado con el texto del error y puede cambiar el mensaje de error, si le parece, llamando de nuevo a L<C<die>|/die LISTA>.  Ver L<perlvar/%SIG> para los detalles sobre cómo colocar entradas L<C<%SIG>|perlvar/%SIG> y L<C<eval>|/eval EXPR> para algunos ejemplos.  Aunque esta característica está preparada para ser ejecutada sólo antes de que el programa termine, así no es cómo se hace ahora: el enganche L<C<$SIG{__DIE__}>|perlvar/%SIG>, ¡se llama incluso desde dentro de cadenas y bloques L<C<eval>|/eval EXPR>uados!  Si uno quiere que el enganche no haga nada en estas situaciones, ponga
 
     die @_ if $^S;
 
 como primera línea del controlador (ver L<perlvar/$^S>).  Debido a que provoca una acción extraña a gran distancia, este comportamiento no intuitivo se puede arreglar en una distribución futura.
 
-Ver también L<C<exit>|/exit EXPR>, L<C<warn>|/warn LIST> y el módulo L<Carp>.
+Ver también L<C<exit>|/exit EXPR>, L<C<warn>|/warn LISTA> y el módulo L<Carp>.
 
 =item do BLOQUE
 X<do> X<block> X<bloque>
@@ -1154,7 +1154,7 @@ X<do> X<block> X<bloque>
 
 No es realmente una función.  Devuelve el valor del último comando en la secuencia de comandos indicada por BLOQUE.  Cuando se encuentra acompañado por los modificadores de bucle C<while> o C<until>, ejecuta el BLOQUE una vez antes de comprobar la condición del bucle.  (En otras instrucciones los modificadores de bucle comprueban primero la condición).
 
-C<do BLOQUE> I<no> cuenta como un bucle, así que las instrucciones de control de bucle L<C<next>|/next LABEL>, L<C<last>|/last LABEL>, o L<C<redo>|/redo LABEL> no se pueden usar para dejar o reiniciar el bloque.
+C<do BLOQUE> I<no> cuenta como un bucle, así que las instrucciones de control de bucle L<C<next>|/next ETIQUETA>, L<C<last>|/last ETIQUETA>, o L<C<redo>|/redo ETIQUETA> no se pueden usar para dejar o reiniciar el bloque.
 Ver L<perlsyn> para estrategias alternativas.
 
 =item do EXPR
@@ -1172,7 +1172,7 @@ excepto que es más conciso, no ejecuta procesos externos, mantiene el seguimien
 
 Si L<C<do>|/do EXPR> puede leer el archivo pero no puede compilarlo, devuelve L<C<undef>|/undef EXPR> y pone un mensaje de error en L<C<$@>|perlvar/$@>.  Si L<C<do>|/do EXPR> no puede leer el archivo, devuelve undef y pone L<C<$!>|perlvar/$!> al valor del error.  Siempre revise L<C<$@>|perlvar/$@> en primer lugar, la compilación puede fallar de una manera que también se establezca L<C<$!>|perlvar/$!>.  Si el archivo se compila bien, L<C<do>|/do EXPR> devuelve el valor de la última expresión evaluada.
 
-La inclusión de bibliotecas de módulos es mejor hacerla con los operadores L<C<use>|/use Module VERSION LIST> y L<C<require>|/require VERSION>, que también hacen una comprobación automática de errores y generan una excepción si existe algún problema.
+La inclusión de bibliotecas de módulos es mejor hacerla con los operadores L<C<use>|/use Módulo VERSIÓN LISTA> y L<C<require>|/require VERSIÓN>, que también hacen una comprobación automática de errores y generan una excepción si existe algún problema.
 
 Puede usar L<C<do>|/do EXPR> para leer en un programa un archivo de configuración.  Comprobación manual de errores se puede hacer así:
 
@@ -1197,7 +1197,7 @@ X<dump> X<core> X<undump> X<volcado> X<núcleo>
 =for Pod::Functions create an immediate core dump
 
 Esta función provoca un volcado inmediato del núcleo de ejecución.  Ver también la opción de línea de comando B<-u> en L<perlrun>, que hace lo mismo.
-Principalmente esto se utiliza en conjunción con el programa B<undump> (no suministrado) para convertir tu volcado del núcleo en un binario ejecutable después de haber inicializado todas las variables al comienzo del programa.  Cuando se ejecuta el nuevo binario, comenzará ejecutando un C<goto ETIQUETA> (con todas las restricciones que L<C<goto>|/goto LABEL> padece).
+Principalmente esto se utiliza en conjunción con el programa B<undump> (no suministrado) para convertir tu volcado del núcleo en un binario ejecutable después de haber inicializado todas las variables al comienzo del programa.  Cuando se ejecuta el nuevo binario, comenzará ejecutando un C<goto ETIQUETA> (con todas las restricciones que L<C<goto>|/goto ETIQUETA> padece).
 Piense en él como un goto entre un volcado del núcleo y una reencarnación.
 Si se omite C<ETIQUETA>, reinicia el programa desde el principio.  La forma C<dump EXPR>, disponible a partir de Perl 5.18.0, permite que un nombre sea computado en tiempo de ejecución o, de lo contrario, es idéntico a C<dump LABEL>.
 
@@ -1250,7 +1250,7 @@ Para no confundir a los posibles usuarios de su código, que ejecuten versiones 
     use 5.012;  # así keys/values/each trabajan sobre arrays
     use 5.018;  # para que each actualice $_ en un test de un while
 
-Vea también L<C<keys>|/keys HASH>, L<C<values>|/values HASH> y L<C<sort>|/sort SUBRUTINA LISTA>.
+Vea también L<C<keys>|/keys HASH>, L<C<values>|/values HASH> y L<C<sort>|/sort NOMBRE_SUB LISTA>.
 
 =item eof IDENTIFICADOR_ARCHIVO
 X<eof> X<end of file> X<end-of-file> X<fin de archivo>
@@ -1312,7 +1312,7 @@ En ambas formas, el valor devuelto es el valor de la última expresión evaluada
 
 Si hay algún error de sintaxis o en tiempo de ejecución, o se ejecuta una instrucción L<C<die>|/die LISTA>, L<C<eval>|/eval EXPR> devuelve L<C<undef>|/undef EXPR> en contexto escalar o una lista vacía en contexto lista, y L<C<$@>|perlvar/$@> se inicializa al mensaje de error.  (Antes de 5,16, un error causaba que C<undef> era devuelto en contexto de lista para errores de sintaxis, pero no para errores en tiempo de ejecución). Si no hay errores, se garantiza que L<C<$@>|perlvar/$@> será una cadena vacía.  Un operador de control de flujo como L<C<last>|/last ETIQUETA> o L<C<goto>|/goto ETIQUETA> puede pasar por alto el valor de L<C<$@>|perlvar/$@>.  Tenga cuidado porque usar L<C<eval>|/eval EXPR> ni silencia a Perl a la hora de imprimir avisos al STDERR, ni rellena el texto de los mensajes de aviso dentro de L<C<$@>|perlvar/$@>.  Para hacer cualquiera de estas dos cosas debe usar L<C<$SIG{__WARN__}>|perlvar/%SIG>, o desactivar los avisos dentro del BLOQUE o EXPR usando S<C<no warnings 'all'>>.  Vea L<C<warn>|/warn LISTA>, L<perlvar>, y L<warnings>.
 
-Note que, como L<C<eval>|/eval EXPR> atrapa errores considerados fatales, es útil para determinar cuándo una característica en particular (como L<C<socket>|/socket SOCKET,DOMINIO,TIPO,PROTOCOLO> o L<C<symlink>|/symlink VIEJO_ARCHIVO,NUEVO_ARCHIVO>) está implementada.  También es el mecanismo de captura de excepciones de Perl, donde el operador L<C<die>|/die LISTA> se usa para levantar excepciones.
+Note que, como L<C<eval>|/eval EXPR> atrapa errores considerados fatales, es útil para determinar cuándo una característica en particular (como L<C<socket>|/socket SOCKET,DOMINIO,TIPO,PROTOCOLO> o L<C<symlink>|/symlink ARCHIVO_VIEJO,ARCHIVO_NUEVO>) está implementada.  También es el mecanismo de captura de excepciones de Perl, donde el operador L<C<die>|/die LISTA> se usa para levantar excepciones.
 
 Si desea capturar los errores cuando se carga un módulo XS, algunos problemas con la interfaz binaria (como el sesgo de versión de Perl) puede ser fatal, incluso con L<C<eval>|/eval EXPR> a menos que esté establecido C<$ENV{PERL_DL_NONLAZY}>.  Vea L<perlrun>.
 
@@ -1377,7 +1377,7 @@ Antes de Perl 5.14, la asignación a L<C<$@>|perlvar/$@> ocurría antes de la re
        die $e if defined $e
     }
 
-C<eval BLOQUE> I<no> cuenta como un bucle, así que las instrucciones de control de bucle L<C<next>|/next LABEL>, L<C<last>|/last LABEL>, o L<C<redo>|/redo LABEL> no se pueden usar para dejar o reiniciar el bloque.
+C<eval BLOQUE> I<no> cuenta como un bucle, así que las instrucciones de control de bucle L<C<next>|/next ETIQUETA>, L<C<last>|/last ETIQUETA>, o L<C<redo>|/redo ETIQUETA> no se pueden usar para dejar o reiniciar el bloque.
 
 Un C<eval ''> ejecutado dentro de una subrutina definida en el paquete C<DB> no ve el usual ámbito léxico circundante, sino más bien el ámbito de la primera parte del código no-DB que le llamó.  No necesita preocuparse de esto a menos que esté escribiendo un depurador Perl.
 
@@ -1401,12 +1401,12 @@ X<exec> X<execute> X<ejecutar>
 
 La función L<C<exec>|/exec LISTA> ejecuta un comando del sistema I<y nunca regresa>; use L<C<system>|/system LISTA> en lugar de L<C<exec>|/exec LISTA> si quiere que regrese.  Fallará y devolverá falso sólo si el comando no existe I<y> se ejecuta directamente en lugar de hacerlo con el shell de comandos del sistema (ver abajo).
 
-Como es un error normal usar L<C<exec>|/exec LISTA> en lugar de L<C<system>|/system LISTA>, Perl le avisará si se llama a L<C<exec>|/exec LISTA> en contexto vacío, y si hay alguna instrucción a continuación que no sea L<C<die>|/die LISTA> o L<C<warn>|/warn LISTA> o L<C<exit>|/exit EXPR> (si L<warnings> está activado -pero usted, siempre lo tiene así, ¿verdad?-).  Si I<verdaderamente> quiere continuar un L<C<exec>|/exec LISTA> con otra instrucción, puede usar algunas de estas formas para evitar el aviso:
+Como es un error frecuente usar L<C<exec>|/exec LISTA> en lugar de L<C<system>|/system LISTA>, Perl le avisará si se llama a L<C<exec>|/exec LISTA> en contexto vacío, y si hay alguna instrucción a continuación que no sea L<C<die>|/die LISTA> o L<C<warn>|/warn LISTA> o L<C<exit>|/exit EXPR> (si L<warnings> está activado -pero usted, siempre lo tiene así, ¿verdad?-).  Si I<verdaderamente> quiere continuar un L<C<exec>|/exec LISTA> con otra instrucción, puede usar algunas de estas formas para evitar el aviso:
 
     exec ('foo')   or print STDERR "no puedo exec foo: $!";
     { exec ('foo') }; print STDERR "no puedo exec foo: $!";
 
-Si hay más de un argumento en LISTA, se llama a L<execvp(3)> con los argumentos de LISTA.  Si sólo hay un elemento en la LISTA, se comprueba si el argumento tiene metacaracteres shell, y si lo hay, el argumento entero es pasado al shell de comandos para que sea interpretado (suele ser C</bin/sh -c> en plataformas Unix, pero varía en otras).  Si no hay metacaracteres shell en el argumento, se divide en palabras y pasadas directamente a C<execvp>, que es más eficiente.  Ejemplos:
+Si hay más de un argumento en LISTA, se llama a L<execvp(3)> con los argumentos de LISTA.  Si sólo hay un elemento en la LISTA, se comprueba si el argumento tiene metacaracteres shell, y si lo hay, el argumento entero es pasado al shell de comandos para que interpretarse (suele ser C</bin/sh -c> en plataformas Unix, pero varía en otras).  Si no hay metacaracteres shell en el argumento, se divide en palabras y pasadas directamente a C<execvp>, que es más eficiente.  Ejemplos:
 
     exec '/bin/echo', 'Tus argumentos son: ', @ARGV;
     exec "sort $salida | uniq";
@@ -1437,7 +1437,7 @@ En Windows, solo la sintaxis de objetos indirecto en C<exec PROGRAMA LISTA> evit
 Perl intenta vaciar todos los archivos abiertos para salida antes de ejecutar exec, pero esto puede no estar soportado en algunas plataformas (vea L<perlport>).
 Para estar seguros, puede necesitar establecer L<C<$E<verbar>>|perlvar/$E<verbar>> ($AUTOFLUSH en el módulo L<English>) o llamar el método C<autoflush> de L<C<IO::Handle>|IO::Handle/METHODS> en cualquiera de los identificadores de archivo abiertos para evitar la pérdida de datos en la salida.
 
-Note que L<C<exec>|/exec LIST> no llamará a sus bloques C<END>, ni llamará a ningún método C<DESTROY> de sus objetos.
+Note que L<C<exec>|/exec LISTA> no llamará a sus bloques C<END>, ni llamará a ningún método C<DESTROY> de sus objetos.
 
 Cuestiones de portabilidad: L<perlport/exec>.
 
@@ -1446,7 +1446,7 @@ X<exists> X<autovivification> X<autovivificación>
 
 =for Pod::Functions test whether a hash key is present
 
-Dada una expresión que especifica un elemento de un hash, devuelve verdadero si el elemento especificado en el hash ha sido inicializado, incluso si el correspondiente valor está indefinido.
+Dada una expresión que especifica un elemento de un hash, devuelve verdadero si el elemento especificado en el hash se ha inicializado, incluso si el correspondiente valor está indefinido.
 
     print "Existe\n"    if exists  $hash{$clave};
     print "Definido\n"  if defined $hash{$clave};
@@ -1607,7 +1607,7 @@ X<fileno>
 
 Devuelve el descriptor de archivo para un identificador de archivo, o indefinido si el identificador de archivo no está abierto.  Si no hay un descriptor de archivo real a nivel del sistema operativo, como puede suceder con identificadores de archivo relacionados con objetos de memoria a través de L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> con una referencia para el tercer argumento, se devuelve -1.
 
-Esto es principalmente útil para construir bitmaps para L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT> y operaciones POSIX de bajo nivel sobre tty.
+Esto es principalmente útil para construir bitmaps para L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA> y operaciones POSIX de bajo nivel sobre tty.
 Si el IDENTIFICADOR_ARCHIVO es una expresión, el valor se toma como un identificador de archivo indirecto, generalmente su nombre.
 
 Puede usar esto para encontrar cuándo dos identificadores de archivos se refieren al mismo descriptor subyacente:
@@ -1638,7 +1638,7 @@ OPERACIÓN es una de LOCK_SH, LOCK_EX, o LOCK_UN, posiblemente combinado con LOC
 
 Para evitar la posibilidad de descoordinación, Perl ahora vacía el IDENTIFICADOR_ARCHIVO antes de bloquearlo o desbloquearlo.
 
-Note que la emulación integrada con L<lockf(3)> no provee de bloqueos compartidos y requiere que el IDENTIFICADOR_ARCHIVO sea abierto con intención de escribir en él.  Estas son las semánticas que L<lockf(3)> implementa.  La mayor parte si no todos los sistemas implementan L<lockf(3)> en términos de bloqueo con L<fcntl(2)>, aunque, las diferencias en la semántica no debería sorprender a muchas personas.
+Note que la emulación integrada con L<lockf(3)> no provee de bloqueos compartidos y requiere que el IDENTIFICADOR_ARCHIVO se abra con intención de escribir en él.  Estas son las semánticas que L<lockf(3)> implementa.  La mayor parte si no todos los sistemas implementan L<lockf(3)> en términos de bloqueo con L<fcntl(2)>, aunque, las diferencias en la semántica no debería sorprender a muchas personas.
 
 Note que la emulación de L<fcntl(2)> de L<flock(3)> requiere que IDENTIFICADOR_ARCHIVO sea abierto con intención de leer para usar LOCK_SH y requiere ser abierto con intención de escribir para usar LOCK_EX.
 
@@ -1713,16 +1713,16 @@ Declara una imagen del formato para usar con la función L<C<write>|/write IDENT
 
 Ver L<perlform> para más detalles y ejemplos.
 
-=item formline CUADRO,LISTA
+=item formline DIBUJO,LISTA
 X<formline>
 
 =for Pod::Functions internal function used for formats
 
 Esta es una función interna usada por L<C<format>|/format>, aunque usted también puede llamarla.  Formatea (vea L<perlform>) una lista de valores de acuerdo a los contenidos de CUADRO, colocando la salida en el acumulador de salida de format, L<C<$^A>|perlvar/$^A> (o C<$ACCUMULATOR> en L<English>).  Finalmente, cuando se hace un L<C<write>|/write IDENTIFICADOR_ARCHIVO>, los contenidos de L<C<write>|/write IDENTIFICADOR_ARCHIVO> se escriben al identificador de archivo.
-Puede también leer L<C<$^A>|perlvar/$^A> y volver a ponerla otra vez a C<"">.  Note que un formato típicamente hace un L<C<formline>|/formline CUADRO,LISTA> por línea del formato, pero a la misma función L<C<formline>|/formline CUADRO,LISTA> no le preocupa cuántos avances de línea están incluidos en el CUADRO.  Esto significa que los I<tokens> C<~> y C<~~> tratan al CUADRO entero como una única línea.  Puede por eso necesitar usar múltiples formlines para implementar un único registro format, como lo hace el propio compilador de L<C<format>|/format>.
+Puede también leer L<C<$^A>|perlvar/$^A> y volver a ponerla otra vez a C<"">.  Note que un formato típicamente hace un L<C<formline>|/formline DIBUJO,LISTA> por línea del formato, pero a la misma función L<C<formline>|/formline DIBUJO,LISTA> no le preocupa cuántos avances de línea están incluidos en el CUADRO.  Esto significa que los I<tokens> C<~> y C<~~> tratan al CUADRO entero como una única línea.  Puede por eso necesitar usar múltiples formlines para implementar un único registro format, como lo hace el propio compilador de L<C<format>|/format>.
 
 Tenga cuidado si pone dobles comillas alrededor del cuadro, porque un carácter C<@> puede ser tomado como el comienzo del nombre de un array.
-L<C<formline>|/formline CUADRO,LISTA> siempre devuelve verdadero.  Vea L<perlform> para otros ejemplos.
+L<C<formline>|/formline DIBUJO,LISTA> siempre devuelve verdadero.  Vea L<perlform> para otros ejemplos.
 
 Si está intentando usar esto en lugar de L<C<write>|/write IDENTIFICADOR_ARCHIVO> para capturar la salida, puede encontrar que sea más sencillo abrir un identificador de archivo en un escalar (C<< open $fh, ">", \$salida >>) y escribir en él.
 
@@ -1798,7 +1798,7 @@ X<getppid> X<parent> X<pid> X<padre>
 
 Devuelve el identificador de proceso del proceso padre.
 
-Nota para los usuarios de Linux: Entre v5.8.1 y v5.16.0 Perl evitará la semántica de hilos no compatible con POSIX que usan una minoría de sistemas Linux (y sistemas Debian GNU/kFreeBSD) que utilizan LinuxThreads; esta emulación ha sido eliminada.  Vea la documentación de L<$$|perlvar/$$> para más detalles.
+Nota para los usuarios de Linux: Entre v5.8.1 y v5.16.0 Perl evitará la semántica de hilos no compatible con POSIX que usan una minoría de sistemas Linux (y sistemas Debian GNU/kFreeBSD) que utilizan LinuxThreads; esta emulación se ha eliminado.  Vea la documentación de L<$$|perlvar/$$> para más detalles.
 
 Cuestiones de portabilidad: L<perlport/getppid>.
 
@@ -1846,7 +1846,7 @@ X<endnetent> X<endprotoent> X<endservent>
 
 =for Pod::Functions get group record given group user ID
 
-=item getservbyname NOMBRE,PROTO
+=item getservbyname NOMBRE,PROTOCOLO
 
 =for Pod::Functions get services record given its name
 
@@ -1862,7 +1862,7 @@ X<endnetent> X<endprotoent> X<endservent>
 
 =for Pod::Functions get protocol record numeric protocol
 
-=item getservbyport PUERTO,PROTO
+=item getservbyport PUERTO,PROTOCOLO
 
 =for Pod::Functions get services record given numeric port
 
@@ -1952,7 +1952,7 @@ Estas rutinas son las mismas que sus homólogas en la biblioteca del sistema.  E
 
 (Si la entrada no existe, el valor de retorno es un único valor verdadero, sin significado).
 
-El significado exacto del campo $gcos varía pero usualmente contiene el nombre real del usuario (como opuesto al nombre de login) y otra información perteneciente al usuario.  Tenga cuidado, sin embargo, que en muchos sistemas los usuarios son capaces de cambiar esta información y por eso no puede confiarse y por eso el $gcos es considerado como contaminado (ver L<perlsec>).  La $contrasena y el $shell, la contraseña codificada del usuario y el shell del login, están también contaminados, por la misma razón.
+El significado exacto del campo $gcos varía pero usualmente contiene el nombre real del usuario (como opuesto al nombre de login) y otra información perteneciente al usuario.  Tenga cuidado, sin embargo, que en muchos sistemas los usuarios son capaces de cambiar esta información y por eso no puede confiarse y por eso el $gcos queda contaminado (ver L<perlsec>).  La $contrasena y el $shell, la contraseña codificada del usuario y el shell del login, están también contaminados, por la misma razón.
 
 En contexto escalar, obtiene el nombre, a menos que la función fuera localizar por nombre, en cuyo caso obtendrá la otra cosa, cualquiera que sea.
 (Si la entrada no existe obtendrá el valor indefinido).  Por ejemplo:
@@ -2101,7 +2101,7 @@ X<goto> X<jump> X<jmp>
 
 =for Pod::Functions create spaghetti code
 
-La forma C<goto ETIQUETA> busca la instrucción etiquetada con ETIQUETA y continua la ejecución desde allí.  No se puede utilizar para salir de un bloque o una subrutina pasada a L<C<sort>|/sort SUBRUTINA LISTA>.  Se puede utilizar para ir a casi cualquier sitio que esté dentro del ámbito dinámico, incluyendo fuera de las subrutinas, pero es usualmente mucho mejor usar otras construcciones, como L<C<last>|/last ETIQUETA> o L<C<die>|/die LISTA>.  El autor de Perl nunca ha tenido la necesidad de usar esta forma de L<C<goto>|/goto ETIQUETA> (en Perl, desde luego. C es otra historia).  (La diferencia con C es que no ofrece bucles nombrados combinados con control de bucles.  Perl sí, y esto reemplaza a la mayor parte de los usos estructurados de L<C<goto>|/goto ETIQUETA> en otros lenguajes).
+La forma C<goto ETIQUETA> busca la instrucción etiquetada con ETIQUETA y continua la ejecución desde allí.  No se puede utilizar para salir de un bloque o una subrutina pasada a L<C<sort>|/sort NOMBRE_SUB LISTA>.  Se puede utilizar para ir a casi cualquier sitio que esté dentro del ámbito dinámico, incluyendo fuera de las subrutinas, pero es usualmente mucho mejor usar otras construcciones, como L<C<last>|/last ETIQUETA> o L<C<die>|/die LISTA>.  El autor de Perl nunca ha tenido la necesidad de usar esta forma de L<C<goto>|/goto ETIQUETA> (en Perl, desde luego. C es otra historia).  (La diferencia con C es que no ofrece bucles nombrados combinados con control de bucles.  Perl sí, y esto reemplaza a la mayor parte de los usos estructurados de L<C<goto>|/goto ETIQUETA> en otros lenguajes).
 
 La forma C<goto EXPR> evalúa C<EXPR> a una referencia de código o nombre de etiqueta.  Si evalúa a una referencia de código, será gestionada como el C<goto &NAME> visto antes.  Esto es especialmente útil para implementar colas de recursión con C<goto __SUB__>.
 
@@ -2112,7 +2112,7 @@ Si la expresión evalúa a un nombre de etiqueta, su ámbito se resolverá diná
 Como se muestra en este ejemplo, C<goto EXPR> está exento de la regla "se parece a una función".  Un par de paréntesis puestos a continuación no (necesariamente) delimitan su argumento.  C<goto("NE")."XT"> es equivalente a C<goto NEXT>.
 También, a diferencia de otros operadores con nombre, este tiene la misma precedencia que una asignación.
 
-El uso de C<goto LABEL> o C<goto EXPR> para saltar en una construcción es obsoleto y emitirá una advertencia.  Incluso entonces, no se puede usar para ir a cualquier construcción que requiere inicialización, como una subrutina o un bucle C<foreach>.  Tampoco se puede usar para ir a una construcción que ha sido optimizada.
+El uso de C<goto ETIQUETA> o C<goto EXPR> para saltar en una construcción es obsoleto y emitirá una advertencia.  Incluso entonces, no se puede usar para ir a cualquier construcción que requiere inicialización, como una subrutina o un bucle C<foreach>.  Tampoco se puede usar para ir a una construcción que se ha optimizado.
 
 La forma C<goto &NOMBRE> es muy diferente de las otras formas de L<C<goto>|/goto ETIQUETA>.  De hecho, no es un goto en el sentido normal y no tiene el estigma asociado de los otros gotos.  En cambio, sale de la subrutina actual (perdiendo cualquier cambio hecho por L<C<local>|/local EXPR>) e inmediatamente llama a la subrutina indicada pasándole el valor actual de L<C<@_>|perlvar/@_>.  Esto se usa en subrutinas C<AUTOLOAD()> que desean cargar otra subrutina y fingen que ésta otra subrutina se ha llamado en primer lugar (excepto que cualquier modificación L<C<@_>|perlvar/@_> en la subrutina actual se propaga a la otra). Después del L<C<goto>|/goto ETIQUETA>, ni siquiera L<C<caller>|/caller EXPR> será capaz de decir qué rutina se llamó en primer lugar.
 
@@ -2137,7 +2137,7 @@ o equivalentemente,
 
 Note que L<C<$_>|perlvar/$_> es un alias al valor de la lista, por lo que se puede usar para modificar los elementos de la LISTA.  Mientras que esto suele ser útil, puede causar resultados extraños si los elementos de la LISTA no son variables.
 De forma semejante, grep devuelve alias de la lista original, como los alias de los elementos de la lista de las variables de los bucles for.  Es decir, modificar un elemento de la lista devuelto por grep (por ejemplo, en un C<foreach>, L<C<map>|/map BLOQUE LISTA> u otro L<C<grep>|/grep BLOQUE LISTA>) realmente modifica el elemento en la lista original.
-Esto es algo usualmente a ser evitado cuando se está escribiendo código claro.
+Esto es algo usualmente a evitarse cuando se está escribiendo código claro.
 
 Vea también L<C<map>|/map BLOQUE LISTA> para ver una lista compuesta de los resultados del BLOQUE o EXPR.
 
@@ -2169,16 +2169,16 @@ X<import>
 
 No existe la función predefinida L<C<import>|/import LISTA>.  Sólo es un método (subrutina) ordinario definido (o heredado) por módulos que desean exportar nombres a otro módulo.  La función L<C<use>|/use Módulo VERSIÓN LISTA> llama al método L<C<import>|/import LISTA> del paquete a usar.  Ver también L<C<use>|/use Módulo VERSIÓN LISTA>, L<perlmod> y L<Exporter>.
 
-=item index STRING,SUBSTR,POSICIÓN
+=item index CADENA,SUBCADENA,POSICIÓN
 X<index> X<indexOf> X<InStr>
 
-=item index STRING,SUBSTR
+=item index CADENA,SUBCADENA
 
 =for Pod::Functions find a substring within a string
 
 La función index busca por un string dentro de otro, pero sin tener el comportamiento de un sistema de coincidencias basado en expresiones regulares.
 Devuelve la posición de la primera ocurrencia de SUBSTR en STRING en o después de POSICIÓN.  Si se omite POSICIÓN, comienza a buscar desde el comienzo del string.  POSICIÓN antes del comienzo del string o después de su final es tratado como si estuviera al principio o al final, respectivamente.  POSICIÓN y el valor de retorno están basados en cero.
-Si la subcadena no se encuentra, L<C<index>|/index STR,SUBSTR,POSICIÓN> devuelve -1.
+Si la subcadena no se encuentra, L<C<index>|/index CADENA,SUBCADENA,POSICIÓN> devuelve -1.
 
 =item int EXPR
 X<int> X<integer> X<truncate> X<trunc> X<floor> X<truncar> X<trunca> X<entero>
@@ -2260,7 +2260,7 @@ o de forma ordenada por la clave:
 
 Los valores devueltos son copias de las claves originales en el hash, así que modificarlas no afectará al hash original.  Compare con L<C<values>|/values HASH>.
 
-Para ordenar un hash por valor, necesitará usar la función L<C<sort>|/sort SUBRUTINA LISTA>.  Esto es una ordenación numérica descendente de un hash por sus valores:
+Para ordenar un hash por valor, necesitará usar la función L<C<sort>|/sort NOMBRE_SUB LISTA>.  Esto es una ordenación numérica descendente de un hash por sus valores:
 
     foreach my $key (sort { $hash{$b} <=> $hash{$a} } keys %hash) {
         printf "%4d %s\n", $hash{$clave}, $clave;
@@ -2279,7 +2279,7 @@ Para no confundir a los posibles usuarios de su código, que ejecuten versiones 
 
     use 5.012;  # así keys/values/each trabajan sobre arrays
 
-Vea también L<C<each>|/each HASH>, L<C<values>|/values HASH> y L<C<sort>|/sort SUBRUTINA LISTA>.
+Vea también L<C<each>|/each HASH>, L<C<values>|/values HASH> y L<C<sort>|/sort NOMBRE_SUB LISTA>.
 
 =item kill SEÑAL, LISTA
 
@@ -2576,7 +2576,7 @@ Esto también puede lograrse escribiendo
 
 lo que hace más clara nuestras intenciones.
 
-Map siempre devuelve una lista, que puede ser asignada a un hash de tal manera que los elementos serán parejas de claves y valores.  Ver L<perldata> para más detalles.
+Map siempre devuelve una lista, que puede asignarse a un hash de tal manera que los elementos serán parejas de claves y valores.  Ver L<perldata> para más detalles.
 
     my %hash = map { una_clave_para($_) => $_ } @array;
 
@@ -2607,7 +2607,7 @@ o para forzar a un constructor de un hash anónimo use C<+{>:
 
 para obtener una lista de hashes anónimos, cada uno con sólo una entrada cada uno.
 
-=item mkdir ARCHIVO,MÁSCARA
+=item mkdir NOMBRE_ARCHIVO,MÁSCARA
 X<mkdir> X<md> X<directory, create> X<directorio, crear>
 
 =item mkdir ARCHIVO
@@ -2639,7 +2639,7 @@ primero para obtener las definiciones de las constantes.  Si CMD es C<IPC_STAT>,
 
 Cuestiones de portabilidad: L<perlport/msgctl>.
 
-=item msgget KEY,FLAGS
+=item msgget CLAVE,INDICADORES
 X<msgget>
 
 =for Pod::Functions get SysV IPC message queue
@@ -2648,7 +2648,7 @@ Llama a la función L<msgget(2)> de System V IPC.  Devuelve el identificador de 
 
 Cuestiones de portabilidad: L<perlport/msgget>.
 
-=item msgrcv ID,VAR,SIZE,TYPE,FLAGS
+=item msgrcv ID,VAR,TAMAÑO,TIPO,INDICADORES
 X<msgrcv>
 
 =for Pod::Functions receive a SysV IPC message from a message queue
@@ -2658,7 +2658,7 @@ Contamina la variable.  Devuelve verdadero si tuvo éxito, falso en caso de erro
 
 Cuestiones de portabilidad: L<perlport/msgrcv>.
 
-=item msgsnd ID,MSG,FLAGS
+=item msgsnd ID,MSG,INDICADORES
 X<msgsnd>
 
 =for Pod::Functions send a SysV IPC message to a message queue
@@ -2667,18 +2667,18 @@ Llama a la función msgsnd de System V IPC para enviar el mensaje MSG a la cola 
 
 Cuestiones de portabilidad: L<perlport/msgsnd>.
 
-=item my VARLIST
+=item my LISTAVAR
 X<my>
 
 =item my TIPO VARLIST
 
-=item my VARLIST : ATRIBUTOS
+=item my LISTAVAR : ATRIBUTOS
 
-=item my TIPO VARLIST : ATRIBUTOS
+=item my TIPO LISTAVAR : ATRIBUTOS
 
 =for Pod::Functions declare and assign a local variable (lexical scoping)
 
-Un L<C<my>|/my VARLIST> declara las variables listadas como locales (léxicamente) en el bloque, archivo, o L<C<eval>|/eval EXPR> que las engloba.  Si se lista más de una variable, la lista se debe poner entre paréntesis.
+Un L<C<my>|/my LISTAVAR> declara las variables listadas como locales (léxicamente) en el bloque, archivo, o L<C<eval>|/eval EXPR> que las engloba.  Si se lista más de una variable, la lista se debe poner entre paréntesis.
 
 La semántica exacta e interfaz de TIPO y ATRIBUTOS están aún en evolución.  TIPO puede ser una palabra simple, una constante declarada con L<C<use constant>|constant>, o L<C<__PACKAGE__>|/__PACKAGE__>.  Está vinculado al uso del pragma L<fields>, y los atributos se gestionan con el I<pragma> L<attributes>, o a partir de Perl 5.8.0 también a través del módulo L<Attribute::Handlers>.  Ver L<perlsub/"Variables privadas con my()"> para más detalles.
 
@@ -2713,7 +2713,7 @@ Ver también L<C<continue>|/continue BLOQUE> para una ilustración de cómo func
 A diferencia de otros operadores con nombre, tiene la misma precedencia que una asignación.
 También está exenta de la regla "se-parece-a-una-función", así que C<next ("foo")."bar"> hará que "bar" sea parte del argumento a L<C<next>|/next ETIQUETA>.
 
-=item no MÓDULO VERSIÓN LISTA
+=item no Módulo VERSIÓN LISTA
 X<no declarations> X<unimporting> X<declaraciones no> X<desimportando>
 
 =item no MÓDULO VERSIÓN
@@ -2726,7 +2726,7 @@ X<no declarations> X<unimporting> X<declaraciones no> X<desimportando>
 
 =for Pod::Functions unimport some module symbols or semantics at compile time
 
-Vea la función L<C<use>|/use MÓDULO VERSIÓN LISTA>, y su opuesta L<C<no>|/no MÓDULO VERSIÓN LISTA>.
+Vea la función L<C<use>|/use Módulo VERSIÓN LISTA>, y su opuesta L<C<no>|/no Módulo VERSIÓN LISTA>.
 
 =item oct EXPR
 X<oct> X<octal> X<hex> X<hexadecimal> X<binary> X<bin> X<binario>
@@ -2786,7 +2786,7 @@ Puede poner un C<+> en frente de C<< > >> o C<< < >> para indicar que desea acce
 
 Estos prefijos se corresponden con los modos de la función L<fopen(3)> de C<r>, C<r+>, C<w>, C<w+>, C<a> y C<a+>.
 
-En las formas de la llamada de uno y de dos argumentos, el modo y el nombre del archivo debe ser concatenados (en ese orden), preferiblemente separados por espacio en blanco.  Puede -pero no debe- omitir el modo en estos formatos cuando ese modo sea C<< < >>.  Siempre es más seguro utilizar el formato de dos argumentos de L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> si el argumento con el nombre de archivo es un literal bien visible.
+En las formas de la llamada de uno y de dos argumentos, el modo y el nombre del archivo debe concatenarse (en ese orden), preferiblemente separados por espacio en blanco.  Puede -pero no debe- omitir el modo en estos formatos cuando ese modo sea C<< < >>.  Siempre es más seguro utilizar el formato de dos argumentos de L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> si el argumento con el nombre de archivo es un literal bien visible.
 
 Para tres o más argumentos, cuando MODO es C<|->, el nombre del archivo se interpreta como un comando cuya salida va a ser entubada, y si MODO es C<-|>, el nombre del archivo se interpreta como un comando que entuba la salida hacia nosotros.  En la forma de dos argumentos (y un argumento), debe sustituir el guión (C<->) por el comando.
 Ver L<perlipc/"Usando open() por IPC"> para más ejemplos de sobre esto.
@@ -2806,12 +2806,12 @@ Esas capas también se ignorarán si especifica un carácter de dos puntos sin q
 
 open() devuelve un valor distinto de cero en caso de éxito, indefinido en otro caso.  Si el L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> contiene una tubería, el valor de retorno pasa a ser el pid del subproceso.
 
-En algunos sistemas (en general, sistemas basados en DOS y Windows) es necesario usar L<C<binmode>/binmode IDENTIFICADOR_ARCHIVO, CAPA> cuando no esté trabajando con un archivo de texto.  Para una mejor portabilidad es siempre una buena idea usarlo cuando sea apropiado, y nunca usarlo cuando no sea apropiado.  También, la gente puede establecer su E/S para que esté codificado, por defecto, en Unicode UTF-8, y no en bytes.
+En algunos sistemas (en general, sistemas basados en DOS y Windows) es necesario usar L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> cuando no esté trabajando con un archivo de texto.  Para una mejor portabilidad es siempre una buena idea usarlo cuando sea apropiado, y nunca usarlo cuando no sea apropiado.  También, la gente puede establecer su E/S para que esté codificado, por defecto, en Unicode UTF-8, y no en bytes.
 
 Al abrir un archivo, es difícil que sea una buena idea seguir si la solicitud ha fallado, por lo que L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> se utiliza con frecuencia con L<C<die>|/die LISTA>.  Incluso si L<C<die>|/die LISTA> no hace lo que usted quiere (por ejemplo, en un script CGI, en la que desea dar formato a un mensaje de error apropiado (aunque existen módulos que pueden ayudar con ese problema)) controle siempre el valor de retorno de la apertura de un archivo.
 
 Se cerrará el identificador de archivo cuando su contador de referencias llegue a cero.
-Si es una variable declarada en un ámbito léxico con L<C<my>|/my VARLIST>, normalmente significa el final del ámbito que la engloba.  Sin embargo, este cierre automático no comprueba errores, así que es mejor cerrar explícitamente los identificadores de archivo, especialmente aquellos que se usaron para escribir:
+Si es una variable declarada en un ámbito léxico con L<C<my>|/my LISTAVAR>, normalmente significa el final del ámbito que la engloba.  Sin embargo, este cierre automático no comprueba errores, así que es mejor cerrar explícitamente los identificadores de archivo, especialmente aquellos que se usaron para escribir:
 
     close($handle)
        || warn "close falló: $!";
@@ -2828,7 +2828,7 @@ Como atajo, la llamada con un solo argumento toma el nombre del archivo de la va
     $ARTICULO = 100;
     open(ARTICULO) or die "No puedo encontrar el artículo $ARTICULO: $!\n";
 
-Aquí, C<$ARTICULO> debe ser una variable escalar global (package), no declarada con L<C<my>|/my VARLIST> o L<C<state>|/state VARLIST>.
+Aquí, C<$ARTICULO> debe ser una variable escalar global (package), no declarada con L<C<my>|/my LISTAVAR> o L<C<state>|/state LISTAVAR>.
 
 Como un caso especial, la forma de tres argumentos con un modo de lectura/escritura y el tercer argumento siendo L<C<undef>|/undef EXPR>:
 
@@ -3039,22 +3039,22 @@ Si EXPR es una cadena vacía, devuelve 0.  Si se omite EXPR, usa L<C<$_>|perlvar
 Para lo contrario, vea L<C<chr>|/chr NÚMERO>.
 Vea L<perlunicode> para más información acerca de Unicode.
 
-=item our VARLIST
+=item our LISTAVAR
 X<our> X<global>
 
 =item our TIPO VARLIST
 
-=item our VARLIST : ATRIBUTOS
+=item our LISTAVAR : ATRIBUTOS
 
-=item our TIPO VARLIST : ATRIBUTOS
+=item our TIPO LISTAVAR : ATRIBUTOS
 
 =for Pod::Functions +5.6.0 declare and assign a package variable (lexical scoping)
 
-L<C<our>|/our VARLIST> crea un alias léxico a una variable de paquete (es decir, global) con el mismo nombre en el paquete actual, para usarla dentro del ámbito léxico actual.
+L<C<our>|/our LISTAVAR> crea un alias léxico a una variable de paquete (es decir, global) con el mismo nombre en el paquete actual, para usarla dentro del ámbito léxico actual.
 
-L<C<our>|/our VARLIST> tiene las mismas reglas de ámbito que L<C<my>|/my VARLIST> o L<C<state>|/state VARLIST>, significando que solo es válido dentro de un ámbito léxico.  A diferencia de L<C<my>|/my VARLIST> o L<C<state>|/state VARLIST>, que declaran nuevas variables (léxicas), solo L<C<our>|/our VARLIST> crea un alias a una variable existente: una variable de paquete del mismo nombre.
+L<C<our>|/our LISTAVAR> tiene las mismas reglas de ámbito que L<C<my>|/my LISTAVAR> o L<C<state>|/state LISTAVAR>, significando que solo es válido dentro de un ámbito léxico.  A diferencia de L<C<my>|/my LISTAVAR> o L<C<state>|/state LISTAVAR>, que declaran nuevas variables (léxicas), solo L<C<our>|/our LISTAVAR> crea un alias a una variable existente: una variable de paquete del mismo nombre.
 
-Esto significa que cuando C<use strict 'vars'> está activo, L<C<our>|/our VARLIST> le permite usar una variable de paquete sin calificarla con el nombre de paquete, pero sólo en el ámbito léxico de la declaración L<C<our>|/our VARLIST>.  Esto se aplica inmediatamente, incluso en la misma sentencia.
+Esto significa que cuando C<use strict 'vars'> está activo, L<C<our>|/our LISTAVAR> le permite usar una variable de paquete sin calificarla con el nombre de paquete, pero sólo en el ámbito léxico de la declaración L<C<our>|/our LISTAVAR>.  Esto se aplica inmediatamente, incluso en la misma sentencia.
 
     package Foo;
     use strict;
@@ -3091,7 +3091,7 @@ Si se lista más de una variable, la lista debe ser puesta entre paréntesis.
 
     our($bar, $baz);
 
-Una declaración L<C<our>|/our VARLIST> declara un alias para una variable de paquete que será visible en todo su ámbito léxico, incluso más allá de los límites del paquete.  El paquete en el que se introduce la variable se determina en el punto de la declaración, no en el momento de ser usada.  Esto significa que el siguiente comportamiento cumple que:
+Una declaración L<C<our>|/our LISTAVAR> declara un alias para una variable de paquete que será visible en todo su ámbito léxico, incluso más allá de los límites del paquete.  El paquete en el que se introduce la variable se determina en el punto de la declaración, no en el momento de usarse.  Esto significa que el siguiente comportamiento cumple que:
 
     package Foo;
     our $bar;      # declara $Foo::bar para el resto del ámbito léxico
@@ -3100,7 +3100,7 @@ Una declaración L<C<our>|/our VARLIST> declara un alias para una variable de pa
     package Bar;
     print $bar;    # pinta 20, porque se refiere a $Foo::bar
 
-Se permiten múltiples declaraciones L<C<our>|/our VARLIST> con el mismo nombre en el mismo ámbito léxico si están en diferentes paquetes.  Si están en el mismo paquete, Perl emitirá mensajes de advertencia -si los tiene activados-, al igual que múltiples declaraciones de L<C<my>|/my VARLIST>.  A diferencia de una segunda declaración de L<C<my>|/my VARLIST>, que unirá el nombre a una nueva variable, una segunda declaración de L<C<our>|/our VARLIST> en el mismo paquete, en el mismo ámbito, es simplemente redundante.
+Se permiten múltiples declaraciones L<C<our>|/our LISTAVAR> con el mismo nombre en el mismo ámbito léxico si están en diferentes paquetes.  Si están en el mismo paquete, Perl emitirá mensajes de advertencia -si los tiene activados-, al igual que múltiples declaraciones de L<C<my>|/my LISTAVAR>.  A diferencia de una segunda declaración de L<C<my>|/my LISTAVAR>, que unirá el nombre a una nueva variable, una segunda declaración de L<C<our>|/our LISTAVAR> en el mismo paquete, en el mismo ámbito, es simplemente redundante.
 
     use warnings;
     package Foo;
@@ -3114,7 +3114,7 @@ Se permiten múltiples declaraciones L<C<our>|/our VARLIST> con el mismo nombre 
     our $bar;      # emite una advertencia pero no tiene otro efecto
     print $bar;    # sigue pintando 30
 
-Una declaración L<C<our>|/our VARLIST> también puede tener una lista de atributos asociados a ella.
+Una declaración L<C<our>|/our LISTAVAR> también puede tener una lista de atributos asociados a ella.
 
 La semántica exacta e interfaz de TIPO y ATRIBUTOS están aún en evolución.  TIPO está vinculado al uso del I<<pragma> L<fields>, y los atributos se gestionan con el I<pragma> L<attributes>, o a partir de Perl 5.8.0 también a través del módulo L<Attribute::Handlers>.  Ver L<perlsub/"Variables privadas con my()"> para más detalles.
 
@@ -3122,7 +3122,7 @@ Note que con una lista entre paréntesis, se puede utilizar L<C<undef>|/undef EX
 
     our ( undef, $min, $hora ) = localtime;
 
-L<C<our>|/our VARLIST> difiere de L<C<use vars>|vars>, que permite usar un nombre no calificado I<solo> dentro del paquete afectado, pero sí en diversos ámbitos.
+L<C<our>|/our LISTAVAR> difiere de L<C<use vars>|vars>, que permite usar un nombre no calificado I<solo> dentro del paquete afectado, pero sí en diversos ámbitos.
 
 =item pack PLANTILLA,LISTA
 X<pack>
@@ -3319,7 +3319,7 @@ Con caracteres no-alfabéticos, el resultado se basa en los 4 bits menos signifi
 
 A partir del comienzo de la plantilla a L<C<pack>|/pack PLANTILLA,LISTA>, cada par de caracteres se convierte en un carácter en la salida.  Con el formato C<h>, el primer carácter del par determina el nible menos significativo de la salida de caracteres; con el formato C<H>, determina el nible más significativo.
 
-Si la longitud de la cadena de entrada no es par, se comporta como si estuviera rellenada con un carácter nulo al final.  Del mismo modo, los nibles "extra" son ignorados durante el desempaquetado.
+Si la longitud de la cadena de entrada no es par, se comporta como si estuviera rellenada con un carácter nulo al final.  Del mismo modo, los nibles "extra" se ignoran durante el desempaquetado.
 
 Si la cadena de entrada es más larga de lo necesario, los caracteres sobrantes se ignoran.
 
@@ -3425,7 +3425,7 @@ Para enteros empaquetados de forma portátil, o bien usar los formatos C<n>, C<N
 
 =item *
 
-También los números en punto flotante tienen distintas ordenaciones.  Normalmente (pero no siempre) coincide con la ordenación de los enteros.  Incluso aunque la mayor parte de las plataformas de nuestros días usan el formato binario IEEE 754, hay diferencias, especialmente si están implicados los dobles largos.  Puede consultar las variables de C<Config>, C<doublekind> y C<longdblkind> (también C<doublesize>, C<longdblsize>): la "clase" de valores son enumerados, a diferencia de C<byteorder>.
+También los números en punto flotante tienen distintas ordenaciones.  Normalmente (pero no siempre) coincide con la ordenación de los enteros.  Incluso aunque la mayor parte de las plataformas de nuestros días usan el formato binario IEEE 754, hay diferencias, especialmente si están implicados los dobles largos.  Puede consultar las variables de C<Config>, C<doublekind> y C<longdblkind> (también C<doublesize>, C<longdblsize>): la "clase" de valores se enumeran, a diferencia de C<byteorder>.
 
 La mejor opción para una buena portabilidad es, probablemente, mantener los dobles de 64 bit IEEE 754, y seguir la ordenación de los bytes del sistema.  Otra posibilidad es el formato C<"%a">) de L<C<printf>|/printf IDENTIFICADOR_ARCHIVO FORMATO, LISTA>.
 
@@ -3443,7 +3443,7 @@ Intercambiando enteros con signo entre distintas plataformas funciona sólo cuan
 
 =item *
 
-Los modificadores C<< > >> o C<< < >> solo pueden ser usados con formatos de punto flotante en máquinas con ordenación big-endian o little-endian.  De lo contrario, al tratar de usarlos lanzará una excepción.
+Los modificadores C<< > >> o C<< < >> solo pueden usarse con formatos de punto flotante en máquinas con ordenación big-endian o little-endian.  De lo contrario, al tratar de usarlos lanzará una excepción.
 
 =item *
 
@@ -3459,7 +3459,7 @@ Cuando se usa C<< > >> o C<< < >> en un grupo C<()>, afecta a todos los tipos de
 =item *
 
 Los números reales (float y double) solo están en formato nativo de la máquina.
-Debido a la multiplicidad de formatos de punto flotante y la falta de una norma de representación en la "red" para ellos, no hay ninguna facilidad para el intercambio de datos.  Esto significa que datos empaquetados de punto flotante escritos en una máquina quizás no puedan ser leídos en otra, aunque ambas utilizan aritmética IEEE de punto flotante (porque la ordenación de bytes de la representación en memoria no es parte de la especificación IEEE).  Vea también L<perlport>.
+Debido a la multiplicidad de formatos de punto flotante y la falta de una norma de representación en la "red" para ellos, no hay ninguna facilidad para el intercambio de datos.  Esto significa que datos empaquetados de punto flotante escritos en una máquina quizás no puedan leerse en otra, aunque ambas utilizan aritmética IEEE de punto flotante (porque la ordenación de bytes de la representación en memoria no es parte de la especificación IEEE).  Vea también L<perlport>.
 
 Si sabe I<exactamente> lo que está haciendo, puede usar los modificadores C<< > >> o C<< < >> para forzas una ordenación de bytes de los valores.
 
@@ -3519,12 +3519,12 @@ Esto es portátil solo cuando todas las plataformas compartiendo datos empaqueta
 
 =item *
 
-Comentarios pueden ser integrados en una PLANTILLA usando C<#> hasta el final de la línea.
+Los comentarios pueden integrarse en una PLANTILLA usando C<#> hasta el final de la línea.
 El espacio en blanco puede separar los códigos de empaquetado, pero los modificadores y los contadores de repetición deben seguir de inmediato.  Rompiendo plantillas complejas en líneas individuales, debidamente comentadas, puede servir para mejorar la legibilidad y facilitar el mantenimiento de los formatos pack/unpack, como C</x> lo es para las expresiones regulares complicadas.
 
 =item *
 
-Si PLANTILLA requiere más argumentos de los que se pasan a L<C<pack>|/pack PLANTILLA,LISTA>, éste asume que los argumentos adicionales son iguales a C<"">.  Si PLANTILLA requiere menos argumentos de los que se le dan, los argumentos adicionales son ignorados.
+Si PLANTILLA requiere más argumentos de los que se pasan a L<C<pack>|/pack PLANTILLA,LISTA>, éste asume que los argumentos adicionales son iguales a C<"">.  Si PLANTILLA requiere menos argumentos de los que se le dan, los argumentos adicionales se ignoran.
 
 =item *
 
@@ -3618,12 +3618,12 @@ X<paquete> X<módulo> X<espacio de nombres> X<versión>
 
 =for Pod::Functions declare a separate global namespace
 
-Declara el BLOQUE o el resto de la unidad de compilación como pertenecientes al espacio de nombres especificado.  El ámbito de la declaración del paquete es, tanto el BLOQUE suministrado o, en ausencia de un BLOQUE, desde la misma declaración hasta el final del ámbito actual (el bloque, archivo o L<C<eval>|/eval EXPR> que lo engloba).  Es decir, las formas sin un BLOQUE son operativas hasta el final del ámbito actual, al igual que los operadores L<C<my>|/my VARLIST>, L<C<state>|/state VARLIST> y L<C<our>|/our VARLIST>.  Todos los identificadores dinámicos no calificados en este ámbito pertenecerán al espacio de nombres indicado, salvo cuando se reemplace por otra declaración L<C<package>|/package ESPACIO_NOMBRES> o cuando sean uno de los identificadores especiales que califican dentro de C<main::>, al igual que C<STDOUT>, C<ARGV>, C<ENV>, y las variables especiales de caracteres de puntuación.
+Declara el BLOQUE o el resto de la unidad de compilación como pertenecientes al espacio de nombres especificado.  El ámbito de la declaración del paquete es, tanto el BLOQUE suministrado o, en ausencia de un BLOQUE, desde la misma declaración hasta el final del ámbito actual (el bloque, archivo o L<C<eval>|/eval EXPR> que lo engloba).  Es decir, las formas sin un BLOQUE son operativas hasta el final del ámbito actual, al igual que los operadores L<C<my>|/my LISTAVAR>, L<C<state>|/state LISTAVAR> y L<C<our>|/our LISTAVAR>.  Todos los identificadores dinámicos no calificados en este ámbito pertenecerán al espacio de nombres indicado, salvo cuando se reemplace por otra declaración L<C<package>|/package ESPACIO_NOMBRES> o cuando sean uno de los identificadores especiales que califican dentro de C<main::>, al igual que C<STDOUT>, C<ARGV>, C<ENV>, y las variables especiales de caracteres de puntuación.
 
-Una instrucción package afecta sólo a las variables dinámicas, incluyendo las que haya usado con L<C<local>|/local EXPR>, pero I<no> a las variables de ámbito léxico, que se crean con L<C<my>|/my VARLIST>, L<C<state>|/state VARLIST> o L<C<our>|/our VARLIST>.  Normalmente será la primera declaración en un archivo incluido por medio de un L<C<require>|/require VERSIÓN> o L<C<use>|/use Módulo VERSIÓN LISTA>.
+Una instrucción package afecta sólo a las variables dinámicas, incluyendo las que haya usado con L<C<local>|/local EXPR>, pero I<no> a las variables de ámbito léxico, que se crean con L<C<my>|/my LISTAVAR>, L<C<state>|/state LISTAVAR> o L<C<our>|/our LISTAVAR>.  Normalmente será la primera declaración en un archivo incluido por medio de un L<C<require>|/require VERSIÓN> o L<C<use>|/use Módulo VERSIÓN LISTA>.
 Usted puede cambiar de paquete en más de un lugar, ya que sólo determina qué tabla de símbolos, por defecto, se utilizará por el compilador para el resto de ese bloque.  Puede hacer referencia a los identificadores de otros paquetes distintos del actual anteponiendo el identificador con el nombre del paquete y un dos puntos doble, como en C<$AlgunPaquete::var> o C<EstePaquete::CONTROLADOR_ENTRADA>.  Si el nombre del paquete se omite, se asume que es C<main>.  Es decir, C<$::sail> es equivalente a C<$main::sail> (y también a C<$main'sail>, algo que se puede ver en código muy antiguo, escrito en su mayoría en Perl 4).
 
-Si se indica VERSIÓN, L<C<package>|/package ESPACIO_NOMBRE> inicializa la variable C<$VERSION> en el espacio de nombres indicado a un objeto L<version> con la VERSIÓN indicada.  VERSIÓN debe ser un número de versión al estilo "estricto", según lo define el módulo L<version>: un número decimal positivo (entero o decimal) sin exponentes o una v-cadena con una 'v' precedente con al menos tres componentes.  Debe ajustar el valor de C<$VERSION> solo una vez por paquete.
+Si se indica VERSIÓN, L<C<package>|/package ESPACIO_NOMBRES> inicializa la variable C<$VERSION> en el espacio de nombres indicado a un objeto L<version> con la VERSIÓN indicada.  VERSIÓN debe ser un número de versión al estilo "estricto", según lo define el módulo L<version>: un número decimal positivo (entero o decimal) sin exponentes o una v-cadena con una 'v' precedente con al menos tres componentes.  Debe ajustar el valor de C<$VERSION> solo una vez por paquete.
 
 Ver L<perlmod/"Paquetes"> para más información sobre paquetes, módulos y clases.  Ver L<perlsub> para otras cuestiones sobre el ámbito o contexto.
 
@@ -3634,19 +3634,19 @@ X<__PACKAGE__>
 
 Un I<token> especial que devuelve el nombre del paquete en el que aparece.
 
-=item pipe CONTROLADOR_LECTURA,CONTROLADOR_ESCRITURA
+=item pipe IDENTIFICADOR_LECTURA,IDENTIFICADOR_ESCRITURA
 X<pipe> X<tubería>
 
 =for Pod::Functions open a pair of connected filehandles
 
 Abre un par de tuberías conectadas como lo hace correspondiente llamada al sistema.
-Tenga en cuenta que si se establece un circuito de procesos entubados, puede producirse un bloqueo mortal a menos que sea muy cuidadoso.  Además, tenga en cuenta que las tuberías de Perl utilizan el búfer de E/S, así que puede que necesite establecer L<C<$E<verbar>>|perlvar/$E<verbar>> para limpiar su CONTROLADOR_ESCRITURA después de cada comando, dependiendo de la aplicación.
+Tenga en cuenta que si se establece un circuito de procesos entubados, puede producirse un bloqueo mortal a menos que sea muy cuidadoso.  Además, tenga en cuenta que las tuberías de Perl utilizan el búfer de E/S, así que puede que necesite establecer L<C<$E<verbar>>|perlvar/$E<verbar>> para limpiar su IDENTIFICADOR_ESCRITURA después de cada comando, dependiendo de la aplicación.
 
 Devuelve verdadero en caso de éxito.
 
 Ver L<IPC::Open2>, L<IPC::Open3>, y L<perlipc/"Comunicación Bidireccional con otro proceso"> para ejemplos de estas cosas.
 
-En los sistemas que soportan el indicador "cerrado-en-ejecución" en los archivos, ese indicador se establece en todos los nuevos descriptores de archivos abiertos cuyo L<C<fileno>|/fileno FILEHANDLE> sean más I<altos> que el valor actual de L<C<$^F>|perlvar/$^F> (por defecto 2 para C<STDERR>).  Ver L<perlvar/$^F>.
+En los sistemas que soportan el indicador "cerrado-en-ejecución" en los archivos, ese indicador se establece en todos los nuevos descriptores de archivos abiertos cuyo L<C<fileno>|/fileno IDENTIFICADOR_ARCHIVO> sean más I<altos> que el valor actual de L<C<$^F>|perlvar/$^F> (por defecto 2 para C<STDERR>).  Ver L<perlvar/$^F>.
 
 =item pop ARRAY
 X<pop> X<stack> X<pila>
@@ -3744,25 +3744,25 @@ pero es más eficiente.  Devuelve el número de elementos en el array tras la ll
 
 A partir de 5.14, una característica experimental permitía a L<C<push>|/push ARRAY,LISTA> tomar una expresión escalar. Se ha considerado que este experimento no ha funcionado, y se quitó a partir de Perl 5.24.
 
-=item q/STRING/
+=item q/CADENA/
 
 =for Pod::Functions singly quote a string
 
-=item qq/STRING/
+=item qq/CADENA/
 
 =for Pod::Functions doubly quote a string
 
-=item qw/STRING/
+=item qw/CADENA/
 
 =for Pod::Functions quote a list of words
 
-=item qx/STRING/
+=item qx/CADENA/
 
 =for Pod::Functions backquote quote a string
 
 Comillas generales.  Ver L<perlop/"Operadores entrecomillados">.
 
-=item qr/STRING/
+=item qr/CADENA/
 
 =for Pod::Functions +5.005 compile pattern
 
@@ -3819,9 +3819,9 @@ Los únicos códigos de carácter que son escapados son los que tienen alguna de
 
 	De estas propiedades, los dos más importantes son Pattern_Syntax y Pattern_White_Space.  Han sido creadas por Unicode para, exactamente, este propósito de decidir qué caracteres en un patrón de expresión regular debe ser escapado.  Ningún carácter que puede ir en un identificador tiene estas propiedades.
 
-Perl promete, que si alguna vez añadimos metacaracteres de patrones de expresión regular a la docena que ya está definida (C<\ E<verbar> ( ) [ { ^ * $ + ?  .>), sólo usaremos aquellos que tengan la propiedad Pattern_Syntax.  Perl también promete, que si alguna vez añadimos caracteres que han de ser considerados como espacio en blanco en las expresiones regulares (actualmente, las más afectadas serán las que tengan el C</x>), todos ellos tendrán la propiedad Pattern_White_Space.
+Perl promete, que si alguna vez añadimos metacaracteres de patrones de expresión regular a la docena que ya está definida (C<\ E<verbar> ( ) [ { ^ * $ + ?  .>), sólo usaremos aquellos que tengan la propiedad Pattern_Syntax.  Perl también promete, que si alguna vez añadimos caracteres que se han de considerar como espacio en blanco en las expresiones regulares (actualmente, las más afectadas serán las que tengan el C</x>), todos ellos tendrán la propiedad Pattern_White_Space.
 
-Unicode promete que el conjunto de códigos de carácter que tienen estas dos propiedades nunca cambiará, así que algo que no se escape en v5.16 nunca tendrá que ser escapado en cualquier futura versión de Perl.  (No todos los códigos de carácter que coinciden con Pattern_Syntax tienen realmente caracteres asignados a ellos; así que hay espacio para crecer, pero son desactivados tanto si están asignados como si no.  Perl, por supuesto, nunca usaría un punto de código asignado como un metacarácter real).
+Unicode promete que el conjunto de códigos de carácter que tienen estas dos propiedades nunca cambiará, así que algo que no se escape en v5.16 nunca tendrá que escaparse en cualquier futura versión de Perl.  (No todos los códigos de carácter que coinciden con Pattern_Syntax tienen realmente caracteres asignados a ellos; así que hay espacio para crecer, pero son desactivados tanto si están asignados como si no.  Perl, por supuesto, nunca usaría un punto de código asignado como un metacarácter real).
 
 Escapar caracteres que tienen las otras 3 propiedades se hace para mejorar la legibilidad de la expresión regular y no porque realmente se necesita que estén escapados para los fines de las expresiones regulares (caracteres con la propiedad White_Space es probable que sean indistinguibles en la página o en la pantalla de los que tienen la propiedad Pattern_White_Space; y las otras dos propiedades contienen caracteres no imprimibles).
 
@@ -3858,7 +3858,7 @@ Un DESPLAZAMIENTO se puede especificar para colocar los datos leídos en algún 
 
 La llamada se implementa en términos de Perl o de la función nativa L<fread(3)> de su sistema.  Para obtener una auténtica llamada del sistema L<read(2)>, vea L<sysread|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>.
 
-Note los I<caracteres>: dependiendo del estado del identificador de archivo, son leídos bytes (8-bit) o caracteres.  Por defecto, todos los identificadores de archivo operan en bytes, pero por ejemplo, si el identificador se ha abierto con la capa de E/S C<:utf8> (vea L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR>, y el pragma L<open>), la E/S operará en caracteres Unicode codificados en UTF-8, no bytes.  Del mismo modo, para la capa C<:encoding>: en este caso casi todos los caracteres se pueden leer.
+Note los I<caracteres>: dependiendo del estado del identificador de archivo, se leen bytes (8-bit) o caracteres.  Por defecto, todos los identificadores de archivo operan en bytes, pero por ejemplo, si el identificador se ha abierto con la capa de E/S C<:utf8> (vea L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR>, y el pragma L<open>), la E/S operará en caracteres Unicode codificados en UTF-8, no bytes.  Del mismo modo, para la capa C<:encoding>: en este caso casi todos los caracteres se pueden leer.
 
 =item readdir IDENTIFICADOR_DIR
 X<readdir>
@@ -3957,7 +3957,7 @@ ESCALAR crecerá o se reducirá a la longitud de la lectura real.  Toma los mism
 Esta llamada está implementada realmente en términos de la llamada del sistema L<recvfrom(2)>.
 Ver L<perlipc/"UDP: Paso de mensajes"> para ejemplos.
 
-Note los I<caracteres>: dependiendo del estado del socket, son leídos bytes (8-bit) o caracteres.  Por defecto todos los I<sockets> operan en bytes, pero por ejemplo si el I<socket> se ha cambiado usando L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> para operar con la capa de E/S C<:encoding(utf8)> (vea el pragma L<open>), la E/S operará en caracteres Unicode codificados en UTF-8, no bytes.  Del mismo modo, para la capa C<:encoding>: en este caso casi todos los caracteres se pueden leer.
+Note los I<caracteres>: dependiendo del estado del socket, se leen bytes (8-bit) o caracteres.  Por defecto todos los I<sockets> operan en bytes, pero por ejemplo si el I<socket> se ha cambiado usando L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> para operar con la capa de E/S C<:encoding(utf8)> (vea el pragma L<open>), la E/S operará en caracteres Unicode codificados en UTF-8, no bytes.  Del mismo modo, para la capa C<:encoding>: en este caso casi todos los caracteres se pueden leer.
 
 =item redo ETIQUETA
 X<redo>
@@ -4151,8 +4151,7 @@ Referencias a subrutinas son el caso más simple.  Cuando el sistema de inclusi�
 
 =item 1
 
-Una referencia a un escalar, conteniendo cualquier código de fuente inicial para ser agregado antes del
-archivo o salida del generador.
+Una referencia a un escalar, conteniendo cualquier código de fuente inicial para agregarse antes del archivo o salida del generador.
 
 =item 2
 
@@ -4224,7 +4223,7 @@ Sólo se restablecen variables o búsquedas en el paquete actual.  Siempre devue
     reset;          # solo reinicia m?una-vez? búsquedas
 
 El restablecimiento de C<"A-Z"> no es recomendable porque limpiará sus arrays L<C<@ARGV>|perlvar/@ARGV> y L<C<@INC>|perlvar/@INC> y su hash L<C<%ENV>|perlvar/%ENV>.
-Restablece solo las variables del paquete; las variables léxicas no se ven afectadas, pero ellas mismas se limpiarán, de todos modos, a la salida de su ámbito, por lo que probablemente querrá usarlas en su lugar.  Vea L<C<my>|/my VARLIST>.
+Restablece solo las variables del paquete; las variables léxicas no se ven afectadas, pero ellas mismas se limpiarán, de todos modos, a la salida de su ámbito, por lo que probablemente querrá usarlas en su lugar.  Vea L<C<my>|/my LISTAVAR>.
 
 =item return EXPR
 X<return>
@@ -4317,11 +4316,11 @@ X<scalar> X<context> X<escalar> X<contexto>
 
 =for Pod::Functions force a scalar context
 
-Fuerza EXPR a ser interpretada en contexto escalar y devuelve el valor de EXPR.
+Fuerza EXPR a interpretarse en contexto escalar y devuelve el valor de EXPR.
 
     my @contadores = ( scalar @a, scalar @b, scalar @c );
 
-No hay un operador equivalente que fuerce a una expresión a ser interpolada en contexto de lista, ya que en la práctica, esto nunca es necesario.  Sin embargo, si realmente quiere hacer eso, puede usar la construcción  C<@{[ (una expresión) ]}>, pero por lo general un simple C<(una expresión)> basta.
+No hay un operador equivalente que fuerce a una expresión a interpolarse en contexto de lista, ya que en la práctica, esto nunca es necesario.  Sin embargo, si realmente quiere hacer eso, puede usar la construcción  C<@{[ (una expresión) ]}>, pero por lo general un simple C<(una expresión)> basta.
 
 Dado que L<C<scalar>|/scalar EXPR> es un operador unario, si, accidentalmente, usa para EXPR una lista entre paréntesis, esto se comportará como una expresión escalar con comas, evaluando todos, menos el último elemento, en contexto vacío, y devolviendo el elemento final evaluado en contexto escalar.  Es muy raro que quiera hacerlo.
 
@@ -4367,12 +4366,12 @@ Si eso no funciona (algunas implementaciones de E/S son particularmente irritabl
         seek($fh, $curpos, 0);
     }
 
-=item seekdir IDENTIFICADOR_DIR,POS
+=item seekdir IDENTIFICADOR_DIR,POSICIÓN
 X<seekdir>
 
 =for Pod::Functions reposition directory pointer
 
-Establece la posición actual para la rutina L<C<readdir>|/readdir IDENTIFICADOR_DIR> en IDENTIFICADOR_DIR.  POS debe ser un valor devuelto por L<C<telldir>|/telldir IDENTIFICADOR_DIR>.  L<C<seekdir>|/seekdir IDENTIFICADOR_DIR,POS> también tiene las mismas advertencias sobre la posible compactación del directorio como la correspondiente rutina del sistema.
+Establece la posición actual para la rutina L<C<readdir>|/readdir IDENTIFICADOR_DIR> en IDENTIFICADOR_DIR.  POS debe ser un valor devuelto por L<C<telldir>|/telldir IDENTIFICADOR_DIR>.  L<C<seekdir>|/seekdir IDENTIFICADOR_DIR,POSICIÓN> también tiene las mismas advertencias sobre la posible compactación del directorio como la correspondiente rutina del sistema.
 
 =item select IDENTIFICADOR_ARCHIVO
 X<select> X<filehandle, default> X<identificador de archivo, por defecto>
@@ -4436,7 +4435,7 @@ o bloquear hasta que algo esté preparado, sólo hacemos esto
  my $n_encontrados =
    select(my $rout = $rin, my $wout = $win, my $eout = $ein, undef);
 
-La mayoría de los sistemas no se molestan en devolver nada útil en C<$tiempo_restante>, así que llamando L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT> en contexto escalar sólo devuelve C<$n_encontrados>.
+La mayoría de los sistemas no se molestan en devolver nada útil en C<$tiempo_restante>, así que llamando L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA> en contexto escalar sólo devuelve C<$n_encontrados>.
 
 Cualquiera de las máscaras de bit también puede ser L<C<undef>|/undef EXPR>.  El tiempo de espera, si se especifica, en segundos, puede ser decimal.  Nota: no todas las implementaciones son capaces de devolver C<$tiempo_restante>.  Si no, siempre devuelven C<$tiempo_restante> igual a C<$tiempo_espera> indicado.
 
@@ -4444,16 +4443,16 @@ Puede efectuar una espera de 250 milisegundos de esta manera:
 
     select(undef, undef, undef, 0.25);
 
-Tenga en cuenta que cuando L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT> se reinicia después de señales (por ejemplo, SIGALRM) es algo dependiente de la implementación.  Vea también L<perlport> para las notas sobre la portabilidad de L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT>.
+Tenga en cuenta que cuando L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA> se reinicia después de señales (por ejemplo, SIGALRM) es algo dependiente de la implementación.  Vea también L<perlport> para las notas sobre la portabilidad de L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA>.
 
-En caso de error, L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT> se comporta como L<select(2)>: devuelve C<-1> y actualiza L<C<$!>|perlvar/$!>.
+En caso de error, L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA> se comporta como L<select(2)>: devuelve C<-1> y actualiza L<C<$!>|perlvar/$!>.
 
 En algunos sistemas Unix, L<select(2)> puede informar de un descriptor de archivo I<socket> como "listo para leer" incluso cuando no hay datos disponibles, y por lo tanto un posterior L<C<read>|/read IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> producirá un bloqueo.
 Esto puede evitarse si siempre utiliza C<O_NONBLOCK> en el I<socket>.  Vea L<select(2)> y L<fcntl(2)> para más detalles.
 
-El módulo estándar L<C<IO::Select>|IO::Select> proporciona una interfaz fácil de utilizar para L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT>, sobre todo porque hace todo el trabajo de la máscara de bit, por usted.
+El módulo estándar L<C<IO::Select>|IO::Select> proporciona una interfaz fácil de utilizar para L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA>, sobre todo porque hace todo el trabajo de la máscara de bit, por usted.
 
-B<AVISO> : No debe tratar de mezclar el E/S con búferes (como L<C<read>|/read IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> o L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT>) con L<C<readline>|/readline EXPR>, excepto lo autorizado por POSIX, e incluso entonces sólo en sistemas POSIX.  Tiene que usar en su lugar L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>
+B<AVISO> : No debe tratar de mezclar el E/S con búferes (como L<C<read>|/read IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> o L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA>) con L<C<readline>|/readline EXPR>, excepto lo autorizado por POSIX, e incluso entonces sólo en sistemas POSIX.  Tiene que usar en su lugar L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>
 
 Cuestiones de portabilidad: L<perlport/select>.
 
@@ -4466,12 +4465,12 @@ Llama a la función L<semctl(2)> de System V IPC.  Probablemente escribirá
 
     use IPC::SysV;
 
-primero para obtener las definiciones de las constantes.  Si CMD es IPC_STAT o GETALL, entonces ARG debe ser una variable que contendrá la estructura semid_ds devuelta o el array de semáforos.  Devuelve lo mismo que L<C<ioctl>|/ioctl IDENTIFICADOR_ARCHIVO,FUNCIÓN,ESCALAR>: el valor indefinido para indicar un error, "C<0 but true>" para el caso de cero, o el valor de retorno real, en caso contrario.  El ARG debe consistir en un vector de enteros cortos nativos, que pueden ser creados con C<pack("s!",(0)x$nsem)>.
+primero para obtener las definiciones de las constantes.  Si CMD es IPC_STAT o GETALL, entonces ARG debe ser una variable que contendrá la estructura semid_ds devuelta o el array de semáforos.  Devuelve lo mismo que L<C<ioctl>|/ioctl IDENTIFICADOR_ARCHIVO,FUNCIÓN,ESCALAR>: el valor indefinido para indicar un error, "C<0 but true>" para el caso de cero, o el valor de retorno real, en caso contrario.  El ARG debe consistir en un vector de enteros cortos nativos, que pueden crearse con C<pack("s!",(0)x$nsem)>.
 Vea también L<perlipc/"SysV IPC"> y la documentación de L<C<IPC::SysV>|IPC::SysV> y L<C<IPC::Semaphore>|IPC::Semaphore>.
 
 Cuestiones de portabilidad: L<perlport/semctl>.
 
-=item semget KEY,NSEMS,FLAGS
+=item semget CLAVE,NSEMS,INDICADORES
 X<semget>
 
 =for Pod::Functions get set of SysV semaphores
@@ -4480,7 +4479,7 @@ Llama a la función L<semget(2)> de System V IPC.  Devuelve el id del semáforo,
 
 Cuestiones de portabilidad: L<perlport/semget>.
 
-=item semop KEY,OPSTRING
+=item semop CLAVE,OPSTRING
 X<semop>
 
 =for Pod::Functions SysV semaphore operations
@@ -4494,7 +4493,7 @@ Para señalizar el el semáforo, reemplace C<-1> con C<1>.  Vea también L<perli
 
 Cuestiones de portabilidad: L<perlport/semop>.
 
-=item send SOCKET,MSG,FLAGS,TO
+=item send SOCKET,MSG,INDICADORES,DESTINO
 X<send>
 
 =item send SOCKET,MSG,FLAGS
@@ -4585,8 +4584,8 @@ X<shmread> X<shmwrite>
 
 =for Pod::Functions write SysV shared memory
 
-Lee o escribe en el segmento ID de memoria compartida System V a partir de la posición POSICIÓN para el tamaño TAMAÑO, añadiéndose a ella, copiando la entrada/salida, y desuniéndose de ella.  Al leer, VAR debe ser una variable que contendrá los datos leídos.  Al escribir, si CADENA es demasiado larga, sólo se utilizan TAMAÑO bytes; si CADENA es demasiado corta, se escriben nulos para llenar TAMAÑO bytes.  Devuelve verdadero si tuvo éxito, falso en caso de error.
-L<C<shmread>|/shmread ID,VAR,POS,TAMAÑO> contamina la variable.  Vea también L<perlipc/"SysV IPC"> y la documentación del módulo L<C<IPC::SysV>|IPC::SysV> y L<C<IPC::Shareable>|IPC::Shareable> en CPAN.
+Lee o escribe en el segmento ID de memoria compartida System V a partir de la POSICIÓN para el TAMAÑO indicado, añadiéndose a ella, copiando la entrada/salida, y desuniéndose de ella.  Al leer, VAR debe ser una variable que contendrá los datos leídos.  Al escribir, si CADENA es demasiado larga, sólo se utilizan TAMAÑO bytes; si CADENA es demasiado corta, se escriben nulos para llenar TAMAÑO bytes.  Devuelve verdadero si tuvo éxito, falso en caso de error.
+L<C<shmread>|/shmread ID,VAR,POSICIÓN,TAMAÑO> contamina la variable.  Vea también L<perlipc/"SysV IPC"> y la documentación del módulo L<C<IPC::SysV>|IPC::SysV> y L<C<IPC::Shareable>|IPC::Shareable> en CPAN.
 
 Cuestiones de portabilidad: L<perlport/shmread> y L<perlport/shmwrite>.
 
@@ -4638,10 +4637,10 @@ Puede ser interrumpido si el proceso recibe una señal como C<SIGALRM>.
 
 Probablemente no puede entremezclar llamadas a L<C<alarm>|/alarm SEGUNDOS> y L<C<sleep>|/sleep EXPR>, porque L<C<sleep>|/sleep EXPR> se implementa, a menudo, con L<C<alarm>|/alarm SEGUNDOS>.
 
-En algunos sistemas antiguos, se puede dormir hasta un segundo meno de lo que ha solicitado, en función de la forma en cómo se cuenten los segundos.  La mayoría de los sistemas modernos siempre duermen la cantidad correspondiente.  Sin embargo, quizás puedan parecer dormir más de lo indicado, debido a que su proceso no puede ser planificado de forma inmediata en un sistema multitarea ocupado.
+En algunos sistemas antiguos, se puede dormir hasta un segundo meno de lo que ha solicitado, en función de la forma en cómo se cuenten los segundos.  La mayoría de los sistemas modernos siempre duermen la cantidad correspondiente.  Sin embargo, quizás puedan parecer dormir más de lo indicado, debido a que su proceso no puede planificarse de forma inmediata en un sistema multitarea ocupado.
 
 Para lapsos de tiempo inferiores a un segundo, el módulo L<Time::HiRes> (en CPAN, y a partir de Perl 5.8 como parte de la distribución estándar) ofrece L<C<usleep>|Time::HiRes/usleep ( $useconds )>.
-Puede también usar la versión de L<C<select>|/select RBITS,WBITS,EBITS,TIMEOUT> de cuatro argumentos, dejando los tres primeros indefinidos, o puede usar la interfaz L<C<syscall>|/syscall NÚMERO, LISTA> para acceder a L<setitimer(2)> si su sistema lo soporta.  Vea L<perlfaq8> para más detalles.
+Puede también usar la versión de L<C<select>|/select RBITS,WBITS,EBITS,TIEMPO_ESPERA> de cuatro argumentos, dejando los tres primeros indefinidos, o puede usar la interfaz L<C<syscall>|/syscall NÚMERO, LISTA> para acceder a L<setitimer(2)> si su sistema lo soporta.  Vea L<perlfaq8> para más detalles.
 
 Vea también la función L<C<pause>|POSIX/C<pause>> del módulo L<POSIX>.
 
@@ -4650,7 +4649,7 @@ X<socket>
 
 =for Pod::Functions create a socket
 
-Abre un socket de la clase especificada y lo adhiere al identificador de archivo SOCKET.  DOMINIO, TIPO, y PROTOCOLO son especificados de la misma manera que la llamada del sistema del mismo nombre.  Debe usar C<use Socket> primero para obtener las apropiadas definiciones.  Ver los ejemplos en L<perlipc/"Sockets: Comunicación Cliente/Servidor">.
+Abre un socket de la clase especificada y lo adhiere al identificador de archivo SOCKET.  DOMINIO, TIPO y PROTOCOLO se especifican de la misma manera que la llamada del sistema del mismo nombre.  Debe usar C<use Socket> primero para obtener las apropiadas definiciones.  Ver los ejemplos en L<perlipc/"Sockets: Comunicación Cliente/Servidor">.
 
 En sistemas que soportan el indicador B<close-on-exec> (cerrar en ejecución) en archivos, este indicador se establecerá para el descriptor de archivo abierto más recientemente según lo determinado por el valor de L<C<$^F>|perlvar/$^F>.  Ver L<perlvar/$^F>.
 
@@ -4659,7 +4658,7 @@ X<socketpair>
 
 =for Pod::Functions create a pair of sockets
 
-Crea un par de sockets anónimos en el dominio especificado, del tipo especificado.  DOMINIO, TIPO, y PROTOCOLO son especificados de la misma manera que la llamada del sistema del mismo nombre.  Si no está implementada, lanza una excepción.
+Crea un par de sockets anónimos en el dominio especificado, del tipo especificado.  DOMINIO, TIPO y PROTOCOLO se especifican de la misma manera que la llamada del sistema del mismo nombre.  Si no está implementada, lanza una excepción.
 Devuelve verdadero si tuvo éxito.
 
 En sistemas que soportan el indicador B<close-on-exec> (cerrar en ejecución) en archivos, este indicador se establecerá para los descriptores de archivo abierto más recientemente según lo determinado por el valor de L<C<$^F>|perlvar/$^F>.  Ver L<perlvar/$^F>.
@@ -4687,7 +4686,7 @@ X<sort> X<qsort> X<quicksort> X<mergesort>
 En contexto lista, ordena la LISTA y devuelve los valores de la lista ordenados.
 En contexto escalar, el comportamiento de L<C<sort>|/sort NOMBRE_SUB LISTA> es indefinido.
 
-Si se omite NOMBRE_SUB O BLOQUE, se ordena siguiendo una comparación estándar de cadenas de caracteres.  Si se ha especificado NOMBRE_SUB, da el nombre de la subrutina que devuelve un entero menor que, igual que, o mayor que C<0>, dependiendo de cómo los elementos de la lista tienen que ser ordenados.  (Los operadores C<< <=> >> y C<cmp> son muy útiles en este tipo de rutinas).
+Si se omite NOMBRE_SUB O BLOQUE, se ordena siguiendo una comparación estándar de cadenas de caracteres.  Si se ha especificado NOMBRE_SUB, da el nombre de la subrutina que devuelve un entero menor que, igual que, o mayor que C<0>, dependiendo de cómo los elementos de la lista tienen que ordenarse.  (Los operadores C<< <=> >> y C<cmp> son muy útiles en este tipo de rutinas).
 NOMBRE_SUB puede ser el nombre de una variable escalar, en cuyo caso el valor provee el nombre de (o la referencia a) la subrutina real a usar.  En lugar de un NOMBRE_SUB, puede proporcionar un BLOQUE como si fuera una subrutina de ordenación anónima.
 
 Si el prototipo de la subrutina es C<($$)>, los elementos a compararse se pasan por referencia en L<C<@_>|perlvar/@_>, como en una subrutina normal.
@@ -4695,13 +4694,13 @@ Esto es más lento que las subrutinas no prototipadas, donde los elementos a com
 
 Si la subrutina es un XSUB, los elementos que deben compararse son metidos en la pila, que es la forma normal en que los argumentos son pasados a las XSUB.  C<$a> y C<$b> no se establecen.
 
-Los valores a ser comparados siempre se pasan por referencia y no deben ser modificados.
+Los valores a compararse siempre se pasan por referencia y no deben modificarse.
 
 También no puede salir fuera del bloque de ordenación o de la subrutina utilizando cualquiera de los operadores de control de bucle descritos en L<perlsyn> o con L<C<goto>|/goto ETIQUETA>.
 
 Cuando L<C<use locale>|locale> está activo (pero no C<use locale ':not_characters'>), C<sort LISTA> ordena LISTA de acuerdo con la actual configuración regional de cotejo.  Vea L<perllocale>.
 
-L<C<sort>|/sort NOMBRE_SUB LISTA> devuelve alias en la lista original, como lo hace la variable de índice de los bucles for(), que hace un alias de los elementos de la lista.  Es decir, modificar un elemento de la lista devuelto por L<C<sort>|/sort NOMBRE_SUB LISTA> (por ejemplo, en un C<foreach>, L<C<map>|/map BLOQUE LISTA> u otro L<C<grep>|/grep BLOQUE LISTA>) realmente modifica el elemento en la lista original.  Esto suele ser algo que debe ser evitado cuando se está escribiendo código claro.
+L<C<sort>|/sort NOMBRE_SUB LISTA> devuelve alias en la lista original, como lo hace la variable de índice de los bucles for(), que hace un alias de los elementos de la lista.  Es decir, modificar un elemento de la lista devuelto por L<C<sort>|/sort NOMBRE_SUB LISTA> (por ejemplo, en un C<foreach>, L<C<map>|/map BLOQUE LISTA> u otro L<C<grep>|/grep BLOQUE LISTA>) realmente modifica el elemento en la lista original.  Esto suele ser algo que debe evitarse cuando se está escribiendo código claro.
 
 Perl v5.6 y anteriores usaban un algoritmo quicksort para implementar sort.
 Este algoritmo no era estable, y I<podría> ser cuadrático.  (Un sort I<estable> preserva el orden de los elementos de entrada que sean iguales en la comparación.  Aunque el tiempo de ejecución de quicksort es O(NlogN) de promedio de todos los arrays de longitud N, el tiempo puede ser O(N**2), comportamiento I<cuadrático>, para algunas entradas).  En v5.7 la implementación de quicksort fue reemplazada con un algoritmo estable mergesort cuyo peor comportamiento es O(NlogN).
@@ -4894,13 +4893,13 @@ Sin embargo, esto:
 
     print join(':', split(//, 'abc')), "\n";
 
-utiliza las coincidencias de cadena vacía como separadores para producir la salida C<a:b:c>, por lo que la cadena vacía puede ser utilizada para dividir EXPR en una lista de los caracteres que lo componen.
+utiliza las coincidencias de cadena vacía como separadores para producir la salida C<a:b:c>, por lo que la cadena vacía puede utilizarse para dividir EXPR en una lista de los caracteres que lo componen.
 
 Como un caso especial para L<C<split>|/split E<sol>PATRÓNE<sol>,EXPR,LÍMITE>, el patrón vacío indicado en la sintaxis del L<operador de coincidencia|perlop/"m/PATRÓN/msixpodualngc"> (C<//>), coincide específicamente con la cadena vacía, que es lo contrario de la interpretación usual de ser igual a la última coincidencia exitosa.
 
 Si PATRÓN es C</^/>, entonces se trata como si estuviera presente el L<modificador multilínea|perlreref/OPERADORES> (C</^/m>), ya que de lo contrario no serviría de mucho.
 
-Como otro caso especial, L<C<split>|/split E<sol>PATRÓNE<sol>,EXPR,LÍMITE> emula el comportamiento predeterminado de la herramienta de línea de comando B<awk> cuando el PATRÓN se omite o es una I<cadena literal> compuesta de un único carácter de espacio (tal como S<C<' '>> o S<C<"\x20">>, pero no, por ejemplo, S<C</ />>).  En este caso, cualquier espacio en blanco que rodee a EXPR es eliminado antes de que ocurra la división, y el PATRÓN es tratado como si fuera C</\s+/>; en particular, esto significa que I<cualquier> espacio en blanco contiguo (no sólo un carácter de espacio) es utilizado como separador.  Sin embargo, este tratamiento especial puede ser evitado especificando el patrón S<C</ />> en lugar de la cadena S<C<" ">>, permitiendo así que sólo un único carácter de espacio sea el separador.  En versiones anteriores de Perl, este caso especial estuvo restringido al uso de un sencillo S<C<" ">> como el argumento de patrón para split; en Perl 5.18.0 y siguientes, este caso especial se activa por cualquier expresión que evalúe a la cadena de caracteres S<C<" ">>.
+Como otro caso especial, L<C<split>|/split E<sol>PATRÓNE<sol>,EXPR,LÍMITE> emula el comportamiento predeterminado de la herramienta de línea de comando B<awk> cuando el PATRÓN se omite o es una I<cadena literal> compuesta de un único carácter de espacio (tal como S<C<' '>> o S<C<"\x20">>, pero no, por ejemplo, S<C</ />>).  En este caso, cualquier espacio en blanco que rodee a EXPR es eliminado antes de que ocurra la división, y el PATRÓN es tratado como si fuera C</\s+/>; en particular, esto significa que I<cualquier> espacio en blanco contiguo (no sólo un carácter de espacio) es utilizado como separador.  Sin embargo, este tratamiento especial puede evitarse especificando el patrón S<C</ />> en lugar de la cadena S<C<" ">>, permitiendo así que sólo un único carácter de espacio sea el separador.  En versiones anteriores de Perl, este caso especial estuvo restringido al uso de un sencillo S<C<" ">> como el argumento de patrón para split; en Perl 5.18.0 y siguientes, este caso especial se activa por cualquier expresión que evalúe a la cadena de caracteres S<C<" ">>.
 
 Si se omite, el PATRÓN por defecto es un único espacio, S<C<" ">>, lo que provoca el comportamiento de la emulación I<awk> descrita anteriormente.
 
@@ -5133,7 +5132,7 @@ Para "g" y "G", especifica el número máximo de dígitos a mostrar, incluyendo 
   printf '<%.5g>', 100.01; # imprime "<100.01>"
   printf '<%.4g>', 100.01; # imprime "<100>"
 
-Para las conversiones de entero, especificando una precisión implica que la salida del número en sí mismo debería ser rellenado con ceros a este ancho, donde se pasa por alto a el indicador 0:
+Para las conversiones de entero, especificando una precisión implica que la salida del número en sí mismo debería rellenarse con ceros a este ancho, donde se pasa por alto a el indicador 0:
 
   printf '<%.6d>', 1;      # imprime "<000001>"
   printf '<%+.6d>', 1;     # imprime "<+000001>"
@@ -5418,24 +5417,24 @@ Consulte su documentación de las nativas L<chmod(2)> y L<stat(2)> para obtener 
 
 Cuestiones de portabilidad: L<perlport/stat>.
 
-=item state VARLIST
+=item state LISTAVAR
 X<state>
 
-=item state TIPO VARLIST
+=item state TIPO LISTAVAR
 
-=item state VARLIST : ATRIBUTOS
+=item state LISTAVAR: ATRIBUTOS
 
-=item state TIPO VARLIST : ATRIBUTOS
+=item state TIPO LISTAVAR : ATRIBUTOS
 
 =for Pod::Functions +state declare and assign a persistent lexical variable
 
-L<C<state>|/state VARLIST> declara una variable de ámbito léxico, como lo hace L<C<my>|/my VARLIST>.
+L<C<state>|/state LISTAVAR> declara una variable de ámbito léxico, como lo hace L<C<my>|/my LISTAVAR>.
 Sin embargo, estas variables no se reinicializan, a diferencia de las variables léxicas que se reinicializan cada vez que entran en un bloque.
 Vea L<perlsub/"Variables privadas persistentes"> para los detalles.
 
 Si se lista más de una variable, la lista debe ser puesta entre paréntesis.  Con una lista entre paréntesis, se puede utilizar L<C<undef>|/undef EXPR> como un marcador de posición.  Sin embargo, debido a que actualmente la inicialización de las variables state en contexto de lista no es posible, esto no sirve para nada.
 
-L<C<state>|/state VARLIST> sólo está disponible si la característica L<C<"state"> feature|feature/The 'state' feature> está habilitada o si está prefijada con C<CORE::>.  La característica L<C<"state"> feature|feature/The 'state' feature> se activa automáticamente con una declaración C<use v5.10> (o superior) en el ámbito actual.
+L<C<state>|/state LISTAVAR> sólo está disponible si la característica L<C<"state"> feature|feature/The 'state' feature> está habilitada o si está prefijada con C<CORE::>.  La característica L<C<"state"> feature|feature/The 'state' feature> se activa automáticamente con una declaración C<use v5.10> (o superior) en el ámbito actual.
 
 
 =item study ESCALAR
@@ -5563,7 +5562,7 @@ Con desplazamientos negativos, recuerda su posición desde el final de la cadena
 
 Antes de la versión Perl 5.10, no estaba especificado el resultado de usar varias veces un valor-izquierda.  Antes de 5,16, el resultado con desplazamientos negativos no estaba especificado.
 
-=item symlink VIEJO,NUEVO
+=item symlink ARCHIVO_VIEJO,ARCHIVO_NUEVO
 X<symlink> X<link> X<symbolic link> X<link, symbolic> X<enlace simbólico> X<enlace>
 
 =for Pod::Functions create a symbolic link to a file
@@ -5580,7 +5579,7 @@ X<syscall> X<system call> X<llamada del sistema>
 
 =for Pod::Functions execute an arbitrary system call
 
-Llama a la llamada del sistema especificado en el primer elemento de la lista, pasando el resto de elementos como argumentos para la llamada al sistema.  Si no está implementada, lanza una excepción.  Los argumentos se interpretan de la siguiente manera: si un argumento dado es numérico, el argumento se pasa como un int.  Si no, se pasa el puntero al valor de la cadena.  Es responsable de asegurarse de que una cadena sea pre-extendida el largo suficiente como para recibir cualquier resultado que pueda ser escrito en una cadena.  No puede utilizar una cadena literal (u otras cadenas de sólo lectura) como un argumento a L<C<syscall>|/syscall NÚMERO, LISTA> porque Perl tiene que asumir que cualquier puntero de cadena se puede escribir a través de ella.  Si sus argumentos enteros no son enteros, y nunca han sido interpretados en un contexto numérico, es posible que deba agregarles C<0> para obligarles a que se parezcan a números.  Esto emula la función L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> (o viceversa):
+Llama a la llamada del sistema especificado en el primer elemento de la lista, pasando el resto de elementos como argumentos para la llamada al sistema.  Si no está implementada, lanza una excepción.  Los argumentos se interpretan de la siguiente manera: si un argumento dado es numérico, el argumento se pasa como un int.  Si no, se pasa el puntero al valor de la cadena.  Es responsable de asegurarse de que una cadena sea pre-extendida el largo suficiente como para recibir cualquier resultado que pueda ser escrito en una cadena.  No puede utilizar una cadena literal (u otras cadenas de sólo lectura) como un argumento a L<C<syscall>|/syscall NÚMERO, LISTA> porque Perl tiene que asumir que cualquier puntero de cadena se puede escribir a través de ella.  Si sus argumentos enteros no son enteros, y nunca se han interpretado en un contexto numérico, es posible que deba agregarles C<0> para obligarles a que se parezcan a números.  Esto emula la función L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> (o viceversa):
 
     require 'syscall.ph';        # puede necesitar ejecutar h2ph
     my $s = "hola por aquí\n";
@@ -5590,16 +5589,16 @@ Tenga en cuenta que Perl soporta pasar sólo hasta 14 argumentos a su syscall, q
 
 Syscall devuelve cualquier valor devuelto por la llamada al sistema que llama.
 Si la llamada al sistema falla, L<C<syscall>|/syscall NÚMERO, LISTA> devuelve C<-1> y establece L<C<$!>|perlvar/$!> (errno).
-Tenga en cuenta que algunas llamadas al sistema I<pueden> legalmente devolver C<-1>.  La forma correcta de gestionar llamadas de ese tipo es el de asignar C<$! =0> antes de la llamada, y comprobar el valor de L<C<$!>|perlvar/$!> si L<C<syscall>|/syscall NÚMBERO, LISTA> devuelve C<-1>.
+Tenga en cuenta que algunas llamadas al sistema I<pueden> legalmente devolver C<-1>.  La forma correcta de gestionar llamadas de ese tipo es el de asignar C<$! = 0> antes de la llamada, y comprobar el valor de L<C<$!>|perlvar/$!> si L<C<syscall>|/syscall NÚMERO, LISTA> devuelve C<-1>.
 
 Hay un problema con C<syscall(SYS_pipe())>: devuelve el número de archivo de la lectura final de la tubería que crea, pero no hay manera de recuperar el número de archivo del otro extremo.  Puede evitar este problema mediante el uso, en su lugar, de L<C<pipe>|/pipe IDENTIFICADOR_LECTURA,IDENTIFICADOR_ESCRITURA>.
 
 Cuestiones de portabilidad: L<perlport/syscall>.
 
-=item sysopen IDENTIFICADOR_ARCHIVO,ARCHIVO,MODO
+=item sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO
 X<sysopen>
 
-=item sysopen IDENTIFICADOR_ARCHIVO,ARCHIVO,MODO,PERMISOS
+=item sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO,PERMISOS
 
 =for Pod::Functions +5.002 open a file, pipe, or descriptor
 
@@ -5614,20 +5613,20 @@ X<O_RDONLY> X<O_RDWR> X<O_WRONLY>
 
 Por razones históricas, algunos valores funcionan en casi todos los sistemas soportados por Perl: 0 significa solo lectura, 1 significa sólo escritura y 2 significa lectura y escritura.  Sabemos que estos valores I<no> funcionan bajo OS/390 y el Macintosh; es probable que no desee utilizarlos en nuevos programas.
 
-Si el archivo con el nombre ARCHIVO no existe y la llamada L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> lo crea (por lo general porque el modo incluye el indicador C<O_CREAT>), entonces el valor de PERMISOS especifica los permisos del archivo recién creado.  Si se omite el argumento PERMISOS a L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,ARCHIVO,MODO>, Perl utiliza el valor octal C<0666>.
+Si el archivo con el nombre ARCHIVO no existe y la llamada L<C<open>|/open IDENTIFICADOR_ARCHIVO,EXPR> lo crea (por lo general porque el modo incluye el indicador C<O_CREAT>), entonces el valor de PERMISOS especifica los permisos del archivo recién creado.  Si se omite el argumento PERMISOS a L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO>, Perl utiliza el valor octal C<0666>.
 Estos valores de permisos tiene que estar en octal, y se modifican por el valor de L<C<umask>|/umask EXPR> de su proceso actual.
 X<O_CREAT>
 
-En muchos sistemas el indicador C<O_EXCL> está disponible para abrir archivos en modo exclusivo.  Esto B<no> es bloquear: la exclusividad significa aquí que si el archivo ya existe, L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,ARCHIVO,MODO> falla.  C<O_EXCL> quizás no funcione en sistemas de archivos en red, y no tiene ningún efecto a menos que el indicador C<O_CREAT> también esté establecido.  Estableciendo C<O_CREAT|O_EXCL> impide que el archivo sea abierto si es un enlace simbólico.  No protege contra enlaces simbólicos en la ruta del archivo.
+En muchos sistemas el indicador C<O_EXCL> está disponible para abrir archivos en modo exclusivo.  Esto B<no> es bloquear: la exclusividad significa aquí que si el archivo ya existe, L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO> falla.  C<O_EXCL> quizás no funcione en sistemas de archivos en red, y no tiene ningún efecto a menos que el indicador C<O_CREAT> también esté establecido.  Estableciendo C<O_CREAT|O_EXCL> impide que el archivo sea abierto si es un enlace simbólico.  No protege contra enlaces simbólicos en la ruta del archivo.
 X<O_EXCL>
 
 A veces puede querer truncar un archivo ya existente.  Esto se puede hacer con el uso del indicador C<O_TRUNC>.  El comportamiento de C<O_TRUNC> con C<O_RDONLY> no está definido.
 X<O_TRUNC>
 
-Rara vez o nunca debe utilizar C<0644> como argumento a L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,ARCHIVO,MODO>, porque eso le quita al usuario la opción de tener un umask más permisivo.
+Rara vez o nunca debe utilizar C<0644> como argumento a L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO>, porque eso le quita al usuario la opción de tener un umask más permisivo.
 Es mejor omitirlo.  Vea L<C<umask>|/umask EXPR> para más detalles sobre esto.
 
-Tenga en cuenta que bajo Perl anteriores a 5.8.0, L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,ARCHIVO,MODO> depende de la función de biblioteca C L<fdopen(3)>.  En muchos sistemas Unix, L<fdopen(3)> se sabe que falla cuando los descriptores de archivo exceden un valor determinado, por lo general, 255.  Si necesita más descriptores de archivo que esa cantidad, contemple la posibilidad de usar la función L<C<POSIX::open>|POSIX/C<open>>.  Para las versiones de Perl 5.8.0 y posteriores, PerlIO es (casi siempre) el valor predeterminado.
+Tenga en cuenta que bajo Perl anteriores a 5.8.0, L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO> depende de la función de biblioteca C L<fdopen(3)>.  En muchos sistemas Unix, L<fdopen(3)> se sabe que falla cuando los descriptores de archivo exceden un valor determinado, por lo general, 255.  Si necesita más descriptores de archivo que esa cantidad, contemple la posibilidad de usar la función L<C<POSIX::open>|POSIX/C<open>>.  Para las versiones de Perl 5.8.0 y posteriores, PerlIO es (casi siempre) el valor predeterminado.
 
 Ver L<perlopentut> para una más amable, más suave explicación de apertura de los archivos.
 
@@ -5673,7 +5672,7 @@ X<system> X<shell>
 
 =for Pod::Functions run a separate program
 
-Hace exactamente lo mismo que L<C<exec>|/exec LISTA>, excepto que se hace primero un fork y el proceso padre espera a que el proceso hijo termine.  Tenga en cuenta que el tratamiento de los argumentos varía en función del número de argumentos.  Si hay más de un argumento en LISTA, o si la lista es un array con más de un valor, se inicia el programa indicado en el primer elemento de la lista, con los argumentos indicados por el resto de la lista.  Si sólo hay un argumento escalar, se comprueba si el argumento tiene metacaracteres, y si hay alguno, el argumento entero es pasado al shell de comandos para que sea interpretado (suele ser C</bin/sh -c> en plataformas Unix, pero varía en otras plataformas).  Si no hay metacaracteres shell en el argumento, es dividido en palabras y pasadas directamente a C<execvp>, que es más eficiente.  En Windows, solo la sintaxis de objetos indirecto en C<system PROGRAMA LISTA> evitará, de forma efectiva, evitar usar la shell; C<system LISTA>, incluso con más de un elemento, volverá a usar la shell si falla el primer intento de lanzamiento.
+Hace exactamente lo mismo que L<C<exec>|/exec LISTA>, excepto que se hace primero un fork y el proceso padre espera a que el proceso hijo termine.  Tenga en cuenta que el tratamiento de los argumentos varía en función del número de argumentos.  Si hay más de un argumento en LISTA, o si la lista es un array con más de un valor, se inicia el programa indicado en el primer elemento de la lista, con los argumentos indicados por el resto de la lista.  Si sólo hay un argumento escalar, se comprueba si el argumento tiene metacaracteres, y si hay alguno, el argumento entero es pasado al shell de comandos para interpretarse (suele ser C</bin/sh -c> en plataformas Unix, pero varía en otras plataformas).  Si no hay metacaracteres shell en el argumento, es dividido en palabras y pasadas directamente a C<execvp>, que es más eficiente.  En Windows, solo la sintaxis de objetos indirecto en C<system PROGRAMA LISTA> evitará, de forma efectiva, evitar usar la shell; C<system LISTA>, incluso con más de un elemento, volverá a usar la shell si falla el primer intento de lanzamiento.
 
 Perl intentará vaciar todos los archivos abiertos para la salida antes de cualquier operación que pueda hacer un fork, pero esto quizás no esté soportado en algunas plataformas (vea L<perlport>).  Para estar seguros, puede necesitar establecer L<C<$E<verbar>>|perlvar/$E<verbar>> ($AUTOFLUSH en el módulo L<English>) o llamar el método C<autoflush> de L<C<IO::Handle>|IO::Handle/METHODS> en cualquiera de los identificadores de archivo abiertos para evitar la pérdida de datos en la salida.
 
@@ -5724,7 +5723,7 @@ Intenta escribir LONGITUD bytes de datos desde la variable ESCALAR al IDENTIFICA
 L<C<print>|/print IDENTIFICADOR_ARCHIVO LISTA>, L<C<write>|/write IDENTIFICADOR_ARCHIVO>, L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, L<C<tell>|/tell IDENTIFICADOR_ARCHIVO>, o L<C<eof>|/eof IDENTIFICADOR_ARCHIVO> pueden provocar confusión porque las capas perlio y stdio normalmente almacenan datos.
 Devuelve el número de bytes realmente escritos, o L<C<undef>|/undef EXPR> si hubo un error (en este caso, también se establece la variable L<C<$!>|perlvar/$!>).  Si LONGITUD es mayor que los datos disponibles en ESCALAR después del DESPLAZAMIENTO, sólo se escribirán los datos que estén disponibles.
 
-Un DESPLAZAMIENTO puede ser especificado para escribir datos desde algún otro lugar de la cadena distinto del principio.  Un DESPLAZAMIENTO negativo especifica escribir tantos caracteres contando desde el final de la cadena.
+Un DESPLAZAMIENTO puede especificarse para escribir datos desde algún otro lugar de la cadena distinto del principio.  Un DESPLAZAMIENTO negativo especifica escribir tantos caracteres contando desde el final de la cadena.
 Si ESCALAR es de longitud cero, sólo se puede utilizar un DESPLAZAMIENTO de 0.
 
 B<ADVERTENCIA>: Si el identificador de archivo está marcado como C<:utf8>, se escriben caracteres Unicode codificados en UTF-8 en lugar de bytes, y la LONGITUD, DESPLAZAMIENTO y el valor de retorno de L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> se basarán en caracteres (Unicode codificados en UTF-8).
@@ -5747,21 +5746,21 @@ El valor de retorno de L<C<tell>|/tell IDENTIFICADOR_ARCHIVO> para los flujos es
 
 No existe la función C<systell>.  Use C<sysseek($fh, 0, 1)> para eso.
 
-No utilice L<C<tell>|/tell IDENTIFICADOR_ARCHIVO> (u otras operaciones de E/S con búfer) en un identificador de archivo que ha sido manipulado con L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> o L<C<sysseek>|/sysseek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>.  Esas funciones ignoran el sistema de búfer, mientras que L<C<tell>|/tell IDENTIFICADOR_ARCHIVO>, no.
+No utilice L<C<tell>|/tell IDENTIFICADOR_ARCHIVO> (u otras operaciones de E/S con búfer) en un identificador de archivo que se ha manipulado con L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> o L<C<sysseek>|/sysseek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>.  Esas funciones ignoran el sistema de búfer, mientras que L<C<tell>|/tell IDENTIFICADOR_ARCHIVO>, no.
 
 =item telldir IDENTIFICADOR_DIR
 X<telldir>
 
 =for Pod::Functions get current seekpointer on a directory handle
 
-Devuelve la posición actual de las rutinas L<C<readdir>|/readdir IDENTIFICADOR_DIR> en IDENTIFICADOR_DIR.  El valor se puede indicar a L<C<seekdir>|/seekdir IDENTIFICADOR_ARCHIVO,POS> para acceder a un lugar determinado en un directorio.  L<C<telldir>|/telldir IDENTIFICADOR_DIR> también tiene las mismas advertencias sobre la posible compactación del directorio como la correspondiente rutina del sistema.
+Devuelve la posición actual de las rutinas L<C<readdir>|/readdir IDENTIFICADOR_DIR> en IDENTIFICADOR_DIR.  El valor se puede indicar a L<C<seekdir>|/seekdir IDENTIFICADOR_DIR,POSICIÓN> para acceder a un lugar determinado en un directorio.  L<C<telldir>|/telldir IDENTIFICADOR_DIR> también tiene las mismas advertencias sobre la posible compactación del directorio como la correspondiente rutina del sistema.
 
-=item tie VARIABLE,CLASE,LISTA
+=item tie VARIABLE,NOMBRE_CLASE,LISTA
 X<tie>
 
 =for Pod::Functions +5.002 bind a variable to an object class
 
-Esta función une una variable a una clase de paquete que ofrecerá la implementación para esa variable.  VARIABLE es el nombre de la variable que será enlazada.  CLASE es el nombre de la clase que implementa objetos del tipo correcto.  Cualesquiera argumentos adicionales son pasados al método constructor apropiado de la clase (es decir, C<TIESCALAR>, C<TIEHANDLE>, C<TIEARRAY>, o C<TIEHASH>).  Por lo general estos son argumentos que se podrían transmitir a la función del C L<dbm_open(3)>. El objeto devuelto por el constructor también se devuelve por la función L<C<tie>|/tie VARIABLE,CLASE,LISTA>, que será útil si desea tener acceso a otros métodos en CLASE.
+Esta función une una variable a una clase de paquete que ofrecerá la implementación para esa variable.  VARIABLE es el nombre de la variable que será enlazada.  CLASE es el nombre de la clase que implementa objetos del tipo correcto.  Cualesquiera argumentos adicionales son pasados al método constructor apropiado de la clase (es decir, C<TIESCALAR>, C<TIEHANDLE>, C<TIEARRAY>, o C<TIEHASH>).  Por lo general estos son argumentos que se podrían transmitir a la función del C L<dbm_open(3)>. El objeto devuelto por el constructor también se devuelve por la función L<C<tie>|/tie VARIABLE,NOMBRE_CLASE,LISTA>, que será útil si desea tener acceso a otros métodos en CLASE.
 
 Note que las funciones como L<C<keys>|/keys HASH> y L<C<values>|/values HASH> pueden devolver listas largas cuando se usan con grandes objetos, como los archivos DBM.  Puede preferir usar la función L<C<each>|/each HASH> para iterar sobre tales objetos.  Ejemplo:
 
@@ -5834,7 +5833,7 @@ Una clase que implementa un escalar debe tener los siguientes métodos:
 
 No todos los métodos indicados es necesario implementarlos.  Ver L<perltie>, L<Tie::Hash>, L<Tie::Array>, L<Tie::Scalar>, y L<Tie::Handle>.
 
-A diferencia de L<C<dbmopen>|/dbmopen HASH,BASE_DATOS,MÁSCARA>, la función L<C<tie>|/tie VARIABLE,CLASE,LISTA> no usará L<C<use>|/use Módulo VERSIÓN LISTA> o L<C<require>|/require VERSIÓN> de un módulo por usted; necesitará hacerlo de forma explícita.  Vea L<DB_File> o el módulo L<Config> para implementaciones interesantes de L<C<tie>|/tie VARIABLE,CLASE,LISTA>.
+A diferencia de L<C<dbmopen>|/dbmopen HASH,NOMBRE_BASE_DATOS,MÁSCARA>, la función L<C<tie>|/tie VARIABLE,NOMBRE_CLASE,LISTA> no usará L<C<use>|/use Módulo VERSIÓN LISTA> o L<C<require>|/require VERSIÓN> de un módulo por usted; necesitará hacerlo de forma explícita.  Vea L<DB_File> o el módulo L<Config> para implementaciones interesantes de L<C<tie>|/tie VARIABLE,NOMBRE_CLASE,LISTA>.
 
 Para más detalles, vea L<perltie>, L<C<tied>|/tied VARIABLE>.
 
@@ -5843,7 +5842,7 @@ X<tied>
 
 =for Pod::Functions get a reference to the object underlying a tied variable
 
-Devuelve una referencia al objeto subyacente en VARIABLE (el mismo valor que fue devuelto originalmente por la llamada L<C<tie>|/tie VARIABLE,CLASE,LISTA> que enlazaba la variable a un paquete).  Devuelve el valor indefinido si la VARIABLE no está atada a un paquete.
+Devuelve una referencia al objeto subyacente en VARIABLE (el mismo valor que fue devuelto originalmente por la llamada L<C<tie>|/tie VARIABLE,NOMBRE_CLASE,LISTA> que enlazaba la variable a un paquete).  Devuelve el valor indefinido si la VARIABLE no está atada a un paquete.
 
 =item time
 X<time> X<epoch>
@@ -5930,9 +5929,9 @@ X<umask>
 Establece la umask para el proceso a EXPR y devuelve el valor anterior.
 Si EXPR se omite, simplemente devuelve la umask actual.
 
-Los permisos Unix C<rwxr-x---> son representados como tres conjuntos de tres bits, o tres dígitos octales: C<0750> (el 0 precedente indica que es octal, y que no es uno de los dígitos).  El valor de L<C<umask>|/umask EXPR> es un número que representa los bits de los permisos que quedan desactivados.  El valor de permiso (o "modo") que se pasa a L<C<mkdir>|/mkdir IDENTIFICADOR_ARCHIVO,MÁSCARA> o L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,ARCHIVO,MODO> se modifican por su umask, así que incluso si usted le pide a L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,ARCHIVO,MODO> crear un archivo con permisos C<0777>, y su umask es C<0022>, entonces el archivo realmente se crea con permisos C<0755>.  Si su L<C<umask>|/umask EXPR> fuera C<0027> (el grupo no puede escribir; los otros no pueden leer, escribir o ejecutar), entonces pasando a L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,ARCHIVO,MODO> C<0666> creará un archivo con el modo C<0640> (porque C<0666 &~ 027> es C<0640>).
+Los permisos Unix C<rwxr-x---> son representados como tres conjuntos de tres bits, o tres dígitos octales: C<0750> (el 0 precedente indica que es octal, y que no es uno de los dígitos).  El valor de L<C<umask>|/umask EXPR> es un número que representa los bits de los permisos que quedan desactivados.  El valor de permiso (o "modo") que se pasa a L<C<mkdir>|/mkdir NOMBRE_ARCHIVO,MÁSCARA> o L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO> se modifican por su umask, así que incluso si usted le pide a L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO> crear un archivo con permisos C<0777>, y su umask es C<0022>, entonces el archivo realmente se crea con permisos C<0755>.  Si su L<C<umask>|/umask EXPR> fuera C<0027> (el grupo no puede escribir; los otros no pueden leer, escribir o ejecutar), entonces pasando a L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO> C<0666> creará un archivo con el modo C<0640> (porque C<0666 &~ 027> es C<0640>).
 
-Aquí, un consejo: suministre un modo de creación de C<0666> para archivos regulares (en L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,ARCHIVO,MODO>) y uno de C<0777> para directorios (en L<C<mkdir>|/mkdir ARCHIVO,MÁSCARA>) y los archivos ejecutables.  Esto ofrece a los usuarios la libertad de elección: si quieren archivos protegidos, podrían elegir un umasks para el proceso de C<022>, C<027>, o incluso la máscara, particularmente antisocial, de C<077>.
+Aquí, un consejo: suministre un modo de creación de C<0666> para archivos regulares (en L<C<sysopen>|/sysopen IDENTIFICADOR_ARCHIVO,NOMBRE_ARCHIVO,MODO>) y uno de C<0777> para directorios (en L<C<mkdir>|/mkdir NOMBRE_ARCHIVO,MÁSCARA>) y los archivos ejecutables.  Esto ofrece a los usuarios la libertad de elección: si quieren archivos protegidos, podrían elegir un umasks para el proceso de C<022>, C<027>, o incluso la máscara, particularmente antisocial, de C<077>.
 Los programas rara vez o nunca deben tomar decisiones políticas, que es mejor dejar al usuario.  La excepción a esto es cuando se escriben archivos que deben mantenerse de forma privada: archivos de correo, las I<cookies> del navegador web, archivos F<.rhosts>, y así sucesivamente.
 
 Si L<umask(2)> no está implementada en su sistema y está tratando de restringir el acceso por I<sí mismo> (es decir, C<< (EXPR & 0700) > 0 >>), se lanza una excepción.  Si L<umask(2)> no está implementado y usted no está tratando de restringir el acceso por sí mismo, devuelve L<C<undef>|/undef EXPR>.
@@ -5984,7 +5983,7 @@ Si quiere saber qué archivos no pudo eliminar, trátelos de uno en uno:
          unlink $archivo or warn "No puedo eliminar $archivo: $!";
      }
 
-Nota: L<C<unlink>|/unlink LISTA> no intentará eliminar directorios a menos que usted sea superusuario y se suministre a Perl el indicador B<-U>.  Incluso si se cumplen estas condiciones, se advierte que desvincular un directorio puede causar daños a su sistema de archivos.  Por último, con L<C<unlink>|/unlink LISTA> en directorios no está soportado en muchos sistemas operativos.  Use en su lugar L<C<rmdir>|/rmdir ARCHIVO>.
+Nota: L<C<unlink>|/unlink LISTA> no intentará eliminar directorios a menos que usted sea superusuario y se suministre a Perl el indicador B<-U>.  Incluso si se cumplen estas condiciones, se advierte que desvincular un directorio puede causar daños a su sistema de archivos.  Por último, con L<C<unlink>|/unlink LISTA> en directorios no está soportado en muchos sistemas operativos.  Use en su lugar L<C<rmdir>|/rmdir NOMBRE_DIRECTORIO>.
 
 Si LISTA se omite, L<C<unlink>|/unlink LISTA> utiliza L<C<$_>|perlvar/$_>.
 
@@ -6028,7 +6027,7 @@ A continuación, de manera eficiente, cuenta el número de bits establecidos en 
 
     my $setbits = unpack("%32b*", $selectmask);
 
-Los formatos C<p> y C<P> deben ser utilizados con cuidado.  Dado que Perl no tiene manera de comprobar si el valor pasado a L<C<unpack>|/unpack PLANTILLA,EXPR> corresponde a una ubicación de memoria válida, pasando un valor de puntero que no se sabe de su validez, puede tener consecuencias desastrosas.
+Los formatos C<p> y C<P> deben utilizarse con cuidado.  Dado que Perl no tiene manera de comprobar si el valor pasado a L<C<unpack>|/unpack PLANTILLA,EXPR> corresponde a una ubicación de memoria válida, pasando un valor de puntero que no se sabe de su validez, puede tener consecuencias desastrosas.
 
 Si hay más códigos de empaquetado o si el número de repeticiones de un campo o un grupo es más grande que lo que el resto de la cadena de entrada permite, el resultado no está bien definido: el número de repeticiones puede ser reducido, o L<C<unpack>|/unpack PLANTILLA,EXPR> puede producir cadenas vacías o ceros, o puede provocar una excepción.
 Si la cadena de entrada es superior a lo descrito por la PLANTILLA, el resto de la cadena de entrada se ignora.
@@ -6054,7 +6053,7 @@ X<untie>
 =for Pod::Functions break a tie binding to a variable
 
 Rompe el enlace entre una variable y un paquete.
-(Vea L<tie|/tie VARIABLE,CLASE,LISTA>).
+(Vea L<tie|/tie VARIABLE,NOMBRE_CLASE,LISTA>).
 No tiene efecto si la variable no está atada.
 
 =item use Módulo VERSIÓN LISTA
@@ -6114,7 +6113,7 @@ El método L<default C<VERSION> method|UNIVERSAL/C<VERSION ( [ REQUIRE ] )>> por
 
 Una vez más, hay una distinción entre omitir LISTA (L<C<import>|/import LISTA> llamado sin argumentos) y una explícita LISTA vacía C<()> (L<C<import>|/import LISTA> no se llama).  ¡Tenga en cuenta que no hay ninguna coma después de VERSIÓN!
 
-Debido a que esta es una interfaz ampliamente abierta, pragmas (directivas del compilador), también son implementadas de esta manera.  Las I<pragmas> actualmente implementadas son:
+Debido a que esta es una interfaz ampliamente abierta, pragmas (directivas del compilador), también se implementan de esta manera.  Las I<pragmas> actualmente implementadas son:
 
     use constant;
     use diagnostics;
@@ -6133,13 +6132,13 @@ En particular, poniendo un L<C<use>|/use Módulo VERSIÓN LISTA> dentro de la ra
     use if $] < 5.008, "utf8";
     use if WANT_WARNINGS, warnings => qw(all);
 
-Existe un correspondiente comando L<C<no>|/no Módulo VERSIÓN LISTA> que des-importa los significados importados por L<C<use>|/use Módulo VERSIÓN LISTA>, es decir, llama a C<< Módulo->unimport(LIST) >> en lugar de L<C<import>|/import LISTA>.  Se comporta igual que L<C<import>|/import LISTA> lo hace con VERSIÓN, con una lista vacía o no, o  se encuentra ningún método unimport.
+Existe un correspondiente comando L<C<no>|/no Módulo VERSIÓN LISTA> que des-importa los significados importados por L<C<use>|/use Módulo VERSIÓN LISTA>, es decir, llama a C<< Módulo->unimport(LISTA) >> en lugar de L<C<import>|/import LISTA>.  Se comporta igual que L<C<import>|/import LISTA> lo hace con VERSIÓN, con una lista vacía o no, o  se encuentra ningún método unimport.
 
     no integer;
     no strict 'refs';
     no warnings;
 
-Se debe tener cuidado cuando se usa la forma C<no VERSIÓN> de L<C<no>|/no Módulo VERSIÓN LISTA>.  I<Sólo> es para ser usado para asegurarse de que el perl que se está ejecutando es de una versión anterior a su argumento y I<no> para deshacer los efectos colaterales activados por C<use VERSION>.
+Se debe tener cuidado cuando se usa la forma C<no VERSIÓN> de L<C<no>|/no Módulo VERSIÓN LISTA>.  I<Sólo> es para asegurarse de que el perl que se está ejecutando es de una versión anterior a su argumento y I<no> para deshacer los efectos colaterales activados por C<use VERSION>.
 
 Ver L<perlmodlib> para una lista de módulos y pragmas estándar.  Vea L<perlrun> para las opciones en línea de comandos C<-M> y C<-m> para Perl que dan la funcionalidad de L<C<use>|/use Módulo VERSIÓN LISTA> en la línea de comandos.
 
@@ -6194,7 +6193,7 @@ Para no confundir a los posibles usuarios de su código, que ejecuten versiones 
 
     use 5.012;  # así keys/values/each trabajan sobre arrays
 
-Vea también L<C<keys>|/keys HASH>, L<C<each>|/each HASH> y L<C<sort>|/sort SUBRUTINA LISTA>.
+Vea también L<C<keys>|/keys HASH>, L<C<each>|/each HASH> y L<C<sort>|/sort NOMBRE_SUB LISTA>.
 
 =item vec EXPR,DESPLAZAMIENTO,BITS
 X<vec> X<bit> X<bit vector> X<vectores de bit>
@@ -6247,7 +6246,7 @@ Para transformar un vector de bits en una cadena o una lista de 0 y 1, utilice l
     my $bits = unpack("b*", $vector);
     my @bits = split(//, unpack("b*", $vector));
 
-Si conoce la longitud exacta en bits, puede ser utilizada en lugar de la C<*>.
+Si conoce la longitud exacta en bits, puede utilizarse en lugar de la C<*>.
 
 Este es un ejemplo para ilustrar cómo los bits están realmente amparados en su lugar:
 
@@ -6450,7 +6449,7 @@ o bien
     1 while waitpid(-1, WNOHANG) > 0;
 
 entonces puede hacer una espera no bloqueante para todos los procesos zombie pendientes (vea L<POSIX/WAIT>).
-Espera no bloqueante está disponible en máquinas que soporten las llamadas del sistema, tanto L<waitpid(2)> como L<wait4(2)>.  Sin embargo, esperar por un particular pid con INDICADORES a C<0> está implementado en todas partes.  (Perl emula la llamada al sistema, recordando los valores de estado de los procesos que han salido, pero que todavía no han sido recolectadas por el script Perl).
+Espera no bloqueante está disponible en máquinas que soporten las llamadas del sistema, tanto L<waitpid(2)> como L<wait4(2)>.  Sin embargo, esperar por un particular pid con INDICADORES a C<0> está implementado en todas partes.  (Perl emula la llamada al sistema, recordando los valores de estado de los procesos que han salido, pero que todavía no se han recolectado por el script Perl).
 
 Tenga en cuenta que en algunos sistemas, un valor devuelto de C<-1> podría significar que los procesos hijos se están automáticamente desechando.  Ver L<perlipc> para más detalles, y para otros ejemplos.
 

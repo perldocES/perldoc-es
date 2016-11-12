@@ -353,7 +353,7 @@ Entonces así es como podemos hacer más seguro el primer ejemplo:
 
     weaken $foo->{bar};
 
-La referencia de C<$foo> a C<$bar> ha sido debilitada. Cuando la variable C<$bar> sale del ámbito, será recolectada. La próxima vez que miremos el valor de la clave de C<< $foo->{bar} >> será C<undef>.
+La referencia de C<$foo> a C<$bar> se ha debilitado. Cuando la variable C<$bar> sale del ámbito, será recolectada. La próxima vez que miremos el valor de la clave de C<< $foo->{bar} >> será C<undef>.
 
 Esta acción a distancia puede ser confusa, por lo que hay que tener cuidado con el uso de weaken. Debe debilitar la referencia en la variable que I<primero> vaya a salir del ámbito. De esta manera, la variable de mayor duración incluirá la referencia esperada hasta que salga del ámbito.
 
@@ -517,7 +517,7 @@ El módulo estándar Tie::RefHash proporciona una solución conveniente para est
 
 =head1 Sintaxis de desreferencia posfija
 
-A partir de v5.20.0, está disponible una sintaxis posfija para usar referencias.  Se comporta tal como se describe en L</Usando referencias>, pero en vez de usar un sigilo prefijado, se usa un sigilo-y-asterisco posfijo.
+A partir de v5.20.0, está disponible una sintaxis posfija para usar referencias.  Se comporta tal como se describe en L</Usar referencias>, pero en vez de usar un sigilo prefijado, se usa un sigilo-y-asterisco posfijo.
 
 Por ejemplo:
 

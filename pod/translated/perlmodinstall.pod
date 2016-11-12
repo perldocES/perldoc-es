@@ -289,7 +289,7 @@ B<Los que deberían, pero no lo hacen>. Habría que arreglarlos; debe ponerse en
 
 =item *
 
-B<Los que deben ser compilados, cuando la plataforma de destino no incluye compiladores>. (Estos módulos contienen, por lo general, archivos F<.xs> o F<.c>).  Quizás sea capaz de encontrar los binarios en CPAN o en otro lugar, o puede que prefiera obtener los compiladores e intentar la compilación (en ese caso, no olvide publicar luego el binario para regocijo de otras almas desventuradas).
+B<Los que deben compilarse, cuando la plataforma de destino no incluye compiladores>. (Estos módulos contienen, por lo general, archivos F<.xs> o F<.c>).  Quizás sea capaz de encontrar los binarios en CPAN o en otro lugar, o puede que prefiera obtener los compiladores e intentar la compilación (en ese caso, no olvide publicar luego el binario para regocijo de otras almas desventuradas).
 
 =item *
 

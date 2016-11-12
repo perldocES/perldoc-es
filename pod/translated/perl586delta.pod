@@ -10,7 +10,7 @@ Este documento describe las diferencias entre la versión 5.8.5 y la versión 5.
 
 No hay cambios incompatibles con 5.8.5.
 
-=head1 Mejoras en los componentes
+=head1 Mejoras en el núcleo principal
 
 El intérprete perl es ahora más tolerante con los script codificados en UTF-16.
 
@@ -88,11 +88,11 @@ C<foreach> sobre un array threads::shared era capaz de colgar Perl. Este error y
 
 Una expresión regular en el destructor de C<STDOUT> se usa en el volcado del núcleo, ya que la plataforma de expresiones regulares ya fue liberada. Esto ha sido corregido.
 
-C<goto &> es ahora más robusto - errores en la recursividad profunda y C<goto &> encadenados han sido corregidos.
+C<goto &> es ahora más robusto - errores en la recursividad profunda y C<goto &> encadenados se han corregido.
 
 El uso de C<delete> en un array ya no provoca fugas de memoria. A C<pop> de un elemento de una referencia compartida a un array ya no provoca fugas de memoria.
 
-C<eval_sv()> fallando una prueba de pringado podría corromper la pila - ha sido arreglado.
+C<eval_sv()> fallando una prueba de pringado podría corromper la pila - se ha arreglado.
 
 En las plataformas con punteros de 64 bits los operadores de comparación numéricos eran erróneamente usados para comparar las direcciones de las referencias que estaban sobrecargadas, en lugar de utilizar los valores sobrecargados. Esto ha sido corregido.
 

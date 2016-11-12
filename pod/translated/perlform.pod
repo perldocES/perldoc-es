@@ -63,7 +63,7 @@ X<format, text field>X<format, campo de texto>
 
 La longitud del campo se indica rellenando el campo con múltiples caracteres "E<lt>", "E<gt>", o "|" para especificar un campo no numérico con, respectivamente, justificación hacia la izquierda, hacia la derecha o centrada. 
 Para un campo normal, el valor (hasta el primer carácter de nueva línea) se toma e imprime de acuerdo a la justificación seleccionada, truncando los caracteres que haya en exceso.
-Si terminó un campo de texto con "...", se mostrarán tres puntos si se truncó el valor. Un campo especial de texto se puede usar como un bloque de relleno multilínea rudimentario; vea L</Usando el modo de relleno> para más detalles.
+Si terminó un campo de texto con "...", se mostrarán tres puntos si se truncó el valor. Un campo especial de texto se puede usar como un bloque de relleno multilínea rudimentario; vea L</Usar el modo de relleno> para más detalles.
 
    Ejemplo:
       format STDOUT =
@@ -117,7 +117,7 @@ La variable I<no> será restaurada.
 =head2 Especificar valores
 X<format, specifying values>X<format, especificando valores>
 
-Los valores se especifican en la siguiente línea de formato, en el mismo orden que indiquen los campos de la línea de dibujo.  Las expresiones que proporcionan los valores se deben separar con comas.  Se evalúan todos en contexto de lista antes de que se procese la línea, así que una única expresión de lista podría producir múltiples elementos de lista.  Las expresiones se pueden extender por más de una línea si se encierran entre llaves.  Así, la llave de apertura debe ser el primer elemento de la primera línea.  Si una expresión evalúa a un número con una parte decimal, y si la correspondiente línea de dibujo especifica que la parte decimal debe aparecer en la salida (es decir, cualquier línea de dibujo excepto múltiples caracteres "#" B<sin> un "." incrustado), el carácter utilizado para el punto decimal se determina por el valor de LC_NUMERIC de la configuración regional si está en activo C<use locale>.  Esto significa que, si, por ejemplo, en el entorno en tiempo de ejecución se especifica una configuración regional en Alemán, se usará "," en lugar del valor por defecto ".".  Vea L<perllocale> y L<"WARNINGS"> para más información.
+Los valores se especifican en la siguiente línea de formato, en el mismo orden que indiquen los campos de la línea de dibujo.  Las expresiones que proporcionan los valores se deben separar con comas.  Se evalúan todos en contexto de lista antes de que se procese la línea, así que una única expresión de lista podría producir múltiples elementos de lista.  Las expresiones se pueden extender por más de una línea si se encierran entre llaves.  Así, la llave de apertura debe ser el primer elemento de la primera línea.  Si una expresión evalúa a un número con una parte decimal, y si la correspondiente línea de dibujo especifica que la parte decimal debe aparecer en la salida (es decir, cualquier línea de dibujo excepto múltiples caracteres "#" B<sin> un "." incrustado), el carácter utilizado para el punto decimal se determina por el valor de LC_NUMERIC de la configuración regional si está en activo C<use locale>.  Esto significa que, si, por ejemplo, en el entorno en tiempo de ejecución se especifica una configuración regional en Alemán, se usará "," en lugar del valor por defecto ".".  Vea L<perllocale> y L<"ADVERTENCIAS"> para más información.
 
 
 =head2 Usar el modo de relleno

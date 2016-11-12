@@ -27,7 +27,7 @@ Para la Licencia General Pública GNU, vea L<perlgpl>.
 
 =head2 Preámbulo
 
-La intención de este documento es establecer las condiciones en que un Paquete puede ser copiado, de manera que el Titular del Copyright mantiene una apariencia de control artístico sobre el desarrollo del paquete, mientras que dan a los usuarios del paquete el derecho a utilizar y distribuir el Paquete de una manera que sea más o menos habitual, además del derecho a hacer modificaciones razonables.
+La intención de este documento es establecer las condiciones en que un Paquete puede copiarse, de manera que el Titular del Copyright mantiene una apariencia de control artístico sobre el desarrollo del paquete, mientras que dan a los usuarios del paquete el derecho a utilizar y distribuir el Paquete de una manera que sea más o menos habitual, además del derecho a hacer modificaciones razonables.
 
 =head2 Definiciones
 
@@ -39,7 +39,7 @@ se refiere a la colección de archivos distribuidos por el Titular del Copyright
 
 =item "Versión Estándar"
 
-se refiere a un paquete, si no ha sido modificado o ha sido modificado de conformidad con los deseos del propietario del Titular del Copyright tal como se especifica a continuación.
+se refiere a un paquete, si no se ha modificado o se ha modificado de conformidad con los deseos del propietario del Titular del Copyright tal como se especifica a continuación.
 
 =item "Titular del Copyright"
 
@@ -70,7 +70,7 @@ Usted puede hacer y regalar copias literales del contenido original de la Versi�
 
 =item 2.
 
-Usted puede solicitar correcciones de errores, de portabilidad y otras modificaciones derivadas del Dominio Público o del Titular del Copyright.  Un paquete modificado de esa manera todavía puede ser considerado Versión Estándar.
+Usted puede solicitar correcciones de errores, de portabilidad y otras modificaciones derivadas del Dominio Público o del Titular del Copyright.  Un paquete modificado de esa manera todavía puede considerarse Versión Estándar.
 
 =item 3.
 
@@ -126,7 +126,7 @@ Usted puede cobrar una cuota razonable por las copias por cualquier distribució
 
 =item 6.
 
-Las secuencias de comandos y archivos de biblioteca suministrados como entrada o producidos como salida de los programas de este Paquete no quedan automáticamente bajo el copyright de este Paquete, sino que pertenecen a quien los ha generado, y puede ser vendidos comercialmente, y se podrán sumar a este paquete.  Si los scripts o archivos de biblioteca son agregados con este Paquete a través de los métodos "undump" o "unexec" para la producción de una imagen ejecutable binaria, entonces, la distribución de esta imagen no se interpretará como una distribución de este Paquete, ni caerá bajo las restricciones de los párrafos 3 y 4, siempre y cuando usted no intente representar que es una imagen ejecutable de una Versión Estándar de este Paquete.
+Las secuencias de comandos y archivos de biblioteca suministrados como entrada o producidos como salida de los programas de este Paquete no quedan automáticamente bajo el copyright de este Paquete, sino que pertenecen a quien los ha generado, y puede venderse comercialmente, y se podrán sumar a este paquete.  Si los scripts o archivos de biblioteca se agregan con este Paquete a través de los métodos "undump" o "unexec" para la producción de una imagen ejecutable binaria, entonces, la distribución de esta imagen no se interpretará como una distribución de este Paquete, ni caerá bajo las restricciones de los párrafos 3 y 4, siempre y cuando usted no intente representar que es una imagen ejecutable de una Versión Estándar de este Paquete.
 
 =item 7.
 

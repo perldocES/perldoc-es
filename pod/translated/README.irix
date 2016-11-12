@@ -46,7 +46,7 @@ debería ser suficiente, la opción Configure automáticamente debería buscar l
 
 =head2 Sobre las versiones del compilador de Irix
 
-Algunas versiones de cc de Irix, por ejemplo, la 7.3.1.1m (pruebe cc -version) se sabe que tienen problemas (coredumps) al compilar perl.c.  Si ha utilizado -OPT:fast_io=ON y sucede esto, pruebelo de nuevo quitándolo antes.  Si eso no funciona, o no lo ha usado, intente, a continuación, ajustar otras opciones de optimización (-LNO,-inline, O3-a-O2, etc).  El error del compilador ha sido reportado a SGI.  (Allen Smith <easmith@beatrice.rutgers.edu>)
+Algunas versiones de cc de Irix, por ejemplo, la 7.3.1.1m (pruebe cc -version) se sabe que tienen problemas (coredumps) al compilar perl.c.  Si ha utilizado -OPT:fast_io=ON y sucede esto, pruebelo de nuevo quitándolo antes.  Si eso no funciona, o no lo ha usado, intente, a continuación, ajustar otras opciones de optimización (-LNO,-inline, O3-a-O2, etc).  El error del compilador se ha reportado a SGI.  (Allen Smith <easmith@beatrice.rutgers.edu>)
 
 =head2 Problemas de enlazado en Irix
 

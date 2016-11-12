@@ -299,7 +299,7 @@ o incluso:
 
    my $buf = pack( 'NA*', length( $msg ), $msg );
 
-y pasar C<$buf> a su rutina de envío. Algunos protocolos demandan que la cuenta debería incluir la longitud de la propia cuenta: simplemente añada 4 a la longitud de datos. (¡Pero asegúrese que lee L<"Longitud y anchos"> antes de codificar esto!)
+y pasar C<$buf> a su rutina de envío. Algunos protocolos demandan que la cuenta debería incluir la longitud de la propia cuenta: simplemente añada 4 a la longitud de datos. (¡Pero asegúrese que lee L<"Longitudes y anchos"> antes de codificar esto!)
 
 
 =head2 Modificadores del orden de bytes
@@ -316,7 +316,7 @@ C<E<gt>> es el modificador I<big-endian>, mientras C<E<lt>> es el modificador I<
 
 Como puede ver, la "parte grande" de la flecha toca la C<s>, que es una forma amable de recordar que C<E<gt>> es el modificador de I<big-endian>. Obviamente, lo mismo funciona para C<E<lt>>, donde la "parte pequeña" toca el código.
 
-Probablemente encontrará estos modificadores incluso más útiles si tiene que tratar con estructuras C I<big-> o I<little-endian>. Asegúrese de leer L<"Empaquetado y desempaquetado de estructuras C"> para más información sobre esto.
+Probablemente encontrará estos modificadores incluso más útiles si tiene que tratar con estructuras C I<big-> o I<little-endian>. Asegúrese de leer L<"Empaquetar y desempaquetar estructuras de C"> para más información sobre esto.
 
 
 =head2 Números en punto flotante

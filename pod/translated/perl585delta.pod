@@ -10,7 +10,7 @@ Este documento describe las diferencias entre la versión 5.8.4 y la versión 5.
 
 No hay cambios incompatibles con 5.8.4.
 
-=head1 Mejoras en los componentes
+=head1 Mejoras en el núcleo principal
 
 El motor de expresiones regulares de Perl ahora tiene soporte para coincidir en la intersección de dos clases de caracteres Unicode. También puede referirse a una clase carácter definida por el usuario, desde el interior de otra clase carácter definida por el usuario.
 
@@ -116,7 +116,7 @@ La optimización de sort in-situ introducido en 5.8.4 tenía un error. Por ejemp
 
     @a = sort ($b, @a)
 
-el resultado podría omitir el valor de $b. Esto ha sido arreglado.
+el resultado podría omitir el valor de $b. Esto se ha arreglado.
 
 =item *
 
@@ -132,7 +132,7 @@ Creando una nueva hebra cuando existen referencias débiles tenía errores, y co
 
 =item *
 
-Varios errores extraños involucrados en la manipulación de cadenas Unicode con C<substr> han sido corregidos.
+Varios errores extraños involucrados en la manipulación de cadenas Unicode con C<substr> se han corregido.
 
 =item *
 
