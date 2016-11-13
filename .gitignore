@@ -5,6 +5,7 @@ omegat/*.bak
 omegat/project_stats.txt
 omegat/last_entry.properties
 target/*
-*.tmx
+perl*.tmx
 source*zip
 informe*
+tm/
