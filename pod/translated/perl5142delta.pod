@@ -10,7 +10,7 @@ En este documento se describen las diferencias entre la versión 5.14.1 y la ver
 
 Si va a actualizar desde una versión anterior, como 5.14.0, lea primero L<perl5141delta>, en el que se describen las diferencias entre 5.14.0 y  5.14.1.
 
-=head1 Mejoras en los componentes
+=head1 Mejoras en el núcleo principal
 
 Ningún cambio con respecto a la versión 5.14.0.
 
@@ -127,7 +127,7 @@ Localización de una variable atada utilizada para que sea de sólo lectura si c
 
 =item *
 
-Elementos de hashes restringidos (vea el pragma L<fields>) que contengan valores de copia-en-escritura no se pudo eliminar, ni estos hashes podían ser limpiados (C<%hash = ()>).
+Elementos de hashes restringidos (vea el pragma L<fields>) que contengan valores de copia-en-escritura no se podían eliminar, ni estos hashes podían limpiarse (C<%hash = ()>).
 
 =item *
 
@@ -135,7 +135,7 @@ Bloqueo un elemento hash que es una copia expandida ya no provoca la asignación
 
 =item *
 
-Un pánico que implica la combinación de los modificadores de expresión regular C</aa> introducidos en 5.14.0 y la secuencia de escape C<\b>, ha sido arreglada [perl #95964].
+Un pánico que implica la combinación de los modificadores de expresión regular C</aa> introducidos en 5.14.0 y la secuencia de escape C<\b>, se ha arreglado [perl #95964].
 
 =back
 
@@ -172,7 +172,7 @@ Si usted encuentra algo que piensa que es un error, podría verificar los artíc
 
 Si cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
 
-Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para ser enviado a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
 
 =head1 VEA TAMBIÉN
 

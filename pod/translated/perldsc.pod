@@ -180,7 +180,7 @@ X<< -> >>
 
 ¡Eso es porque las reglas de precedencia de Perl, con sus cinco prefijos de desreferencia (que se parecen a alguien jurando: C<$ @ * % &>) tienen más prioridad que los subíndices con llaves o corchetes post-fijos!  Esto, sin duda, será una gran sorpresa para el programador de C o C++, que está bastante acostumbrado a usar C<*a[i]> para referirse al I<i>-ésimo elemento de C<a>.  Es decir, primero toman el subíndice, y sólo entonces, desreferencian el elemento apuntado por ese subíndice.  Eso está bien en C, pero esto no es C.
 
-La construcción aparentemente equivalente en Perl, C<$$aref[$i]>, primero hace la desreferencia de $aref, tomando a $aref como una referencia a un array, y luego lo desreferencia para, finalmente, darnos el I<i>-ésimo valor del array que apuntaba a $AoA. Si quiere seguir la misma notación que en C, tendría que escribir C<${$AoA[$i]}> para forzar a que C<$AoA[$i]> sea evaluado antes del primer C<$> desreferenciador.
+La construcción aparentemente equivalente en Perl, C<$$aref[$i]>, primero hace la desreferencia de $aref, tomando a $aref como una referencia a un array, y luego lo desreferencia para, finalmente, darnos el I<i>-ésimo valor del array que apuntaba a $AoA. Si quiere seguir la misma notación que en C, tendría que escribir C<${$AoA[$i]}> para forzar a que C<$AoA[$i]> se evalúe antes del primer C<$> desreferenciador.
 
 =head1 POR QUÉ DEBE SIEMPRE USAR C<use strict>
 
@@ -597,7 +597,7 @@ X<registro> X<estructura>
 
 =head2 Declaración de REGISTROS MÁS ELABORADOS
 
-Aquí hay un ejemplo que muestra cómo crear y usar un registro cuyos campos pueden ser ordenados de diferentes formas:
+Aquí hay un ejemplo que muestra cómo crear y usar un registro cuyos campos pueden ordenarse de diferentes formas:
 
      $rec = {
          TEXT      => $cadena,
@@ -732,7 +732,7 @@ Aquí hay un ejemplo que muestra cómo crear y usar un registro cuyos campos pue
 
 =head1 Bases de datos con ataduras
 
-No es fácil atar una estructura de datos de múltiples niveles (por ejemplo, un hash de hashes) a un archivo dbm.  El primer problem es que todas, excepto las BD GDBM y Berkeley tienen limitaciones de tamaño; pero aparte de eso, también tiene problemas con cómo las referencias son representadas en disco.  Un módulo experimental que intenta, parcialmente, resolver esto es el módulo MLDBM.  Revise su sitio CPAN más cercano, como se describe en L<perlmodlib>, para obtener el código fuente de MLDBM.
+No es fácil atar una estructura de datos de múltiples niveles (por ejemplo, un hash de hashes) a un archivo dbm.  El primer problem es que todas, excepto las BD GDBM y Berkeley tienen limitaciones de tamaño; pero aparte de eso, también tiene problemas con cómo las referencias se representan en disco.  Un módulo experimental que intenta, parcialmente, resolver esto es el módulo MLDBM.  Revise su sitio CPAN más cercano, como se describe en L<perlmodlib>, para obtener el código fuente de MLDBM.
 
 =head1 VEA TAMBIÉN
 

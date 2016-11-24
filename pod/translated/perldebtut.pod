@@ -28,7 +28,7 @@ Mientras que esto compila y se ejecuta correctamente, probablemente no hace lo q
 	$varl = undef;
 	$var2 = "\n";
 
-Para cazar esta clase de problema, podemos forzar que cada variable debe ser declarada antes de usarse, por medio del módulo strict, poniendo 'use strict;' después de la primera línea del I<script>.
+Para cazar esta clase de problema, podemos forzar que cada variable debe declararse antes de usarse, por medio del módulo strict, poniendo 'use strict;' después de la primera línea del I<script>.
 
 Ahora, cuando lo ejecute, perl se quejará sobre que existen 3 variables no declaradas, y obtenemos cuatro mensajes de error porque una de las variables se referencia dos veces:
 

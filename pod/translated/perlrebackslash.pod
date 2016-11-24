@@ -271,7 +271,7 @@ Mnemónicos: I<w>ord (palabra), I<d>ígito, eI<s>pacio, I<h>orizontal, I<v>ertic
 
 =head3 Clases Unicode
 
-C<\pP> (donde C<P> es una sola letra) y C<\p{Propiedad}> se usan para coincidir con un carácter que coincida con la propiedad Unicode indicada; las propiedades incluyen cosas como "letra" o "carácter thai". La capitalización de la secuencia a C<\PP> y C<\P{Propiedad}> hace que la secuencia coincida con un carácter que no coincida con la propiedad Unicode indicada. Para más detalles, vea L<perlrecharclass/Secuencias de barras diagonales inversas> y L<perlunicode/Propiedades de caracteres Unicode>.
+C<\pP> (donde C<P> es una sola letra) y C<\p{Propiedad}> se usan para coincidir con un carácter que coincida con la propiedad Unicode indicada; las propiedades incluyen cosas como "letra" o "carácter thai". La capitalización de la secuencia a C<\PP> y C<\P{Propiedad}> hace que la secuencia coincida con un carácter que no coincida con la propiedad Unicode indicada. Para más detalles, vea L<perlrecharclass/Secuencias de barras diagonales inversas> y L<perlunicode/Propiedades de carácter Unicode>.
 
 Mnemónico: I<p>ropiedad.
 

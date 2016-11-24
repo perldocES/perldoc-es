@@ -28,7 +28,7 @@ Esto se puede modificar, si es necesario, con el parámetro de Configure -Dprefi
 A partir de OS/400 V5R2, el compilador de IBM Visual Age está soportado en OS/400 PASE, por lo que es posible la generación de Perl de forma nativa en OS/400.  
 La manera más fácil, sin embargo, es la compilación en AIX, tal como acabamos de describir.
 
-Si no desea instalar el Perl compilado en AIX en /QOpenSys (para ser empaquetado antes de copiarlo a PASE), puede utilizar un parámetro de Configure: -Dinstallprefix=/tmp/QOpenSys/perl.  Esto hará que el "make install" instale todo en ese directorio, mientras que los archivos instalados seguirán pensando que están (estarán) en /QOpenSys/perl.
+Si no desea instalar el Perl compilado en AIX en /QOpenSys (para empaquetarse antes de copiarlo a PASE), puede utilizar un parámetro de Configure: -Dinstallprefix=/tmp/QOpenSys/perl.  Esto hará que el "make install" instale todo en ese directorio, mientras que los archivos instalados seguirán pensando que están (estarán) en /QOpenSys/perl.
 
 Si se genera de forma nativa en PASE, por favor, hágalo en el directorio /QOpenSys, ya que Perl es más feliz cuando se genera en un sistema de archivos que es sensible a las mayúsculas y minúsculas.
 
@@ -71,7 +71,7 @@ y entonces compile Perl.  Los lugares donde fchdir() se usan tienen alternativas
 =head2 Perl en ILE
 
 Existe un adaptación de Perl al entorno ILE.  Esta adaptación, sin embargo, se basa completamente en una publicación antigua de Perl, Perl 5.00502 (agosto de 1998).
-(La última publicación de Perl 5.8.0 fue en julio del 2002, e incluso 5.6.1 salió en abril del 2001).  Si, a pesar de todo, necesita ejecutar Perl en ILE, puede necesitar esta vieja adaptación: L<http://www.cpan.org/ports/#os400> Tenga en cuenta que cualquier Perl siguiente a 5.00502 no ha sido adaptada a ILE.
+(La última publicación de Perl 5.8.0 fue en julio del 2002, e incluso 5.6.1 salió en abril del 2001).  Si, a pesar de todo, necesita ejecutar Perl en ILE, puede necesitar esta vieja adaptación: L<http://www.cpan.org/ports/#os400> Tenga en cuenta que cualquier Perl siguiente a 5.00502 no se ha adaptado a ILE.
 
 Si necesita utilizar Perl en el entorno ILE, es posible que desee considerar el uso de Qp2RunPase() para llamar a la versión de PASE de Perl.
 

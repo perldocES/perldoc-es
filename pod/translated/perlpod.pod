@@ -3,7 +3,7 @@
 This document is in Pod format.  Para leerlo, use un formateador de Pod,
 como "perldoc perlpod".
 
-=head1 NOMBRE
+=head1 NAME / NOMBRE
 X<POD> X<plain old documentation> X<documentación sencilla vieja>
 
 perlpod - el formato de documentación POD (sencilla, vieja, documentación)
@@ -421,7 +421,7 @@ La mayor parte del tiempo, necesitará sólo un conjunto de ángulos para delimi
 
 Esto producirá: "C<$a E<lt>=E<gt> $b>"
 
-Un forma más legible, y quizás más "sencilla" es utilizar un conjunto alternativo de delimitadores que no requieran que sea escapado un simple ">".
+Un forma más legible, y quizás más "sencilla" es utilizar un conjunto alternativo de delimitadores que no requieran que se escape un simple ">".
 Se pueden usar dobles ángulos ("<<" y ">>") I<¡si y solo si hay espacio en blanco a continuación del delimitador de apertura y espacio en blanco antes del delimitar de cierre!> Por ejemplo, lo siguiente hará el truco: X<POD, formatting code, escaping with multiple brackets> X<escapando con múltiples ángulos>
 
     C<< $a <=> $b >>

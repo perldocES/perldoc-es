@@ -290,11 +290,11 @@ Los grupos de captura se numeran de acuerdo a su paréntesis de I<apertura>.
 
    split       Usa una regex para dividir una cadena en partes
 
-Las primeras de estas cinco son como las secuencias de escape C<\L>, C<\l>, C<\U>, C<\u> y C<\F>.  Para titulación, vea L</Titulación>; Para plegamiento, vea L</Plegamiento>.
+Las primeras de estas cinco son como las secuencias de escape C<\L>, C<\l>, C<\U>, C<\u> y C<\F>.  Para titulación, vea L</Tamaño de caja titular>; Para plegamiento, vea L</Plegamiento>.
 
 =head2 TERMINOLOGÍA
 
-=head3 Titulación
+=head3 Tamaño de caja titular
 
 Concepto Unicode que casi siempre es igual a poner en mayúsculas, pero para ciertos caracteres como el alemán "sharp s", hay una diferencia.
 

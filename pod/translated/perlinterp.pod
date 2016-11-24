@@ -247,7 +247,7 @@ AV y HV son más complicadas, pero SV es, de lejos, el tipo de variable más com
 
 =head1 ÁRBOLES I<OP>
 
-Primero, ¿qué es, de todos modos, el árbol de I<op>? El árbol de I<op> es la representación interpretada de su programa, como hemos visto en nuestra sección de análisis, y es la secuencia de operaciones por las que Perl pasa para ejecutar nuestro programa, como hemos visto en L</Ejecutar>.
+Primero, ¿qué es, de todos modos, el árbol de I<op>? El árbol de I<op> es la representación interpretada de su programa, como hemos visto en nuestra sección de análisis, y es la secuencia de operaciones por las que Perl pasa para ejecutar nuestro programa, como hemos visto en L</Ejecución>.
 
 Una I<op> es una operación fundamental que Perl puede realizar: todas las funciones incorporadas y operadores son I<op>, y existen una serie de I<op> que tratan con conceptos que el intérprete necesita internamente: entrar y salir de un bloque, terminar una sentencia, acceder a una variable, y así.
 

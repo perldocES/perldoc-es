@@ -119,7 +119,7 @@ Qué reglas se aplican se determina tal como se describe en L<perlre/¿Qué modi
 
 Hay un número de problemas de seguridad con la lista completa Unicode de caracteres de palabra.  Vea L<http://unicode.org/reports/tr36>
 
-También, para un conjunto de caracteres más afinado que puede existir en los identificadores del lenguaje de programación, más allá del rango del ASCII, puede desear, en cambio, usar la opción más personalizada de L</Unicode Properties>, C<\p{ID_Start}>, C<\p{ID_Continue}>, C<\p{XID_Start}> y C<\p{XID_Continue}>.  Vea L<http://unicode.org/reports/tr31>
+También, para un conjunto de caracteres más afinado que puede existir en los identificadores del lenguaje de programación, más allá del rango del ASCII, puede desear, en cambio, usar la opción más personalizada de L</Propiedades Unicode>, C<\p{ID_Start}>, C<\p{ID_Continue}>, C<\p{XID_Start}> y C<\p{XID_Continue}>.  Vea L<http://unicode.org/reports/tr31>
 
 Cualquier carácter que no coincida con C<\w>, coincide con C<\W>.
 
@@ -330,7 +330,7 @@ Algunos nombres indicados en C<\N{...}> se refieren a una secuencia de caractere
   "\N{TAMIL LETTER KA}\N{TAMIL VOWEL SIGN AU}"
                               =~ / ^ [\N{TAMIL SYLLABLE KAU}]  $ /x;
 
-coincide, ya que C<\N{TAMIL SYLLABLE KAU}> es el nombre de una secuencia que contiene los dos caracteres que se busca.  Igual que con la otra instancia, donde una clase entre corchetes puede coincidir con múltiples caracteres, y por razones similares, la clase no debe invertirse, y el nombre de la secuencia no puede aparecer en un rango, ni incluso en uno de sus puntos finales.  Si esto sucede, es un error fatal si la clase de carácter está dentro de una clase extendida L<C<(?[...])>|/Clases de carácter entre corchetes extendidas>; o, de otra forma, solo se usa el primer código de carácter (levantando una excepción de tipo C<regex>).
+coincide, ya que C<\N{TAMIL SYLLABLE KAU}> es el nombre de una secuencia que contiene los dos caracteres que se busca.  Igual que con la otra instancia, donde una clase entre corchetes puede coincidir con múltiples caracteres, y por razones similares, la clase no debe invertirse, y el nombre de la secuencia no puede aparecer en un rango, ni incluso en uno de sus puntos finales.  Si esto sucede, es un error fatal si la clase de carácter está dentro de una clase extendida L<C<(?[...])>|/Clases de carácter extendidas entre corchetes>; o, de otra forma, solo se usa el primer código de carácter (levantando una excepción de tipo C<regex>).
 
 =back
 
@@ -650,7 +650,7 @@ Perl reconoce las clases de caracteres POSIX C<[=clase=]> y C<[.class.]>, pero (
                           # El OR añade los dígitos, dejando solo las
                           # letras 'a' a 'f' y 'A' a 'F' excluidas.
 
-=head3 Clases de caracteres entre corchetes extendidas
+=head3 Clases de carácter extendidas entre corchetes
 X<character class>
 X<set operations>
 

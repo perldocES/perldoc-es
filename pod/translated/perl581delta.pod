@@ -48,7 +48,7 @@ Vea L<perlsec/"Ataques de complejidad algorítmica"> para la justificación orig
 
 =head2 UTF-8 en identificadores de archivo ya no son activados por locale
 
-En Perl 5.8.0 todos los identificadores de archivo, incluidos los identificadores de archivo estándar, se establecían implícitamente en Unicode UTF-8 si la configuración regional indicaba el uso de UTF-8.  Esta característica causaba muchos problemas, por lo que la función se ha desactivado y rediseñado: vea L</"Mejoras principales">.
+En Perl 5.8.0 todos los identificadores de archivo, incluidos los identificadores de archivo estándar, se establecían implícitamente en Unicode UTF-8 si la configuración regional indicaba el uso de UTF-8.  Esta característica causaba muchos problemas, por lo que la función se ha desactivado y rediseñado: vea L</"Mejoras en el núcleo principal">.
 
 =head2 Las cadenas v-strings de un solo dígito ya no son v-strings delante de un "=>"
 
@@ -68,7 +68,7 @@ v-strings con múltiples números como C<v65.66> y C<65.66.67> siguen siendo v-s
 
 =head2 (Win32) La opción -C ha sido reasignada
 
-La opción -C ha cambiado de una forma incompatible.  La semántica anterior de esta opción sólo tiene sentido en Win32 y sólo con "use utf8" en el universo de versiones 5.6.x, y no tienen sentido para la implementación de Unicode en 5.8.0.  Dado que esta opción quizás no podría haber sido utilizada más por cualquier persona, se ha reutilizado.  El comportamiento que esta opción activaba en las versiones 5.6.x se puede soportar de manera transparente, dependiendo de la moda, en una próxima versión.
+La opción -C ha cambiado de una forma incompatible.  La semántica anterior de esta opción sólo tiene sentido en Win32 y sólo con "use utf8" en el universo de versiones 5.6.x, y no tienen sentido para la implementación de Unicode en 5.8.0.  Dado que esta opción quizás no podría haberse utilizado más por cualquier persona, se ha reutilizado.  El comportamiento que esta opción activaba en las versiones 5.6.x se puede soportar de manera transparente, dependiendo de la moda, en una próxima versión.
 
 Para la nueva vida de esta opción, vea L<"UTF-8 ya no está por defecto bajo la configuración regional de UTF-8"> y L<perlrun/-C>.
 
@@ -76,7 +76,7 @@ Para la nueva vida de esta opción, vea L<"UTF-8 ya no está por defecto bajo la
 
 Perl 5.8.1 usa el modificador /d cuando se ejecuta el shell cmd.exe, internamente, para system(), comillas invertidas, y al abrir tuberías hacia programas externos.  Esta opción adicional deshabilita la ejecución de los comandos AutoRun del registro, que generalmente se considera indeseable cuando se ejecutan programas externos.  Si desea mantener la compatibilidad con el antiguo comportamiento, establezca PERL5SHELL en su entorno a C<cmd /x/c>.
 
-=head1 Mejoras en los componentes
+=head1 Mejoras en el núcleo principal
 
 =head2 UTF-8 ya no está por defecto bajo la configuración regional de UTF-8
 
@@ -84,7 +84,7 @@ En Perl 5.8.0 se introdujeron muchas características Unicode.   Una de ellas re
 
 Por ejemplo, si usted tenía C<en_US.UTF-8> como su configuración local, su STDIN y STDOUT fueron automáticamente "UTF-8", en otras palabras, se hizo un binmode(..., ": utf8") de forma implícita.  Esto significaba que intentando imprimir, por ejemplo, chr(0xff), terminaba imprimiendo los bytes 0xc3 0xbf.  Difícilmente se acordaría de ello a menos que fuera consciente de esta característica de Perl 5.8.0.
 El problema es que la gran mayoría de la gente no lo era: por ejemplo, en RedHat versiones 8 y 9, la configuración local B<por defecto> es UTF-8, por lo que todos los usuarios de RedHat obtenían identificadores de archivo UTF-8, lo quisieran o no.
-El dolor se intensificó por que la implementación de Unicode de Perl 5.8.0 (todavía) tenía errores desagradables, especialmente en relación con el uso de s// y tr///.  (Errores que han sido corregidos en 5.8.1)
+El dolor se intensificó por que la implementación de Unicode de Perl 5.8.0 (todavía) tenía errores desagradables, especialmente en relación con el uso de s// y tr///.  (Errores que se han corregido en 5.8.1)
 
 Por lo tanto se tomó la decisión de dar marcha atrás a esta característica y se cambió, desde una manera por defecto implícita y silenciosa a otra opción explícita y consciente.  La nueva opción de la línea de comandos de Perl C<-C> y su contrapartida en la variable de entorno PERL_UNICODE ahora se pueden utilizar para controlar la forma en que Perl y Unicode interactuan en las interfaces como E/S y, por ejemplo, los argumentos en la línea de comandos.  Vea L<perlrun/-C> y L<perlrun/PERL_UNICODE> para más información.
 
@@ -114,7 +114,7 @@ ahora localizan variables, teniendo en cuenta que $x es un nombre válido de var
 
 =head2 Unicode Character Database 4.0.0
 
-La copia de la base de datos de caracteres Unicode incluidos en Perl 5.8 ha sido actualizada desde la 3.2.0 a la 4.0.0.  Esto significa que, por ejemplo, las propiedades de caracteres Unicode son como en Unicode 4.0.0.
+La copia de la base de datos de caracteres Unicode incluidos en Perl 5.8 se ha actualizada desde la 3.2.0 a la 4.0.0.  Esto significa que, por ejemplo, las propiedades de caracteres Unicode son como en Unicode 4.0.0.
 
 =head2 Advertencias de desaprobación
 
@@ -138,7 +138,7 @@ Los I<threads> estilo 5.005 (activados con C<use Thread;>) fueron desaprobados e
 
 =head3 (Recordatorio) La variable $* es obsoleta (de verdad)
 
-La variable C<$*> que controla la coincidencia multi-línea ha sido desaprobada y será eliminada después de 5.8.  La variable ha dejado de utilizarse desde hace bastante tiempo, y ahora se muestra la advertencia de desaprobación C<Use of $* is deprecated>; ahora la variable será finalmente eliminada.  La funcionalidad ha sido reemplazada por los modificadores C</s> y C</m> en la coincidencia de patrones.
+La variable C<$*> que controla la coincidencia multi-línea se ha desaprobado y se eliminará después de 5.8.  La variable ha dejado de utilizarse desde hace bastante tiempo, y ahora se muestra la advertencia de desaprobación C<Use of $* is deprecated>; ahora la variable será finalmente eliminada.  La funcionalidad se ha reemplazado por los modificadores C</s> y C</m> en la coincidencia de patrones.
 Si realmente desea seguir utilizando la variable C<$*> pero no quiere ver la advertencia de obsolescencia, utilice:
 
     no warnings 'deprecated';
@@ -157,9 +157,9 @@ utf8::is_utf8() ha sido añadido como una forma rápida de comprobar cuándo un 
 
 =head1 Módulos y pragmas
 
-=head2 Módulos y Pragmata actualizados
+=head2 Módulos y pragmas actualizados
 
-Los siguientes módulos y pragmata se han actualizado desde Perl 5.8.0:
+Los siguientes módulos y pragmas se han actualizado desde Perl 5.8.0:
 
 =over 4
 
@@ -209,9 +209,9 @@ Una nueva opción, Pair, permite elegir el separador entre las claves y valores 
 
 Actualizaciones significativas en la funcionalidad del pragma de codificación (formatos tr/// y del identificador de archivo de datos DATA).
 
-Si un identificador de archivo se ha marcado para tener una cierta codificación, los caracteres no traducibles son detectados en la entrada, no después (cuando los datos dañados se estén utilizando).
+Si un identificador de archivo se ha marcado para tener una cierta codificación, los caracteres no traducibles se detectan en la entrada, no después (cuando los datos dañados se estén utilizando).
 
-La tabla de conversión ISO 8859-6 ha sido corregida (el 0x30..0x39 erróneamente estaba asignado a U+0660..U+0669, en lugar de U+0030..U+0039).  La conversión GSM 03.38 no gestiona correctamente las secuencias de escape.  La codificación UTF-7 ha sido añadida (haciendo que Encode tenga las características completas con Unicode::String).
+La tabla de conversión ISO 8859-6 se ha corregido (el 0x30..0x39 erróneamente estaba asignado a U+0660..U+0669, en lugar de U+0030..U+0039).  La conversión GSM 03.38 no gestiona correctamente las secuencias de escape.  La codificación UTF-7 ha sido añadida (haciendo que Encode tenga las características completas con Unicode::String).
 
 =item fields
 
@@ -302,7 +302,7 @@ Varias correcciones, por ejemplo para problemas y pérdidas de memoria en join()
 
 =item threads::shared
 
-Muchas fugas de memoria han sido corregidas.
+Muchas fugas de memoria se han corregido.
 
 =item Unicode::Collate
 
@@ -354,7 +354,7 @@ Ahora se pueden especificar directorios de instalación para las páginas man y 
 Ahora se puede especificar un directorio destino para la instalación de Perl mediante la especificación de la variable DESTDIR para C<make install>.  (Esta característica es ligeramente diferente de la anterior C<Configure -Dinstallprefix=...>).
 Vea F<INSTALL>.
 
-versiones 3.x de gcc introdujeron una nueva advertencia que causaba mucho ruido en la compilación Perl: C<gcc -Ialreadyknowndirectory (advertencia: cambiando el órden de búsqueda)>.  Esta advertencia ha sido eliminada para no confundir a Configure de esos directorios antes de la compilación.
+versiones 3.x de gcc introdujeron una nueva advertencia que causaba mucho ruido en la compilación Perl: C<gcc -Ialreadyknowndirectory (advertencia: cambiando el órden de búsqueda)>.  Esta advertencia se ha eliminado para no confundir a Configure de esos directorios antes de la compilación.
 
 Ahora se pueden generar subconjuntos de módulos básicos de Perl usando los indicadores de Configure C<-Dnoextensions=...> y C<-Donlyextensions=...>, vea F<INSTALL>.
 
@@ -374,7 +374,7 @@ En otras palabras, la instalación por defecto ya no rompe el Perl proporcionado
 
 Mac OS X ahora por defecto genera Perl de forma estática.  Este cambio se llevó a cabo principalmente por obtener tiempos de arranque más rápidos.  El Perl proporcionado por Apple sigue siendo enlazado de forma dinámica y compartida, y se puede habilitar el nivel de compartición de su propia generación de Perl por medio de C<Configure -Duseshrplib>.
 
-Perl ha sido adaptada al entorno de IBM OS/400 PASE.  La mejor manera de generar un Perl para PASE es utilizar un host AIX como entorno de compilación cruzado.  Vea README.os400.
+Perl se ha adaptado al entorno de IBM OS/400 PASE.  La mejor manera de generar un Perl para PASE es utilizar un host AIX como entorno de compilación cruzado.  Vea README.os400.
 
 Se ha agregado otra opción de generación cruzada: ahora Perl se genera en OpenZaurus, una distribución Linux basada en Mandrake + Embedix para la PDA Sharp Zaurus.  Vea el archivo Cross/README.
 
@@ -446,7 +446,7 @@ Configuración ahora prueba por la presencia de C<poll()>, e IO::Poll ahora util
 =item *
 
 Una violación de acceso poco frecuente en la puesta en marcha de Perl podría producirse si la imagen de Perl se instaló con privilegios o si hubo un identificador con el conjunto de atributos del subsistema en la lista de derechos del proceso.  Cualquiera de estas circunstancias provocaba código contaminado que contenía un error de puntero. 
-La aritmética de punteros errónea ha sido corregida.
+La aritmética de punteros errónea se ha corregido.
 
 =item *
 
@@ -485,11 +485,11 @@ Tuberías y I<sockets> están, ahora, automáticamente, en modo binario.
 
 =item *
 
-La forma de cuatro argumentos de select() no preservaba $! (errno) correctamente cuando se han producido errores en la llamada subyacente.  Esto ha sido arreglado.
+La forma de cuatro argumentos de select() no preservaba $! (errno) correctamente cuando se han producido errores en la llamada subyacente.  Esto se ha arreglado.
 
 =item *
 
-El problema "CR CR LF" ha sido fijado, binmode(FH ":crlf") es ahora, efectivamente, una no-operación.
+El problema "CR CR LF" se ha arreglado, binmode(FH ":crlf") es ahora, efectivamente, una no-operación.
 
 =back
 
@@ -565,9 +565,9 @@ Algo modificó los valores que se utilizaron en la iteración.  Esto no es bueno
 
 Estas noticias solamente son importantes para usted si, o escribe código XS o le gustaría saber acerca de o quiere I<hackear> las partes internas Perl (usando Devel::Peek o cualquiera de los módulos C<B::>), o como para ejecutar Perl con la opción C<-D>.
 
-Los ejemplos incluidos en L<perlembed> han sido revisados para estar al día y ser consistentes: por ejemplo, el uso correcto de PERL_SYS_INIT3() y PERL_SYS_TERM().
+Los ejemplos incluidos en L<perlembed> se han revisado para estar al día y ser consistentes: por ejemplo, el uso correcto de PERL_SYS_INIT3() y PERL_SYS_TERM().
 
-Una remodelación extensa del código de control (el código responsable de las variables léxicas) ha sido llevado a cabo por Dave Mitchell.
+Una remodelación extensa del código de control (el código responsable de las variables léxicas) se ha llevado a cabo por Dave Mitchell.
 
 Una amplia labor en la v-strings por parte de John Peacock.
 
@@ -584,7 +584,7 @@ Perl_save_bool() ha sido añadido.
 Objetos Regexp (los creados con C<qr>) ahora tienen S-magic en lugar de R-magic.  Esto arregla expresiones regulares de la forma /...(??{...;$x})/ para que deje de ignorar los cambios realizados en $x.  El S-magic evita decaer la optimización de almacenamiento en caché y que las construcciones (??{...}) sean obscenamente lentas (y por lo tanto, inútiles).  Vea también L<perlguts/"Variables Mágicas">.
 Regexp::Copy se vio afectada por este cambio.
 
-Las macros internas de depueración Perl DEBUG() y DEB() han sido renombradas a PERL_DEBUG() y PERL_DEB() para evitar conflictos en el espacio de nombres.
+Las macros internas de depueración Perl DEBUG() y DEB() se han renombrado a PERL_DEBUG() y PERL_DEB() para evitar conflictos en el espacio de nombres.
 
 C<-DL> eliminado (el test de agotamiento estaba roto y no mantenido desde hace años; de otra forma, use malloc de depuración o herramientas como valgrind y Purify).
 
@@ -626,7 +626,7 @@ El soporte de compilador generador de C, B::C (la interfaz que hay por detrás d
 
 =head2 Plataformas EBCDIC
 
-IBM z/OS y otras plataformas EBCDIC siguen siendo problemáticas en relación con la compatibilidad con Unicode.  Muchas pruebas de Unicode se omiten cuando en realidad deberían ser arregladas.
+IBM z/OS y otras plataformas EBCDIC siguen siendo problemáticas en relación con la compatibilidad con Unicode.  Muchas pruebas de Unicode se omiten cuando en realidad deberían arreglarse.
 
 =head2 Problemas en Cygwin 1.5
 
@@ -721,7 +721,7 @@ Se seguirá trabajando en el bytecompiler y byteloader.
 
 =item *
 
-Los v-strings, tal como existen en la actualidad, está previsto que sean descartados.  La forma v-less (1.2.3) se convertirá en un "objeto de versión" cuando se utilice con C<use>, C<require> y C<$VERSION>.  $^V será también un "objeto versión" así que la construcción printf("%vd",...) ya no será necesaria.  La versión v-ful (v1.2.3) se convertirá en obsoleta.  La equivalencia de cadenas y v-strings (p. e., que en la actualidad 5.8.0 es igual a "\5\8\0") va a desaparecer.  Sin embargo, B<puede no haber advertencias con los v-strings>: es muy difícil detectar cuándo los v-strings se están utilizando de forma segura, y cuándo no.
+Los v-strings, tal como existen en la actualidad, está previsto que se descarten.  La forma v-less (1.2.3) se convertirá en un "objeto de versión" cuando se utilice con C<use>, C<require> y C<$VERSION>.  $^V será también un "objeto versión" así que la construcción printf("%vd",...) ya no será necesaria.  La versión v-ful (v1.2.3) se convertirá en obsoleta.  La equivalencia de cadenas y v-strings (p. e., que en la actualidad 5.8.0 es igual a "\5\8\0") va a desaparecer.  Sin embargo, B<puede no haber advertencias con los v-strings>: es muy difícil detectar cuándo los v-strings se están utilizando de forma segura, y cuándo no.
 
 =item *
 

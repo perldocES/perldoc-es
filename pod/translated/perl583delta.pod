@@ -12,7 +12,7 @@ Si está actualizando desde una versión anterior como la 5.6.1, primero lea L<p
 
 No hay cambios incompatibles con 5.8.2.
 
-=head1 Mejoras en los componentes
+=head1 Mejoras en el núcleo principal
 
 Un método C<SCALAR> está ahora disponible para los hash atados. Esto se activa cuando un hash atado se utiliza en contexto escalar, como
 
@@ -75,9 +75,9 @@ Una nueva utilidad, C<prove>, hace que sea fácil ejecutar una prueba de regresi
 
 =head1 Nueva documentación
 
-La documentación ha sido revisada en diversos lugares para producir páginas de manual más estándares.
+La documentación se ha revisado en diversos lugares para producir páginas de manual más estándares.
 
-La documentación de los bloques especiales (BEGIN, CHECK, INIT, FIN) ha sido mejorado.
+La documentación de los bloques especiales (BEGIN, CHECK, INIT, FIN) se ha mejorado.
 
 =head1 Mejoras en la instalación y configuración
 
@@ -87,7 +87,7 @@ Perl ahora se compila en OpenVMS I64
 
 Usando substr() en una cadena UTF8 podría causar que los subsecuentes accesos a dicha cadena devuelvan basura. Esto se debió a que se almacenaban desplazamientos UTF8 incorrectos, y ahora ya está arreglado.
 
-join() podría devolver basura cuando la misma instrucción join() fue anteriormente usada para procesar datos de 8 bits habiendo procesado anteriormente datos UTF8, debido a que los indicadores en esa área de trabajo temporal no eran correctamente reinicializadas. Esto ha sido arreglado.
+join() podría devolver basura cuando la misma instrucción join() fue anteriormente usada para procesar datos de 8 bits habiendo procesado anteriormente datos UTF8, debido a que los indicadores en esa área de trabajo temporal no eran correctamente reinicializadas. Esto se ha arreglado.
 
 C<$a .. $b> ahora funcionará como se espera cuando $a o $b sean C<undef>
 
@@ -103,7 +103,7 @@ El error fatal "DESTROY creó una nueva referencia al objeto muerto" ya está do
 
 =head1 Cambios internos
 
-El código hash ha sido reprogramado para reducir la duplicación de código fuente. El interfaz externo no se ha modificado, y aparte de la corrección de errores descritos anteriormente, no debería haber ningún cambio en el comportamiento.
+El código hash se ha reprogramado para reducir la duplicación de código fuente. El interfaz externo no se ha modificado, y aparte de la corrección de errores descritos anteriormente, no debería haber ningún cambio en el comportamiento.
 
 C<hv_clear_placeholders> ahora es parte de la API de perl
 

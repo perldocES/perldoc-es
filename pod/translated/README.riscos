@@ -8,12 +8,12 @@ perlriscos - Perl versión 5 para sistemas operativos RISC
 
 Este documento proporciona instrucciones para la construcción de Perl para sistemas operativos RISC. Es complicado, por la necesidad de hacer una compilación cruzada. Hay una versión binaria de perl disponible en L<http://www.cp15.org/perl/> que es posible que desee utilizar en lugar de tratar de compilarlo usted mismo.
 
-=head1 BUILD
+=head1 COMPILACIÓN
 
 Necesita tener instalado y funcionando un compilador cruzado gccsdk L<http://gccsdk.riscos.info/> y REXEN L<http://www.cp15.org/programming/>
 
 En primer lugar, copiar el código fuente y crear una copia nativa de perl de su sistema principal.
-Luego, en el código fuente para ser compilado de forma cruzada:
+Luego, en el código fuente para compilarse de forma cruzada:
 
 =over 4
 

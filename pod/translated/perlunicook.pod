@@ -369,7 +369,7 @@ Para definir en tiempo de compilación sus propias propiedades de caracteres per
 
 =head2 ℞ 27: Normalización Unicode
 
-Típicamente, debería mostrar sus datos en NFD (la forma de descomposición canónica) en la entrada y en NFC (descomposición canónica seguido por una composición canónica) en la salida. Usar las funciones NFKC o NFKD mejora las prestaciones en las búsquedas, asumiendo que haya hecho la misma normalización al texto a ser localizado. Note que esta normalización es más que solo dividir y unir precombinados glifos compatibles; también reordena marcas de acuerdo a las clases de combinación canónica y poda a los que queden sueltos.
+Típicamente, debería mostrar sus datos en NFD (la forma de descomposición canónica) en la entrada y en NFC (descomposición canónica seguido por una composición canónica) en la salida. Usar las funciones NFKC o NFKD mejora las prestaciones en las búsquedas, asumiendo que haya hecho la misma normalización al texto a localizarse. Note que esta normalización es más que solo dividir y unir precombinados glifos compatibles; también reordena marcas de acuerdo a las clases de combinación canónica y poda a los que queden sueltos.
 
  use Unicode::Normalize;
  my $nfd  = NFD($orig);

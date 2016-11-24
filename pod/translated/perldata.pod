@@ -12,7 +12,7 @@ Perl tiene tres tipos de datos predefinidos: escalares, arrays de escalares y ar
 
 A los valores se accede normalmente por su nombre, o a través de una referencia con nombre.
 El primer carácter del nombre nos indica el tipo de la estructura de datos.  El resto del nombre indica a qué valor concreto se accede.  Normalmente, este nombre es un I<identificador>, es decir, una palabra que comienza por una letra o un guión bajo, y que contiene letras, guiones bajos o dígitos.  En ciertos casos, puede ser una serie de identificadores separados por C<::> (o por el separador C<'>, algo anticuado), donde todos los identificadores menos el último se interpretan como nombres de paquetes que determinan el espacio de nombres en el que se buscará el identificador final (encontrará más detalles en la sección "Paquetes" de L<perlmod>).  Para una explicación más detallada
-de los identificadores, vea L<Análisis de identificadores>.  También es posible sustituir un identificador simple por una expresión que produzca una referencia al valor en tiempo de ejecución.   Esto se describe con mayor detalle más abajo y en L<perlref>.
+de los identificadores, vea L<Interpretación de identificadores>.  También es posible sustituir un identificador simple por una expresión que produzca una referencia al valor en tiempo de ejecución.   Esto se describe con mayor detalle más abajo y en L<perlref>.
 X<identifier> X<identificador>
 
 Perl también tiene sus propias variables predefinidas, cuyos nombres no siguen estas reglas.  Estas variables tienen nombres extraños para evitar conflictos accidentales con las variables normales.  Las cadenas que coinciden con las partes encerradas entre paréntesis de una expresión regular se guardan con nombres que contienen solo dígitos después del símbolo C<$> (véase L<perlre> y L<perlop>).
@@ -162,7 +162,7 @@ entonces la operación sort establece un contexto de lista para <>, el cual proc
 La asignación es un poco especial en el sentido de que utiliza el argumento de la izquierda para determinar el contexto del argumento de la derecha.  La asignación a un escalar evalúa lo que hay en el lado derecho en contexto de escalar, mientras que la asignación a un array o a un hash evalúa el lado derecho en contexto de lista.  La asignación a una lista (o a una porción, que también es una lista después de todo) también evalúa el lado derecho en contexto de lista.
 
 Si se utiliza el pragma C<use warnings> o la opción de línea de comandos B<-w>, pueden aparecer advertencias sobre el uso inútil de constantes o funciones en contexto vacío ("I<void>").
-El contexto vacío significa simplemente que se ha descartado el valor, como por ejemplo en una instrucción que consista únicamente en una cadena (p. ej., C<"alfredo";>) o una llamada a función (p. ej., C<getpwuid(0);>).  Cuenta como contexto de escalar para las funciones a las que les interesa saber si han sido llamadas en contexto de lista o no.
+El contexto vacío significa simplemente que se ha descartado el valor, como por ejemplo en una instrucción que consista únicamente en una cadena (p. ej., C<"alfredo";>) o una llamada a función (p. ej., C<getpwuid(0);>).  Cuenta como contexto de escalar para las funciones a las que les interesa saber si se han llamado en contexto de lista o no.
 
 Para las subrutinas definidas por el usuario existe la opción de considerar si la llamada se realiza en contexto vacío, escalar o de lista.  Sin embargo, no es necesario para la mayoría de las subrutinas.  Esto se debe a que ambos tipos, escalares y listas, se interpolan automáticamente en listas.  Para saber cómo se puede averiguar dinámicamente el contexto de llamada de una función, vea la sección sobre C<wantarray> de L<perlfunc>.
 
@@ -199,7 +199,7 @@ Este método puede ser mejor, ya que de otro modo no se pueden tratar notaciones
 
 El número de elementos (que llamaremos "longitud") de un array es un valor escalar.  Para conocer la longitud del array @jornadas, puede evaluar C<$#jornadas>, como en B<csh>.  Sin embargo, esto no es el número de elementos del array, sino el subíndice del último elemento, que es un valor distinto, ya que normalmente hay un elemento número 0.
 Asignar un valor a C<$#jornadas> cambia la longitud del array.
-Acortar un array de esta forma destruye los valores involucrados.  Alargar un array que ha sido acortado previamente no permite recuperar los valores que había en esos elementos
+Acortar un array de esta forma destruye los valores involucrados.  Alargar un array que se ha acortado previamente no permite recuperar los valores que había en esos elementos
 X<$#> X<array, length> X<array, longitud>
 
 También se puede obtener un pequeño aumento de eficiencia ampliando previamente un array que va a crecer.  Otra forma de ampliar un array es hacer una asignación a un elemento que esté más allá del final del array.  Para truncar un array y dejarlo vacío, puede asignarle la lista nula ().  Las instrucciones siguientes son equivalentes:
@@ -338,7 +338,7 @@ Dentro de cadenas escritas entre comillas dobles, los arrays y las porciones se 
 
     system "echo @ARGV";
 
-Dentro de los patrones de búsqueda (donde también se realiza la sustitución del entrecomillado doble) existe una desafortunada ambigüedad: ¿Debe C</$foo[bar]/> ser interpretado como C</${foo}[bar]/> (donde C<[bar]> es una clase de caracteres para la expresión regular) o como C</${foo[bar]}/> (donde C<[bar]> es el subíndice del array @foo)?  Si @foo no existe, entonces es evidente que se trata de una clase de caracteres.  Si @foo existe, Perl tiene una buena pista acerca de C<[bar]>, y casi siempre acierta.  Por si se equivoca, o para evitar ataques de paranoia, puede forzar la interpretación correcta con llaves, como se indicó arriba.
+Dentro de los patrones de búsqueda (donde también se realiza la sustitución del entrecomillado doble) existe una desafortunada ambigüedad: ¿Debe C</$foo[bar]/> interpretarse como C</${foo}[bar]/> (donde C<[bar]> es una clase de caracteres para la expresión regular) o como C</${foo[bar]}/> (donde C<[bar]> es el subíndice del array @foo)?  Si @foo no existe, entonces es evidente que se trata de una clase de caracteres.  Si @foo existe, Perl tiene una buena pista acerca de C<[bar]>, y casi siempre acierta.  Por si se equivoca, o para evitar ataques de paranoia, puede forzar la interpretación correcta con llaves, como se indicó arriba.
 
 Si busca información acerca de cómo usar documentos incrustados, que solía estar en este documento, debe saber que ahora se encuentra en la sección "Comillas y operadores de comillas" de L<perlop>.
 
@@ -609,7 +609,7 @@ A partir de Perl 5.20, una operación de partición hash con el símbolo %, es u
     %subconjunto = %h{'foo', 'bar'}; # porción hash clave/valor
     # %subconjunto ahora es (foo => 3, bar => 8)
 
-Sin embargo, el resultado de tal partición no puede ser localizado, eliminado o utilizado en una asignación.  En cambio, ahora son mucho más consistentes con las particiones hash que usan el símbolo @.
+Sin embargo, el resultado de tal partición no puede localizarse, eliminado o utilizado en una asignación.  En cambio, ahora son mucho más consistentes con las particiones hash que usan el símbolo @.
 
 =head3 Porciones array índice/valor
 

@@ -10,7 +10,7 @@ Este documento describe las diferencias entre la versión 5.16.2 y la versión 5
 
 Si va a actualizar desde una versión anterior, como 5.16.1, lea primero L<perl5162delta>, en el que se describen las diferencias entre 5.16.1 y 5.16.2.
 
-=head1 Mejoras en los componentes
+=head1 Mejoras en el núcleo principal
 
 Ningún cambio con respecto a la versión 5.16.0.
 

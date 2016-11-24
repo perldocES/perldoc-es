@@ -11,15 +11,15 @@ Si está actualizando desde una versión anterior como la 5.6.1, primero lea L<p
 =head1 Cambios incompatibles
 
 Se perdió, accidentalmente, la compatibilidad binaria entre 5.8.0 y 5.8.1, en la construcción de módulos en paralelo, al llamar a ciertas llamadas del sistema reentrantes.
-La compatibilidad binaria con 5.8.0 ha sido restaurada en 5.8.2, que requiere romper la compatibilidad con 5.8.1. Vemos esto como el menor de dos males.
+La compatibilidad binaria con 5.8.0 se ha restaurado en 5.8.2, que requiere romper la compatibilidad con 5.8.1. Vemos esto como el menor de dos males.
 
 Esto sólo afectará a las personas que tienen un perl 5.8.1 multihilo, y los módulos compilados que utilizan estas llamadas, y ahora intenta ejecutar los módulos compilados con 5.8.2. La solución es volver a compilar y volver a instalar los módulos usando 5.8.2.
 
-=head1 Mejoras en los componentes
+=head1 Mejoras en el núcleo principal
 
 =head2 Aleatorización Hash
 
-La asignación al azar hash introducido con 5.8.1 ha sido modificado. Se constató que, aunque la implementación fue introducida en 5.8.1, compatible a nivel de código fuente con 5.8.0, no era compatible a nivel binario, en ciertos casos. 5.8.2 contiene una implementación mejorada que es a la vez compatible a nivel de código fuente y binario con 5.8.0 y 5.8.1, y se mantiene robusto contra la forma de ataque que provocó el cambio de 5.8.1.
+La asignación al azar hash introducido con 5.8.1 se ha modificado. Se constató que, aunque la implementación fue introducida en 5.8.1, compatible a nivel de código fuente con 5.8.0, no era compatible a nivel binario, en ciertos casos. 5.8.2 contiene una implementación mejorada que es a la vez compatible a nivel de código fuente y binario con 5.8.0 y 5.8.1, y se mantiene robusto contra la forma de ataque que provocó el cambio de 5.8.1.
 
 Estamos muy agradecidos con el proyecto Debian por sus aportaciones en este ámbito.
 Vea L<perlsec/"Ataques de complejidad algorítmica"> para la justificación original de este cambio.
@@ -30,9 +30,9 @@ Varias agotamientos de memoria, asociados con variables compartidas entre hilos 
 
 =head1 Módulos y pragmas
 
-=head2 Módulos y Pragmata actualizados
+=head2 Módulos y pragmas actualizados
 
-Los siguientes módulos y pragmata se han actualizado desde Perl 5.8.1:
+Los siguientes módulos y pragmas se han actualizado desde Perl 5.8.1:
 
 =over 4
 
@@ -79,7 +79,7 @@ Esto debería resolver los problemas con la inicialización y destrucción del i
 
 =head1 Problemas en plataformas específicas
 
-Los indicadores del enlazador dinámico han sido modificados para Solaris y OS X, lo que debería solucionar los mismos problemas que aparecen en la construcción de algunos módulos XS.
+Los indicadores del enlazador dinámico se han modificado para Solaris y OS X, lo que debería solucionar los mismos problemas que aparecen en la construcción de algunos módulos XS.
 
 Errores corregidos en sockets en OS/2 y tmpfile.
 
