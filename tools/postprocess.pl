@@ -279,7 +279,7 @@ foreach my $pod_name (@names) {
 
 
     # Generate word-oriented diff file
-    if ( $diff ) {
+    if ( $diff && !$notrev) {  # Will not create a diff file if option $notrev is ON
 
         say "Generating diff file...";
 
