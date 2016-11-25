@@ -9,5 +9,5 @@ perl*.tmx
 source*zip
 informe*
 tm/
-.omegat/logs/*
-software/*
+.omegat/logs/
+software/
