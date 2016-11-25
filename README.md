@@ -1,3 +1,5 @@
 #Proyeto OmegaT para traducción al español.
 
-En realidad, es mejor que empieces a mirar [el repo de Enrique Nell](https://github.com/zipf/perldoc-es). Este repo se debería usar directamente desde OmegaT. 
+Este repositorio es EXCLUSIVAMENTE para trabajar en grupo, directamente, desde OmegaT.
+
+Consultar [el repositorio oficial de perldocES](https://github.com/perldocES). 
