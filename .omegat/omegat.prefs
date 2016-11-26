@@ -6,7 +6,7 @@
     <source_font_size>13</source_font_size>
     <display_modification_info>selected</display_modification_info>
     <auto_save_interval>900</auto_save_interval>
-    <scripts_dir>/home/explorer/Proyectos/perlspanish/software/OmegaT/./scripts</scripts_dir>
+    <scripts_dir>/home/explorer/Proyectos/perldocES/v5/software/OmegaT/scripts</scripts_dir>
     <project_files_window_width>866</project_files_window_width>
     <project_files_window_height>561</project_files_window_height>
     <project_files_window_x>438</project_files_window_x>
@@ -25,7 +25,7 @@
     <ext_tmx_match_template>${id}. ${fuzzyFlag}${diff}
 ${targetText}
 &lt;${score}/${noStemScore}/${adjustedScore}% ${filePath}&gt;</ext_tmx_match_template>
-    <current_folder>/home/explorer/Proyectos/perlspanish</current_folder>
+    <current_folder>/home/explorer/Proyectos/perldocES</current_folder>
     <mark_translated_segments>true</mark_translated_segments>
     <mark_untranslated_segments>true</mark_untranslated_segments>
     <display_segment_sources>true</display_segment_sources>
@@ -39,7 +39,7 @@ ${targetText}
     <lt_disabled>false</lt_disabled>
     <dictionary_url>http://download.services.openoffice.org/files/contrib/dictionaries/</dictionary_url>
     <allow_auto_spellchecking>true</allow_auto_spellchecking>
-    <spellcheker_dir>/home/explorer/Proyectos/perlspanish/perlspanish-work/dictionary</spellcheker_dir>
+    <spellcheker_dir>/home/explorer/Proyectos/perldocES/v5/work.github/dictionary</spellcheker_dir>
     <team_Author>explorer</team_Author>
     <tab_advance>false</tab_advance>
     <transtips>true</transtips>
@@ -70,7 +70,7 @@ ${targetText}
     <help_window_x>223</help_window_x>
     <help_window_y>0</help_window_y>
     <allow_apertium_translate_plugin>true</allow_apertium_translate_plugin>
-    <search_window_dir>/home/explorer/Documentos/Desarrollo/perlspanish-work/target/</search_window_dir>
+    <search_window_dir>/home/explorer/Proyectos/perldocES/v5/work.github/target/</search_window_dir>
     <search_window_search_type>REGEXP</search_window_search_type>
     <search_window_search_state>TRANSLATED</search_window_search_state>
     <search_window_replace_type>EXACT</search_window_replace_type>
@@ -114,7 +114,7 @@ ${targetText}
     <loose_tag_ordering>false</loose_tag_ordering>
     <tags_valid_required>false</tags_valid_required>
     <sb_progress_mode>PERCENTAGE</sb_progress_mode>
-    <source_folder>/home/explorer/Documents/Desarrollo/perlspanish</source_folder>
+    <source_folder>/home/explorer/Proyectos/perldocES/v5</source_folder>
     <COLOR_BACKGROUND>__DEFAULT__</COLOR_BACKGROUND>
     <COLOR_FOREGROUND>__DEFAULT__</COLOR_FOREGROUND>
     <COLOR_SOURCE>#c0ffc0</COLOR_SOURCE>
@@ -136,7 +136,7 @@ ${targetText}
     <COLOR_TRANSTIPS>#0000ff</COLOR_TRANSTIPS>
     <COLOR_SPELLCHECK>#ff0000</COLOR_SPELLCHECK>
     <most_recent_projects_size>5</most_recent_projects_size>
-    <most_recent_projects_0>/home/explorer/Proyectos/perlspanish/perlspanish-work</most_recent_projects_0>
+    <most_recent_projects_0>/home/explorer/Proyectos/perldocES/v5/work.github</most_recent_projects_0>
     <ext_tmx_sort_key>SCORE</ext_tmx_sort_key>
     <always_confirm_quit>true</always_confirm_quit>
     <taas_domain>TaaS-1501</taas_domain>
@@ -145,7 +145,7 @@ ${targetText}
     <allow_project_extern_cmd>false</allow_project_extern_cmd>
     <view_option_mod_info_template>${creationId} - ${changedId} ${changedDate} ${changedTime}</view_option_mod_info_template>
     <view_option_mod_info_template_wo_date>${creationId} - ${changedId}</view_option_mod_info_template_wo_date>
-    <most_recent_projects_1>/home/explorer/Proyectos/perlspanish/perl6spanish-work</most_recent_projects_1>
+    <most_recent_projects_1>/home/explorer/Proyectos/perldocES/v5/work.github</most_recent_projects_1>
     <search_window_history_size>10</search_window_history_size>
     <search_window_file_names>true</search_window_file_names>
     <search_window_search_history_item_0>\wse ha actualizad</search_window_search_history_item_0>
@@ -156,9 +156,7 @@ ${targetText}
     <search_window_search_history_item_5>L&lt;L&lt;</search_window_search_history_item_5>
     <search_window_search_history_item_6>I&lt;Regex&gt;</search_window_search_history_item_6>
     <search_window_search_history_item_7>IDENTIFICADORes de archivo</search_window_search_history_item_7>
-    <most_recent_projects_2>/home/explorer/Documentos/Desarrollo/perlspanish-work</most_recent_projects_2>
-    <most_recent_projects_3>/home/explorer/Documentos/Desarrollo/perl6spanish-work</most_recent_projects_3>
-    <most_recent_projects_4>/home/explorer/Documentos/Desarrollo/prueba</most_recent_projects_4>
+    <most_recent_projects_2>/home/explorer/Proyectos/perldocES/v6/work.github</most_recent_projects_3>
     <search_window_search_history_item_8>I&lt;andeados&gt;</search_window_search_history_item_8>
     <search_window_search_history_item_9>El módulo &lt;File::stat&gt;</search_window_search_history_item_9>
     <allow_google2_translate>false</allow_google2_translate>
