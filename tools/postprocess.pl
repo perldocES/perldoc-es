@@ -64,10 +64,11 @@ Readonly my $DIFF_HEADER   => <<"END_HEADER";
 END_HEADER
 
 # File Not Reviewed Warning
-Readonly my $NOT_REVIEWED => <<"END_WARNING";
+Readonly my $NOT_REVIEWED => <<'END_WARNING';
 =begin HTML
 
 <p style="color:red"><strong>ADVERTENCIA: ESTE DOCUMENTO NO ESTÁ REVISADO.</br> 
+SOLO PARA L@S MÁS DUR@S.</br>
 Se incluye en la distribución como borrador útil e informativo, pero su lectura puede 
 resultar dura para las almas con mayor sensibilidad lingüística.</strong></p>
 
@@ -185,7 +186,7 @@ foreach my $pod_name (@names) {
     
     
     # Add a warning in case the file is not reviewed
-    $text =~ s/=head1 NOMBRE\K(.+?)(?==head1 )/$1\n\n$NOT_REVIEWED\n\n/s if $notrev;
+    $text =~ s/=head1 (?:NOMBRE|NAME)\K(.+?)(?==head1 )/$1\n\n$NOT_REVIEWED\n\n/s if $notrev;
 
     # Check if there is a =encoding command
     my $encoding;
