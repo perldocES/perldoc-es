@@ -67,8 +67,8 @@ END_HEADER
 Readonly my $NOT_REVIEWED => <<'END_WARNING';
 =begin HTML
 
-<p style="color:red"><strong>ADVERTENCIA: ESTE DOCUMENTO NO ESTÁ REVISADO.</br> 
-SOLO PARA L@S MÁS DUR@S.</br>
+<p style="color:red"><strong>ADVERTENCIA: ESTE DOCUMENTO NO ESTÁ REVISADO.<br> 
+SOLO PARA L@S MÁS DUR@S.<br>
 Se incluye en la distribución como borrador útil e informativo, pero su lectura puede 
 resultar dura para las almas con mayor sensibilidad lingüística.</strong></p>
 
