@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 NAME / NOMBRE
+=head1 NAME
 X<operator>
 
 perlop - Operadores y precedencia en Perl

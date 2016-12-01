@@ -25,7 +25,7 @@ lib/POD2/ES/perlnewmod.pod
 lib/POD2/ES/perlnumber.pod
 lib/POD2/ES/perlobj.pod
 lib/POD2/ES/perlootut.pod
-lib/POS2/ES/perlop.pod
+lib/POD2/ES/perlop.pod
 lib/POD2/ES/perlopenbsd.pod
 lib/POD2/ES/perlopentut.pod
 lib/POD2/ES/perlpragma.pod
