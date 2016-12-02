@@ -4,7 +4,7 @@
 Para aplicar un formato uniforme a este archivo, use:
   perl ./Porting/podtidy pod/perlsource.pod
 
-=head1 NOMBRE
+=head1 NAME
 
 perlsource - Guía del árbol de código fuente de Perl
 

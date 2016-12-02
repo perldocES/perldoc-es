@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 NOMBRE
+=head1 NAME
 
 perlpragma - Crear un pragma de usuario
 

@@ -5,7 +5,7 @@ extraños, pero puede ignorarlos). Está escrito en formato POD (vea
 pod/perlpod.pod), un formato diseñado específicamente para ser legible tal
 cual.
 
-=head1 NOMBRE
+=head1 NAME
 
 perlhurd - Perl versión 5 en Hurd
 

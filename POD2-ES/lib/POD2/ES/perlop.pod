@@ -3,19 +3,7 @@
 =head1 NAME
 X<operator>
 
-perlop - Operadores y precedencia en Perl
-
-
-
-=begin HTML
-
-<p style="color:red"><strong>ADVERTENCIA: ESTE DOCUMENTO NO ESTÁ REVISADO.<br>
- Se incluye en la distribución como borrador útil e informativo, pero su
-lectura puede  resultar dura para l@s perler@s con mayor sensibilidad
-lingüística.</strong></p>
-
-=end HTML
-
+perlop - Operadores y precedencia en Perl   *** DOCUMENTO SIN REVISAR ***
 
 =head1 DESCRIPCIÓN
 
