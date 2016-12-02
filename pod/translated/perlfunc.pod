@@ -1,4 +1,4 @@
-=head1 NAME / NOMBRE
+=head1 NAME
 X<function>
 
 perlfunc - Funciones predefinidas en Perl
