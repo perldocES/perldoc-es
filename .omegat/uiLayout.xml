@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <VLDocking version="2.1">
 <DockingDesktop name="">
-<DockingPanel x="-4" y="-3" width="1338" height="775">
-<Split orientation="1" location="0.5897435897435898">
-<Split orientation="0" location="0.7968299711815562">
-<Split orientation="0" location="0.6775956284153005">
-<Split orientation="0" location="0.44565217391304346">
+<DockingPanel x="408" y="64" width="1338" height="775">
+<Split orientation="1" location="0.5871212121212122">
+<Split orientation="0" location="0.788235294117647">
+<Split orientation="0" location="0.6691729323308271">
+<Split orientation="0" location="0.4403409090909091">
 <Dockable>
 <Key dockName="MATCHES"/>
 </Dockable>
@@ -13,7 +13,7 @@
 <Key dockName="EDITOR"/>
 </Dockable>
 </Split>
-<Split orientation="1" location="0.5578406169665809">
+<Split orientation="1" location="0.5525291828793775">
 <Dockable>
 <Key dockName="MACHINE_TRANSLATE"/>
 </Dockable>
@@ -22,7 +22,7 @@
 </Dockable>
 </Split>
 </Split>
-<Split orientation="1" location="0.487146529562982">
+<Split orientation="1" location="0.48508430609597925">
 <Dockable>
 <Key dockName="NOTES"/>
 </Dockable>
@@ -31,7 +31,7 @@
 </Dockable>
 </Split>
 </Split>
-<Split orientation="1" location="0.5388888888888889">
+<Split orientation="1" location="0.532347504621072">
 <Dockable>
 <Key dockName="GLOSSARY"/>
 </Dockable>

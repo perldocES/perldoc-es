@@ -9,14 +9,14 @@
     <scripts_dir>/home/explorer/Proyectos/perldocES/v5/software/OmegaT/scripts</scripts_dir>
     <project_files_window_width>866</project_files_window_width>
     <project_files_window_height>561</project_files_window_height>
-    <project_files_window_x>438</project_files_window_x>
-    <project_files_window_y>56</project_files_window_y>
+    <project_files_window_x>949</project_files_window_x>
+    <project_files_window_y>49</project_files_window_y>
     <script_window_width>1150</script_window_width>
     <script_window_height>650</script_window_height>
     <script_window_x>103</script_window_x>
     <script_window_y>67</script_window_y>
-    <screen_x>-4</screen_x>
-    <screen_y>-3</screen_y>
+    <screen_x>408</screen_x>
+    <screen_y>64</screen_y>
     <screen_width>1338</screen_width>
     <screen_height>775</screen_height>
     <tokenizer_behavior_org.omegat.tokenizer.LuceneSpanishTokenizer>LUCENE_CURRENT</tokenizer_behavior_org.omegat.tokenizer.LuceneSpanishTokenizer>
@@ -25,7 +25,7 @@
     <ext_tmx_match_template>${id}. ${fuzzyFlag}${diff}
 ${targetText}
 &lt;${score}/${noStemScore}/${adjustedScore}% ${filePath}&gt;</ext_tmx_match_template>
-    <current_folder>/home/explorer/Proyectos/perldocES</current_folder>
+    <current_folder>/home/explorer/Proyectos/perldocES/v6</current_folder>
     <mark_translated_segments>true</mark_translated_segments>
     <mark_untranslated_segments>true</mark_untranslated_segments>
     <display_segment_sources>true</display_segment_sources>
@@ -136,7 +136,7 @@ ${targetText}
     <COLOR_TRANSTIPS>#0000ff</COLOR_TRANSTIPS>
     <COLOR_SPELLCHECK>#ff0000</COLOR_SPELLCHECK>
     <most_recent_projects_size>5</most_recent_projects_size>
-    <most_recent_projects_0>/home/explorer/Proyectos/perldocES/v5/work.github</most_recent_projects_0>
+    <most_recent_projects_0>/home/explorer/Proyectos/perldocES/v6/work.github</most_recent_projects_0>
     <ext_tmx_sort_key>SCORE</ext_tmx_sort_key>
     <always_confirm_quit>true</always_confirm_quit>
     <taas_domain>TaaS-1501</taas_domain>
@@ -156,9 +156,19 @@ ${targetText}
     <search_window_search_history_item_5>L&lt;L&lt;</search_window_search_history_item_5>
     <search_window_search_history_item_6>I&lt;Regex&gt;</search_window_search_history_item_6>
     <search_window_search_history_item_7>IDENTIFICADORes de archivo</search_window_search_history_item_7>
-    <most_recent_projects_2>/home/explorer/Proyectos/perldocES/v6/work.github</most_recent_projects_3>
+    <most_recent_projects_2>/home/explorer/Proyectos/perldocES/v5/work.github</most_recent_projects_2>
     <search_window_search_history_item_8>I&lt;andeados&gt;</search_window_search_history_item_8>
     <search_window_search_history_item_9>El módulo &lt;File::stat&gt;</search_window_search_history_item_9>
     <allow_google2_translate>false</allow_google2_translate>
+    <ac_show_suggestions_automatically>true</ac_show_suggestions_automatically>
+    <mt_auto_fetch>true</mt_auto_fetch>
+    <glossary_tbx_display_context>true</glossary_tbx_display_context>
+    <glossary_not_exact_match>true</glossary_not_exact_match>
+    <glossary_stemming>true</glossary_stemming>
+    <dictionary_fuzzy_matching>true</dictionary_fuzzy_matching>
+    <stat_counting_custom_tags>true</stat_counting_custom_tags>
+    <project_files_show_on_load>true</project_files_show_on_load>
+    <editor_initial_segment_load_count>2000</editor_initial_segment_load_count>
+    <view_option_ppt_simplify>true</view_option_ppt_simplify>
   </preference>
 </omegat>
