@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 NOMBRE
+=head1 NAME
 
 perlmroapi - Interfaz del complemento de resolución de métodos de Perl
 

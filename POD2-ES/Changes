@@ -1,6 +1,29 @@
 Revision history for Perl extension POD2::ES
 
-5.24.0.01 October 19, 2016
+5.24.0.2_3 December 3, 2016
+         
+         * Reverted the translation of the NOMBRE section to NAME in all files
+         * Added a new (command-line friendly) warning message to non-reviewed
+           files
+
+5.24.0.2_2 December 1, 2016
+
+         * Fixed perlop.pod path in MANIFEST
+         * Changed NAME section in perl.pod, perlfunc.pod, perlop.pod,
+           and perlopentut.pod (to test different possibilities)
+         * Fixed typo in perlopentut description
+
+5.24.0.2_1 December 1, 2016
+
+         * Included 3 non-reviewed documents: perlfunc, perlop, perlopentut
+           (prelude of a phased release of non-reviewed docs along with the 
+           reviewed documentation)
+         * Changed the NOMBRE section to 'NAME / NOMBRE' in these files
+           to check if this fixes the file description issue (currently 
+           doc descriptions are not shown in the documentation listing)
+         * Uupdated ES.pm and translated all the section names (except NAME)
+
+5.24.0.1 October 21, 2016
 
           * Updated the latest release to v5.24.0
 

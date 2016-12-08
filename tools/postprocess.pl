@@ -64,15 +64,17 @@ Readonly my $DIFF_HEADER   => <<"END_HEADER";
 END_HEADER
 
 # File Not Reviewed Warning
-Readonly my $NOT_REVIEWED => <<"END_WARNING";
-=begin HTML
+Readonly my $NOT_REVIEWED => "*** DOCUMENTO SIN REVISAR ***";
+# Readonly my $NOT_REVIEWED => <<'END_WARNING';
+# =begin HTML
+# 
+# <p style="color:red"><strong>ADVERTENCIA: ESTE DOCUMENTO NO ESTÁ REVISADO.<br> 
+# Se incluye en la distribución como borrador útil e informativo, pero su lectura puede 
+# resultar dura para l@s perler@s con mayor sensibilidad lingüística.</strong></p>
+# 
+# =end HTML
+# END_WARNING
 
-<p style="color:red"><strong>ADVERTENCIA: ESTE DOCUMENTO NO ESTÁ REVISADO.</br> 
-Se incluye en la distribución como borrador útil e informativo, pero su lectura puede 
-resultar dura para las almas con mayor sensibilidad lingüística.</strong></p>
-
-=end HTML
-END_WARNING
 
 # Read team from __DATA__ section
 my (%team, %files);
@@ -185,7 +187,7 @@ foreach my $pod_name (@names) {
     
     
     # Add a warning in case the file is not reviewed
-    $text =~ s/=head1 NOMBRE\K(.+?)(?==head1 )/$1\n\n$NOT_REVIEWED\n\n/s if $notrev;
+    $text =~ s/=head1\s+NAME\s*\n(?:X<.+?>)*\s+\K(.+?)(?=\n\s+=head1 )/$1   $NOT_REVIEWED/s if $notrev;
 
     # Check if there is a =encoding command
     my $encoding;

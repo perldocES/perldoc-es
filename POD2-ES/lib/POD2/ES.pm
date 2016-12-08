@@ -6,7 +6,7 @@ use open ':utf8';
 use base 'Exporter';
 use base 'POD2::Base';
 
-our $VERSION = '5.24.0.1';
+our $VERSION = '5.24.0.2_3';
 
 our @EXPORT = qw(print_pod print_pods);
 
@@ -26,6 +26,7 @@ sub pod_info {{
         perlfaq1          => '5.24.0',
         perlfaq2          => '5.24.0',
         perlfreebsd       => '5.24.0',
+        perlfunc          => '5.24.0',
         #perlgit           => '5.24.0',
         #perlglossary      => '5.24.0',
         perlhacktut       => '5.24.0',
@@ -39,7 +40,9 @@ sub pod_info {{
         perlnumber        => '5.24.0',
         perlobj           => '5.24.0',
         perlootut         => '5.24.0',
+        perlop            => '5.24.0',
         perlopenbsd       => '5.24.0',
+        perlopentut       => '5.24.0',
         perlpragma        => '5.24.0',
         #perlre            => '5.24.0',
         perlsource        => '5.24.0',
@@ -104,7 +107,7 @@ __END__
 
 POD2::ES - Documentación de Perl en español
 
-=head1 SYNOPSIS
+=head1 SINOPSIS
 
   $ perldoc POD2::ES::<nombre_pod>
 
@@ -121,7 +124,7 @@ POD2::ES - Documentación de Perl en español
   $pod2->print_pod('perlfunc');
                                                                                           
 
-=head1 DESCRIPTION
+=head1 DESCRIPCIÓN
 
 Este módulo contiene los documentos revisados hasta la fecha del proyecto de 
 traducción al español de la documentación básica de Perl, que se aloja en 
@@ -203,7 +206,7 @@ solicita a C<perldoc> mediante la opción C<-f>.
 =back
 
 
-=head1 NOTES ABOUT THE TRANSLATION
+=head1 NOTAS ACERCA DE LA TRADUCCIÓN
 
 Para este proyecto hemos tomado las siguientes decisiones:
 
@@ -247,7 +250,7 @@ Latinoamérica.
 =back
 
 
-=head1 AUTHOR
+=head1 AUTOR
 
 =over
 
@@ -261,18 +264,18 @@ Latinoamérica.
 
 =back
 
-=head1 REPOSITORY
+=head1 REPOSITORIO
 
 Encontrará más información sobre el proyecto en
 L<https://github.com/perldocES/perldoc-es>.
 
 
-=head1 SEE ALSO
+=head1 VEA TAMBIÉN
 
 L<POD2::RU>, L<POD2::PT_BR>, L<POD2::IT>, L<POD2::FR>, L<POD2::LT>.
 
 
-=head1 DONATIONS
+=head1 DONATIVOS
 
 Por el elevado volumen de trabajo que representa y su larga duración, el
 proyecto de traducción de la documentación de Perl requiere un esfuerzo
@@ -284,7 +287,7 @@ alta la moral. Todo será bienvenido.
 
 
 
-=head1 BUGS
+=head1 ERRORES
 
 Puede notificar errores (bugs) o solicitar funcionalidad a través de la
 dirección de correo electrónico C<bug-pod2-es at rt.cpan.org> o de la interfaz
@@ -293,7 +296,7 @@ comunicarán automáticamente los cambios relacionados con los errores
 notificados o la funcionalidad solicitada.
 
 
-=head1 SUPPORT
+=head1 AYUDA
 
 Para ver la documentación de este módulo, utilice el comando perldoc.
 
@@ -323,7 +326,7 @@ L<http://search.cpan.org/dist/POD2-ES/>
 =back
 
 
-=head1 ACKNOWLEDGMENTS
+=head1 AGRADECIMIENTOS
 
 Los autores desean expresar su gratitud al equipo de desarrollo de OmegaT,
 la herramienta utilizada para la traducción.
@@ -331,7 +334,7 @@ la herramienta utilizada para la traducción.
 Proyecto OmegaT: L<http://omegat.org/>
 
 
-=head1 LICENSE AND COPYRIGHT
+=head1 LICENCIA Y COPYRIGHT
 
 Copyright (C) 2011-2016 Equipo de Perl en Español.
 
