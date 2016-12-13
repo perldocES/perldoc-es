@@ -5,6 +5,7 @@ omegat/project_stats.txt
 omegat/last_entry.properties
 target/*
 perl*.tmx
+work.github*.tmx
 source*zip
 informe*
 tm/
