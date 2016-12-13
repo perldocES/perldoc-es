@@ -668,7 +668,7 @@ El operando de la derecha no es evaluado mientras que el operador esté en el es
 Si alguno de los operandos del escalar C<".."> es una expresión constante, ese operando se considera cierto si es igual (C<==>) al número de línea actual de la entrada (la variable C<$.>).
 
 Para ser un poco más pedante, la comparación es en realidad S<C<int(EXPR) == int(EXPR)>>, pero esto sólo es un problema si utiliza una expresión de punto flotante; cuando, implícitamente, está usando C<$.> como se describe en el párrafo anterior, la comparación es S<C<int(EXPR) == int($.)>> que sólo es un problema cuando C<$.> se establece en un valor de punto flotante y usted no está leyendo desde un archivo.
-Por otra parte, S<C<"span" .. "spat">> o S<C<2.18 .. 3,14>> no harán lo que quiere que hagan en contexto escalar porque cada uno de los operandos se evalúan utilizando su representación entera.
+Por otra parte, S<C<"span" .. "spat">> o S<C<2.18 .. 3.14>> no harán lo que quiere que hagan en contexto escalar porque cada uno de los operandos se evalúan utilizando su representación entera.
 
 Ejemplos:
 

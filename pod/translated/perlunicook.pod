@@ -61,7 +61,7 @@ Sin poner la -siempre- criticada declaración C<use utf8>, poner UTF-8 en sus li
  my @μsoft     = qw( cp852 cp1251 cp1252 );
  my @ὑπέρμεγας = qw( ὑπέρ  μεγας );
  my @鯉        = qw( koi8-f koi8-u koi8-r );
- my $lema      = "        "; # FAMILY, GROWING HEART, DROMEDARY CAMEL
+ my $motto     = "👪 💗 🐪"; # FAMILY, GROWING HEART, DROMEDARY CAMEL
 
 Si olvida C<use utf8>, los bytes superiores serán malinterpretados como caracteres individuales, y nada funcionará bien.
 
@@ -78,7 +78,7 @@ Las funciones C<ord> y C<chr> trabajan transparentemente con todos los códigos 
  chr(0x3A3)
 
  # más allá de BMP
- ord("  ")               # MATHEMATICAL ITALIC SMALL N
+ ord("𝑛")               # MATHEMATICAL ITALIC SMALL N
  chr(0x1D45B)
 
  # ¡más allá de Unicode! (hasta el MAXINT)
@@ -458,9 +458,9 @@ Para mostrar que la normalización no produce ninguna diferencia, imprimiremos d
 ... genera esto, para mostrar que rellena correctamente sin importar de qué normalización sea:
 
  crème      |
- crème      |
+ crème      |
  brûlée     |
- brûlée     |
+ brûlée     |
 
 =head2 ℞ 35: Cotejo Unicode
 

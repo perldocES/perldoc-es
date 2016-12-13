@@ -336,7 +336,7 @@ A la gente le cuesta mucho recordar que algunas funciones tienen por defecto a $
 
 =item *
 
-La construcción <FH> no es el nombre del gestor de archivo; es la operación readline (leer una línea) sobre ese gestor.  Los datos leídos se asignan a $_ solo si la operación de lectura del archivo es la única condición en el bucle while:
+La construcción <FH> no es el nombre del identificador de archivo; es la operación readline (leer una línea) sobre ese gestor.  Los datos leídos se asignan a $_ solo si la operación de lectura del archivo es la única condición en el bucle while:
 
     while (<FH>)      { }
     while (defined($_ = <FH>)) { }..

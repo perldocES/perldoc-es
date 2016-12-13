@@ -417,7 +417,7 @@ A pesar de los nombres graciosos, la precedencia es la misma que cualquier otro 
     -S  Archivo es un socket.
     -b  Archivo es un archivo especial por bloques.
     -c  Archivo es un archivo especial de caracteres.
-    -t  El identificador está abierto a una tty.
+    -t  El identificador de archivo está abierto a una tty.
 
     -u  Archivo tiene puesto el bit setuid.
     -g  Archivo tiene puesto el bit setgid.
@@ -564,7 +564,7 @@ X<binmode> X<binary> X<text> X<DOS> X<Windows> X<binario> X<texto>
 
 =for Pod::Functions prepare binary files for I/O
 
-Ordena que el modo de lectura o escritura para el IDENTIFICADOR_ARCHIVO sea en "binario" o "texto" en sistemas donde las bibliotecas en tiempo de ejecución distingan entre archivos binarios y de texto.  Si IDENTIFICADOR_ARCHIVO es una expresión, el valor es tomado como el nombre del identificador.  Devuelve verdadero en caso de éxito; de lo contrario devuelve L<C<undef>|/undef EXPR> y establece L<C<$!>|perlvar/$!> (errno).
+Ordena que el modo de lectura o escritura para el IDENTIFICADOR_ARCHIVO sea en "binario" o "texto" en sistemas donde las bibliotecas en tiempo de ejecución distingan entre archivos binarios y de texto.  Si IDENTIFICADOR_ARCHIVO es una expresión, el valor es tomado como el nombre del identificador de archivo.  Devuelve verdadero en caso de éxito; de lo contrario devuelve L<C<undef>|/undef EXPR> y establece L<C<$!>|perlvar/$!> (errno).
 
 En algunos sistemas (en general, sistemas basados en DOS y Windows) es necesario usar L<C<binmode>|/binmode IDENTIFICADOR_ARCHIVO, CAPA> cuando no esté trabajando con un archivo de texto.  Para una mejor portabilidad es siempre una buena idea usarlo cuando sea apropiado, y nunca usarlo cuando no sea apropiado.  También, la gente puede establecer su E/S para que esté codificado, por defecto, en Unicode UTF-8, y no en bytes.
 
@@ -573,7 +573,7 @@ En otras palabras: indiferentemente de la plataforma, use L<C<binmode>|/binmode 
 Si CAPA está presente es un único string, pero puede contener múltiples directivas.  Las directivas alteran el comportamiento del identificador del archivo.
 Tiene sentido que CAPA esté presente, al usar binmode sobre un archivo de texto.
 
-Si se omite CAPA o se especifica como C<:raw> el identificador se prepara para pasar datos binarios.  Esto incluye desactivar posibles traducciones CRLF y marcarlas como bytes (como opuesto a los caracteres Unicode).
+Si se omite CAPA o se especifica como C<:raw> el identificador de archivo se prepara para pasar datos binarios.  Esto incluye desactivar posibles traducciones CRLF y marcarlas como bytes (como opuesto a los caracteres Unicode).
 Note que, a pesar de estar implícito en I<"Programming Perl"> (el dromedario, 3.ª edición) o en otro lugar, C<:raw> I<no> es el simplemente el inverso de C<:crlf>
 -- otras capas que pudieran afectar la naturaleza binaria del flujo son I<también> desactivadas.  Ver L<PerlIO>, L<perlrun> y la discusión sobre la variable de entorno PERLIO.
 
@@ -1622,7 +1622,7 @@ Puede usar esto para encontrar cuándo dos identificadores de archivos se refier
             "no tienen un descriptor a un archivo real\n";
     }
 
-El comportamiento de L<C<fileno>|/fileno IDENTIFICADOR_ARCHIVO> en un identificador de directorio depende del sistema operativo.  En un sistema con L<dirfd(3)> o similar, L<C<fileno>|/fileno IDENTIFICADOR_ARCHIVO> en un identificador de directorio devuelve el descriptor de archivo subyacente asociado con el identificador; en sistemas que no lo soportan, devuelve el valor indefinido, y establece L<C<fileno>|/fileno IDENTIFICADOR_ARCHIVO> (errno).
+El comportamiento de L<C<fileno>|/fileno IDENTIFICADOR_ARCHIVO> en un identificador de directorio depende del sistema operativo.  En un sistema con L<dirfd(3)> o similar, L<C<fileno>|/fileno IDENTIFICADOR_ARCHIVO> en un identificador de directorio devuelve el descriptor de archivo subyacente asociado con el identificador; en sistemas que no lo soportan, devuelve el valor indefinido, y establece L<C<$!>|perlvar/$!> (errno).
 
 =item flock IDENTIFICADOR_ARCHIVO,OPERACIÓN
 X<flock> X<lock> X<locking>
@@ -1718,7 +1718,7 @@ X<formline>
 
 =for Pod::Functions internal function used for formats
 
-Esta es una función interna usada por L<C<format>|/format>, aunque usted también puede llamarla.  Formatea (vea L<perlform>) una lista de valores de acuerdo a los contenidos de CUADRO, colocando la salida en el acumulador de salida de format, L<C<$^A>|perlvar/$^A> (o C<$ACCUMULATOR> en L<English>).  Finalmente, cuando se hace un L<C<write>|/write IDENTIFICADOR_ARCHIVO>, los contenidos de L<C<write>|/write IDENTIFICADOR_ARCHIVO> se escriben al identificador de archivo.
+Esta es una función interna usada por L<C<format>|/format>, aunque usted también puede llamarla.  Formatea (vea L<perlform>) una lista de valores de acuerdo a los contenidos de CUADRO, colocando la salida en el acumulador de salida de format, L<C<$^A>|perlvar/$^A> (o C<$ACCUMULATOR> en L<English>).  Finalmente, cuando se hace un L<C<write>|/write IDENTIFICADOR_ARCHIVO>, los contenidos de L<C<$^A>|perlvar/$^A> se escriben al identificador de archivo.
 Puede también leer L<C<$^A>|perlvar/$^A> y volver a ponerla otra vez a C<"">.  Note que un formato típicamente hace un L<C<formline>|/formline DIBUJO,LISTA> por línea del formato, pero a la misma función L<C<formline>|/formline DIBUJO,LISTA> no le preocupa cuántos avances de línea están incluidos en el CUADRO.  Esto significa que los I<tokens> C<~> y C<~~> tratan al CUADRO entero como una única línea.  Puede por eso necesitar usar múltiples formlines para implementar un único registro format, como lo hace el propio compilador de L<C<format>|/format>.
 
 Tenga cuidado si pone dobles comillas alrededor del cuadro, porque un carácter C<@> puede ser tomado como el comienzo del nombre de un array.
@@ -3691,7 +3691,7 @@ X<print>
 Imprime una cadena o una lista de cadenas.  Devuelve verdadero si tuvo éxito.
 IDENTIFICADOR_ARCHIVO puede ser una variable escalar conteniendo el nombre de o una referencia al identificador de archivo, introduciendo así un nivel más de indirección.  (NOTA: Si IDENTIFICADOR_ARCHIVO es una variable y el siguiente I<token> es un término, se puede malinterpretar como un operador a menos que interponga un C<+> o ponga los argumentos entre paréntesis).  Si se omite IDENTIFICADOR_ARCHIVO, se imprime al canal de salida seleccionado por última vez (vea L<C<select>|/select IDENTIFICADOR_ARCHIVO>).  Si la LISTA se omite, se imprime L<C<$_>|perlvar/$_> al actual canal de salida seleccionado.  Para utilizar solamente IDENTIFICADOR_ARCHIVO para imprimir en él el contenido de L<C<$_>|perlvar/$_>, debe ser un identificador de archivo real, como C<FH>, no uno indirecto como C<$fh>.  Para configurar el controlador de salida predeterminado a otro valor distinto que STDOUT, use el operador C<select>.
 
-El valor actual de L<C<$,>|perlvar/$,> (si lo tiene) es impreso entre cada elemento de la LISTA.  El valor actual de L<C<$\>|perlvar/$\> (si lo tiene) es impreso después de que toda la LISTA se haya impreso.  Debido a que print toma una LISTA, cualquier cosa en la LISTA se evalúa en contexto de lista, incluyendo cualquier subrutina que devuelva listas.  Tenga cuidado de no seguir la palabra clave print con un paréntesis de apertura a menos que desee que el correspondiente paréntesis de cierre ponga fin a los argumentos de la impresión; ponga paréntesis alrededor de todos los argumentos (o interponga un C<+>, pero esto no parece tan bonito).
+El valor actual de L<C<$,>|perlvar/$,> (si lo tiene) es impreso entre cada elemento de la LISTA.  El valor actual de L<C<$\>|perlvar/$\> (si lo tiene) es impreso después de que toda la LISTA se haya impreso.  Debido a que print toma una LISTA, cualquier cosa en la LISTA se evalúa en contexto de lista, incluyendo cualquier subrutina que devuelva listas que pase a L<C<print>|/print IDENTIFICADOR_ARCHIVO LISTA>.  Tenga cuidado de no seguir la palabra clave print con un paréntesis de apertura a menos que desee que el correspondiente paréntesis de cierre ponga fin a los argumentos de la impresión; ponga paréntesis alrededor de todos los argumentos (o interponga un C<+>, pero esto no parece tan bonito).
 
 Si está almacenando identificadores en un array o hash, o en general, en cualquier expresión más compleja que un simple identificador o una sencilla variable escalar sin subíndice, para acceder a él, tendrá que utilizar un bloque que retorne el valor del identificador de archivo, en cuyo caso la LISTA no se puede omitir:
 

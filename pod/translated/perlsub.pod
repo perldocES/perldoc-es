@@ -623,7 +623,7 @@ La construcción
 
     local *nombre;
 
-crea una nueva entrada completa en la tabla de símbolos para la variable de expansión C<nombre> en el paquete actual.  Eso significa que todas las variables en su espacio de expansión ($nombre, @nombre, %nombre, &nombre, y el gestor dr archivo C<nombre>) se reinicializan dinámicamente.
+crea una nueva entrada completa en la tabla de símbolos para la variable de expansión C<nombre> en el paquete actual.  Eso significa que todas las variables en su espacio de expansión ($nombre, @nombre, %nombre, &nombre, y el identificador de archivo C<nombre>) se reinicializan dinámicamente.
 
 Esto implica, aparte de otras cosas, que se perdería cualquier magia que portasen estas variables.  En otras palabras, el decir C<local */> no tendrá ningún efecto en el valor interno del separador del registro de entrada.
 

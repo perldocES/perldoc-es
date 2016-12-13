@@ -162,7 +162,7 @@ entonces la operación sort establece un contexto de lista para <>, el cual proc
 La asignación es un poco especial en el sentido de que utiliza el argumento de la izquierda para determinar el contexto del argumento de la derecha.  La asignación a un escalar evalúa lo que hay en el lado derecho en contexto de escalar, mientras que la asignación a un array o a un hash evalúa el lado derecho en contexto de lista.  La asignación a una lista (o a una porción, que también es una lista después de todo) también evalúa el lado derecho en contexto de lista.
 
 Si se utiliza el pragma C<use warnings> o la opción de línea de comandos B<-w>, pueden aparecer advertencias sobre el uso inútil de constantes o funciones en contexto vacío ("I<void>").
-El contexto vacío significa simplemente que se ha descartado el valor, como por ejemplo en una instrucción que consista únicamente en una cadena (p. ej., C<"alfredo";>) o una llamada a función (p. ej., C<getpwuid(0);>).  Cuenta como contexto de escalar para las funciones a las que les interesa saber si se han llamado en contexto de lista o no.
+El contexto vacío significa simplemente que se ha descartado el valor, como por ejemplo en una instrucción que consista únicamente en una cadena (p. ej., C<"alfredo";>) o una llamada a función (p. ej., C<getpwuid(0);>).  Cuenta como contexto de escalar para las funciones a las que les interesa saber si han sido llamadas en contexto de lista o no.
 
 Para las subrutinas definidas por el usuario existe la opción de considerar si la llamada se realiza en contexto vacío, escalar o de lista.  Sin embargo, no es necesario para la mayoría de las subrutinas.  Esto se debe a que ambos tipos, escalares y listas, se interpolan automáticamente en listas.  Para saber cómo se puede averiguar dinámicamente el contexto de llamada de una función, vea la sección sobre C<wantarray> de L<perlfunc>.
 
@@ -199,7 +199,7 @@ Este método puede ser mejor, ya que de otro modo no se pueden tratar notaciones
 
 El número de elementos (que llamaremos "longitud") de un array es un valor escalar.  Para conocer la longitud del array @jornadas, puede evaluar C<$#jornadas>, como en B<csh>.  Sin embargo, esto no es el número de elementos del array, sino el subíndice del último elemento, que es un valor distinto, ya que normalmente hay un elemento número 0.
 Asignar un valor a C<$#jornadas> cambia la longitud del array.
-Acortar un array de esta forma destruye los valores involucrados.  Alargar un array que se ha acortado previamente no permite recuperar los valores que había en esos elementos
+Acortar un array de esta forma destruye los valores involucrados.  Alargar un array que ha sido acortado previamente no permite recuperar los valores que había en esos elementos
 X<$#> X<array, length> X<array, longitud>
 
 También se puede obtener un pequeño aumento de eficiencia ampliando previamente un array que va a crecer.  Otra forma de ampliar un array es hacer una asignación a un elemento que esté más allá del final del array.  Para truncar un array y dejarlo vacío, puede asignarle la lista nula ().  Las instrucciones siguientes son equivalentes:
@@ -338,7 +338,7 @@ Dentro de cadenas escritas entre comillas dobles, los arrays y las porciones se 
 
     system "echo @ARGV";
 
-Dentro de los patrones de búsqueda (donde también se realiza la sustitución del entrecomillado doble) existe una desafortunada ambigüedad: ¿Debe C</$foo[bar]/> interpretarse como C</${foo}[bar]/> (donde C<[bar]> es una clase de caracteres para la expresión regular) o como C</${foo[bar]}/> (donde C<[bar]> es el subíndice del array @foo)?  Si @foo no existe, entonces es evidente que se trata de una clase de caracteres.  Si @foo existe, Perl tiene una buena pista acerca de C<[bar]>, y casi siempre acierta.  Por si se equivoca, o para evitar ataques de paranoia, puede forzar la interpretación correcta con llaves, como se indicó arriba.
+Dentro de los patrones de búsqueda (donde también se realiza la sustitución del entrecomillado doble) existe una desafortunada ambigüedad: ¿Debe C</$foo[bar]/> ser interpretado como C</${foo}[bar]/> (donde C<[bar]> es una clase de caracteres para la expresión regular) o como C</${foo[bar]}/> (donde C<[bar]> es el subíndice del array @foo)?  Si @foo no existe, entonces es evidente que se trata de una clase de caracteres.  Si @foo existe, Perl tiene una buena pista acerca de C<[bar]>, y casi siempre acierta.  Por si se equivoca, o para evitar ataques de paranoia, puede forzar la interpretación correcta con llaves, como se indicó arriba.
 
 Si busca información acerca de cómo usar documentos incrustados, que solía estar en este documento, debe saber que ahora se encuentra en la sección "Comillas y operadores de comillas" de L<perlop>.
 

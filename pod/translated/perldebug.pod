@@ -707,7 +707,7 @@ X<debugger option, noTTY> X<opción del depurador, noTTY>
 
 Si está activado, el depurador entra en el modo C<NonStop> y no se conectará a ninguna TTY.  Si se interrumpe (o si el control lleva al depurador a través de una opción $DB::signal o $DB::single explícita desde el I<script> Perl), conecta con una TTY especificada en la opción C<TTY> en el arranque, o a un tty encontrado en tiempo de ejecución usando el módulo C<Term::Rendezvous> de su elección.
 
-Este módulo debe implementar un método llamado C<new> que devuelva un objeto con dos métodos: C<IN> y C<OUT>.  Estos deberían devolver gestores de archivo a usar, correspondientemente, por la entrada y salida de la depuración.  El método C<new> debe inspeccionar un argumento conteniendo un valor de C<$ENV{PERLDB_NOTTY}> en el arranque, o en otro caso, C<"$ENV{HOME}/.perldbtty$$"> .  No se inspecciona este archivo por si tiene una propiedad apropiada, así que es teóricamente posible que ocurran problemas de seguridad.
+Este módulo debe implementar un método llamado C<new> que devuelva un objeto con dos métodos: C<IN> y C<OUT>.  Estos deberían devolver identificadores de archivo a usar, correspondientemente, por la entrada y salida de la depuración.  El método C<new> debe inspeccionar un argumento conteniendo un valor de C<$ENV{PERLDB_NOTTY}> en el arranque, o en otro caso, C<"$ENV{HOME}/.perldbtty$$"> .  No se inspecciona este archivo por si tiene una propiedad apropiada, así que es teóricamente posible que ocurran problemas de seguridad.
 
 =item C<ReadLine>
 X<debugger option, ReadLine> X<opción del depurador, ReadLine>
