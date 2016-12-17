@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 NOMBRE
+=head1 NAME
 
 perlhist - Registro histórico de versiones de Perl
 
