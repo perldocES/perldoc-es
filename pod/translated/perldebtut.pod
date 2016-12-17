@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perldebtut - Tutorial de depuración
 

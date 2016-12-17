@@ -4,7 +4,7 @@
 Para aplicar un formato uniforme a este archivo, use:
   perl ./Porting/podtidy pod/perlgit.pod
 
-=head1 NOMBRE
+=head1 NAME
 
 perlgit - Información detallada sobre git y el repositorio de Perl
 

@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlnumber - Semántica de números y operaciones numéricas en Perl
 

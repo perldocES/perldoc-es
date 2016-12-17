@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perltrap - Trampas para los incautos
 

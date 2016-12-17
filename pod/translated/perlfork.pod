@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlfork - Emulación de fork() por parte de Perl
 

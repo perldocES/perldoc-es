@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlvar - Variables predefinidas de Perl
 

@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlreftut - Tutorial muy breve de Mark sobre las referencias
 

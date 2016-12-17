@@ -1,7 +1,7 @@
 
 =encoding utf8
 
-=head1 NOMBRE
+=head1 NAME
 
 perlunicook - recetario de ejemplos del manejo de Unicode en Perl
 

@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 NOMBRE
+=head1 NAME
 
 perl5100delta - qué hay de nuevo para Perl 5.10.0
 

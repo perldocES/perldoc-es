@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlunifaq - Preguntas más frecuentes sobre Unicode en Perl
 

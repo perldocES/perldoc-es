@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlpodstyle - Guía de estilo para POD
 

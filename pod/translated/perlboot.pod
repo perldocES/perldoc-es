@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 NOMBRE
+=head1 NAME
 
 perlboot - Vínculos a información sobre programación orientada a objetos en Perl
 

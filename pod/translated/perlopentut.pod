@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 NOMBRE
+=head1 NAME
 
 perlopentut - recetas sencillas para abrir archivos y tuberías en Perl
 

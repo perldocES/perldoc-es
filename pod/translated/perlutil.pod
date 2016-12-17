@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlutil - Utilidades incluidas en la distribución de Perl
 

@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perl583delta - Qué hay de nuevo para perl v5.8.3
 

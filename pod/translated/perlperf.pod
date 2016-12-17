@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlperf - Rendimiento y técnicas de optimización
 
@@ -143,7 +143,7 @@ Una pieza ligeramente más grande de código ofrecerá algo que un perfilador pu
  use strict;
  use warnings;
 
- =head1 NOMBRE
+ =head1 NAME
 
  wordmatch - análisis de palabras del archivo de entrada
 

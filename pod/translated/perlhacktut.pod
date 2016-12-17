@@ -4,7 +4,7 @@
 Para aplicar un formato uniforme a este archivo, use:
   perl ./Porting/podtidy pod/perlhacktut.pod
 
-=head1 NOMBRE
+=head1 NAME
 
 perlhacktut - Tutorial de creación de un parche sencillo de código C
 

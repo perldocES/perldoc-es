@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 NOMBRE
+=head1 NAME
 
 perllocale - Gestión de la configuración regional (internacionalización y localización) en Perl
 

@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perllol - Manipulación de array de array en Perl
 

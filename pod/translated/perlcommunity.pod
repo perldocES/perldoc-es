@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlcommunity - Breve descripción de la comunidad Perl
 

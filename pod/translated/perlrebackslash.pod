@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlrebackslash - Secuencias de escape en expresiones regulares en Perl
 

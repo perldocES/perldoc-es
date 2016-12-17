@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlmod - Módulos Perl (paquetes y tablas de símbolos)
 

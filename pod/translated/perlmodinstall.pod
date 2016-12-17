@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlmodinstall - Instalación de módulos de CPAN
 

@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlstyle - Guía de estilo de Perl
 

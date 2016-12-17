@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 NOMBRE
+=head1 NAME
 
 perlrepository - Enlaces a la información actual sobre el repositorio de código Perl
 

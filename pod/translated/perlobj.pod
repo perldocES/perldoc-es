@@ -4,7 +4,7 @@
 Para aplicar un formato uniforme a este archivo, use:
   perl ./Porting/podtidy pod/perlobj.pod
 
-=head1 NOMBRE
+=head1 NAME
 X<object> X<objeto> X<OOP> X<POO>
 
 perlobj - Referencia de objetos en Perl

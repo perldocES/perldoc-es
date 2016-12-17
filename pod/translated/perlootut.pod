@@ -4,7 +4,7 @@
 Para aplicar un formato uniforme a este archivo, use:
   perl ./Porting/podtidy pod/perlootut.pod
 
-=head1 NOMBRE
+=head1 NAME
 
 perlootut - Manual de programación orientada a objetos en Perl
 

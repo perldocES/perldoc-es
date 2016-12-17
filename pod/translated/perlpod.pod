@@ -473,7 +473,7 @@ Si va a poner su Pod al final del archivo, y está utilizando una marca de corte
 
   __END__
 
-  =head1 NOMBRE
+  =head1 NAME
 
   Time::Local - calcula eficientemente la hora a partir de la hora local y GMT
 

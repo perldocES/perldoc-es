@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlcheat - Hoja resumen de Perl 5
 

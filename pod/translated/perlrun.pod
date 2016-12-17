@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlrun - cómo ejecutar el intérprete de Perl
 

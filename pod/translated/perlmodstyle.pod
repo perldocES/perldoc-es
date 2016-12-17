@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 
 perlmodstyle - Guía de estilo de los módulos Perl
 

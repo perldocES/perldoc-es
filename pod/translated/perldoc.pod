@@ -1,5 +1,5 @@
 
-=head1 NOMBRE
+=head1 NAME
 
 perldoc - Consultar la documentación de Perl en formato Pod.
 
