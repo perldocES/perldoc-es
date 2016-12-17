@@ -6,7 +6,7 @@ use open ':utf8';
 use base 'Exporter';
 use base 'POD2::Base';
 
-our $VERSION = '5.24.0.2_3';
+our $VERSION = '5.24.0.3';
 
 our @EXPORT = qw(print_pod print_pods);
 
@@ -16,7 +16,7 @@ sub pod_info {{
         perlbook          => '5.24.0',
         perlboot          => '5.24.0',
         perlbot           => '5.24.0',
-        #perlcheat         => '5.24.0',
+        perlcheat         => '5.24.0',
         #perlclib          => '5.24.0',
         perlcommunity     => '5.24.0',
         #perldata          => '5.24.0',
@@ -30,9 +30,10 @@ sub pod_info {{
         #perlgit           => '5.24.0',
         #perlglossary      => '5.24.0',
         perlhacktut       => '5.24.0',
-        #perlhist          => '5.24.0',
+        perlhist          => '5.24.0',
         perlhurd          => '5.24.0',
         perlintro         => '5.24.0',
+        perllol           => '5.24.0',
         perlmod           => '5.24.0',
         perlmodinstall    => '5.24.0',
         perlmroapi        => '5.24.0',
@@ -45,6 +46,7 @@ sub pod_info {{
         perlopentut       => '5.24.0',
         perlpragma        => '5.24.0',
         #perlre            => '5.24.0',
+        perlreftut        => '5.24.0',
         perlsource        => '5.24.0',
         perlstyle         => '5.24.0',
         perltodo          => '5.24.0',
