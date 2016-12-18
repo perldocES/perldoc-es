@@ -17,7 +17,7 @@ lib/POD2/ES/perlfaq2.pod
 lib/POD2/ES/perlfreebsd.pod
 lib/POD2/ES/perlfunc.pod
 lib/POD2/ES/perlhacktut.pod
-lib/POD2/ES/perhist.pod
+lib/POD2/ES/perlhist.pod
 lib/POD2/ES/perlhurd.pod
 lib/POD2/ES/perlintro.pod
 lib/POD2/ES/perllol.pod
