@@ -6,7 +6,7 @@ use open ':utf8';
 use base 'Exporter';
 use base 'POD2::Base';
 
-our $VERSION = '5.24.0.4';
+our $VERSION = '5.24.0.5';
 
 our @EXPORT = qw(print_pod print_pods);
 

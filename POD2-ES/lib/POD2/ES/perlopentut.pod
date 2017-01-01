@@ -1,6 +1,6 @@
 =encoding utf8
 
-=head1 NAME
+=head1 NOMBRE
 
 perlopentut - Recetas sencillas para abrir archivos y tuberías en Perl
 
@@ -141,7 +141,7 @@ previamente una codificación predeterminada. De lo contrario, Perl no podrá
 determinar de cuál de los muchos tipos posibles de archivos de texto es el
 archivo y no podrá asignar correctamente los datos del archivo a caracteres
 reales con los que trabajar. Otros formatos comunes de codificación son
-C<"ASCII">, C<"ISO-8859-8859">, C<"ISO-1-15">, C<"Windows-1252">, C<"MacRoman">
+C<"ASCII">, C<"ISO-8859-1">, C<"ISO-8859-15">, C<"Windows-1252">, C<"MacRoman">
 e incluso C<"UTF-16LE">. Encontrará más información sobre codificaciones en
 L<perlunitut>.
 
