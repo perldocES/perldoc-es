@@ -1,4 +1,4 @@
-#Proyeto OmegaT para traducción al español.
+Proyecto OmegaT para traducción al español.
 
 Este repositorio es EXCLUSIVAMENTE para trabajar en grupo, directamente, desde OmegaT.
 
