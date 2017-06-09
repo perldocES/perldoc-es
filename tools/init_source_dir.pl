@@ -8,6 +8,7 @@
 # · update files list file
 #
 # 2015/05/17 - basado en get_pods.pl
+# 2017/06/09 - Información de depurado
 #
 use v5.18.2;
 use autodie;
@@ -15,10 +16,10 @@ use File::Copy;
 
 ### Configuration -------------------------------------------------------------
 my $user	  = 'explorer';
-my $version	  = '5.22.0';
-my $DEBUG         = 0;							# 0 .. 2
+my $version	  = '5.26.0';
+my $DEBUG         = 2;							# 0 .. 2
 my $PERL_DIST_DIR = "/home/$user/perl5/perlbrew/build/perl-$version";
-my $PROJECT_DIR   = "/home/$user/Documentos/Desarrollo/perlspanish-$version";
+my $PROJECT_DIR   = "/home/$user/Proyectos/perldocES/v5/nuevo_perl5.26";
 ### End configuration ---------------------------------------------------------
 
 
@@ -76,6 +77,8 @@ my @files_lst;
 {
     opendir my $DIR, $PERL_DIST_DIR;
 
+    say "Archivos README" if $DEBUG > 1;
+
     while (my $file = readdir $DIR) {
 	next if $file !~ /^README/;
 	say $file if $DEBUG > 1;
@@ -131,6 +134,8 @@ my @files_lst;
 	copy_file($source_dir, $file);
 
 	update_files_list($file);
+
+    	say "[$source_dir/$file] => [$PROJECT_SOURCE_DIR/$file]" if $DEBUG > 1;
     }
     closedir $DIR;
 }
@@ -149,6 +154,8 @@ my @files_lst;
 	copy_file($source_dir, $file);
 
 	update_files_list($file);
+
+    	say "[$source_dir/$file] => [$PROJECT_SOURCE_DIR/$file]" if $DEBUG > 1;
     }
 
     closedir $DIR;
