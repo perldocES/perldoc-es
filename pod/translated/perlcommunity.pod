@@ -37,7 +37,7 @@ Los sitios web sobre Perl son de diversos tipos, pero se engloban en dos grandes
 
 =item L<http://perl.com/>
 
-Dirigido originalmente por O'Reilly Media (la editorial del L<libro del Camello|perlbook>), este sitio ofrece artículos de calidad en su mayor parte sobre detalles técnicos de Perl.
+En este sitio, dirigido originalmente por O'Reilly Media (la editorial del L<libro del Camello|perlbook>), se publican principalmente artículos de calidad sobre detalles técnicos de Perl.
 
 =item L<http://blogs.perl.org/>
 
@@ -45,11 +45,11 @@ Muchos miembros de la comunidad tienen un blog sobre Perl en este sitio. Puede a
 
 =item L<http://perlsphere.net/>
 
-Perlsphere es uno de los diversos agregadores de fuentes de blog relacionadas con Perl.
+Perlsphere es uno de los diversos agregadores disponibles de blogs sobre Perl.
 
 =item L<http://perlweekly.com/>
 
-Perl Weekly es una lista de correo semanal que le mantiene informado sobre conferencias, lanzamientos y publicaciones blog notables.
+Perl Weekly es una lista de correo semanal que informa sobre conferencias, lanzamientos y destacados artículos de blog.
 
 =item L<http://use.perl.org/>
 
@@ -71,7 +71,7 @@ Stack Overflow es un sitio para programadores en el que todos pueden hacer pregu
 
 =item L<http://prepan.org/>
 
-PrePAN se usa como lugar para discutir sobre módulos que esté considerando subir a CPAN.  Puede obtener retroalimentación en su diseño antes de subirlo.
+Puede usar PrePAN para pedir que analicen un módulo nuevo suyo antes de subirlo a CPAN.  Recibirá comentarios sobre el diseño del módulo.
 
 =back
 
