@@ -68,7 +68,7 @@ La caché de datos privada se apropiará de una referencia a private_sv, de la m
 
 =head1 Ejemplos
 
-Si desea ver ejemplos de implementaciones de orden de resolución de métodos, consulte C<S_mro_get_linear_isa_c3()> y la sección C<BOOT:> de F<ext/mro/mro.xs>, y vea también C<S_mro_get_linear_isa_dfs()> en F<mro_core.c>
+Si desea ver ejemplos de implementaciones de orden de resolución de métodos, consulte C<S_mro_get_linear_isa_c3()> y la sección C<BOOT:> de F<ext/mro/mro.xs>; vea también C<S_mro_get_linear_isa_dfs()> en F<mro_core.c>
 
 =head1 AUTORES
 
