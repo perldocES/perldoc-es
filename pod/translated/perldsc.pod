@@ -732,7 +732,7 @@ Aquí hay un ejemplo que muestra cómo crear y usar un registro cuyos campos pue
 
 =head1 Bases de datos con ataduras
 
-No es fácil atar una estructura de datos de múltiples niveles (por ejemplo, un hash de hashes) a un archivo dbm.  El primer problem es que todas, excepto las BD GDBM y Berkeley tienen limitaciones de tamaño; pero aparte de eso, también tiene problemas con cómo las referencias se representan en disco.  Un módulo experimental que intenta, parcialmente, resolver esto es el módulo MLDBM.  Revise su sitio CPAN más cercano, como se describe en L<perlmodlib>, para obtener el código fuente de MLDBM.
+No es fácil atar una estructura de datos de múltiples niveles (por ejemplo, un hash de hashes) a un archivo dbm.  El primer problema es que todas, excepto las BD GDBM y Berkeley tienen limitaciones de tamaño; pero aparte de eso, también tiene problemas con cómo las referencias se representan en disco.  Un módulo experimental que intenta, parcialmente, resolver esto es el módulo MLDBM.  Revise su sitio CPAN más cercano, como se describe en L<perlmodlib>, para obtener el código fuente de MLDBM.
 
 =head1 VEA TAMBIÉN
 
