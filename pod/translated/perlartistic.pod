@@ -143,15 +143,11 @@ El nombre del Titular del Copyright no puede utilizarse para apoyar o promociona
 
 =item 10.
 
-ESTE PAQUETE SE PROPORCIONAL "TAL CUAL" Y SIN NINGUNA GARANTÍA EXPRESA O IMPLÍCITA, INCLUYENDO, SIN LIMITACIÓN, LAS GARANTÍAS IMPLÍCITAS DE COMERCIALIDAD E IDONEIDAD PARA UN PROPÓSITO PARTICULAR.
+ESTE PAQUETE SE PROPORCIONAL "TAL CUAL" Y SIN NINGUNA GARANTÍA EXPRESA O IMPLÍCITA, INCLUYENDO, SIN LIMITACIÓN, LAS GARANTÍAS IMPLÍCITAS DE COMERCIALIZACIÓN E IDONEIDAD PARA UN PROPÓSITO PARTICULAR.
 
 =back
 
-Fin
-
-=head1 Nota del traductor
-
-Esta traducción C<no> es un documento legal. La expresión de la legalidad de la Licencia Artística reside únicamente en el texto original en inglés de perlartistic.pod.
+El final
 
 =cut
 
