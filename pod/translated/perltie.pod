@@ -1,0 +1,978 @@
+=head1 NAME
+X<tie>
+
+perltie - cómo esconder una clase de objetos en un simple variable
+
+=head1 SINOPSIS
+
+ tie VARIABLE, NOMBRE_CLASE, LISTA
+
+ $objeto = tied VARIABLE
+
+ untie VARIABLE
+
+=head1 DESCRIPCIÓN
+
+Antes del lanzamiento de v5.0 de Perl, un programador podía usar dbmopen() para conectar, mágicamente, una base de datos en disco en el formato estándar Unix dbm(3x), a un %HASH en su programa.  Sin embargo, cada Perl se compilaba con una u otra biblioteca dbm, pero no con ambas, y no podía extender este mecanismo a otros paquetes o tipos de variables.
+
+Ahora ya puede.
+
+La función tie() enlaza una variable a una clase (paquete) que proporcionará la implementación de métodos de acceso para esa variable.  Una vez que se ha ejecutado esa magia, acceder a una variable enlazada dispara automáticamente llamadas a métodos de la clase apropiada.  La complejidad de la clase se esconde detrás de llamadas a métodos mágicos.  Los nombres de los métodos están en MAYÚSCULAS, que es una convención que Perl usa para indicar que se llaman de forma implícita en lugar de explícita -igual que las funciones BEGIN() y END()-.
+
+En la llamada tie(), C<VARIABLE> es el nombre de la variable a encantar.  C<NOMBRE_CLASE> es el nombre de la clase que implementa los objetos del tipo correcto.  Cualquier argumento adicional en la C<LISTA> se pasa al método constructor apropiado para esa clase -es decir, TIESCALAR(), TIEARRAY(), TIEHASH() o TIEHANDLE()-.  (Típicamente, son argumentos que se podrían pasar a la función C dbminit()). También se devuelve el objeto devuelto por el método "new" por la función tie(), que podría ser útil si quiere acceder a otros métodos en C<NOMBRE_CLASE>. (Actualmente no tiene que devolver una referencia a un "tipo" correcto (es decir, HASH o C<NOMBRE_CLASS>) siempre y cuando sea un objeto que esté apropiadamente bendecido).  También puede recuperar una referencia a un objeto subyacente usando la función tied().
+
+A diferencia de dbmopen(), la función tie() no usará C<use> o C<require> de un módulo por usted; necesitará hacerlo de forma explícita.
+
+=head2 Enlazar escalares
+X<scalar, tying> X<escalar, enlazar>
+
+Una clase que implementa un escalar enlazado debería definir los siguientes métodos: TIESCALAR, FETCH, STORE, y posiblemente UNTIE o DESTROY.
+
+Miremos cada uno por separado, usando como ejemplo una clase tie para escalares que permite al usuario hacer algo como esto:
+
+    tie $su_velocidad, 'Nice', getppid();
+    tie $mi_velocidad, 'Nice', $$;
+
+Y ahora, siempre y cuando se acceda a estas variables, es recuperado y devuelto su actual sistema de prioridad.  Si están establecidas estas variables, entonces ¡se cambia la prioridad del proceso!
+
+Usaremos la clase BSD::Resource de Jarkko Hietaniemi <F<jhi@iki.fi>> (no incluida) para acceder a las constantes PRIO_PROCESS, PRIO_MIN y PRIO_MAX de su sistema, así como las llamadas del sistema getpriority() y setpriority().  Aquí está el preámbulo de la clase.
+
+    package Nice;
+    use Carp;
+    use BSD::Resource;
+    use strict;
+    $Nice::DEBUG = 0 unless defined $Nice::DEBUG;
+
+=over 4
+
+=item TIESCALAR nombre_clase, LISTA
+X<TIESCALAR>
+
+Este es el constructor para la clase.  Eso significa que se espera que devuelva una referencia bendecida a un nuevo escalar (probablemente anónimo) que se va a crear.  Por ejemplo:
+
+ sub TIESCALAR {
+     my $clase = shift;
+     my $pid = shift || $$; # 0 significa yo mismo
+
+     if ($pid !~ /^\d+$/) {
+         carp "Nice::Tie::Scalar obtuvo un pid no numérico $pid" if $^W;
+         return undef;
+     }
+
+     unless (kill 0, $pid) { # EPERM o ERSCH, sin duda
+         carp "Nice::Tie::Scalar obtuvo un pid erróneo $pid: $!" if $^W;
+         return undef;
+     }
+
+     return bless \$pid, $clase;
+ }
+
+Esta clase tie ha elegido devolver un error en lugar de levantar una excepción en caso de que el constructor falle.  Mientras que es así cómo funciona dbmopen(), otras clases podrían no desear ser tan perdonavidas.  Comprueba la variable global C<$^W> para ver cuándo emitir un bit de ruido, por si acaso.
+
+=item FETCH esto
+X<FETCH>
+
+Este método se disparará cada vez que se acceda a la variable enlazada (lectura).  No toma argumentos más allá de su auto referencia, que es el objeto que representa el escalar con que estamos tratando.  Ya que en este caso estamos usando únicamente una ref. a SCALAR para el objeto enlazado, un simple $$self permite al método obtener el valor almacenado allí.  En nuestro ejemplo, el valor real es el ID del proceso al cual hemos ligado nuestra variable.
+
+    sub FETCH {
+        my $self = shift;
+        confess "tipo erróneo" unless ref $self;
+        croak "error de uso" if @_;
+        my $prioridad;
+        local($!) = 0;
+        $prioridad = getpriority(PRIO_PROCESS, $$self);
+        if ($!) { croak "falló getpriority: $!" }
+        return $prioridad;
+    }
+
+Esta vez hemos decidido soplar más alto (levantar una excepción) si falla el cambio de prioridad. No hay otra opción para nosotros que devolver un error y es, probablemente, la mejor opción.
+
+=item STORE esto, valor
+X<STORE>
+
+Este método se disparará cada vez que se establezca la variable enlazada (asignado).  Más allá de su auto referencia, también espera uno (y solo un) argumento: el nuevo valor que el usuario intenta asignar. No se preocupe sobre devolver un valor desde STORE; la semántica de devolver el valor que se asigna se implementa con FETCH.
+
+ sub STORE {
+     my $self = shift;
+     confess "tipo erróneo" unless ref $self;
+     my $nueva_prioridad = shift;
+     croak "error de uso" if @_;
+
+     if ($nueva_prioridad < PRIO_MIN) {
+         carp sprintf
+           "WARNING: la prioridad %d es menor que la prioridad mínima del sistema %d",
+               $nueva_prioridad, PRIO_MIN if $^W;
+         $nueva_prioridad = PRIO_MIN;
+     }
+
+     if ($nueva_prioridad > PRIO_MAX) {
+         carp sprintf
+           "WARNING: la prioridad %d es mayor que la prioridad máxima del sistema %d",
+               $nueva_prioridad, PRIO_MAX if $^W;
+         $nueva_prioridad = PRIO_MAX;
+     }
+
+     unless (defined setpriority(PRIO_PROCESS,
+                                 $$self,
+                                 $nueva_prioridad))
+     {
+         confess "falló setpriority: $!";
+     }
+ }
+
+=item UNTIE esto
+X<UNTIE>
+
+Este método se disparará cuando ocurra C<untie>. Esto puede ser útil si la clase necesita saber cuándo no se harán más llamadas. (Excepto DESTROY, naturalmente). Vea L<El problema de C<untie>> más abajo para más detalles.
+
+=item DESTROY esto
+X<DESTROY>
+
+Este método disparará cuándo se necesite destruir la variable enlazada.
+Así como con otras clases de objetos, tal método es raramente necesario, porque Perl libera la memoria del objeto moribundo de forma automática -esto no es C++, por supuesto-.  Usaremos un método DESTROY solo para propósitos de depuración.
+
+    sub DESTROY {
+        my $self = shift;
+        confess "tipo erróneo" unless ref $self;
+        carp "[ Nice::DESTROY pid $$self ]" if $Nice::DEBUG;
+    }
+
+=back
+
+Esto es todo lo que diremos sobre él.  De hecho, es más que todo eso, porque hemos hecho unas pocas cosas divertidas para ser más completos en la explicación, robustos y, generalmente, estéticos.  Ciertamente, es posible hacer clases TIESCALAR más simples.
+
+=head2 Enlazar arrays
+X<array, tying> X<array, enlazar>
+
+Una clase que implementa un array ordinario enlazado debe definir los siguientes métodos: TIEARRAY, FETCH, STORE, FETCHSIZE, STORESIZE, CLEAR, y quizás UNTIE o DESTROY.
+
+FETCHSIZE y STORESIZE se usan para proporcionar C<$#array> y el acceso equivalente C<scalar(@array)>.
+
+Se requieren los métodos POP, PUSH, SHIFT, UNSHIFT, SPLICE, DELETE y EXISTS si el operador de perl con el correspondiente nombre (pero en minúsculas) es el de operar en un array enlazado. La clase B<Tie::Array> se puede usar como clase base para implementar a los cinco primeros en términos de los métodos básicos anteriores.  La implementación por defecto de DELETE y EXISTS en B<Tie::Array> simplemente hace un C<croak>.
+
+Además, EXTEND se llamará cuando perl haya pre-extendido la memoria de un array real.
+
+Para esta explicación, implementaremos un array cuyos elementos son de un tamaño fijo, en la creación.  Si intenta crear un elemento más grande que el tamaño fijo, recibirá una excepción.  Por ejemplo:
+
+    use FixedElem_Array;
+    tie @array, 'FixedElem_Array', 3;
+    $array[0] = 'cat';  # ok.
+    $array[1] = 'dogs'; # excepción, length('dogs') > 3.
+
+El preámbulo del código para la clase es como sigue:
+
+    package FixedElem_Array;
+    use Carp;
+    use strict;
+
+=over 4
+
+=item TIEARRAY nombre_clase, LISTA
+X<TIEARRAY>
+
+Este es el constructor para la clase.  Esto significa que se espera que devuelva una referencia bendecida a través de la cual accederemos al nuevo array (probablemente una ref ARRAY anónima).
+
+En nuestro ejemplo, solo para demostrar que I<realmente> no tiene que devolver una referencia a ARRAY, elegiremos una referencia a un HASH para representar nuestro objeto.
+Un HASH funciona bien un tipo de registro genérico: el campo C<{ELEMSIZE}> almacenará el tamaño máximo permitido del elemento, y el campo C<{ARRAY}> almacenará la verdadera ref. a ARRAY.  Si alguien fuera de la clase intenta desreferenciar el objeto devuelto (pensando sin duda en una ref. de ARRAY), explosionará.
+Esto es solo para mostrarle que debe respetar la privacidad de un objeto.
+
+    sub TIEARRAY {
+      my $clase    = shift;
+      my $tamano   = shift;
+      if ( @_ || $tamano   =~ /\D/ ) {
+        croak "uso: tie ARRAY, '" . __PACKAGE__ . "', tamaño_elemento";
+      }
+      return bless {
+        ELEMSIZE => $tamaño,
+        ARRAY    => [],
+      }, $clase;
+    }
+
+=item FETCH esto, índice
+X<FETCH>
+
+Este método se disparará cada vez que se acceda a un elemento individual del array enlazado (lectura).  Toma un argumento más que su propia referencia: el índice a cuyo valor estamos intentando sacar.
+
+    sub FETCH {
+      my $self  = shift;
+      my $index = shift;
+      return $self->{ARRAY}->[$index];
+    }
+
+Si se usa un índice de array negativo para leer desde un array, el índice se traducirá a uno positivo llamando a FETCHSIZE antes de pasarlo a FETCH.  Puede desactivar esta característica asignando un valor verdadero a la variable C<$NEGATIVE_INDICES> en la clase array enlazada.
+
+Como ha podido notar, el nombre del método FETCH (y amigos) es el mismo para todos los accesos, incluso aunque el constructor difiere en sus nombres (TIESCALAR versus TIEARRAY).  Mientras que, en teoría podría tener la misma clase sirviendo diversos tipos enlazados, en la práctica esto se vuelve embarazoso, por lo que es más sencillo mantenerlos en una única clase por tipo.
+
+=item STORE esto, índice, valor
+X<STORE>
+
+Este método disparará cada vez que se establezca un elemento en un array enlazado (escritura).  Toma dos argumentos además de la propia referencia: el índice en donde estamos intentando almacenar y el valor que estamos intentando poner allí.
+
+En nuestro ejemplo, C<undef> es realmente C<$self-E<gt>{ELEMSIZE}> número de espacios así que necesitamos hacer poco trabajo:
+
+ sub STORE {
+   my $self = shift;
+   my( $indice, $valor ) = @_;
+   if ( length $valor > $self->{ELEMSIZE} ) {
+     croak "longitud de $valor es mayor que $self->{ELEMSIZE}";
+   }
+   # rellenar en los blancos
+   $self->EXTEND( $indice ) if $indice > $self->FETCHSIZE();
+   # justifica a la derecha para mantener el tamaño del elemento para elementos pequeños
+   $self->{ARRAY}->[$indice] = sprintf "%$self->{ELEMSIZE}s", $valor;
+ }
+
+Índices negativos se tratan de igual forma que con FETCH.
+
+=item FETCHSIZE esto
+X<FETCHSIZE>
+
+Devuelve el número total de elementos en el array enlazado asociado con el objeto I<esto>. (Equivalente a C<scalar(@array)>).  Por ejemplo:
+
+    sub FETCHSIZE {
+      my $self = shift;
+      return scalar @{$self->{ARRAY}};
+    }
+
+=item STORESIZE esto, cuenta
+X<STORESIZE>
+
+Establece que el número total de elementos en el array asociado con el objeto I<esto> sea I<cuenta>. Si esto hace que el array sea más grande entonces el mapeo que hace la clase de C<undef> será lo que se devuelva como valor de las nuevas posiciones.
+Si el array se vuelve más pequeño entonces las entradas que estén más allá de I<cuenta> tendrían que borrarse. 
+
+En nuestro ejemplo, 'undef' es, realmente, un elemento que contiene C<$self-E<gt>{ELEMSIZE}> número de espacios.  Observe:
+
+    sub STORESIZE {
+      my $self  = shift;
+      my $cuenta = shift;
+      if ( $cuenta > $self->FETCHSIZE() ) {
+        foreach ( $cuenta - $self->FETCHSIZE() .. $cuenta ) {
+          $self->STORE( $_, '' );
+        }
+      } elsif ( $cuenta < $self->FETCHSIZE() ) {
+        foreach ( 0 .. $self->FETCHSIZE() - $cuenta - 2 ) {
+          $self->POP();
+        }
+      }
+    }
+
+=item EXTEND esto, cuenta
+X<EXTEND>
+
+Llamada informativa para que el array crezca para tener I<cuenta> entradas.
+Se puede usar para optimizar la reserva de espacio. Este método no necesita hacer nada.
+
+En nuestro ejemplo, queremos asegurarnos que no hay entradas en blanco (C<undef>), para que de esta manera C<EXTEND> haga uso de C<STORESIZE> para rellenar de los elementos necesarios:
+
+    sub EXTEND {   
+      my $self  = shift;
+      my $cuenta = shift;
+      $self->STORESIZE( $cuenta );
+    }
+
+=item EXISTS esto, clave
+X<EXISTS>
+
+Verifica que el elemento al índice I<clave> existe en el array enlazado I<esto>.
+
+En nuestro ejemplo, determinaremos que si un elemento consiste solamente de C<$self-E<gt>{ELEMSIZE}> espacios, entonces no existe:
+
+ sub EXISTS {
+   my $self  = shift;
+   my $index = shift;
+   return 0 if ! defined $self->{ARRAY}->[$index] ||
+               $self->{ARRAY}->[$index] eq ' ' x $self->{ELEMSIZE};
+   return 1;
+ }
+
+=item DELETE esto, clave
+X<DELETE>
+
+Borra el elemento al índice I<clave> del array enlazado I<esto>.
+
+En nuestro ejemplo, un ejemplo eliminado tiene C<$self-E<gt>{ELEMSIZE}> espacios:
+
+    sub DELETE {
+      my $self  = shift;
+      my $index = shift;
+      return $self->STORE( $index, '' );
+    }
+
+=item CLEAR esto
+X<CLEAR>
+
+Limpiar (quitar, borrar, ...) todos los valores del array enlazado asociado con el objeto I<esto>.  Por ejemplo:
+
+    sub CLEAR {
+      my $self = shift;
+      return $self->{ARRAY} = [];
+    }
+
+=item PUSH esto, LISTA
+X<PUSH>
+
+Añade elementos de I<LISTA> al array.  Por ejemplo:
+
+    sub PUSH {  
+      my $self = shift;
+      my @lista = @_;
+      my $ultimo = $self->FETCHSIZE();
+      $self->STORE( $ultimo + $_, $lista[$_] ) foreach 0 .. $#lista;
+      return $self->FETCHSIZE();
+    }   
+
+=item POP esto
+X<POP>
+
+Quita el último elemento del array, y lo devuelve.  Por ejemplo:
+
+    sub POP {
+      my $self = shift;
+      return pop @{$self->{ARRAY}};
+    }
+
+=item SHIFT esto
+X<SHIFT>
+
+Quita el primer elemento del array (desplazando el resto de elementos hacia abajo), y lo devuelve.  Por ejemplo:
+
+    sub SHIFT {
+      my $self = shift;
+      return shift @{$self->{ARRAY}};
+    }
+
+=item UNSHIFT esto, LISTA
+X<UNSHIFT>
+
+Interta LISTA elementos al comienzo del array, moviendo hacia arriba los elementos actuales para hacer espacio.  Por ejemplo:
+
+    sub UNSHIFT {
+      my $self = shift;
+      my @lista = @_;
+      my $tamano = scalar( @lista );
+      # hacer espacio para nuestra lista
+      @{$self->{ARRAY}}[ $tamano .. $#{$self->{ARRAY}} + $tamano ]
+       = @{$self->{ARRAY}};
+      $self->STORE( $_, $lista[$_] ) foreach 0 .. $#lista;
+    }
+
+=item SPLICE esto, desplazamiento, longitud, LISTA
+X<SPLICE>
+
+Realiza el C<splice> equivalente en el array. 
+
+I<desplazamiento> es opcional y por defecto es cero; valores negativos cuentan desde el final del array. 
+
+I<longitud> es opcional y por defecto es el resto del array.
+
+I<LISTA> puede estar vacía.
+
+Devuelve una lista de I<longitud> elementos del array original a partir del I<desplazamiento>.
+
+En nuestro ejemplo, usaremos un pequeño atajo si exista una I<LISTA>:
+
+    sub SPLICE {
+      my $self    = shift;
+      my $desplazamiento = shift || 0;
+      my $longitud = shift || $self->FETCHSIZE() - $desplazamiento;
+      my @lista  = (); 
+      if ( @_ ) {
+        tie @lista, __PACKAGE__, $self->{ELEMSIZE};
+        @lista  = @_;
+      }
+      return splice @{$self->{ARRAY}}, $desplazamiento, $longitud, @lista;
+    }
+
+=item UNTIE esto
+X<UNTIE>
+
+Se llamará cuando suceda C<untie>. (Vea L<El problema de C<untie>> más abajo).
+
+=item DESTROY esto
+X<DESTROY>
+
+Este método disparará cuándo se necesite destruir la variable enlazada.
+Igual que con la clase escalar enlazada, esto casi nunca se necesita en un lenguaje que tiene su propio recolector de basura, así que esta vez lo dejaremos fuera.
+
+=back
+
+=head2 Enlazar hashes
+X<hash, tying>
+
+Los hashes fueron los primeros tipos de datos de Perl que se enlazaron (ver dbmopen()).  Un clase que implemente un hash enlazado debe definir los siguientes métodos: TIEHASH es el constructor.  FETCH y STORE acceden a la pareja de clave y valor.  EXISTS informa de cuando una clave está presente en el hash, y DELETE la elimina.
+CLEAR limpia el hash borrando todas las parejas de claves y valores.  FIRSTKEY y NEXTKEY implementan las funciones keys() each() para iterar por todas las claves. SCALAR se dispara cuando un hash enlazado se evalúa en contexto escalar. UNTIE se llama cuando sucede un C<untie>, y a DESTROY se le llama cuando se recolecta la basura de una variable enlazada.
+
+Si esto parece un montón, entonces es libre de heredar sencillamente del módulo estándar Tie::StdHash para la mayor parte de sus métodos, redefiniendo solo los que le interese.  Vea L<Tie::Hash> para más detalles.
+
+Recuerde que Perl distingue entre una clave que no existe en el hash, y una clave que sí existe en el hash pero que corresponde a valor C<undef>.  Las dos posibilidades se pueden comprobar con las funciones C<exists()> y C<defined()>.
+
+Aquí hay un ejemplo de algo interesante sobre clases hash enlazadas: le proporciona un hash que representa los archivos punto de un usuario en particular.  Usted accede al hash con el nombre del archivo (menos el punto) y obtiene los contenidos del archivo punto.  Por ejemplo:
+
+    use DotFiles;
+    tie %dot, 'DotFiles';
+    if ( $dot{profile} =~ /MANPATH/ ||
+         $dot{login}   =~ /MANPATH/ ||
+         $dot{cshrc}   =~ /MANPATH/    )
+    {
+	print "parece que sí has establecido tu MANPATH\n";
+    }
+
+O aquí hay otro ejemplo de cómo usar nuestra clase enlazada:
+
+    tie %him, 'DotFiles', 'daemon';
+    foreach $f ( keys %him ) {
+	printf "archivo demonio con punto %s tiene un tamaño de %d\n",
+	    $f, length $him{$f};
+    }
+
+En nuestro ejemplo del hash enlazado DotFiles, usamos un hash normal para el objeto que contiene diversos campos, de los cuales solo el campo C<{LISTA}> será lo que el usuario cree que es el verdadero hash.
+
+=over 5
+
+=item USER
+
+aquellos archivos punto que este objeto representa
+
+=item DIRECTORIO INICIAL (en inglés, I<HOME>)
+
+dónde residen estos archivos punto
+
+=item CLOBBER
+
+cuándo debemos intentar cambiar o eliminar estos archivos punto
+
+=item LISTA
+
+el hash de mapeo entre nombres de archivo punto y su contenido
+
+=back
+
+Aquí está el inicio de F<Dotfiles.pm>:
+
+    package DotFiles;
+    use Carp;
+    sub whowasi { (caller(1))[3] . '()' }
+    my $DEBUG = 0;
+    sub debug { $DEBUG = @_ ? shift : 1 }
+
+Para nuestro ejemplo, queremos ser capaces de emitir información de depuración para ayudar en el trazado, durante el desarrollo.  Mantenemos también, al lado e internamente, una función conveniente para ayudar a imprimir advertencias; whowasi() devuelve el nombre de la función que le llama.
+
+Aquí están los métodos para el hash enlazado DotFiles.
+
+=over 4
+
+=item TIEHASH nombre_clase, LISTA
+X<TIEHASH>
+
+Este es el constructor para la clase.  Esto significa que se espera que devuelva una referencia bendecida a través de la cual accederemos al nuevo objeto (probablemente pero no necesariamente, en un hash anónimo).
+
+Aquí está el constructor:
+
+    sub TIEHASH {
+	my $self = shift;
+	my $user = shift || $>;
+	my $dotdir = shift || '';
+	croak "Uso: @{[&whowasi]} [USER [DOTDIR]]" if @_;
+	$user = getpwuid($user) if $user =~ /^\d+$/;
+	my $dir = (getpwnam($user))[7]
+		|| croak "@{[&whowasi]}: no existe usuario $user";
+	$dir .= "/$dotdir" if $dotdir;
+
+	my $node = {
+	    USER    => $user,
+	    HOME    => $dir,
+	    LISTA   => {},
+	    CLOBBER => 0,
+	};
+
+	opendir(DIR, $dir)
+		|| croak "@{[&whowasi]}: no puedo abrir $dir: $!";
+	foreach $dot ( grep /^\./ && -f "$dir/$_", readdir(DIR)) {
+	    $dot =~ s/^\.//;
+	    $node->{LISTA}{$dot} = undef;
+	}
+	closedir DIR;
+	return bless $node, $self;
+    }
+
+Merece la pena mencionar que si va a comprobar los valores de retorno de la comprobación de archivos sin readdir, es mejor que ponga por delante el nombre del directorio en cuestión.  De lo contrario, ya que no hicimos antes un chdir(), se estará probando en un archivo incorrecto.
+
+=item FETCH esto, clave
+X<FETCH>
+
+Este método se disparará cada vez que se acceda a un elemento en el hash enlazado(lectura).  Toma un argumento más que su propia referencia: la clave a cuyo valor estamos intentando sacar.
+
+Aquí está el recuperador para nuestro DotFiles de ejemplo.
+
+    sub FETCH {
+	carp &whowasi if $DEBUG;
+	my $self = shift;
+	my $dot = shift;
+	my $dir = $self->{HOME};
+	my $file = "$dir/.$dot";
+
+	unless (exists $self->{LISTA}->{$dot} || -f $file) {
+	    carp "@{[&whowasi]}: ho hay un archivo $dot" if $DEBUG;
+	    return undef;
+	}
+
+	if (defined $self->{LISTA}->{$dot}) {
+	    return $self->{LISTA}->{$dot};
+	} else {
+	    return $self->{LISTA}->{$dot} = `cat $dir/.$dot`;
+	}
+    }
+
+Fue fácil escribirlo haciendo una llamada al comando Unix cat(1), pero, probablemente, sería más portátil abrir el archivo manualmente (y algo más eficiente).  Naturalmente, ya que los archivos punto son un concepto del Unix, no estamos preocupados.
+
+=item STORE esto, clave, valor
+X<STORE>
+
+Este método se disparará cada vez que se establezca un elemento en un hash enlazado (escritura).  Toma dos argumentos además de la propia referencia: el índice en donde estamos intentando almacenar algo, y el valor que estamos intentando poner allí.
+
+Aquí, en nuestro ejemplo DotFiles, tendremos cuidado de no permitirles sobrescribir el archivo a menos que llamemos al método clobber() sobre la referencia original del objeto, devuelta por tie().
+
+    sub STORE {
+	carp &whowasi if $DEBUG;
+	my $self = shift;
+	my $dot = shift;
+	my $valor = shift;
+	my $file = $self->{HOME} . "/.$dot";
+	my $user = $self->{USER};
+
+	croak "@{[&whowasi]}: $file no es sobreescribible"
+	    unless $self->{CLOBBER};
+
+	open(my $f, '>', $file) || croak "no puedo abrir el archivo $file: $!";
+	print $f $value;
+	close($f);
+    }
+
+Si quisieran sobreescribir algo, podrían decir:
+
+    $ob = tie %daemon_dots, 'daemon';
+    $ob->clobber(1);
+    $daemon_dots{signature} = "Un verdadero demonio\n";
+
+Otra forma de echarle mano a la referencia del objeto subyacente es usar la función tied(), y de esta manera podrían establecer la propiedad de sobreescritura así:
+
+    tie %daemon_dots, 'daemon';
+    tied(%daemon_dots)->clobber(1);
+
+El método clobber es simplemente:
+
+    sub clobber {
+	my $self = shift;
+	$self->{CLOBBER} = @_ ? shift : 1;
+    }
+
+=item DELETE esto, clave
+X<DELETE>
+
+Este método se dispara cuando eliminamos un elemento del hash, típicamente usando la función delete().  De nuevo, tendremos cuidado de comprobar si realmente queremos sobreescribir archivos.
+
+ sub DELETE   {
+     carp &whowasi if $DEBUG;
+
+     my $self = shift;
+     my $dot = shift;
+     my $file = $self->{HOME} . "/.$dot";
+     croak "@{[&whowasi]}: no puedo eliminar el archivo $file"
+         unless $self->{CLOBBER};
+     delete $self->{LISTA}->{$dot};
+     my $success = unlink($file);
+     carp "@{[&whowasi]}: no puedo borrar $file: $!" unless $success;
+     $exito;
+ }
+
+El valor devuelto por DELETE deviene en el valor devuelto de la llamada a delete().  Si quiere emular el comportamiento normal de delete(), debería devolver cualquier FETCH que hubiera devuelto para esa clave.
+En este ejemplo, hemos elegido en su lugar devolver un valor que le dice al llamante si el archivo se borró de forma exitosa.
+
+=item CLEAR esto
+X<CLEAR>
+
+Este método se dispara cuando se limpia todo el hash, normalmente asignándole una lista vacía.
+
+En nuestro ejemplo, ¡eso eliminaría todos los archivos punto del usuario!  Eso es tan peligroso que tendrán que establecer CLOBBER a algo superior a 1 para hacer posible que suceda.
+
+ sub CLEAR    {
+     carp &whowasi if $DEBUG;
+     my $self = shift;
+     croak "@{[&whowasi]}: no puedo eliminar todos los archivos punto del usuario $self->{USER}"
+         unless $self->{CLOBBER} > 1;
+     my $dot;
+     foreach $dot ( keys %{$self->{LISTA}}) {
+         $self->DELETE($dot);
+     }
+ }
+
+=item EXISTS esto, clave
+X<EXISTS>
+
+Este método se dispara cuando el usuario usa la función exists() sobre un hash en particular.  En nuestro ejemplo, buscaremos en el elemento hash de C<{LIST}> con esto:
+
+    sub EXISTS   {
+	carp &whowasi if $DEBUG;
+	my $self = shift;
+	my $dot = shift;
+	return exists $self->{LISTA}->{$dot};
+    }
+
+=item FIRSTKEY esto
+X<FIRSTKEY>
+
+Este método se disparará cuando el usuario va a iterar a lo largo del hash, como las llamadas a keys(), values() o each().
+
+    sub FIRSTKEY {
+	carp &whowasi if $DEBUG;
+	my $self = shift;
+	my $a = keys %{$self->{LISTA}}; # reinicia cada iterador each()
+	each %{$self->{LISTA}}
+    }
+
+A FIRSTKEY siempre se le llama en contexto escalar y debería devolver la primera clave.  values() y each(), en contexto lista, llamará FETCH para las claves devueltas.
+
+=item NEXTKEY esto, últimaclave
+X<NEXTKEY>
+
+Este método se dispara durante una iteración de keys(), values() o each().  Tiene un segundo argumento que es la última clave a la que se ha accedido.  Esto es útil si está atento a la ordenación o el llamar al iterador desde más de una secuencia, o el no almacenar realmente las cosas en un hash.
+
+A NEXTKEY siempre se le llama en contexto escalar y debería devolver solo la primera clave.  values() y each(), en contexto lista, llamará FETCH para las claves devueltas.
+
+Para nuestro ejemplo, usamos un hash real, así que solo haremos una cosa muy simple, pero atravesaremos el campo LISTA de forma indirecta.
+
+    sub NEXTKEY  {
+	carp &whowasi if $DEBUG;
+	my $self = shift;
+	return each %{ $self->{LISTA} }
+    }
+
+=item SCALAR esto
+X<SCALAR>
+
+A esto se le llama cuando el hash se le evalúa en contexto escalar. En orden de imitar el comportamiento de los hashes desenlazados, este método debería devolver un valor falso cuando el hash enlazado se considera que está vacío. Si este método no existe, perl realizará unas suposiciones educadas y devolverá verdadero cuando el hash se encuentre dentro de una iteración. Si este no es el caso, se llama a FIRSTKEY, y el resultado será un valor falso si FIRSTKEY devuelve la lista vacía, o verdadero en caso contrario.
+
+Sin embargo, B<no> debería confiar ciegamente en que perl siembre haga lo correcto. De forma particular, perl equivocadamente devolverá verdadero cuando limpie el hash llamando repetidamente DELETE hasta que quede vacío. Se le aconseja que suministre su propio método SCALAR cunado quiere estar completamente seguro de que su hash se comporta de forma amable en contexto escalar.
+
+En nuestro ejemplo, simplemente llamamos a C<scalar> en el hash subyacente referenciado por C<$self-E<gt>{LISTA}>:
+
+    sub SCALAR {
+	carp &whowasi if $DEBUG;
+	my $self = shift;
+	return scalar %{ $self->{LISTA} }
+    }
+
+=item UNTIE esto
+X<UNTIE>
+
+A esto se le llama cuando ocurre un C<untie>.  Vea L<El problema de C<untie>> más abajo.
+
+=item DESTROY esto
+X<DESTROY>
+
+Este método se dispara cuando un hash enlazado está a punto de salir de un ámbito.  Realmente no lo necesita a menos que esté intentando añadir depuración o tener que limpiar un state auxiliar.  Aquí hay una función muy sencillo:
+
+    sub DESTROY  {
+	carp &whowasi if $DEBUG;
+    }
+
+=back
+
+Note que las funciones como keys() y values() pueden devolver largas listas como cuando se usan con grandes archivos DBM.  Puede preferir usar la función each() para iterar por él.  Ejemplo:
+
+    # imprime los desplazamientos en el archivo histórico
+    use NDBM_File;
+    tie(%HIST, 'NDBM_File', '/usr/lib/news/history', 1, 0);
+    while (($key,$val) = each %HIST) {
+        print $clave, ' = ', unpack('L',$valor), "\n";
+    }
+    untie(%HIST);
+
+=head2 Enlazar identificadores de archivos
+X<filehandle, tying> X<identificador de archivo, enlazar>
+
+Esto está ahora parcialmente implementado.
+
+Un clase que implementa un identificador de archivo enlazado debería definir los siguientes métodos: TIEHANDLE, al menos uno de PRINT, PRINTF, WRITE, READLINE, GETC, READ, y posiblemente CLOSE, UNTIE y DESTROY.  La clase también puede proporcionar: BINMODE, OPEN, EOF, FILENO, SEEK, TELL, si se usan en el identificador los correspondientes operadores perl.
+
+Cuando se enlaza STDERR, se llamará a su método PRINT para sacar advertencias y mensajes de errores.  Esta característica se desactiva temporalmente durante la llamada, que significa que puede usar C<warn()> dentro de PRINT sin iniciar un bucle recursivo.  Y al igual que los identificadores de C<__WARN__> y C<__DIE__>, se llama al método PRINT de STDERR para informar de errores de interpretación, así que se aplican los problemas mencionados bajo L<perlvar/%SIG>.
+
+Todo esto es especialmente útil cuando se incrusta perl en algún otro programa, donde la salida hacia STDOUT y STDERR se pueden redireccionar de alguno forma especial.  Vea nvi y el módulo Apache para más ejemplos.
+
+Cuando enlace un identificador, el primer argumento a C<tie> debe comenzar con un asterisco.  Así que, si está intentando enlazar STDOUT, use C<*STDOUT>.  Si lo ha asignado a una variable escalar, digamos C<$handle>, use C<*$handle>.
+C<tie $handle> enlaza la variable escalar C<$handle>, no el identificador que está dentro de él.
+
+En nuestro ejemplo vamos a crear un identificador gritón.
+
+    package Griton;
+
+=over 4
+
+=item TIEHANDLE nombre_clase, LISTA
+X<TIEHANDLE>
+
+Este es el constructor para la clase.  Esto significa que se espera devolver una referencia bendecida de alguna clase. La referencia se puede usar para almacenar alguna información interna.
+
+    sub TIEHANDLE { print "<grito>\n"; my $i; bless \$i, shift }
+
+=item WRITE esto, LISTA
+X<WRITE>
+
+A este método se le llamará cuando el identificador se escribe por medio de la función C<syswrite>.
+
+ sub WRITE {
+     $r = shift;
+     my($buf,$len,$offset) = @_;
+     print "WRITE llamado, \$buf=$buf, \$len=$len, \$offset=$offset";
+ }
+
+=item PRINT esto, LISTA
+X<PRINT>
+
+Este método se disparará cada vez que el identificador enlazado se imprime con las funciones C<print()> o C<say()>.  Más allá de su propia referencia, también espera la lista que se pasará a la función print.
+
+  sub PRINT { $r = shift; $$r++; print join($,,map(uc($_),@_)),$\ }
+
+C<say()> actúa justo igual que C<print()> excepto que se localizará $\ a C<\n> así que no necesita nada especial para manejar C<say()> en C<PRINT()>.
+
+=item PRINTF esto, LISTA
+X<PRINTF>
+
+Este método se disparará cada vez que el identificador enlazado se imprima con la función C<printf()>.
+Más allá de su propia referencia, también espera el formato y la lista que se pasará a la función printf.
+
+    sub PRINTF {
+        shift;
+        my $fmt = shift;
+        print sprintf($fmt, @_);
+    }
+
+=item READ esto, LISTA
+X<READ>
+
+A este método se le llamará cuando el identificador se lee por medio de las funciones C<read> o C<sysread>.
+
+ sub READ {
+   my $self = shift;
+   my $bufref = \$_[0];
+   my(undef,$len,$offset) = @_;
+   print "READ llamado, \$buf=$bufref, \$len=$len, \$offset=$offset";
+   # añadir a $$bufref, establece $len al número de caracteres leídos
+   $len;
+ }
+
+=item READLINE esto
+X<READLINE>
+
+A este método se le llamará cuando el identificador se lee por medio de las funciones C<E<lt>IDENTIFICADORE<gt>> o C<readline IDENTIFICADOR>.
+
+Igual que L<C<readline>|perlfunc/readline>, en contexto escalar debería devolver la siguiente línea, o C<undef> cuando no hay más datos.  En contexto lista debería devolver todas las líneas restantes, o una lista vacía si no hay más datos.  Las cadenas devueltas deberías inclir el separador de registros C<$/> (vea L<perlvar>), a menos que se C<undef> (que significa modo "sorber").
+
+    sub READLINE {
+      my $r = shift;
+      if (wantarray) {
+        return ("el resto\n",
+                "de líneas\n",
+                "hasta eof (fin de archivo)\n");
+      } else {
+        return "READLINE llamado " . ++$$r . " veces\n";
+      }
+    }
+
+=item GETC esto
+X<GETC>
+
+Este método se llamará cuando se llame a la función C<getc>.
+
+    sub GETC { print "No es GETC, es Perl"; return "a"; }
+
+=item EOF esto
+X<EOF>
+
+Este método se llamará cuando se llame a la función C<eof>.
+
+A partir de Perl 5.12, se pasará un parámetro entero adicional.  Será cero si se llamó a C<eof> sin parámetro; C<1> si se le proporcionó a C<eof> un identificador de archivo como parámetro, por ejemplo, C<eof(FH)>; y C<2> en el caso, muy especial de que el identificador de archivo enlazado sea C<ARGV> y a C<eof> se le llame con una lista de parámetros vacía. Por ejemplo: C<eof()>.
+
+    sub EOF { not length $stringbuf }
+
+=item CLOSE esto
+X<CLOSE>
+
+A este método se le llamará cuando se cierre el identificador de archivo por medio de la función C<close>.
+
+    sub CLOSE { print "CLOSE llamado.\n" }
+
+=item UNTIE esto
+X<UNTIE>
+
+Igual que con otros tipos de enlazados, a este método se le llamará cuando suceda un C<untie>.
+Podría ser apropiado "auto cerrarse (CLOSE)" cuando suceda esto.  Vea L<El problema de C<untie>> más abajo.
+
+=item DESTROY esto
+X<DESTROY>
+
+Igual que con otros tipos de enlazados, a este método se le llamará cuando el identificador de archivo enlazado se vaya a destruir. Esto es útil para depuración y, posiblemente, limpieza.
+
+    sub DESTROY { print "</grito>\n" }
+
+=back
+
+Aquí hay un pequeño ejemplo de cómo usarlo:
+
+    tie(*FOO,'Grito');
+    print FOO "hola\n";
+    $a = 4; $b = 6;
+    print FOO $a, " más ", $b, " igual a ", $a + $b, "\n";
+    print <FOO>;
+
+=head2 UNTIE esto
+X<UNTIE>
+
+Puede definir, para todos los tipos de enlazado, un método UNTIE a quien se le llamará cuando ocurra untie().  Vea L<El problema de C<untie>> más abajo.
+
+=head2 El problema de C<untie>
+X<untie>
+
+Si pretende hacer uso del objeto devuelto tanto por tie() como por tied(), y si la clase objetivo del enlazado define un destructor, existe un sutil problema contra el que I<debe> estar prevenido.
+
+Para empezar, considere el siguiente (muy pensado) ejemplo de un enlazado; todo lo que hace es usar un archivo para mantener un registro de los valores asignados a un escalar.
+
+    package Recuerda;
+
+    use strict;
+    use warnings;
+    use IO::File;
+
+    sub TIESCALAR {
+        my $clase = shift;
+        my $archivo = shift;
+        my $handle = IO::File->new( "> $archivo" )
+                         or die "No se puede abrir $archivo: $!\n";
+
+        print $handle "El inicio\n";
+        bless {FH => $handle, Valor => 0}, $clase;
+    }
+
+    sub FETCH {
+        my $self = shift;
+        return $self->{Valor};
+    }
+
+    sub STORE {
+        my $self = shift;
+        my $valor = shift;
+        my $handle = $self->{FH};
+        print $handle "$valor\n";
+        $self->{Valor} = $valor;
+    }
+
+    sub DESTROY {
+        my $self = shift;
+        my $handle = $self->{FH};
+        print $handle "El final\n";
+        close $handle;
+    }
+
+    1;
+
+Aquí hay un ejemplo que hace uso de nuestro enlazado:
+
+    use strict;
+    use Recuerda;
+
+    my $fred;
+    tie $fred, 'Recuerda', 'myfile.txt';
+    $fred = 1;
+    $fred = 4;
+    $fred = 5;
+    untie $fred;
+    system "cat myfile.txt";
+
+Esta es la salida cuando se ejecuta:
+
+    El inicio
+    1
+    4
+    5
+    El final
+
+Hasta aquí todo bien.  A los que han prestado atención se habrán dado cuenta de que no se ha usado el objeto enlazado.  Así que permítanos añadir un método extra para permitir que se incluyan comentarios en el archivo; digamos, algo como esto:
+
+    sub comentario {
+        my $self = shift;
+        my $texto = shift;
+        my $handle = $self->{FH};
+        print $handle $texto, "\n";
+    }
+
+Y aquí está el ejemplo anterior, modificado para usar el método C<comentario> (que requiere al objeto enlazado):
+
+    use strict;
+    use Recuerda;
+
+    my ($fred, $x);
+    $x = tie $fred, 'Recuerda', 'myfile.txt';
+    $fred = 1;
+    $fred = 4;
+    comentario $x "cambiando...";
+    $fred = 5;
+    untie $fred;
+    system "cat myfile.txt";
+
+Cuando se ejecuta este código, no hay salida.  He aquí el porqué:
+
+Cuando la variable se enlaza, se le asocia con el objeto que es el valor de retorno de las funciones TIESCALAR, TIEARRAY o TIEHASH.  Este objeto, normalmente, solo tiene una referencia, concretamente, la referencia implícita desde la variable enlazada.  Cuando se llama a untie(), esa referencia se destruye.  Entonces, como en el primer ejemplo de antes, se llama al destructor del objeto (DESTROY), que es lo normal para objetos que no tienen más referencias válidas; y por ello, se cierra el archivo.
+
+En el segundo ejemplo, sin embargo, hemos almacenado otra referencia al objeto enlazado, en $x.  Eso significa que cuando se le llama a untie() seguirá existiendo una referencia válida al objeto existente, así que no se llama al destructor en ese momento, y por lo tanto, el archivo no es cerrado.  La razón de que aquí no haya salida es porque no se han vaciado los búferes de archivo, a disco.
+
+Ahora que sabe cuál es el problema, ¿qué puede hacer para evitarlo?
+Antes de la introducción del método opcional UNTIE, la única manera era la vieja opción C<-w>. Mostrará cualquier instancia donde llame a untie() y siga existiendo referencias válidas al objeto enlazado.  Si al segundo I<script> de antes, cerca del inicio, pusiéramos C<use warnings 'untie'> o si se ejecutase con la opción C<-w>, Perl imprime este mensaje de advertencia:
+
+    I<untie attempted while 1 inner references still exist> (se intentó un untie mientras sigue existiendo 1 referencia interna)
+
+Para conseguir que el I<script> funcione de forma apropiada, y silencie la advertencia, asegúrese de que no existan referencias válidas al objeto enlazado I<antes> de llamar a untie():
+
+    undef $x;
+    untie $fred;
+
+Ahora que existe UNTIE, el diseñador de la clase puede decidir qué partes de la funcionalidad de la clase están realmente asociadas con C<untie>, y cuáles con el objeto que se va a destruir. Lo que tiene sentido para una clase dada, depende de cuando las referencias internas se mantienen, de modo que los métodos no relacionados con el enlazado pueden aplicarse sobre un objeto. Pero en la mayor parte de los casos, es más probable que tenga sentido mover la funcionalidad que estaría en DESTROY, al método UNTIE.
+
+Si existe el método UNTIE entonces no aparece la advertencia anterior. En lugar de él, al método UNTIE se la pasa la cuenta de referencias "extra" y emitirá su propia advertencia, si resulta apropiado. Por ejemplo, replicar que no se puede usar UNTIE en este caso:
+
+ sub UNTIE
+ {
+  my ($obj,$cuenta) = @_;
+  carp "se intentó untie mientras siguen existiendo $cuenta referencia internas"
+                                                              if $cuenta;
+ }
+
+=head1 VEA TAMBIÉN
+
+Vea L<DB_File> o L<Config> para encontrar unas interesantes implementaciones de tie().
+Un buen punto de partida para muchas implementaciones de tie() es con alguno de los módulos L<Tie::Scalar>, L<Tie::Array>, L<Tie::Hash> o L<Tie::Handle>.
+
+=head1 ERRORES
+
+El cubo de información de uso proporcionado por C<scalar(%hash)> no está disponible.  Lo que esto significa es que usar el hash %enlazado en contexto booleano no funciona bien (actualmente siempre resulta en un falso, sin importar de si el hash está vacío o tiene elementos).
+
+Localizar array y hashes enlazados no funciona.  Después de salir del ámbito, los arrays y los hashes no se recuperan.
+
+Contar el número de entradas en un hash por medio de C<scalar(keys(%hash))> o C<scalar(values(%hash)>) es ineficiente ya que necesita iterar a través de todas las entradas, con FIRSTKEY/NEXTKEY.
+
+Trozos enlazados de hashes y arrays causan llamadas múltiples de parejas FETCH/STORE; no existen métodos enlazados para las operaciones de troceados (I<slice>).
+
+No es fácil atar una estructura de datos de múltiples niveles (por ejemplo, un hash de hashes) a un archivo dbm.  El primer problema es que todas, excepto las BD GDBM y Berkeley tienen limitaciones de tamaño; pero aparte de eso, también tiene problemas con cómo las referencias se representan en disco.  Un módulo que intenta solucionar esta necesidad es DBM::Deep.  Revise su sitio CPAN más cercano, como se describe en L<perlmodlib>, para obtener el código fuente de MLDBM.  Note que, a pesar de su nombre, DBM::Deep no usa dbm.  Otro intento temprano de solucionar el problema es MLDBM, que también está disponible en CPAN, pero que tiene serias limitaciones.
+
+Identificadores de archivo enlazados siguen estando incompletos.  Actualmente, sysopen(), truncate(), flock(), fcntl(), stat() y -X, no se pueden atrapar (I<trap>).
+
+=head1 AUTOR
+
+Tom Christiansen
+
+TIEHANDLE de Sven Verdoolaege <F<skimo@dns.ufsia.ac.be>> y Doug MacEachern <F<dougm@osf.org>>
+
+UNTIE de Nick Ing-Simmons <F<nick@ing-simmons.net>>
+
+SCALAR de Tassilo von Parseval <F<tassilo.von.parseval@rwth-aachen.de>>
+
+Tying Arrays de Casey West <F<casey@geeknest.com>>
