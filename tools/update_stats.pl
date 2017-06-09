@@ -13,13 +13,16 @@
 # TODO: ¿Es posible automatizar los comandos git, o seguimos a mano? Mejor a mano... de momento.
 
 # Joaquín Ferrero. 20110130
-# Última versión:  dom 23 oct 2016 13:35:38 CEST
+# Última versión:  20170609 21:44:00
 #
 # Se supone que se debe ejecutar este programa después de haber ejecutado la orden
 # de generar los ficheros finales en el OmegaT, pero no es imprescindible.
 #
 
 use v5.18.2;
+
+use lib '/home/explorer/perl5/lib/perl5';
+
 use common::sense;					# TODO: buscar una alternativa mejor para este módulo
 
 use locale;
@@ -42,8 +45,9 @@ my $user           = 'explorer';			# TMX user file
 # Ruta a los ficheros
 my $DIR_ROOT	   = '<ruta al directorio base de todo el proyecto>';
 
-my $DIR_PROJECT	   = "$DIR_ROOT/perlspanish-work";	# ruta al proyecto OmegaT
-my $DIR_GIT	   = "$DIR_ROOT/perldoc-es";		# ruta al repositorio local Github
+my $PROJECT        = 'work.github';
+my $DIR_PROJECT	   = "$DIR_ROOT/$PROJECT";		# ruta al proyecto OmegaT
+my $DIR_GIT	   = "$DIR_ROOT/perldoc-es.github";	# ruta al repositorio local Github
 
 my $FILE_STATS     = "$DIR_PROJECT/omegat/project_stats.txt";
 my $FILE_LIST      = "$DIR_PROJECT/files.lst";
@@ -173,7 +177,7 @@ my %archivos_cambios;
 my %archivos_traduciendo;
 my %archivos_porciento;
 
-my $min_porcen	   = 30;			## Porcentaje mínimo docs traducidos, no asignados
+my $min_porcen	   = 50;			## Porcentaje mínimo docs traducidos, no asignados
 
 #open my $listado, q[>], "$dir_git/pod_traducidos.txt";
 
@@ -367,7 +371,7 @@ close $REPORT;
 my $archivos_en_git = 0;
 
 ## Llevar la memoria de traducción al git
-my $origen = (<$DIR_PROJECT/perlspanish*omegat.tmx>)[0];
+my $origen = "$DIR_PROJECT/$PROJECT-omegat.tmx";
 my $target = "$DIR_GIT_TMX/perlspanish-omegat.$user.tmx";
 
 if (!-f $target  or  -M $origen < -M $target) {
