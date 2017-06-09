@@ -10,7 +10,7 @@ La estructura de datos a dos niveles más simple que se puede generar en Perl es
 
 Un array de un array es justo un array @AoA normal sobre la que se puede aplicar dos subíndices, como C<$AoA[3][2]>.  Aquí hay una declaración del array:
 
-    use 5.010;  # so we can use say()
+    use 5.010;  # así podemos usar say()
 
     # asignar a nuestro array, un array de referencias a array
     @AoA = (
