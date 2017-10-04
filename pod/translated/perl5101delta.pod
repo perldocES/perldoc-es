@@ -1069,7 +1069,7 @@ Bajo C<use filetest 'access'>, C<-x> estaba utiliza un modo de acceso incorrecto
 
 =item *
 
-C<length> en un escalar atado que devolvía un valor Unicode, podría no ser correcto, en una primera vez. Esto ha sido corregido.
+C<length> en un escalar atado que devolvía un valor Unicode, podría no ser correcto, en una primera vez. Esto se ha corregido.
 
 =item *
 
@@ -1251,7 +1251,7 @@ Bajo ithreads, ahora se actualiza el contador de referencias de la expresión re
 =item *
 
 C<Perl_mg_magical()> podría, a veces erróneamente, activar C<SvRMAGICAL()>.
-Esto ha sido corregido.
+Esto se ha corregido.
 
 =item *
 

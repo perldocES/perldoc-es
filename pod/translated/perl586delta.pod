@@ -22,7 +22,7 @@ En Win32, Perl ahora puede usar no-IFS compatibles con LSP, que permite a Perl t
 
 =item *
 
-Con el pragma C<base>, una clase intermedia sin campos se utiliza para mezclarse con los campos privados de la clase base. Esto ha sido corregido.
+Con el pragma C<base>, una clase intermedia sin campos se utiliza para mezclarse con los campos privados de la clase base. Esto se ha corregido.
 
 =item *
 
@@ -86,7 +86,7 @@ El motor de I<regex> es ahora más sólido cuando se le administra una entrada u
 
 C<foreach> sobre un array threads::shared era capaz de colgar Perl. Este error ya se ha solucionado.
 
-Una expresión regular en el destructor de C<STDOUT> se usa en el volcado del núcleo, ya que la plataforma de expresiones regulares ya fue liberada. Esto ha sido corregido.
+Una expresión regular en el destructor de C<STDOUT> se usa en el volcado del núcleo, ya que la plataforma de expresiones regulares ya fue liberada. Esto se ha corregido.
 
 C<goto &> es ahora más robusto - errores en la recursividad profunda y C<goto &> encadenados se han corregido.
 
@@ -94,7 +94,7 @@ El uso de C<delete> en un array ya no provoca fugas de memoria. A C<pop> de un e
 
 C<eval_sv()> fallando una prueba de pringado podría corromper la pila - se ha arreglado.
 
-En las plataformas con punteros de 64 bits los operadores de comparación numéricos eran erróneamente usados para comparar las direcciones de las referencias que estaban sobrecargadas, en lugar de utilizar los valores sobrecargados. Esto ha sido corregido.
+En las plataformas con punteros de 64 bits los operadores de comparación numéricos eran erróneamente usados para comparar las direcciones de las referencias que estaban sobrecargadas, en lugar de utilizar los valores sobrecargados. Esto se ha corregido.
 
 C<read> en un búfer codificado en UTF8 con un desplazamiento más allá del final del búfer ya no calcula mal la longitud del búfer.
 

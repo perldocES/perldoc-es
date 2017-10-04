@@ -971,7 +971,7 @@ En versiones anteriores, perl leería el archivo F</dev/urandom>, en caso de exi
 
 La variable de entorno C<PERLIO_DEBUG> ya no tiene ningún efecto para los scripts setuid, ni para los scripts ejecutados con B<-T>.
 
-Además, con un perl con soporte de hilos de ejecución, usar C<PERLIO_DEBUG> podría provocar un desbordamiento de un búfer interno. Esto ha sido corregido.
+Además, con un perl con soporte de hilos de ejecución, usar C<PERLIO_DEBUG> podría provocar un desbordamiento de un búfer interno. Esto se ha corregido.
 
 =item PerlIO::scalar y escalares de solo lectura
 

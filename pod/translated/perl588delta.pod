@@ -523,7 +523,7 @@ C<File::Spec->rootdir()> ahora devuelve C<\> en Win32, en lugar de C</>
 
 =item *
 
-C<$^O> podría estar, algunas veces, pringada. Esto ha sido corregido.
+C<$^O> podría estar, algunas veces, pringada. Esto se ha corregido.
 
 =item *
 

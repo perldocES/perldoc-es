@@ -120,7 +120,7 @@ el resultado podría omitir el valor de $b. Esto se ha arreglado.
 
 =item *
 
-La optimización de las tareas innecesarias introducida en 5.8.4 podría dar advertencias falsas. Esto ha sido corregido.
+La optimización de las tareas innecesarias introducida en 5.8.4 podría dar advertencias falsas. Esto se ha corregido.
 
 =item *
 
