@@ -1,0 +1,1243 @@
+=encoding utf8
+
+=head1 NAME
+
+perlpodspec - Documentación en POD: especificación de formato y apuntes
+
+=head1 DESCRIPCIÓN
+
+Este documento tiene notas detalladas sobre el lenguaje de marcas Pod.  La mayor parte solo leerá L<perlpod|perlpod> para saber cómo escribir en Pod, pero este documento puede responder algunas cuestiones incidentales para hacer interpretación y presentación de Pod.
+
+En este documento, "debe" / "no debe", "debería" / "no debería" y "puede" tiene sus significados convencionales (ver RFC 2119): "X debe hacer Y" significa que si X no hace Y, va en contra de esta especificación, y debería arreglarse.  "X debería hacer Y" significa que se recomienda, pero X podría fallar el crear Y, si existe una buena razón.  "X puede hacer Y" es, meramente, una nota que dice que X podría hacer Y (aunque le deja al lector detectar cualquier connotación de "y creo que debería estar I<bien> si X ha hecho Y", contra "realmente no me I<molestaría> si X ha hecho Y").
+
+De forma notable, cuando digo "el intérprete debería hacer Y", el intérprete puede fallar al hacer Y, si la llamada explícita de la aplicación pide que el intérprete I<no> haga Y. A menudo lo digo como "el intérprete debería, pero por defecto, hace Y". Esto no I<requiere> que el intérprete proporcione una opción para desactivar lo que sea la característica Y (como expandir tabuladores en párrafos literales), aunque eso implique que I<puede> estar proporcionando tal opción.
+
+=head1 Definiciones Pod 
+
+Pod se incrusta en los archivos, típicamente en archivos de código fuente Perl, aunque puede escribir un archivo que no tenga nada de Pod.
+
+Una B<línea> en un archivo consiste de cero o más caracteres que no son de nueva línea, terminado tanto en un nueva línea o el final del archivo.
+
+Una B<secuencia de nueva línea> es normalmente un concepto dependiente de la plataforma, pero los intérpretes de Pod deberían entenderlo para que signifique cualquiera de las combinaciones de CR (ASCII 13), LF (ASCII 10) o un CRLF (ASCII 13 seguido inmediatamente de ASCII 10), añadido a cualquier otro significado específico del sistema.  La primera secuencia de CR/CRLF/LF en el archivo se puede usar como la base para identificar la secuencia de nueva línea para interpretar el resto del archivo.
+
+Una B<línea en blanco> es una línea que consiste completamente de cero o más espacios (ASCII 32) o tabuladores (ASCII 9) y terminados por una nueva línea o fin de archivo.
+Una B<línea que no está en blanco> es una línea que contiene una o más caracteres distintos del espacio o el tabulador (y terminados por un nueva línea o fin de archivo).
+
+(I<Nota:> Muchos interpretadores antiguos de Pod no aceptan una línea consistente de espacios/tabuladores y un nueva línea, como línea en blanco. Las únicas líneas que se consideran en blanco eran las líneas que no consistían de I<ningún carácter en absoluto>, terminados por un nueva línea).
+
+El B<espacio en blanco> se usa en este documento como término en genérico para referirnos a los espacios, tabuladores y secuencias de nueva línea.  (Por sí solo, este término se refiere normalmente al espacio en blanco literal).  Es decir, las secuencias de caracteres de espacios en blanco en el código Pod, es opuesto a "EE<lt>32>", que es código de formateo que I<denota> un carácter de espacio en blanco).
+
+Un B<intérprete de Pod> es un módulo que se usa para interpretar Pod (sin importar si esto incluye hacer retrollamadas o construir un árbol de interpretación o, directamente, formatearlo).  Un B<formateador de Pod> (o B<traductor de Pod>) es un módulo o programa que convierte Pod a algún otro formato (HTML, texto plano, TeX, PostScript, RTF).  Un B<procesador de Pod> podría ser un formateador o un traductor, o podría ser un programa que hace algo con el Pod (como contar palabras, escanear puntos para el índice, etc.).
+
+El contenido Pod se contiene en los B<bloques Pod>.  Un bloque Pod comiento con una línea que coincide con C<m/\A=[a-zA-Z]/>, y continúa hasta la siguiente línea que coincide con C<m/\A=cut/> o hasta el final del archivo si no existe la línea C<m/\A=cut/>.
+
+=for comment
+ El perlsyn actual dice:
+ [comienzo de la cita]
+   Note que los traductores pod tendrían que mirar solo en los párrafos que comienzan
+   con una directiva pod (hace más fácil la interpretación), aunque el compilador
+   sepa realmente encontrar secuencias pod incluso en el medio de un
+   párrafo.  Esto significa que el siguiente material secreto se ignorará
+   tanto por el compilador como por los traductores.
+      $a=3;
+      =material secreto
+       warn "¿¡Ni POD ni CÓDIGO!?"
+      =cut back
+      print "tengo $a\n";
+   Probablemente no se dará cuenta de que el warn() ha sido comentado para siempre.
+   No todos los traductores serán tan atentos, y quizás
+   el compilador se vuelva loco.
+ [fin de la cita]
+ Creo que estos párrafos deberían, simplemente, eliminarse; la interpretación basados en
+ párrafos parece que hace tiempo que se ha dejado de hacer, debido a la molestia que existe con
+ las líneas que no están en blanco, enredándose con lo que la gente entiende por "párrafo".
+ Incluso si el tópico "hace la interpretación más sencilla" fuera especialmente cierto,
+ no merece la pena confundirse de lo que perl con pod2whatever
+ discrepen de lo que constituye un bloque Pod.
+
+Dentro de un bloque Pod, existen B<párrafos Pod>.  Un párrafo Por consiste en líneas que no están en blanco, de texto, separado por una o más líneas en blanco.
+
+Para los propósitos de procesado Por, existen cuatro tipos de párrafos en un bloque Pod:
+
+=over
+
+=item *
+
+Un párrafo común (que también se llama una "directiva").  La primera línea de este párrafo debe coincidir con C<m/\A=[a-zA-Z]/>.  Los comandos de párrafos son, típicamente, una sola línea, como en:
+
+  =head1 NOTAS
+
+  =item *
+
+Pero pueden abarcar varias líneas que no están en blanco:
+
+  =for comment
+  Hum, me pregunto qué parecería si
+  intenta escribir un BNF para Pod a partir de esto.
+
+  =head3 Dr. Strangelove, o: Cómo aprendí a
+  dejar de preocuparme y amar a la bomba
+
+I<Algunos> párrafos de comandos permite códigos de formateo en su contenido (es decir, después de la parte que coincide con C<m/\A=[a-zA-Z]\S*\s*/>), como en:
+
+  =head1 ¿Recuerda cómo usar C<use strict;>?
+
+En otras palabras, el gestor de procesamiento Pod para "head1" aplicará el mismo procesamiento para "¿Recuerda cómo usar CE<lt>use strict;>?" que sería un párrafo ordinario (es decir, los códigos de formateo como "CE<lt>...>") se interpretan, y presumiblemente, formatear apropiadamente, y no son significativos el espacio en blanco en la forma de espacios literales y/o tabuladores.
+
+=item *
+
+Un B<párrafo literal>.  La primera línea de este párrafo debe ser un espacio literal o tabulador, y este párrafo no debe estar dentro de la secuencia "=begin I<identificador>", ... "=end I<identificador>" a menos que "I<identificador>" comience por un (":").  Es decir, si un párrafo comienza con un espacio literal o tabulador, pero I<está> dentro de una región "=begin I<identificador>", ... "=end I<identificador>", entonces es un párrafo de datos, a menos que "I<identificador>" comience con un carácter de dos puntos.
+
+El espacio en blanco I<es> significativo en párrafos literales (aunque, en el procesado, los tabuladores probablemente se expandan).
+
+=item *
+
+Un B<párrafo ordinario>.  Un párrafo es un párrafo ordinario si su primera línea no coincide con C<m/\A=[a-zA-Z]/> ni con C<m/\A[ \t]/>, I<y> si no está dentro de una secuencia "=begin I<identificador>",
+... "=end I<identificador>" a menos que "I<identificador>" comience con un ":".
+
+=item *
+
+Un B<párrafo de datos>.  Es un párrafo que I<está> dentro de una secuencia "=begin I<identificador>" ... "=end I<identificador>", donde "I<identificador>" I<no> comienza con un carácter de dos puntos (":").  En cierto sentido, un párrafo de datos no es ni siquiera Pod (es decir, está "fuera de onda"), ya que no está sujeto a la mayor parte de la interpretación Pod; pero se especifica aquí, ya que los intérpretes Pod deben ser capaces de llamar eventos al detectarlo, o almacenarlo de alguna forma en el árbol de interpretación, o al menos interpretar lo que le I<rodea>.
+
+=back
+
+Por ejemplo, considere el párrafo siguiente:
+
+  # <- esta es la columna 0
+
+  =head1 Foo
+
+  Cosas
+
+    $foo->bar
+
+  =cut
+
+Aquí, "=head1 Foo" y "=cut" son comandos de párrafo porque cada una de esas líneas coinciden con C<m/\A=[a-zA-Z]/>.  "I<[espacio][espacio]>$foo->bar" es un párrafo literal, porque la línea comienza con un carácter de espacio en blanco literal (y no existe ninguna región "=begin" ... "=end" alrededor).
+
+Los comandos "=begin I<identificador>" ... "=end I<identificador>" impiden que los párrafos que rodean se interpreten como párrafos literales o normales, si el I<identificador> no comienza por un carácter de dos puntos.  Esto se explica con detalle en la sección L</Sobre los párrafos de datos y las regiones "=beginE<sol>=end">.
+
+=head1 Comandos Pod
+
+La intención de esta sección es la de aumentar y clarificar lo explicado en L<perlpod/"Comandos de párrafo">.  Estos son los comandos Pod que, actualmente, se reconocen:
+
+=over
+
+=item "=head1", "=head2", "=head3", "=head4"
+
+Este comando indica que el texto en el resto del párrafo es una línea de cabecera.  Ese texto puede contener códigos de formato.  Ejemplos:
+
+  =head1 Atributos de objeto
+
+  =head3 ¡Qué B<no> hacer!
+
+=item "=pod"
+
+Este comando indica que ese párrafo inicia un bloque Pod.  (Si ya estábamos en el medio de un bloque Pod, este comando no tiene ningún efecto).  Si existe algún texto en este comando de párrafo después de "=pod", debe ignorarse.  Ejemplos:
+
+  =pod
+
+  Este es un sencillo párrafo Pod.
+
+  =pod Este texto se ignora.
+
+=item "=cut"
+
+Este comando indica que esta línea es el final del bloque Pod iniciado anteriormente.  Se ignorará cualquier texto que siga a "=cut".  Ejemplos:
+
+  =cut
+
+  =cut La documentación termina aquí.
+
+  =cut
+  # Esta es la primera línea del texto del programa.
+  sub foo { # Esta es la segunda.
+
+Es un error intentar I<iniciar> un bloque Pod con un comando "=cut".  En ese caso, el procesador Pod debe parar la interpretación del archivo de entrada y, por defecto, emitir una advertencia.
+
+=item "=over"
+
+Este comando indica que esto es el inicio de una lista/región sangrada.  Si existe algún texto a continuación de "=over", debe consistir de un número positivo distinto de cero.  La semántica de este número se explica en la sección L</"Sobre las regiones =over ... =back">, más abajo.  No se expanden los códigos de formateo.  Ejemplos:
+
+  =over 3
+
+  =over 3.5
+
+  =over
+
+=item "=item"
+
+Este comando indica que ahí comienza un elemento de una lista.  Se procesarán los códigos de formateo.  Las semánticas del texto (opcional) en el resto del párrafo se explican en la sección L</"Sobre las regiones =over ... =back">, más abajo.  Ejemplos:
+
+  =item
+
+  =item *
+
+  =item      *    
+
+  =item 14
+
+  =item   3.
+
+  =item C<< $cosa->stuff(I<loquesea>) >>
+
+  =item Para transportarnos más allá de los mares para probarnos por pretendidas
+  ofensas
+
+  =item Está en este momento transportando grandes ejércitos de mercenarios
+  extranjeros para completar el trabajo de muerte, desolación y
+  tiranía, comenzando con circunstancias de crueldad y perfidia
+  difícilmente equiparables en las eras más bárbaras, y totalmente
+  indignas del mando de una nación civilizada.
+
+=item "=back"
+
+Este comando indica que es el final de una región iniciada por el comando "=over" más reciente.  No se permite texto después del comando "=back".
+
+=item "=begin nombreformato"
+
+=item "=begin nombreformato parámetro"
+
+Esto marca a los párrafos siguientes (hasta el correspondiente "=end nombreformato") como comienzo de alguna clase especial de procesamiento.  A menos que "nombreformato" comience con un carácter de dos puntos, los párrafos insertados, que no sean comandos, son párrafos de datos.  Pero si "nombreformato" I<comienza> con un carácter de dos puntos, entonces los párrafos, que no sean comandos, son párrafos ordinarios o de datos.  Esto se explica con detalle en la sección L</Sobre los párrafos de datos y las regiones "=beginE<sol>=end">.
+
+Se aconseja que los "nombresformato" coincidan con la I<regex> C<m/\A:?[-a-zA-Z0-9_]+\z/>.  Todo lo que sigue al espacio en blanco después de "nombreformato" es un parámetro que puede usar el formateador cuando trate esta región.  Este parámetro no debe repetirse en el párrafo "=end".  Los implementadores deben anticipar futuras expansiones en la semántica y sintaxis del primer parámetro de "=begin"/"=end"/"=for".
+
+=item "=end nombreformato"
+
+Este comando marca el final de la región iniciada por el correspondiente comando "=begin nombreformato".  Si "nombreformato" no es el "nombreformato" de la región "=begin nombreformato" más recientemente abierta, entonces es un error y se debe generar un mensaje de error.  Esto se explica con detalle en la sección L</Sobre los párrafos de datos y las regiones "=beginE<sol>=end">.
+
+=item "=for nombreformato texto..."
+
+Es un sinónimo de:
+
+     =begin nombreformato
+
+     texto...
+
+     =end nombreformato
+
+Es decir, crea una región consistente de un único párrafo; ese párrafo se tratará como un párrafo normal si "nombreformato" comienza con un ":"; si "nombreformato" I<no> comienza con un ":" entonces "texto..." es un párrafo de datos.  No hay forma de usar "=for nombreformato texto..." para expresar "texto..." como un párrafo literal.
+
+=item "=encoding nombrecodificación"
+
+Este comando, que debe aparecer lo más cerca posible del comienzo del documento (al menos, ¡antes de cualquier dato no-ASCII!), declara que ese documento está codificado en I<nombrecodificación>, que debe ser un nombre de codificación que L<Encode> reconozca.  (Aquí sería útil la lista de codificaciones soportadas por Encode, en L<Encode::Supported>).
+Si el intérprete de Pod no puede decodificar con la codificación indicada, debe emitir una advertencia y, generalmente, abortar la interpretación del documento.
+
+Un documento que tenga más de una línea "=encoding" se debe considerar un error.  Los procesadores Pod pueden tolerar silenciosamente este error si las siguientes líneas "=encoding" son repeticiones de la primera (ejemplo: si existe una línea "=encoding utf8", y más tarde hay otra línea "=encoding utf8").  Pero los procesadores Pod pueden quejarse so existen líneas "=encoding" contradictorias en el mismo documento (p.e., si existe un "=encoding utf8" al principio del documento y un "=encoding big5" más tarde).  Los procesadores Pod que reconocen BOM también pueden quejarse si ven una línea "=encoding" que contradiga al BOM (p.e., si un documento con un BOM UTF-16LE tiene una línea "=encoding shiftjis").
+
+=back
+
+Si un procesador Pod ve un comando distinto de los listados antes (como "=head" o "=haed1" o "=stuff" o "=cuttlefish" o "=w123"), ese procesador debe, por defecto, tratarlo como un error.  No debe procesar el párrafo que comience con ese comando; debe, por defecto, advertirlo como un error, y puede después abortar la interpretación.  Un intérprete de Pod puede permitir a una aplicación en particular que añada comandos a lista de comandos conocidos, y estipular, por cada comando adicional, qué códigos de formateo deberían procesarse.
+
+Versiones futuras de esta especificación pueden añadir comandos adicionales.
+
+
+
+=head1 Códigos de formateo Pod
+
+(Note que en borradores anteriores de este documento y de perlpod, a los códigos de formateo se les refería como "secuencias interiores", y este término aún puede encontrarse en la documentación de los intérpretes Pod, y en mensajes de error en los procesadores Pod).
+
+Hay dos sintaxis para los códigos de formateo:
+
+=over
+
+=item *
+
+Un código de formateo empieza con una letra mayúscula (una letra US-ASCII [A-Z]) seguida por un "<", cualquier número de caracteres, y terminando con un ">", correspondiente con el primer ángulo.  Ejemplos:
+
+    ¡Es lo que I<tu> piensas!
+
+    ¿Para qué sirve C<dump()>?
+
+    X<C<chmod> y C<unlink()> bajo diferentes sistemas operativos
+
+=item *
+
+Un código de formateo empieza con una letra mayúscula (una letra US-ASCII [A-Z]) seguida por dos o más "<", uno o más espacios en blanco, cualquier número de caracteres, uno o más espacios en blanco, y terminando con la correspondiente secuencia final de dos o más ">", donde el número de ">" iguala al número de "<" del comienzo.  Ejemplos:
+
+    ¡Es lo que I<<tu>> piensas!
+
+    C<<< open(X, ">>cosa.dat") || die $! >>>
+
+    B<< $foo->bar(); >>
+
+Con esta sintaxis, el/los espacios en blanco después de "CE<lt><<" y antes del ">>>" (o cualquier otra letra) I<no> se muestran. No significan más espacio en blanco; son, meramente, parte de los propios códigos de formateo.  Así, todo lo que sigue son sinónimos:
+
+    C<cosa>
+    C<< cosa >>
+    C<<           cosa     >>
+    C<<<   cosa >>>
+    C<<<<
+    cosa
+               >>>>
+
+y así.
+
+Finalmente, la forma de múltiples-ángulos I<no> altera la interpretación de códigos de formateo anidados. Así, las cuatro líneas siguientes de ejemplo son idénticas en su significado:
+
+  B<ejemplo: C<$a E<lt>=E<gt> $b>>
+
+  B<ejemplo: C<< $a <=> $b >>>
+
+  B<ejemplo: C<< $a E<lt>=E<gt> $b >>>
+
+  B<<< ejemplo: C<< $a E<lt>=E<gt> $b >> >>>
+
+=back
+
+En la interpretación Pod, una parte notablemente delicada es la correcta interpretación de los códigos formateados (¡potencialmente anidados!).  Los desarrolladores deberían consultar el código en la rutina C<parse_text> en Pod::Parser como ejemplo de una correcta implementación.
+
+=over
+
+=item C<IE<lt>textoE<gt>> -- texto en itálica
+
+Vea el resumen en L<perlpod/"Códigos de formateo">.
+
+=item C<BE<lt>textoE<gt>> -- texto en negrita
+
+Vea el resumen en L<perlpod/"Códigos de formateo">.
+
+=item C<CE<lt>códigoE<gt>> -- texto de código
+
+Vea el resumen en L<perlpod/"Códigos de formateo">.
+
+=item C<FE<lt>nombre de archivoE<gt>> -- estilo para nombres de archivo
+
+Vea el resumen en L<perlpod/"Códigos de formateo">.
+
+=item C<XE<lt>nombre de un tópicoE<gt>> -- una entrada de un índice
+
+Vea el resumen en L<perlpod/"Códigos de formateo">.
+
+Este código es tan inusual que la mayor parte de los formateadores descartarán completamente este código y su contenido.  Otros formateadores lo mostrarán con códigos invisibles que se pueden usar en la construcción de un índice del documento actual.
+
+=item C<ZE<lt>E<gt>> -- un código de formateo nulo (efecto cero)
+
+Vea el resumen en L<perlpod/"Códigos de formateo">.
+
+Sería extraño que este código tuviese algún contenido.  Es decir, un procesador podría quejarse si ve C<ZE<lt>patatasE<gt>>.  Se queje o no, el texto I<patatas> debería ignorarse.
+
+=item C<LE<lt>nombreE<gt>> -- un enlace
+
+La complicada sintaxis de este código se explican a lo largo de L<perlpod/"Códigos de formateo">, y los detalles de implementación se explican más abajo, en L</"Sobre los códigos LE<lt>...E<gt>">.  Interpretar los contenidos de LE<lt>contenido> es... algo delicado.  De forma notable, el contenido tiene que comprobarse por si se parece a una URL, o si tiene que dividirse con un "|" o "/" literal (¡en el orden correcto!), y así, I<antes> de resolver los códigos EE<lt>...>.
+
+=item C<EE<lt>escapeE<gt>> -- un carácter de escape
+
+Vea L<perlpod/"Códigos de formateo">, y varios puntos en L</Notas sobre implementar procesadores Pod>.
+
+=item C<SE<lt>textoE<gt>> -- texto que contiene espacios en blanco irrompibles
+
+Este código de formateo es sintácticamente sencillo, pero semánticamente complejo.  Eso significa que cada espacio en ese contenido imprimible de ese código, es un espacio irrompible.
+
+Considere:
+
+    C<$x ? $y    :  $z>
+
+    S<C<$x ? $y     :  $z>>
+
+Ambos implican texto monoespaciado (estilo c[ódigo]) consistiendo de "$x", un espacio, "?", un espacio, ":", un espacio, "$z".  La diferencia es que el último, con el código S, esos espacios no son espacios "normales", sino que son espacios irrompibles.
+
+=back
+
+
+Si un procesador Pod ve cualquier otro código de formateo distinto de los listados antes (como en "NE<lt>...>" o "QE<lt>...>", etc.), ese procesador debe tratarlo, por defecto, como un error.
+Un intérprete de Pod puede permitir a una aplicación en particular que añada comandos a la lista anterior; un intérprete de Pod podría incluso permitir una forma de estipular, por cada comando adicional, si requiere alguna forma especial de procesado, como lo hace LE<lt>...>.
+
+Versiones futuras de esta especificación pueden añadir códigos adicionales de formateo.
+
+Nota histórica: Unos pocos y antiguos procesadores Pod podrían no ver un ">" como cierre de un código "CE<lt>", si el ">" si estaba precedido por un "-".  Esto era algo así:
+
+    C<$foo->bar>
+
+podría interpretarse como equivalente a esto:
+
+    C<$foo-E<gt>bar>
+
+en lugar de equivaler a un código de formateo "C" conteniendo solo "$foo-", y luego un "bar>" fuero del código de formateo "C".  Este problema se ha solucionado con la adición de sintaxis como esta:
+
+    C<< $foo->bar >>
+
+Los intérpretes quejosos no deben tratar "->" como algo especial.
+
+Los códigos de formateo no pueden, absolutamente, abarcar párrafos.  Si un código empieza en un párrafo, y no se encuentra el código de cierre al final del párrafo, el intérprete Pod debe cerrar el código de formateo, y debe quejarse (como por ejemplo "Un código sin terminar en el párrafo que comienza en la línea 123: 'Los objetos de tiempo no son...'").  Así que estos dos párrafos
+
+  I<¡Te he dicho que no hagas eso!
+
+  ¡No me hagas decirlo de nuevo!>
+
+... I<no> se deben interpretar como dos párrafos en itálica (con el código I comenzando en un párrafo y terminando en el otro).  En lugar de eso, el primer párrafo debería generar una advertencia, pero, aparte de eso, el código anterior debe interpretarse como si fuera
+
+  I<¡Te he dicho que no hagas eso!>
+
+  ¡No me hagas decirlo de nuevo!E<gt>
+
+(En la jerga SGML, todos los comandos Pod son como elementos a nivel de bloque, mientras que todos los códigos de formateo Pod son como elementos a nivel de incrustación).
+
+
+
+=head1 Notas sobre la implementación de procesadores Pod
+
+Lo que sigue es una larga sección de requerimientos variados y sugerencias para hacer el procesado Pod.
+
+=over
+
+=item *
+
+Los formateadores Pod deberían tolerar líneas en bloques literales de cualquier longitud, incluso si eso significa romperlos (posiblemente varias veces, para líneas muy largas) para evitar que el texto sobrepase el límite de la página.  Los formateadores Pod pueden advertir de tal ruptura de líneas.  Tales avisos son apropiados, particularmente para líneas de más de 100 caracteres de longitud que, normalmente, no será algo intencionado.
+
+=item *
+
+Los intérpretes Pod deben reconocer I<todos> los formatos de fin de línea, los tres bien conocidos: CR, LF y CRLF.  Vea L<perlport|perlport>.
+
+=item *
+
+Los intérpretes Pod deberían aceptar líneas de entrada de cualquier longitud.
+
+=item *
+
+Desde que Perl reconoce una marca Unicode I<Byte Order Mark> (BOM) al comienzo de los archivos como señal de que el archivo está codificado en Unicode UTF-16 (bien sea I<big-endian> o I<little-endian>) o UTF-8; los intérpretes Pod deberían hacer lo mismo.  De otra forma, la codificación de caracteres debería entenderse como UTF-8 si el primer byte de la secuencia parece una secuencia UTF-8 válida o, de otra forma, como CP-1252 (versiones anteriores de esta especificación usaban Latin-1 en lugar de CP-1252).
+
+Versiones futuras de esta especificación pueden decir cómo Pod puede aceptar otras codificaciones.  Presumiblemente, el tratamiento de otras codificaciones en la interpretación Pod deberían ser como en la interpretación XML: sin importar la codificación que un archivo Pod declare, el contenido se almacena en memoria como caracteres Unicode.
+
+=item *
+
+Las bien conocidas marcas Unicode I<Byte Order> (BOM) son así: si el archivo comienza con los dos bytes 0xFE y 0xFF, es la marca BOM para UTF-16 I<big-endian>.  Si el archivo comienza con dos los dos bytes 0xFF 0xFE, es la marca BOM para UTF-16 I<little-endian>.  En una plataforma ASCII, si el archivo comienza con los tres bytes 0xEF 0xBB 0xBF, es la marca BOM para UTF-8.
+Un mecanismo adaptado para la plataforma EBCDIC es:
+
+  my $utf8_bom = "\x{FEFF}";
+  utf8::encode($utf8_bom);
+
+=for comment
+ use bytes; print map sprintf(" 0x%02X", ord $_), split '', "\x{feff}";
+ 0xEF 0xBB 0xBF
+
+=for comment
+ Si se modificó toke.c para soportar UTF-32, añadir aquí una mención.
+
+=item *
+
+Una heurística ingenua, pero a menudo suficiente, en plataformas ASCII, para comprobar el bit más alto de la secuencia de bytes en un archivo sin BOM (¡tanto en código como en un Pod!), para ver si esa secuencia lo valida como UTF-8 (RFC 2279), es comprobar si ese primer byte en la secuencia está en el rango 0xC2 - 0xFD I<y> si el byte siguiente está en el rango 0x80 - 0xBF.  Si es así, el intérprete puede concluir que ese archivo está en UTF-8, y en todas las secuencias con bits altos, en el archivo, se debería asumir que están en UTF-8.  De lo contrario, el intérprete debería tratar el archivo como si estuviese en CP-1252.  (Una mejor comprobación, y que también funciona en plataformas EBCDIC, es pasar una copia de la secuencia a L<utf8::decode()|utf8> que ejecuta una validación completa de la secuencia y devuelve VERDADERO si es un UTF-8 válido; y si no, FALSO.  Esta función siempre está precargada, y es rápida porque está escrita en C, y solo es necesario llamarla una vez, así que no necesita evitarla por problemas de rendimiento).
+En la improbable circunstancia de que el bit más alto de la secuencia, en un archivo que realmente no sea UTF-8, le haga aparecer como que sí lo fuera, podemos ayudar a nuestra heurística (así como a cualquier otra heurística inteligente) prefijando esa línea con una línea de comentario que contenga una secuencia con un bit alto activado que, claramente, indique que I<no> es un UTF-8 válido.  Una línea que consista en un sencillo "#", una e con tilde, y cualquier byte sin el bit alto activado, es suficiente para establecer la codificación de este archivo.
+
+=for comment
+ Si/CUANDO alguna alma valiente convierta estas heurísticas en una genérica
+ clase de archivo de texto (¿o capa PerlIO?), podemos borrar, presumiblemente,
+ la mención a estos detalles picajosos, de este archivo, y en lugar de eso, podemos
+ decirle a la gente que solo use la capa/clase apropiada.
+ El auto reconocimiento de las secuencias de los caracteres de nueva línea sería otra deseable
+ característica de tal capa/clase.
+ PISTA PISTA PISTA.
+
+=for comment
+ "La probabilidad de que una cadena de caracteres
+ en otra codificación aparezca como un UTF-8 válido, es baja" - RFC2279
+
+=item *
+
+Los procesadores Pod deben tratar un "=for [etiqueta] [contenido...]" párrafo con el mismo significado que un "=begin [etiqueta]" párrafo, contenido, y un "=end [etiqueta]" párrafo.  (El intérprete puede simplificar estas dos construcciones, o puede dejarlas diferentes, esperando que el formateador las tratará de la misma manera).
+
+=item *
+
+Cuando se muestre Pod a un formato que permita comentarios (e.d., a casi cualquier formato parecido al texto sencillo), un formateador Pod debe insertar el texto del comentario identificando su nombre y número de versión, y el nombre y números de versión de cualquier módulo que fuera necesario para procesar el Pod.
+Ejemplos sencillos:
+
+ %% POD::Pod2PS v3.14159, usando POD::Parser v1.92
+
+ <!-- Pod::HTML v3.14159, usando POD::Parser v1.92 -->
+
+ {\doccomm generado por Pod::Tree::RTF 3.14159 usando Pod::Tree 1.08}
+
+ .\" Pod::Man versión 3.14159, usando POD::Parser versión 1.92
+
+Los formateadores pueden también insertar comentarios adicionales, incluyendo: la fecha de publicación del programa formateador de Pod, la dirección de contacto del autor o autores del formateador, la hora actual, el nombre del archivo de entrada, las opciones de formateo que están activas, versión de Perl utilizada, etc.
+
+Los formateadores también pueden elegir anotar los errores/advertencias como comentarios, además de o en lugar de emitirlos (como mensajes hacia STDERR o muriendo -con C<die>-).
+
+=item *
+
+Los intérpretes de Pod I<pueden> emitir mensajes de advertencia o de error ("Unknown E code
+EE<lt>zslig>!") a STDERR (bien sea por medio de impresión hacia STDERR, o por efecto de C<warn>/C<carp>, o C<die>/C<croak>), pero I<debe> permitir la supresión de toda salida hacia STDERR, y en su lugar permitir una opción para reportar errores/advertencias de otra manera, bien sea disparando una retrollamada, o anotar los errores en algún atributo del documento objetivo, o algún otro mecanismo similar no intrusivo -o incluso añadiendo una sección "Errores Pod" al final del resultado interpretado del documento-.
+
+=item *
+
+En casos de documentos excepcionalmente aberrantes, los intérpretes de Pod pueden abortar la interpretación.  Incluso entonces, debe evitarse el uso de C<die>/C<croak>; donde sea posible, la biblioteca de interpretación puede, simplemente, cerrar el archivo de entrada y añadir un texto como "*** Interpretación abortada ***" al final del documento (parcialmente) en memoria.
+
+=item *
+
+En párrafos donde los códigos de formateo (como EE<lt>...>, BE<lt>...>)
+se entienden (e.d., I<no> son párrafos literales, sino I<incluyendo> párrafos ordinarios, y párrafos comando que producen texto representable, como "=head1"), el espacio en blanco literal debería, generalmente, considerarse "insignificante", en que un espacio en blanco literal tiene el mismo significado que cualquier número (distinto de cero) de espacios literales, caracteres de nueva línea literales, y tabuladores literales (mientras que esto no produzca líneas en blanco, ya que estas podrían terminar el párrafo).  Los intérpretes de Pod deberían compactar el espacio en blanco literal en cada párrafo procesado, pero pueden ofrecer una opción para impedirlo (ya que algunas tareas de procesamiento no lo requieren), o pueden seguir reglas especiales adicionales (por ejemplo, tratar especialmente las secuencias punto-espacio-espacio o punto-caracteres de nueva línea).
+
+=item *
+
+Los intérpretes Pod no debería, por defecto, intentar convertir los apóstrofes (') y comillas (") en comillas simples (como 9's, 66's, 99's, etc.), ni intentar convertir la comilla inversa (`) en cualquier otra cosa que no sea un carácter de comilla inversa (¡distinta de una comilla de apertura!), ni convertir "--" en ninguna otra cosa que no sean dos signos menos.  I<Nunca deben> hacer nada de esto dentro del texto de los códigos de formateo CE<lt>...>, y nunca, I<nunca>, convertirlo en párrafos literales.
+
+=item *
+
+Cuando se renderiza Pod a un formato que tiene dos clases de guiones (-), uno que es un guión irrompible, y otro que es un guión rompible (como en "programación-objeto", que se puede partir en varias líneas, como "programación-", nueva línea, "objeto"); a los formateadores se les anima a traducir, de forma general, un "-" a un guión irrompible, pero pueden aplicar una heurística para convertirlos algunos de estos a guiones rompibles.
+
+=item *
+
+Los formateadores Pod deben hacer esfuerzos razonables para evitar que el texto de código Perl se divida en varias líneas.  Por ejemplo, "Foo::Bar" en algunos sistemas de formateo es visto como elegible para ser dividido en varias líneas como en "Foo::", nueva línea, "Bar", o incluso "Foo::-", nueva línea, "Bar".  Esto se debería evitar donde sea posible, tanto desactivando todas las rupturas de línea en medio de una palabra, o envolviendo ciertas palabras rodeándolas con puntuación interna en códigos "no rompas esto en varias líneas" (que en algunos formatos pueden quizás no ser un único código, pero podría ser una cuestión de insertar espacios de tamaño cero irrompible entre cada par de caracteres de una palabra).
+
+=item *
+
+Los intérpretes de Pod deberían, por defecto, expandir los tabuladores dentro de los párrafos literales a medida de que son procesador, antes de pasarlos al formateador o a otro procesador.  Los intérpretes también pueden permitir una opción que obvie esto.
+
+=item *
+
+Los intérpretes de Pod debería, por defecto, eliminar los caracteres de nueva línea del final de los párrafos literales y normales, antes de pasarlos al formateador.  Por ejemplo, mientras que al párrafo que está leyendo ahora, se le podría considerar, en código fuente Pod, que termina (y contiene) los caracteres de nueva línea, debería procesarse como terminando con (y conteniendo) el carácter punto que termina esta frase.
+
+=item *
+
+Los intérpretes de Pod , cuando reportan errores, deberían hacer algunos esfuerzos para reportar un número de línea aproximado ("¡EE<lt>> anidados en el párrafo #52, cerca de la línea 633 de Thing/Foo.pm!"), en lugar de simplemente anotar el número de párrafo("¡EE<lt>> anidados en el párrafo #52 de Thing/Foo.pm!").  Donde sea problemático, el número del párrafo debería, al menos, acompañarse por un extracto del párrafo ("EE<lt>> anidados en el párrafo #52 de Thing/Foo.pm, que comienza así: 'Los accesores de lectura/escritura del atributo CE<lt>tasa de interés>...'").
+
+=item *
+
+Los intérpretes de Pod, cuando procesan una serie de párrafos literales consecutivos, deberían considerarles como un único párrafo literal en el que sucede que contiene líneas en blanco.  Por ejemplo, estas dos líneas, que tienen una línea en blanco en medio de ellas:
+
+	use Foo;
+
+	print Foo->VERSION
+
+deberían unificarse en un único párrafo ("\tuse Foo;\n\n\tprint
+Foo->VERSION") antes de pasarse al formateador o a otro procesador.  Los intérpretes también pueden permitir una opción que obvie esto.
+
+Mientras que esto podría ser demasiado pesado de implementar en intérpretes Pod basados en eventos, es muy simple para intérpretes que devuelven árboles de interpretación.
+
+=item *
+
+A los intérpretes de Pod, donde sea factible, se les aconseja evitar dividir los párrafos literales pequeños (digamos, menos de doce líneas) a lo largo de las páginas.
+
+=item *
+
+Los intérpretes de Pod deben tratar a una línea que contenga solamente espacio en blanco o tabuladores como una "línea en blanco", como los que separa a los párrafos.  (Algunos intérpretes más antiguos reconocen solo dos caracteres de nueva línea adyacentes como una "línea en blanco" pero no reconocerían un carácter de nueva línea, un espacio, y otro carácter de nueva línea, como una línea en blanco.  Este no es un comportamiento deseable).
+
+=item *
+
+Los autores de formateadores/procesadores de Pod deberían hacer todos los efectos para evitar tener que escribir su propio intérprete de Pod.  Ya hay muchos en CPAN, con un amplio rango de estilos de interfaz; y uno de ellos, Pod::Parser, viene con las versiones modernas de Perl.
+
+=item *
+
+Los caracteres en documentos Pod pueden quedarse como literales, o por número en códigos EE<lt>n>, o por un mnemónico equivalente, como en EE<lt>eacute> que es exactamente equivalente a EE<lt>233>.  Los números son valores Latin1/Unicode, incluso en plataformas EBCDIC.
+
+Cuando se refiere a caracteres usando un código numérico EE<lt>n>, los números en el rango 32-126 refieren a los bien conocidos caracteres US-ASCII (también definidos por Unicode, con el mismo significado), que todos los formateadores Pod deben mostrar fielmente.  No se deberían usar los caracteres cuyos números EE<lt>E<gt> están en el rango 0-31 y 127-159 (ni como literales ni como códigos EE<lt>número>), excepto para la secuencia literal de bytes de los caracteres de nueva línea (ASCII 13, ASCII 13 10 o ASCII 10), y tabulador (ASCII 9).
+
+Los números en el rango 160-255 se refieren a los caracteres Latin-1 (también definidos en Unicode, con el mismo significado).  Los números por encima de 255 deberían entenderse que se refieren a caracteres Unicode.
+
+=item *
+
+Tenga en cuenta que algunos formateadores no pueden mostrar de forma correcta los caracteres que estén fuera del rango 32-126; y muchos son capaces de manejar 32-126 y 160-255, pero nada por encima de 255.
+
+=item *
+
+Además de los conocidos códigos "EE<lt>lt>" y "EE<lt>gt>" para menor-que y mayor-que, los intérpretes Pod deben entender "EE<lt>sol>" para "/" (barra inclinada, sólida) y "EE<lt>verbar>" para "|" (barra vertical, tubería).  Los intérpretes Pod deberían también entender "EE<lt>lchevron>" y "EE<lt>rchevron>" como códigos heredados de los caracteres 171 y 187, es decir, "comillas dobles angulares hacia la izquierda" = "comillas francesas a la izquierda" y "comillas dobles angulares hacia la derecha" = "comillas francesas a la derecha".  (Se parecen un poco a "<<" y ">>", y es preferible expresarlas ahora con los códigos HTML/XHTML "EE<lt>laquo>" y "EE<lt>raquo>").
+
+=item *
+
+Los intérpretes Pod deberían entender todos los códigos "EE<lt>html>" tal como se definen en las declaraciones de entidades en las especificaciones más recientes de XHTML en C<www.W3.org>.  Los intérpretes de Pod deben entender al menos las entidades que definen caracteres en el rango 160-255 (Latin-1).  Los intérpretes de Pod, cuando se encaran con algún código "EE<lt>I<identificador>>" desconocido, no deberían, simplemente, reemplazarlo con una cadena nula (por defecto, al menos), sino dejarlo pasarlo como una cadena que consiste de los caracteres literales E, menor-que, I<identificador>, mayor-que.  O los intérpretes Pod pueden ofrecer la opción alternativa de procesar los códigos desconocidos "EE<lt>I<identificador>>" disparando un evento especial para estos códigos, o añadiendo un tipo de nodo especial al árbol del documento construido en memoria.  El "EE<lt>I<identificador>>" puede tener un significado especial para algunos procesadores, o algunos procesadores pueden escoger añadirle al informe especial de errores.
+
+=item *
+
+Los intérpretes de Pod pueden también soportar los códigos XHTML "EE<lt>quot>" para los caracteres 34 (comilla doble, "), "EE<lt>amp>" para el carácter 38 (et, &), y "EE<lt>apos>" para el carácter 39 (apóstrofe, ').
+
+=item *
+
+Note que en todos los casos de "EE<lt>lo-que-seaE<gt>", I<lo-que-sea> (siendo un nombre html o un número en cualquier base) deben consistir solo de caracteres alfanuméricos -esto es, I<lo-que-sea> debe coincidir con C<m/\A\w+\z/>-.  Así, S<"EE<lt> 0 1 2 3 E<gt>"> no es válido, porque contiene espacios, que no son caracteres alfanuméricos.  Esto, presumiblemente, no I<necesita> un trato especial por parte de un procesador Pod; S<" 0 1 2 3 "> no se parece a un número, de ninguna base, así que, presumiblemente, se le buscará en una tabla de nombres HTML.  Ya que no existe (y no puede existir) una entidad HTML que se llame S<" 0 1 2 3 ">, se tratará como un error.  Sin embargo, los procesadores Pod pueden tratar S<"EE<lt> 0 1 2 3 E<gt>"> o "EE<lt>e-acute>" como I<sintácticamente> inválido, generando potencialmente un mensaje de error (o advertencia o evento) diferente del de nombre de html desconocido (pero teóricamente válido), como en "EE<lt>qacute>" [sic].  Sin embargo, a los intérpretes Pod no se les requiere que hagan esta distinción.
+
+=item *
+
+Note que el EE<lt>número> I<no debe> interpretarse como un simple "punto de código I<número> en el conjunto de caracteres actual/nativo".  Únicamente significa que "el carácter que se representa por el punto de código I<número> en Unicode". (Esto es idéntico a la semántica de &#I<número>; en XML).
+
+Esto requeriría que muchos formateadores tuviesen tablas de mapeo, desde los puntos de código tratables (como el "\xE9" para el carácter e-acute) a las secuencias de escape o códigos necesarios para convertir tales secuencias en el formato de la salida.  Un conversor para *roff podría, por ejemplo, saber que "\xE9" (tanto si es literalmente, o a través de una secuencia EE<lt>...>) se debe convertir en "e\\*'".
+De modo parecido, un programa que muestra Pod en una ventana del Mac OS, podría, presumiblemente, necesitar saber que "\xE9" se mapea al punto de código 142 en la codificación MacRoman que (en el momento de escribir esto) es nativo para el Mac OS.  Tales mapeos Unicode-a-lo-que-sea están, presumiblemente, ya ampliamente disponibles para los formatos de salida más comunes.  (Tales mapeos pueden estar incompletos!  De los implementadores no se espera que den soporte a los silábicos Cherokee, runas Etruscas, símbolos musicales Bizantinos, o cualquier otra cosa extraña que Unicode puede codificar).  Y si un documento Pod usa un carácter que no se encuentra en tal mapeo, el formateador debería considerarlo un carácter no representable.
+
+=item *
+
+Si, por sorpresa, el implementador de un formateador no puede encontrar una tabla satisfactoria que mapee desde caracteres Unicode a secuencias de escape en el formato objetivo (por ejemplo, una tabla decente de caracteres Unicode a escapes *roff), necesitará construir tal tabla.  Si usted está en estas circunstancias, debería comenzar con los caracteres en el rango 0x00A0 - 0x00FF, que son los caracteres acentuados que más se usan.  Y luego proceder (tanto como la paciencia lo permita y obligue la exigencia) a través de los caracteres que los grupos estándares (X)HTML juzgan como suficientemente importantes como para merecer un mnemónico.  Esto se declara en las especificaciones (X)HTML del sitio web www.W3.org  En el momento de escribir esto (septiembre de 2001), los archivos con la declaración de entidades son:
+
+  http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent
+  http://www.w3.org/TR/xhtml1/DTD/xhtml-special.ent
+  http://www.w3.org/TR/xhtml1/DTD/xhtml-symbol.ent
+
+Luego puede progresar a través del resto de caracteres Unicode en el rango 0x2000-0x204D (consulte las tablas de caracteres en www.unicode.org) y cualquier otra cosa elegante.  Por ejemplo, en F<xhtml-symbol.ent>, hay esta entrada:
+
+  <!ENTITY infin    "&#8734;"> <!-- infinity, U+221E ISOtech -->
+
+Mientras que el mapeo de "infin" al carácter "\x{221E}" se gestionará (esperemos) por el intérprete de Pod, la presencia del carácter en este archivo significa que es razonablemente importante incluir en una tabla del formateador un mapeo desde los principales caracteres Unicode a los códigos necesarios para presentarlos.  Así que para un mapeo Unicode-a-*roff, por ejemplo, podría contener esta entrada:
+
+  "\x{221E}" => '\(in',
+
+Se espera con entusiasmo que en el futuro, un número mayor de formatos (y formateadores) soportarán caracteres Unicode de forma directa (como hace (X)HTML con C<&infin;>, C<&#8734;> o C<&#x221E;>), reduciendo la necesidad de mapeos idiosincrásicos de Unicode-a-I<mis_escapes>.
+
+=item *
+
+Queda pendiente de cada formateador Pod el mostrar un buen juicio cuando se enfrente con un carácter no representable (que es distinto de una secuencia desconocida EE<lt>cosa> que el intérprete no podría resolver a nada, representable o no).  Es una buena práctica mapear letras latinas con diacríticos (como "EE<lt>eacute>"/"EE<lt>233>") a las correspondientes letras ASCII no acentuadas (como un sencillo carácter 101, "e"), pero, claramente, esto no es lo más factible, y un carácter no representable puede presentarse como "?", o parecido.  Intentando una sana conversión (como en EE<lt>233> a "e"), los formateadores Pod pueden usar la tabla %Latin1Code_to_fallback en L<Pod::Escapes|Pod::Escapes> o
+L<Text::Unidecode|Text::Unidecode>, si está disponible.
+
+Por ejemplo, este texto Pod:
+
+  La magia está habilitada si establece C<$Dinero> a 'E<euro>'.
+
+puede presentarse como:
+"La magia está habilitada si establece C<$Dinero> a 'I<?>'" o como
+"La magia está habilitada si establece C<$Dinero> a 'B<[euro]>'", o como
+"La magia está habilitada si establece C<$Dinero> a '[x20AC]'", etc.
+
+Un formateador Pod puede anotar, también, en un comentario o advertencia, una lista de los caracteres no representables encontrados.
+
+=item *
+
+EE<lt>...> puede aparecer libremente en cualquier código de formateo (distinto de otro EE<lt>...> o en un ZE<lt>>).  Es decir, "XE<lt>La solución 1.000.000 EE<lt>euro>>" es válida, como en "LE<lt>La solución 1.000.000 EE<lt>euro>|Million::Euros>".
+
+=item *
+
+Algunos formateadores Pod imprimen a formatos que implementan espacios irrompibles como un carácter individual (que llamará "NBSP"), y otros imprimen a formatos que implementan espacios irrompibles solo como espacios rodeados con un código "no dividir en líneas".  Note que a nivel de Pod, pueden ocurrir ambas suertes de códigos: Pod puede contener un carácter NBSP (tanto de forma literal o como un código "EE<lt>160>" o "EE<lt>nbsp>"); y Pod puede contener códigos "SE<lt>foo IE<lt>barE<gt> baz>", donde se usan "meros espacios" (carácter 32) en tales códigos para representar los espacios irrompibles.  Los intérpretes Pod deberían considerar el soportar la interpretación opcional de "SE<lt>foo
+IE<lt>barE<gt> baz>" como si fuera "fooI<NBSP>IE<lt>barE<gt>I<NBSP>baz" y, yendo de otra manera, la interpretación opcional de grupos de palabras unidas por NBSP como si cada grupo estuviera en un código SE<lt>...>, para que así los formateadores puedan usar la representación que mejor mapee a lo que demanda la salida.
+
+=item *
+
+Algunos procesadores pueden encontrar que el código C<SE<lt>...E<gt>> es más sencillo de implementar reemplazando cada espacio en el árbol de interpretación bajo el contenido de la S, con un NBSP.  Pero, atención: el reemplazo I<no> debería aplicarse a todos los espacios de I<todo> el texto, sino I<solo> a los espacios dentro del texto I<imprimible>.  (Esta distinción puede o no ser evidente en un particular modelo de árbol/evento implementado por el intérprete Pod).  Por ejemplo, considere este ejemplo poco usual:
+
+   S<L</Funciones autocargadas>>
+
+Significa que el espacio de en medio del texto del enlace visible no debe dividirse en varias líneas.  En otras palabras, es lo mismo que esto:
+
+   L<"FuncionesE<160>autocargadas"/Funciones autocargadas>
+
+Sin embargo, un espacio-a-NBSP mal puesto podría (erróneamente) producir algo equivalente a esto:
+
+   L<"FuncionesE<160>autocargadas"/FuncionesE<160>autocargadas>
+
+... que, con casi toda seguridad no funcionará como hiperenlace (asumiendo que este formateador saque un formato que soporte hipertexto).
+
+Los formateadores pueden decidir el no soportar el código de formato S, especialmente en casos donde la salida formateada simplemente no contiene caracteres/códigos NBSP y sin códigos del tipo "no divida esto en varias líneas".
+
+=item *
+
+Además del carácter NBSP detallado antes, a los desarrolladores se les recuerda la existencia de otro carácter "especial" en Latin-1, el carácter "guión blando", también conocido como "guión discrecional", es decir, C<EE<lt>173E<gt>> = C<EE<lt>0xADE<gt>> = C<EE<lt>shyE<gt>>).  Este carácter expresa un punto de guionado opcional.  Es decir: normalmente no se representa, pero puede representarse como un "-" si un formateador divide la palabra en ese punto.  Los formateadores Pod deberían, como es lo apropiado, hacer uno de los siguientes: 1) representarlo con un código con el mismo significado (por ejemplo, "\-" en RTF), 2) pasarlo a través a la espera de que el formateador comprenda este carácter, o 3) borrarlo.
+
+Por ejemplo:
+
+  señaE<shy>lización
+  manusE<shy>crito
+  JarkE<shy>ko HieE<shy>taE<shy>nieE<shy>mi
+
+Esta señala a un formateador que si va a poner un guión en "señalización" o "manuscrito", entonces debe hacerlo como "seña-I<[linebreak]>lización" o "manus-I<[linebreak]>crito" (y si no va a hacerlo, entonces C<EE<lt>shyE<gt>> no muestra nada).  Y si va a poner guiones a "Jarkko" o "Hietaniemi", solo podrá hacerlo en los puntos donde esté el código C<EE<lt>shyE<gt>>.
+
+En la práctica, se prevé que este carácter no se use mucho, pero los formateadores deberían, o soportarlo, o borrarlo.
+
+=item *
+
+Si cree que quiere añadir un nuevo comando a Pod (como, digamos, un comando "=biblio"), considere si podría obtener el mismo efecto con un for o una secuencia begin/end: "=for biblio ..." o "=begin biblio" ... "=end biblio".  Los procesadores de Pod processors que no entienden "=for biblio", etc., simplemente lo ignorará, mientras que puede quejarse ruidosamente si ve "=biblio".
+
+=item *
+
+A lo largo de este documento, "Pod" es la ortografía preferida para el nombre del formato de documentación.  También puede usar "POD" o "pod".  Para la documentación que está (típicamente) en formato Pod, puede usar "pod", "Pod" o "POD".  Entender estas distinciones es útil; pero no obsesionarse sobre cómo escribirlo.
+
+=back
+
+
+
+
+
+=head1 Sobre los códigos LE<lt>...E<gt>
+
+Después de echar un vistazo en L<perlpod|perlpod>, puede decir que el código LE<lt>...> es el más complejo de los códigos de formateo Pod.  Los siguientes puntos esperamos que clarifique lo que significa y cómo los procesadores deberían tratarlo.
+
+=over
+
+=item *
+
+En la interpretación de un código LE<lt>...>, los intérpretes Pod deben distinguir al menos cuatro atributos:
+
+=over
+
+=item Primero:
+
+El texto del enlace.  Si no hay ninguno, debe ser C<undef>.  (Por ejemplo, en "LE<lt>Funciones Perl|perlfunc>", el texto del enlace es "Funciones Perl".
+En "LE<lt>Time::HiRes>" e incluso "LE<lt>|Time::HiRes>", no hay texto del enlace.  Note que el texto del enlace puede estar formateada).
+
+=item Segundo:
+
+El texto del enlace posiblemente inferido; es decir, si no existe un texto del enlace, entonces este texto se inferirá en ese lugar.  (Por ejemplo, para "LE<lt>Getopt::Std>", el texto del enlace inferido es "Getopt::Std".)
+
+=item Tercero:
+
+El nombre o URL, o C<undef> si no hay ninguno.  (Por ejemplo, en "LE<lt>Funciones Perl|perlfunc>", el nombre (llamado algunas veces la página) es "perlfunc".  En "LE<lt>/ADVERTENCIAS>", el nombre es C<undef>).
+
+=item Cuarto:
+
+La sección (alias "item" en perlpod anteriores), o C<undef> si no hay nada.  Por ejemplo, en "LE<lt>Getopt::Std/DESCRIPCIÓNE<gt>", "DESCRIPCIÓN" es la sección.  (Note que no es lo mismo que la sección de una página de manual como el "5" en "man 5
+crontab".  "Sección Foo" en un sentido Pod significa la parte del texto que se inicia por la cabecera o elemento cuyo texto es "Foo").
+
+=back
+
+Los intérpretes Pod pueden también tener en cuenta atributos adicionales incluyendo:
+
+=over
+
+=item Quinto:
+
+Un indicador por si el elemento 3 (si está presente) es un URL (como lo es "http://lists.perl.org"), en cuyo caso no debería existir el atributo de sección; un nombre Pod (como lo es "perldoc" y "Getopt::Std"); o posiblemente una página de manual (como lo es "crontab(5)").
+
+=item Sexto:
+
+El contenido original de LE<lt>...>, antes del texto, se divide por "|", "/", etc., y antes de que se expandan los códigos EE<lt>...>.
+
+=back
+
+(Lo anterior se numeró solo para referirnos de forma concisa más abajo.  No es un requisito que se pasen como una lista real o array).
+
+Por ejemplo:
+
+  L<Foo::Bar>
+    =>  undef,                         # texto del enlace
+        "Foo::Bar",                    # posiblemente el texto del enlace inferido
+        "Foo::Bar",                    # nombre
+        undef,                         # sección
+        'pod',                         # qué clase de enlace
+        "Foo::Bar"                     # contenido original
+
+  L<Sección de perlport sobre nuevas líneas|perlport/Nuevas líneas>
+    =>  "Sección de perlport sobre nuevas líneas",  # texto del enlace
+        "Sección de perlport sobre nuevas líneas",  # posiblemente el texto del enlace inferido
+        "perlport",                    # nombre
+        "Newlines",                    # sección
+        'pod',                         # qué clase de enlace
+        "Sección de perlport sobre nuevas líneas|perlport/Nuevas líneas"
+                                       # contenido original
+
+  L<perlport/Nueva líneas>
+    =>  undef,                         # texto del enlace
+        '"Nuevas líneas" en perlport', # posiblemente el texto del enlace inferido
+        "perlport",                    # nombre
+        "Newlines",                    # sección
+        'pod',                         # qué clase de enlace
+        "perlport/Nuevas líneas"       # contenido original
+
+  L<crontab(5)/"DESCRIPCIÓN">
+    =>  undef,                         # texto del enlace
+        '"DESCRIPCIÓN" en crontab(5)', # posiblemente el texto inferido
+        "crontab(5)",                  # nombre
+        "DESCRIPCIÓN",                 # sección
+        'man',                         # qué tipo de enlace
+        'crontab(5)/"DESCRIPCIÓN"'     # contenido original
+
+  L</Atributos de objeto>
+    =>  undef,                         # texto del enlace
+        '"Atributos de objeto"',       # posiblemente el texto del enlace
+        undef,                         # nombre
+        "Atributos de objeto",         # sección
+        'pod',                         # qué clase de enlace
+        "/Atributos de objeto"         # contenido original
+
+  L<http://www.perl.org/>
+    =>  undef,                         # texto del enlace
+        "http://www.perl.org/",        # es posible que se infiera texto del enlace
+        "http://www.perl.org/",        # nombre
+        undef,                         # sección
+        'url',                         # qué clase de enlace
+        "http://www.perl.org/"         # contenido original
+
+  L<Perl.org|http://www.perl.org/>
+    =>  "Perl.org",                    # texto del enlace
+        "http://www.perl.org/",        # es posible que se infiera texto del enlace
+        "http://www.perl.org/",        # nombre
+        undef,                         # sección
+        'url',                         # qué clase de enlace
+        "Perl.org|http://www.perl.org/" # contenido original
+
+Note que puede distinguir los enlaces/URL de cualquier otra cosa por el hecho que coinciden C<m/\A\w+:[^:\s]\S*\z/>.  Así que C<LE<lt>http://www.perl.comE<gt>> es un URL, pero C<LE<lt>HTTP::ResponseE<gt>> no lo es.
+
+=item *
+
+En caso de los códigos LE<lt>...> sin la parte de "texto|", los viejos formateadores han mostrado una gran variabilidad en cómo mostrar el enlace o la referencia cruzada.  Por ejemplo, LE<lt>crontab(5)> se presentará como "la página de manual C<crontab(5)>" o "en la página de manual C<crontab(5)>" o solo "C<crontab(5)>".
+
+Los procesadores Pod processors ahora deben tratar enlaces sin "texto|" como sigue:
+
+  L<nombre>         =>  L<nombre|nombre>
+  L</sección>       =>  L<"sección"|/sección>
+  L<nombre/sección> =>  L<"sección" en nombre|nombre/sección>
+
+=item *
+
+Note que los nombres de sección podrían contener códigos de marcas.  Es decir, si una sección comienza con:
+
+  =head2 Sobre el operador C<-M>
+
+o bien:
+
+  =item Sobre el operador C<-M>
+
+entonces un enlace hacia él podría parecerse a esto:
+
+  L<algúndocumento/Sobre el operador C<-M>>
+
+Los formateadores pueden escoger el ignorar el marcado con el propósito de resolver el enlace y usar solo los caracteres representables en el nombre de sección, como en:
+
+  <h1><a name="Sobre_el_operador_-M">Sobre <code>-M</code>
+  (operador)</h1>
+
+  ...
+
+  <a href="algúndocumento#Sobre_el_operador_-M">Sobre <code>-M</code>
+  (operador)" en algúndocumento</a>
+
+=item *
+
+Versiones anteriores de perlpod distinguían enlaces C<LE<lt>nombre/"sección"E<gt>> de los enlaces C<LE<lt>nombre/elementoE<gt>> (y sus objetivos).  Se han mezclado sintácticamente y semánticamente en la especificación actual, y I<sección> puede referirse tanto a un comando "=headI<n> Contenido titular" o a un comando "=item Contenido de un artículo".  Esta especificación no especifica qué comportamiento debe ocurrir en el caso de que un documento dado con diversos elementos produzcan todos el mismo identificador de I<sección> (por ejemplo, en HTML, diversos elementos producen el mismo I<nombre de ancla> en las marcas <a name="I<nombre de ancla>">...</a>).  Si los procesadores Pod pueden controlar este comportamiento, deberían usar el primero de tales anclajes.  Es decir, C<LE<lt>Foo/BarE<gt>> refiere a la I<primera> sección "Bar" en Foo.
+
+Pero para algunos procesadores/formateadores esto no se puede controlar de forma sencilla; como con el ejemplo HTML, el comportamiento de múltiples anclajes ambiguos <a name="I<nombre de anclaje>">...</a> es más sencillo dejar que lo decidan los navegadores.
+
+=item *
+
+En un código C<LE<lt>texto|...E<gt>>, el texto puede contener códigos de formateo para formatear o para escapes EE<lt>...> , como en:
+
+  L<B<ummE<234>cosas>|...>
+
+Para códigos C<LE<lt>...E<gt>> sin una parte "nombre|", solo pueden ocurrir códigos C<EE<lt>...E<gt>> y C<ZE<lt>E<gt>>.  Es decir, los autores no deben usar "C<LE<lt>BE<lt>Foo::BarE<gt>E<gt>>".
+
+Note, sin embargo, que los códigos de formateo y ZE<lt>> pueden ocurrir en cualquiera y en todas las partes de un LE<lt>...> (por ejemplo, en I<nombre>, I<sección>, I<texto>,
+y I<url>).
+
+Los autores no deben anidar códigos LE<lt>...>.  Por ejemplo, "LE<lt>La página de manual LE<lt>Foo::Bar>>" debería tratarse como un error.
+
+=item *
+
+Note que los autores de Pod puede usar códigos de formateo dentro de la parte de "texto" "LE<lt>texto|nombre>" (y también para LE<lt>texto|/"sección">).
+
+En otras palabras, esto es válido:
+
+  Vaya a leer L<los documentos sobre C<$.>|perlvar/"$.">
+
+Algunos formatos de salida que permiten mostrar códigos "LE<lt>...>" como hipertexto, podrían impedir que el texto del enlace no se pueda formatear; en ese caso, los formateadores tendrán que ignorar ese formateo.
+
+=item *
+
+En el momento de escribir esto, los valores de C<LE<lt>nombreE<gt>> son de dos tipos: tanto el nombre de una página Pod como C<LE<lt>Foo::BarE<gt>> (que podría ser un módulo Perl actual o un programa en un directorio @INC / PATH, o un archivo .pod en esos sitios); o el nombre de una página de manual Unix, como C<LE<lt>crontab(5)E<gt>>.  En teoría, C<LE<lt>chmodE<gt>> es ambiguo, entre una página Pod que se llame "chmod", o la página de manual Unix "chmod" (en cualquier sección de man).  Sin embargo, la presencia de una cadena en paréntesis, como en "crontab(5)", es suficiente para señalar que no se trata de una página Pod, y que presumiblemente es una página de manual Unix.  La distinción no es importante para muchos procesadores Pod, pero otros que muestran formatos de hipertexto pueden necesitar distinguirlos para saber representarles en un determinado código C<LE<lt>fooE<gt>>.
+
+=item *
+
+Versiones anteriores de perlpod permitían una sintaxis C<LE<lt>secciónE<gt>> (como en C<LE<lt>Atributos de objectE<gt>>), que no era fácilmente distinguible de la sintaxis C<LE<lt>nombreE<gt>> y para C<LE<lt>"sección"E<gt>> que era solo ligeramente menos ambiguo.  Esta sintaxis ya no está en la especificación, y se ha reemplazado por la sintaxis C<LE<lt>/secciónE<gt>> (done la barra diagonal anteriormente era opcional).  Los intérpretes Pod deberían tolerar la sintaxis C<LE<lt>"sección"E<gt>>, al menos por un tiempo.  La heurística sugerida para distinguir C<LE<lt>secciónE<gt>> de C<LE<lt>nombreE<gt>> es que si contienen algún espacio en blanco, es una I<sección>.  Los procesadores Pod deberían advertir que esto es sintaxis obsoleta.
+
+=back
+
+=head1 Sobre las regiones =over...=back
+
+Las regiones "=over"..."=back" se usan por diversas clases de estructuras parecidas a listas.  (Uso el término "región" aquí simplemente como un término que recolecta todo lo que haya desde "=over" al correspondiente "=back").
+
+=over
+
+=item *
+
+El valor numérico distinto de cero I<nivel-de-sangrado> en "=over I<nivel-de-sangrado>" ...
+"=back" se usa para darle al formateador una pista de cuántos "espacios" (em, o unidades aproximadas equivalentes) debe tabular, aunque muchos formateadores tendrán que convertirlo en una medida absoluta que quizás no coincida exactamente con el tamaño de los espacios (o emes) en la fuente de letras del documento.  Otros formateadores pueden tener que ignorar completamente ese número.  La falta explícita de un parámetro I<nivel-de-sangrado> es equivalente a un valor de I<nivel-de-sangrado> de 4.  Los procesadores Pod pueden quejarse si un I<nivel-de-sangrado> presente no es un número positivo que coincida con C<m/\A(\d*\.)?\d+\z/>.
+
+=item *
+
+A los autores de formateadores Pod se les recuerda que "=over" ... "=back" pueden mapearse a diferentes construcciones en su formato de salida.  Por ejemplo, para convertir Pod a (X)HTML, se puede mapear a cualquiera de estos: <ul>...</ul>, <ol>...</ol>, <dl>...</dl>, o <blockquote>...</blockquote>.  De modo parecido, "=item" puede mapearse a <li> o <dt>.
+
+=item *
+
+Cada región "=over" ... "=back" debería ser una de las siguientes:
+
+=over
+
+=item *
+
+Una región "=over" ... "=back" que solo contiene comandos "=item *", seguidos por un cierto número de párrafos normales/literales, otras regiones "=over" ... "=back" anidadas, párrafos "=for...", y regiones "=begin" ... "=end".
+
+(Los procesadores Pod deben tolerar un simple "=item" como si fuera "=item *").  Si un "*" se va a representar como un asterisco literal, una "o" o alguna clase de carácter de viñeta, se deja a elección del formateador Pod, y puede depender del nivel de anidamiento.
+
+=item *
+
+Una región "=over" ... "=back" conteniendo solo párrafos C<m/\A=item\s+\d+\.?\s*\z/>, cada uno (o cada grupo de ellos) seguido por un cierto número de párrafos normales/literales, otras regiones "=over" ... "=back" anidadas, párrafos "=for...", o códigos "=begin" ... "=end".  Note que los números deben empezar en 1 en cada sección, y deben continuar en orden y sin saltar números.
+
+(Los procesadores Pod deben tolerar líneas como "=item 1" como si fuera "=item 1.", con el punto).
+
+=item *
+
+Una región "=over" ... "=back" que solo contiene comandos "=item *", seguidos por un cierto número de párrafos normales/literales, otras regiones "=over" ... "=back" anidadas, párrafos "=for...", y regiones "=begin" ... "=end".
+
+El párrafo "=item [texto]" no debería coincidir con C<m/\A=item\s+\d+\.?\s*\z/> o C<m/\A=item\s+\*\s*\z/>, ni con C<m/\A=item\s*\z/>.
+
+=item *
+
+Una región "=over" ... "=back" que no contiene ningún párrafo "=item", y solo contiene cierto número de párrafos normales/literales, y posiblemente algunas regiones "=over"
+... "=back" anidadas, párrafos "=for..." y regiones "=begin" ... "=end".  Tal región "=over" ... "=back" sin ítems es equivalente en significado a un elemento "<blockquote>...</blockquote>" en HTML.
+
+=back
+
+Note que en todos los casos anteriores, puede determinar qué tipo de "=over" ... "=back" tiene, examinando el primer párrafo Pod (no "=cut" ni "=pod") después del comando "=over".
+
+=item *
+
+Los formateadores Pod I<deben> tolerar una arbitraria y gran cantidad de texto en el párrafo "=item I<texto...>".  En la práctica, la mayor parte de los párrafos son pequeños, como en:
+
+  =item Para atajar nuestro comercio con todas las partes del mundo
+
+Pero pueden ser arbitrariamente largos:
+
+  =item Para transportarnos más allá de los mares para probarnos por pretendidas
+  ofensas
+
+  =item Está en este momento transportando grandes ejércitos de mercenarios
+  extranjeros para completar el trabajo de muerte, desolación y
+  tiranía, comenzando con circunstancias de crueldad y perfidia
+  difícilmente equiparables en las eras más bárbaras, y totalmente
+  indignas del mando de una nación civilizada.
+
+=item *
+
+Los procesadores Pod deben tolerar los comandos "=item *" / "=item I<número>" sin párrafo adjunto.  El ítem del medio es un ejemplo:
+
+  =over
+
+  =item 1
+
+  Escoge limpieza en seco.
+
+  =item 2
+
+  =item 3
+
+  Paremos en el almacén.  Compra pastelitos rellenos de mantequilla de cacahuete, vodka y sillas de exterior, baratas.
+
+  =back
+
+=item *
+
+Ninguna región "=over" ... "=back" puede contener encabezados.  Los procesadores pueden tratar tales encabezados como un error.
+
+=item *
+
+Note que una región "=over" ... "=back" debería tener algún contenido.  Es decir, los autores no deberían tener una región vacía como esta:
+
+  =over
+
+  =back
+
+Los procesadores Pod que vean una región "=over" ... "=back" sin contenido, pueden ignorarlo, o reportarlo como un error.
+
+=item *
+
+Los procesadores deben tolerar una lista "=over" que llegue al final del documento (es decir, que no existe un "=back" coincidente), pero pueden advertir sobre tal lista.
+
+=item *
+
+Los autores de formateadores Pod deben notar que esta construcción:
+
+  =item Neque
+
+  =item Porro
+
+  =item Quisquam Est
+
+  Qui dolorem ipsum quia dolor sit amet, consectetur, adipisci 
+  velit, sed quia non numquam eius modi tempora incidunt ut
+  labore et dolore magnam aliquam quaerat voluptatem.
+
+  =item Ut Enim
+
+es semánticamente ambigua, de tal forma que un poco más difícil las decisiones de formateo.  Por otro lado, podría mencionar un elemento "Neque", mencionar otro elemento "Porro" y mencionar otro elemento "Quisquam Est", requiriendo este último un párrafo explicativo "Qui dolorem ipsum quia dolor..."; y luego un elemento "Ut Enim".  En ese caso, querría formatearlo así:
+
+  Neque
+
+  Porro
+
+  Quisquam Est
+    Qui dolorem ipsum quia dolor sit amet, consectetur, adipisci
+    velit, sed quia non numquam eius modi tempora incidunt ut
+    labore et dolore magnam aliquam quaerat voluptatem.
+
+  Ut Enim
+
+Pero podría igualmente ser una discusión de tres elementos (relativos o equivalentes), "Neque", "Porro" y "Quisquam Est", seguidos por un párrafo que explica a todos ellos, y luego un nuevo elemento "Ut Enim".  En ese caso, probablemente querría formatearlo así:
+
+  Neque
+  Porro
+  Quisquam Est
+    Qui dolorem ipsum quia dolor sit amet, consectetur, adipisci
+    velit, sed quia non numquam eius modi tempora incidunt ut
+    labore et dolore magnam aliquam quaerat voluptatem.
+
+  Ut Enim
+
+Pero (al menos hasta un próximo futuro), Pod no proporciona a los autores ninguna forma de distinguir a qué agrupación se refiere la anterior estructura de "=item".  Así que los formateadores lo formatearían así:
+
+  Neque
+
+  Porro
+
+  Quisquam Est
+
+    Qui dolorem ipsum quia dolor sit amet, consectetur, adipisci
+    velit, sed quia non numquam eius modi tempora incidunt ut
+    labore et dolore magnam aliquam quaerat voluptatem.
+
+  Ut Enim
+
+Esto es: tendría que haber (al menos de forma aproximada) un espaciado igual entre los elementos que entre los párrafos (a pesar de que el espaciado puede ser menos que la altura de una línea de texto).  Esto le deja al lector para que use pistas (con)textuales para figurarse si el párrafo "Qui dolorem ipsum..." se aplica al elemento "Quisquam Est" o a los tres elementos "Neque", "Porro" y "Quisquam Est".  Mientras que no es una situación ideal, es preferible proporcionar pistas de formateo que, realmente, pueden ser contrarias a las intenciones del autor.
+
+=back
+
+
+
+=head1 Sobre párrafos de datos y regiones "=begin/=end"
+
+Los párrafos de datos se usan típicamente para incrustar datos no Pod que se van a usar (típicamente pasándoles directamente) cuando se representa el documento en un formato específico:
+
+  =begin rtf
+
+  \par{\pard\qr\sa4500{\i Printed\~\chdate\~\chtime}\par}
+
+  =end rtf
+
+Se podría conseguir exactamente el mismo efecto con un simple párrafo "=for":
+
+  =for rtf \par{\pard\qr\sa4500{\i Printed\~\chdate\~\chtime}\par}
+
+ (A pesar de que no es, formalmente, un párrafo de datos, tiene el mismo significado que el primero, y los intérpretes Pod pueden leerlo como el primero).
+
+Otro ejemplo de párrafo de datos:
+
+  =begin html
+
+  ¡Me gusta las <em>TARTAS</em>!
+
+  <hr>¡Especialmente las tartas sabor pacana!
+
+  =end html
+
+Si fueran párrafos ordinarios, el intérprete Pod intentaría expandir el "EE<lt>/em>" (en el primer párrafo) como un código de formateo, justo como "EE<lt>lt>" o "EE<lt>eacute>".  Pero ya que está en una región "=begin I<identificador>" ... "=end I<identificador>" I<y> el identificador "html" no comienza con un prefijo ":", los contenidos de esta región se almacenan como párrafos de datos, en lugar de procesarse como párrafos ordinarios (o si comenzasen con espacios o tabuladores, como párrafos literales).
+
+Como ejemplo añadido: En el momento de escribir esto, no se soporta ningún identificador "biblio", pero supongamos que se escriba algún procesador capaz de reconocerlo como una referencia bibliográfica (conteniendo necesariamente códigos de formateo en un párrafo ordinario).  El hecho que marque que los párrafos "biblio" significase un procesamiento ordinario se podría indicar prefijando cada identificador "biblio" con un carácter de dos puntos:
+
+  =begin :biblio
+
+  Wirth, Niklaus.  1976.  I<Algorithms + Data Structures =
+  Programs.>  Prentice-Hall, Englewood Cliffs, NJ.
+
+  =end :biblio
+
+Esto señalaría al intérprete que los párrafos en esta región begin ... end están sujetos a una gestión normal como párrafos ordinarios/literales (mientras que este marcado tenga significado para los procesadores que entiendan el identificador "biblio").  El mismo efecto se podría tener así:
+
+  =for :biblio
+  Wirth, Niklaus.  1976.  I<Algorithms + Data Structures =
+  Programs.>  Prentice-Hall, Englewood Cliffs, NJ.
+
+El ":" en estos identificadores significa simplemente "procesa esto de forma normal, incluso aunque el resultado sea para un objetivo especial".
+Sugiero que la API de ese intérprete reporte "biblio" como el identificador del objetivo, pero también debe reportar que tiene un ":" prefijar.  (Y de forma similar, con el anterior "html", reportar "html" como un identificador objetivo, y notar la I<ausencia> de un prefijo ":").
+
+Note que una región "=begin I<identificador>" ... "=end I<identificador>" donde el I<identificador> que comienza con un carácter de dos puntos, I<puede> contener comandos.  Por ejemplo:
+
+  =begin :biblio
+
+  El clásico de Wirth está disponible en diversas ediciones, incluyendo:
+
+  =for comment
+   hum, visite abebooks.com para ver cuánto cuestan las copias usadas.
+
+  =over
+
+  =item
+
+  Wirth, Niklaus.  1975.  I<Algorithmen und Datenstrukturen.>
+  Teubner, Stuttgart.  [Sí, está en alemán.]
+
+  =item
+
+  Wirth, Niklaus.  1976.  I<Algorithms + Data Structures =
+  Programs.>  Prentice-Hall, Englewood Cliffs, NJ.
+
+  =back
+
+  =end :biblio
+
+Note, sin embargo, que una región "=begin I<identificador>" ... "=end I<identificador>"
+donde I<identificador> I<no> comienza con un carácter de dos puntos, no debería contener comandos "=head1" ... "=head4", ni "=over", ni "=back", ni "=item".  Por ejemplo, esto se podría considerar inválido:
+
+  =begin datos
+
+  Esto es un párrafo de datos.
+
+  =head1 ¡No haga esto!
+
+  Esto también es un párrafo de datos.
+
+  =end datos
+
+Un procesador puede señalar que lo anterior (especialmente el párrafo "=head1") es un error.  Note, sin embargo, que lo siguiente I<no> debería tratarse como un error:
+
+  =begin datos
+
+  Esto es un párrafo de datos.
+
+  =cut
+
+  # ¡Epa!, ya no hay más Pod.
+  sub excl { (rand() > .5) ? "¡uh!" : "¡ah!" }
+
+  =pod
+
+  Esto también es un párrafo de datos.
+
+  =end datos
+
+Y esto también es válido:
+
+  =begin formato
+
+  Esto es un párrafo de datos.
+
+    Y esto es un párrafo de datos.
+
+  =begin otroformato
+
+  Esto también es un párrafo de datos.
+
+    Y esto también es un párrafo de datos.
+
+  =begin :yotroformato
+
+  =head2 ¡Este es un párrafo de comandos!
+
+  ¡Este es un párrafo ordinario!
+
+    ¡Y este es un párrafo literal!
+
+  =end :yotroformato
+
+  =end otroformato
+
+  ¡Otro párrafo de datos!
+
+  =end formato
+
+Los contenidos de la anterior región "=begin :yotroformato" ... "=end :yotroformato" I<no son> párrafos de datos, porque el identificador de región que le sigue (":yotroformato") comienza con un carácter de dos puntos.  En la práctica, la mayor parte de las regiones que contienen párrafos de datos contendrán I<solo> párrafos de datos; sin embargo, el anidamiento anterior es sintácticamente válido, para Pod, incluso si parece extraño.  Sin embargo, los gestores para algunos formatos, como "html", aceptarán solo párrafos de datos, no regiones anidadas; y pueden quejarse si ven (apuntadas por ellos) regiones anidadas, o comandos distintos de "=end", "=pod" y "=cut".
+
+Considere también esta estructura válida:
+
+  =begin :biblio
+
+  El clásico de Wirth está disponible en diversas ediciones, incluyendo:
+
+  =over
+
+  =item
+
+  Wirth, Niklaus.  1975.  I<Algorithmen und Datenstrukturen.>
+  Teubner, Stuttgart.  [Sí, está en alemán.]
+
+  =item
+
+  Wirth, Niklaus.  1976.  I<Algorithms + Data Structures =
+  Programs.>  Prentice-Hall, Englewood Cliffs, NJ.
+
+  =back
+
+  ¡Compra, compra, compra!
+
+  =begin html
+
+  <img src='wirth_spokesmodeling_book.png'>
+
+  <hr>
+
+  =end html
+
+  ¡Ahora, ahora, ahora!
+
+  =end :biblio
+
+Aquí, la región "=begin html" ... "=end html" está anidada dentro de la región más grande "=begin :biblio" ... "=end :biblio".  Note que el contenido de la región "=begin html" ... "=end html" son párrafos de datos, porque el identificador de la región que la contiene directamente ("html") I<no> comienza con un carácter de dos puntos.
+
+Los intérpretes de Pod, cuando procesan series de párrafos de datos uno tras otro (dentro de una única región), deben considerarlos como un gran párrafo de datos que eventualmente contiene líneas en blanco.  Así que el contenido del anterior "=begin html" ... "=end html" I<puede> almacenarse como dos párrafos de datos (uno constando de "<img src='wirth_spokesmodeling_book.png'>\n" y otro constando en "<hr>\n"), pero I<debería> almacenarse como un único párrafo de datos (constando de "<img src='wirth_spokesmodeling_book.png'>\n\n<hr>\n").
+
+Los procesadores Pod deben tolerar regiones "=begin I<algo>" ... "=end I<algo>" vacías, regiones vacías "=begin :I<algo>" ... "=end :I<algo>" y párrafos "=for I<algo>" y "=for :I<algo>" sin contenido.  Es decir, deberían tolerar algo así:
+
+  =for html
+
+  =begin html
+
+  =end html
+
+  =begin :biblio
+
+  =end :biblio
+
+Adicionalmente, note que no existe una forma sencilla de expresar un párrafo de datos que comience con algo parecido a un comando.  Considere:
+
+  =begin cosas
+
+  =shazbot
+
+  =end cosas
+
+En este ejemplo, "=shazbot" se interpretará como el comando Pod "shazbot", no como un párrafo de datos "=shazbot\n".  Sin embargo, puede expresar un párrafo de datos como "=shazbot\n" usando este código:
+
+  =for cosas =shazbot
+
+Presumiblemente, es muy rara la situación donde esto sea necesario.
+
+Note que los comandos =end deben emparejarse con su correspondiente comando =begin.  Es decir, deben anidarse correctamente.  Por ejemplo, esto es válido:
+
+  =begin externo
+
+  X
+
+  =begin interno
+
+  Y
+
+  =end interno
+
+  Z
+
+  =end externo
+
+mientras que esto es inválido:
+
+  =begin externo
+
+  X
+
+  =begin interno
+
+  Y
+
+  =end externo
+
+  Z
+
+  =end interno
+
+Esto último es impropio porque cuando se ve el comando "=end externo", la correspondiente región abierta tiene el nombre de formato "interno", no "externo".  (Sucede que "externo" es el nombre de formato de una región anterior).  Esto es un error.  Los procesadores deben reportar esto como un error, por defecto, y pueden parar el procesamiento del documento que contiene ese error.  Un corolario de esto es que las regiones no pueden "solaparse". Es decir, el último bloque de más arriba no representa una región llamada "externo" que contiene X e Y, solapando una región llamada "interno" que contiene Y y Z. Pero debido a que es inválido (como lo serían todas las regiones que aparentemente se solaparan), no representa eso, ni nada en absoluto.
+
+De modo parecido, esto no es válido:
+
+  =begin cosa
+
+  =end ocsa
+
+Esto es un error porque la región se abrió con "cosa" y el "=end" intenta cerrar "ocsa" [sic].
+
+Esto también es inválido:
+
+  =begin cosa
+
+  =end
+
+Esto es inválido porque cada comando "=end" debe tener un parámetro con nombre de formato.
+
+=head1 VEA TAMBIÉN
+
+L<perlpod>, L<perlsyn/"POD: documentación empotrada">, L<podchecker>
+
+=head1 AUTOR
+
+Sean M. Burke
+
+=cut
+
+
