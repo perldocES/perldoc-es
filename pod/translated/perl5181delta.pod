@@ -1,0 +1,162 @@
+=encoding utf8
+
+=head1 NAME
+
+perl5181delta - qué hay de nuevo para Perl 5.18.1
+
+=head1 DESCRIPCIÓN
+
+Este documento describe las diferencias entre la versión 5.18.0 y la versión 5.18.1.
+
+Si va a actualizar desde una versión anterior, como la 5.16.0, debe leer primero L<perl5180delta>, donde se describen las diferencias entre las versiones 5.16.0 y 5.18.0.
+
+=head1 Cambios incompatibles
+
+No hay ningún cambio intencionadamente incompatible con 5.18.0 Si existe alguno, son errores, y le pedimos que envíe un informe.  Vea L</Notificación de errores> más abajo.
+
+=head1 Módulos y pragmas
+
+=head2 Módulos y pragmas actualizados
+
+=over 4
+
+=item *
+
+Se ha actualizado B de la versión 1.42 a la 1.42_01, para arreglar errores relativos a las subrutinas léxicas.
+
+=item *
+
+Digest::SHA se ha actualizado de 5.84 a 5.84_01, arreglando un error de cuelgue.
+[RT #118649]
+
+=item *
+
+Module::CoreList se ha actualizado de la versión 2.89 a la 2.96.
+
+=back
+
+=head1 Compatibilidad con plataformas
+
+=head2 Notas específicas de plataformas
+
+=over 4
+
+=item AIX
+
+Se ha corregido un error muy extraño de configuración en el archivo de pistas AIX.
+
+=item MidnightBSD
+
+perl debería compilarse correctamente en MidnightBSD 0.4-RELEASE después de un parche al archivo de pistas pertinente.
+
+=back
+
+=head1 Arreglo de determinados errores
+
+=over 4
+
+=item *
+
+A partir de v5.18.0, una construcción como C</[#](?{})/x> tendría a sus C<#> incorrectamente interpretados como comentarios.  El bloque de código se saltará, sin interpretarse.  Esto ha sido corregido.
+
+=item *
+
+Se han arreglado un número de fugas de memoria relativas a la nueva característica experimental de expresiones regulares de las clases de caracteres entre corchetes.
+
+=item *
+
+El código de asignación OP ahora regresa correctamente memoria alineada, en todos los casos, para C<struct pmop>. Previamente, podría devolver memoria solo en múltiplos de 4 bytes, que no es correcto para una compilación ithreads con IV de 64 bit en algunas plataformas de 32 bit. De forma notable, esto hace que la compilación falle completamente en GNU/Linux. [RT #118055]
+
+=item *
+
+El comando C<man> del depurador se ha corregido. Se rompió en el lanzamiento v5.18.0. Al comando C<man> se le han creado alias, con los nombres C<doc> y C<perldoc>; ahora todo funciona otra vez.
+
+=item *
+
+Ahora, C<@_> es visible de forma correcta, en el depuraor, arreglando una regresión introducida en el depurador de v5.18.0. [RT #118169]
+
+=item *
+
+Arregla un pequeño número de construcciones I<regex> que podrían, tanto fallar en la coincidencia, como hacer colgar perl, cuando la cadena contra la que se hace la prueba de coincidencia, fue reservada por encima del límite de 2 GB, en sistemas de 32 bits. [RT #118175]
+
+=item *
+
+Perl v5.16 introdujo de forma inadvertida un error por el cual las llamadas a XSUB que no eran visibles en tiempo de compilación se trataban como valores-izquierda y podrían recibir una asignación, incluso cuando la subrutina no es una subrutina de valor-izquierdo.  Esto se ha corregido.
+[perl #117947]
+
+=item *
+
+Perl v5.18, de forma inadvertida introdujo un error por el cual las variables duales (es decir variables con valores de cadena y valores numéricos, como C<$!>) por la cual el valor de verdad de la variable se determina por el valor numérico en lugar de por el valor de cadena. [RT #118159]
+
+=item *
+
+Perl v5.18 introduce, inadvertidamente, un error en aquellos sitios donde se interpolan cadenas ascendidas y degradadas desde/a UTF-8 en una expresión regular podría resultar en un patrón UTF-8 mal formado; específicamente, si a un carácter degradado en el rango C<\x80..\xff> le sigue una cadena UTF-8. Por ejemplo
+
+    utf8::upgrade(  my $u = "\x{e5}");
+    utf8::downgrade(my $d = "\x{e5}");
+    /$u$d/
+
+[perl #118297].
+
+=item *
+
+Constantes léxicas (C<my sub a() { 42 }>) ya no se cuelgan cuando se ponen literalmente en el programa (I<inlined>).
+
+=item *
+
+Los parámetros de los prototipos adjuntos a las subrutinas léxicas se respetan ahora cuando se compilan llamadas a subrutinas sin paréntesis.  Anteriormente, los prototipos se promocionaban solo para llamadas I<con> paréntesis. [RT #116735]
+
+=item *
+
+Los errores de sintaxis en subrutinas léxicas en combinación con llamadas a la misma subrutina ya no causa cuelgues en tiempo de compilación.
+
+=item *
+
+La sonda en la sub-entrada dtrace ahora funciona con subrutinas léxicas, en lugar de colgarse [perl #118305].
+
+=item *
+
+Indefinir una subrutina léxica que se puede insertar en línea (C<my sub foo() { 42 } undef
+&foo>) resultaría en un cuelgue si se activan las advertencias.
+
+=item *
+
+Los avisos de recursión profunda ya no cuelga las subrutinas léxicas. [RT #118521]
+
+=back
+
+=head1 Agradecimientos
+
+Perl 5.18.1 representa aproximadamente 2 meses de desarrollo desde Perl 5.18.0 y contiene aproximadamente 8400 líneas de cambios en 60 archivos por parte de 12 autores.
+
+Perl sigue floreciendo en su tercera década gracias a una vibrante comunidad de usuarios y desarrolladores. Las siguientes personas aportaron las mejoras que hicieron posible Perl 5.18.1:
+
+Chris 'BinGOs' Williams, Craig A. Berry, Dagfinn Ilmari Mannsåker, David
+Mitchell, Father Chrysostomos, Karl Williamson, Lukas Mai, Nicholas Clark,
+Peter Martini, Ricardo Signes, Shlomi Fish, Tony Cook.
+
+Como la lista anterior se genera automáticamente a partir del historial de control de versiones, es muy probable que sea incompleta. En particular, no incluye los nombres de los (muy apreciados) colaboradores que notificaron problemas a través del sistema de seguimiento de errores de Perl.
+
+Muchos de los cambios incluidos en esta versión tuvieron su origen en los módulos CPAN incluidos en el núcleo de Perl. Agradecemos a toda la comunidad CPAN por ayudar en el florecimiento de Perl.
+
+Si desea ver una lista más completa de todas las personas que han contribuido a lo largo de la historia de Perl, la encontrará en el archivo F<AUTHORS> de la distribución del código fuente de Perl.
+
+=head1 Notificación de errores
+
+Si encuentra algo que piensa que es un error, podría verificar los artículos publicados recientemente en el grupo de noticias comp.lang.perl.misc y la base de datos de errores de perl en http://rt.perl.org/perlbug/  También puede haber información en http://www.perl.org/, la página oficial de Perl.
+
+Si cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
+
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org  Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado.  Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+
+=head1 VEA TAMBIÉN
+
+En el archivo F<Changes> encontrará una explicación de cómo obtener información detallada de los cambios.
+
+El archivo F<INSTALL> contiene instrucciones para compilar Perl.
+
+El archivo F<README> contiene información general.
+
+En los archivos F<Artistic> y F<Copying> encontrará información de copyright.
+
+=cut
