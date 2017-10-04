@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-perlopentut - recetas sencillas para abrir archivos y tuberías en Perl
+perlopentut - Recetas sencillas para abrir archivos y tuberías en Perl
 
 =head1 DESCRIPCIÓN
 

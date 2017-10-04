@@ -14,7 +14,7 @@ Esta 'hoja resumen' es una referencia útil para programadores principiantes. No
   lista      %hash    HASH       $array[0]     $hash{'a'}
              &sub     CODE
              *glob    GLOB       VALORES ESCALARES
-                      FORMAT     número, cadena, ref, glob, undef
+                    FORMAT    número, cadena, ref, glob, undef
   REFERENCIAS
   \      referencia       $$foo[1]       equivale a $foo->[1]
   $@%&*  desreferenciar   $$foo{bar}     equivale a $foo->{bar}
