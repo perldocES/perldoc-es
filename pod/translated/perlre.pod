@@ -1,4 +1,4 @@
-=head1 NOMBRE
+=head1 NAME
 X<regular expression> X<expresión regular> X<regex> X<regexp>
 
 perlre - Expresiones regulares en Perl

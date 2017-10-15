@@ -10,7 +10,7 @@
 
 ### Config
 # Project directory
-DIR=/home/explorer/Documentos/Desarrollo/perlspanish-work
+DIR=/home/explorer/Proyectos/perldocES/v5/work.github
 ### End config
 
 ### Arguments

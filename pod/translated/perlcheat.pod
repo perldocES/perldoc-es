@@ -12,8 +12,8 @@ Esta 'hoja resumen' es una referencia útil para programadores principiantes. No
   void       $escalar SCALAR     @array        %hash
   escalar    @array   ARRAY      @array[0, 2]  @hash{'a', 'b'}
   lista      %hash    HASH       $array[0]     $hash{'a'}
-            &sub      CODE
-            *glob     GLOB       VALORES ESCALARES
+             &sub     CODE
+             *glob    GLOB       VALORES ESCALARES
                     FORMAT    número, cadena, ref, glob, undef
   REFERENCIAS
   \      referencia       $$foo[1]       equivale a $foo->[1]
@@ -26,7 +26,7 @@ Esta 'hoja resumen' es una referencia útil para programadores principiantes. No
   ->                     while   (e) { }        until (e)   { }
   ++ --                  if      (e) { } elsif (e) { } else { }
   **                     unless  (e) { } elsif (e) { } else { }
-  ! ~ \ u+ u-              given   (e) { when (e) {} default {} }
+  ! ~ \ u+ u-            given   (e) { when (e) {} default {} }
   =~ !~
   * / % x                NÚMEROS vs CADENAS  FALSO vs VERDADERO
   + - .                   =          =        undef, "", 0, "0"
@@ -36,11 +36,11 @@ Esta 'hoja resumen' es una referencia útil para programadores principiantes. No
   == != <=> eq ne cmp ~~  <=>        cmp
   &
   | ^             MODIFICADORES REGEX   METACARACTERES REGEX
-  &&              /i no distinguir may/min   ^       principio cadena
+  &&              /i no distinguir may/min     ^       principio cadena
   || //           /m basado en líneas ^$       $       fin cadena (antes \n)
   .. ...          /s . incluir \n              +       uno o más
   ?:              /x ignorar espacios          *       cero o más
-  = += last goto  /p preservar                 ?      cero o uno
+  = += last goto  /p preservar                 ?       cero o uno
   , =>            /a ASCII   /aa seguro        {3,7}   repeticiones en rango
   ops lista       /l config. reg. /d  dual     |       alternancia
   not             /u Unicode                   []      clase caracteres
@@ -57,7 +57,7 @@ Esta 'hoja resumen' es una referencia útil para programadores principiantes. No
   perl -V:ivsize  \h  espacio en blanco horiz. (?|p|p) reinicio bifurcación
                   \R  salto de línea           (?<n>p) captura con nombre
                   \S \W \D \H negar            \g{n}   ref a captura con nombre
-                                        \K      mantener parte izquierda
+                                               \K      mantener parte izquierda
   LISTAS RETORNO FUNCIONES
   stat      localtime    caller            VARIABLES ESPECIALES
    0 dev    0 segundo    0 paquete         $_    variable predeterminada
