@@ -6,7 +6,7 @@ perlpodspec - Documentación en POD: especificación de formato y apuntes
 
 =head1 DESCRIPCIÓN
 
-Este documento tiene notas detalladas sobre el lenguaje de marcas Pod.  La mayor parte solo leerá L<perlpod|perlpod> para saber cómo escribir en Pod, pero este documento puede responder algunas cuestiones incidentales para hacer interpretación y presentación de Pod.
+Este documento tiene notas detalladas sobre el lenguaje de marcas Pod.  La mayor parte solo leerá L<perlpod|perlpod> para saber cómo escribir en Pod, pero este documento puede responder a algunas cuestiones ocasionales para hacer la interpretación y presentación de Pod.
 
 En este documento, "debe" / "no debe", "debería" / "no debería" y "puede" tiene sus significados convencionales (ver RFC 2119): "X debe hacer Y" significa que si X no hace Y, va en contra de esta especificación, y debería arreglarse.  "X debería hacer Y" significa que se recomienda, pero X podría fallar el crear Y, si existe una buena razón.  "X puede hacer Y" es, meramente, una nota que dice que X podría hacer Y (aunque le deja al lector detectar cualquier connotación de "y creo que debería estar I<bien> si X ha hecho Y", contra "realmente no me I<molestaría> si X ha hecho Y").
 
@@ -14,29 +14,29 @@ De forma notable, cuando digo "el intérprete debería hacer Y", el intérprete 
 
 =head1 Definiciones Pod 
 
-Pod se incrusta en los archivos, típicamente en archivos de código fuente Perl, aunque puede escribir un archivo que no tenga nada de Pod.
+Pod se incrusta en los archivos, típicamente en archivos de código fuente Perl, aunque puede escribir un archivo que solo contenga Pod.
 
 Una B<línea> en un archivo consiste de cero o más caracteres que no son de nueva línea, terminado tanto en un nueva línea o el final del archivo.
 
 Una B<secuencia de nueva línea> es normalmente un concepto dependiente de la plataforma, pero los intérpretes de Pod deberían entenderlo para que signifique cualquiera de las combinaciones de CR (ASCII 13), LF (ASCII 10) o un CRLF (ASCII 13 seguido inmediatamente de ASCII 10), añadido a cualquier otro significado específico del sistema.  La primera secuencia de CR/CRLF/LF en el archivo se puede usar como la base para identificar la secuencia de nueva línea para interpretar el resto del archivo.
 
-Una B<línea en blanco> es una línea que consiste completamente de cero o más espacios (ASCII 32) o tabuladores (ASCII 9) y terminados por una nueva línea o fin de archivo.
-Una B<línea que no está en blanco> es una línea que contiene una o más caracteres distintos del espacio o el tabulador (y terminados por un nueva línea o fin de archivo).
+Una B<línea en blanco> es una línea que consiste enteramente de cero o más espacios (ASCII 32) o tabuladores (ASCII 9) y terminados por una nueva línea o fin de archivo.
+Una B<línea que no está en blanco> es una línea que contiene uno o más caracteres distintos del espacio o el tabulador (y terminados por una nueva línea o fin de archivo).
 
-(I<Nota:> Muchos interpretadores antiguos de Pod no aceptan una línea consistente de espacios/tabuladores y un nueva línea, como línea en blanco. Las únicas líneas que se consideran en blanco eran las líneas que no consistían de I<ningún carácter en absoluto>, terminados por un nueva línea).
+(I<Nota:> Muchos interpretes antiguos de Pod no aceptan una línea que consista en espacios/tabuladores y seguida de una nueva línea como línea en blanco. Las únicas líneas que se consideran en blanco eran las líneas que no consistían de I<ningún carácter en absoluto>, terminados por una nueva línea).
 
 El B<espacio en blanco> se usa en este documento como término en genérico para referirnos a los espacios, tabuladores y secuencias de nueva línea.  (Por sí solo, este término se refiere normalmente al espacio en blanco literal).  Es decir, las secuencias de caracteres de espacios en blanco en el código Pod, es opuesto a "EE<lt>32>", que es código de formateo que I<denota> un carácter de espacio en blanco).
 
 Un B<intérprete de Pod> es un módulo que se usa para interpretar Pod (sin importar si esto incluye hacer retrollamadas o construir un árbol de interpretación o, directamente, formatearlo).  Un B<formateador de Pod> (o B<traductor de Pod>) es un módulo o programa que convierte Pod a algún otro formato (HTML, texto plano, TeX, PostScript, RTF).  Un B<procesador de Pod> podría ser un formateador o un traductor, o podría ser un programa que hace algo con el Pod (como contar palabras, escanear puntos para el índice, etc.).
 
-El contenido Pod se contiene en los B<bloques Pod>.  Un bloque Pod comiento con una línea que coincide con C<m/\A=[a-zA-Z]/>, y continúa hasta la siguiente línea que coincide con C<m/\A=cut/> o hasta el final del archivo si no existe la línea C<m/\A=cut/>.
+El contenido Pod se contiene en los B<bloques Pod>.  Un bloque Pod comienza con una línea que coincide con C<m/\A=[a-zA-Z]/>, y continúa hasta la siguiente línea que coincide con C<m/\A=cut/> o hasta el final del archivo si no existe la línea C<m/\A=cut/>.
 
 =for comment
  El perlsyn actual dice:
  [comienzo de la cita]
    Note que los traductores pod tendrían que mirar solo en los párrafos que comienzan
-   con una directiva pod (hace más fácil la interpretación), aunque el compilador
-   sepa realmente encontrar secuencias pod incluso en el medio de un
+   con una directiva pod (hace más fácil la interpretación), considerando que el compilador
+   sabe realmente encontrar secuencias pod incluso en el medio de un
    párrafo.  Esto significa que el siguiente material secreto se ignorará
    tanto por el compilador como por los traductores.
       $a=3;
@@ -44,20 +44,20 @@ El contenido Pod se contiene en los B<bloques Pod>.  Un bloque Pod comiento con 
        warn "¿¡Ni POD ni CÓDIGO!?"
       =cut back
       print "tengo $a\n";
-   Probablemente no se dará cuenta de que el warn() ha sido comentado para siempre.
+   Probablemente no se habrá dado cuenta de que el warn() fue suprimido para siempre.
    No todos los traductores serán tan atentos, y quizás
    el compilador se vuelva loco.
  [fin de la cita]
- Creo que estos párrafos deberían, simplemente, eliminarse; la interpretación basados en
+ Creo que estos párrafos deberían, simplemente, eliminarse; la interpretación basada en
  párrafos parece que hace tiempo que se ha dejado de hacer, debido a la molestia que existe con
  las líneas que no están en blanco, enredándose con lo que la gente entiende por "párrafo".
  Incluso si el tópico "hace la interpretación más sencilla" fuera especialmente cierto,
- no merece la pena confundirse de lo que perl con pod2whatever
+ no merece la pena confundirse de tener que perl y pod2whatever
  discrepen de lo que constituye un bloque Pod.
 
-Dentro de un bloque Pod, existen B<párrafos Pod>.  Un párrafo Por consiste en líneas que no están en blanco, de texto, separado por una o más líneas en blanco.
+Dentro de un bloque Pod, existen B<párrafos Pod>.  Un párrafo Pod consiste en líneas de texto que no estén en blanco, separado por una o más líneas en blanco.
 
-Para los propósitos de procesado Por, existen cuatro tipos de párrafos en un bloque Pod:
+Para los propósitos de procesado Pod, existen cuatro tipos de párrafos en un bloque Pod:
 
 =over
 
@@ -75,14 +75,14 @@ Pero pueden abarcar varias líneas que no están en blanco:
   Hum, me pregunto qué parecería si
   intenta escribir un BNF para Pod a partir de esto.
 
-  =head3 Dr. Strangelove, o: Cómo aprendí a
+  =head3 Dr. Strangelove o Cómo aprendí a
   dejar de preocuparme y amar a la bomba
 
 I<Algunos> párrafos de comandos permite códigos de formateo en su contenido (es decir, después de la parte que coincide con C<m/\A=[a-zA-Z]\S*\s*/>), como en:
 
   =head1 ¿Recuerda cómo usar C<use strict;>?
 
-En otras palabras, el gestor de procesamiento Pod para "head1" aplicará el mismo procesamiento para "¿Recuerda cómo usar CE<lt>use strict;>?" que sería un párrafo ordinario (es decir, los códigos de formateo como "CE<lt>...>") se interpretan, y presumiblemente, formatear apropiadamente, y no son significativos el espacio en blanco en la forma de espacios literales y/o tabuladores.
+En otras palabras, el gestor de procesamiento Pod para "head1" aplicará el mismo procesamiento para "¿Recuerda cómo usar CE<lt>use strict;>?" que sería un párrafo ordinario (es decir, los códigos de formateo como "CE<lt>...>") interpretado, y presumiblemente, formateado apropiadamente, y el espacio en blanco en la forma de espacios literales y/o tabuladores, no es significativo.
 
 =item *
 
@@ -223,7 +223,7 @@ Es decir, crea una región consistente de un único párrafo; ese párrafo se tr
 Este comando, que debe aparecer lo más cerca posible del comienzo del documento (al menos, ¡antes de cualquier dato no-ASCII!), declara que ese documento está codificado en I<nombrecodificación>, que debe ser un nombre de codificación que L<Encode> reconozca.  (Aquí sería útil la lista de codificaciones soportadas por Encode, en L<Encode::Supported>).
 Si el intérprete de Pod no puede decodificar con la codificación indicada, debe emitir una advertencia y, generalmente, abortar la interpretación del documento.
 
-Un documento que tenga más de una línea "=encoding" se debe considerar un error.  Los procesadores Pod pueden tolerar silenciosamente este error si las siguientes líneas "=encoding" son repeticiones de la primera (ejemplo: si existe una línea "=encoding utf8", y más tarde hay otra línea "=encoding utf8").  Pero los procesadores Pod pueden quejarse so existen líneas "=encoding" contradictorias en el mismo documento (p.e., si existe un "=encoding utf8" al principio del documento y un "=encoding big5" más tarde).  Los procesadores Pod que reconocen BOM también pueden quejarse si ven una línea "=encoding" que contradiga al BOM (p.e., si un documento con un BOM UTF-16LE tiene una línea "=encoding shiftjis").
+Un documento que tenga más de una línea "=encoding" se debe considerar un error.  Los procesadores Pod pueden tolerar silenciosamente este error si las siguientes líneas "=encoding" son repeticiones de la primera (ejemplo: si existe una línea "=encoding utf8", y más tarde hay otra línea "=encoding utf8").  Pero los procesadores Pod pueden quejarse si existen líneas "=encoding" contradictorias en el mismo documento (p.e., si existe un "=encoding utf8" al principio del documento y un "=encoding big5" más tarde).  Los procesadores Pod que reconocen BOM también pueden quejarse si ven una línea "=encoding" que contradiga al BOM (p.e., si un documento con un BOM UTF-16LE tiene una línea "=encoding shiftjis").
 
 =back
 
@@ -255,7 +255,7 @@ Un código de formateo empieza con una letra mayúscula (una letra US-ASCII [A-Z
 
 Un código de formateo empieza con una letra mayúscula (una letra US-ASCII [A-Z]) seguida por dos o más "<", uno o más espacios en blanco, cualquier número de caracteres, uno o más espacios en blanco, y terminando con la correspondiente secuencia final de dos o más ">", donde el número de ">" iguala al número de "<" del comienzo.  Ejemplos:
 
-    ¡Es lo que I<<tu>> piensas!
+    ¡Es lo que I<< tu >> piensas!
 
     C<<< open(X, ">>cosa.dat") || die $! >>>
 
@@ -319,7 +319,7 @@ Sería extraño que este código tuviese algún contenido.  Es decir, un procesa
 
 =item C<LE<lt>nombreE<gt>> -- un enlace
 
-La complicada sintaxis de este código se explican a lo largo de L<perlpod/"Códigos de formateo">, y los detalles de implementación se explican más abajo, en L</"Sobre los códigos LE<lt>...E<gt>">.  Interpretar los contenidos de LE<lt>contenido> es... algo delicado.  De forma notable, el contenido tiene que comprobarse por si se parece a una URL, o si tiene que dividirse con un "|" o "/" literal (¡en el orden correcto!), y así, I<antes> de resolver los códigos EE<lt>...>.
+La complicada sintaxis de este código se explican a lo largo de L<perlpod/"Códigos de formateo">, y los detalles de implementación se explican más abajo, en L</"Sobre los códigos LE<lt>...E<gt>">.  Interpretar los contenidos de LE<lt>contenido> es algo delicado.  De forma notable, el contenido tiene que comprobarse por si se parece a una URL, o si tiene que dividirse con un "|" o "/" literal (¡en el orden correcto!), y así, I<antes> de resolver los códigos EE<lt>...>.
 
 =item C<EE<lt>escapeE<gt>> -- un carácter de escape
 
@@ -345,7 +345,7 @@ Un intérprete de Pod puede permitir a una aplicación en particular que añada 
 
 Versiones futuras de esta especificación pueden añadir códigos adicionales de formateo.
 
-Nota histórica: Unos pocos y antiguos procesadores Pod podrían no ver un ">" como cierre de un código "CE<lt>", si el ">" si estaba precedido por un "-".  Esto era algo así:
+Nota histórica: Unos pocos y antiguos procesadores Pod podrían no ver un ">" como cierre de un código "CE<lt>", si el ">" está precedido por un "-".  Esto era algo así:
 
     C<$foo->bar>
 
@@ -365,7 +365,7 @@ Los códigos de formateo no pueden, absolutamente, abarcar párrafos.  Si un có
 
   ¡No me hagas decirlo de nuevo!>
 
-... I<no> se deben interpretar como dos párrafos en itálica (con el código I comenzando en un párrafo y terminando en el otro).  En lugar de eso, el primer párrafo debería generar una advertencia, pero, aparte de eso, el código anterior debe interpretarse como si fuera
+... I<no> se deben interpretar como dos párrafos en itálica (con el código I comenzando en un párrafo y terminando en el otro).  En lugar de eso, el primer párrafo debería generar una advertencia, pero, aparte de eso, el código anterior debe interpretarse como si fuera:
 
   I<¡Te he dicho que no hagas eso!>
 
@@ -401,7 +401,7 @@ Versiones futuras de esta especificación pueden decir cómo Pod puede aceptar o
 
 =item *
 
-Las bien conocidas marcas Unicode I<Byte Order> (BOM) son así: si el archivo comienza con los dos bytes 0xFE y 0xFF, es la marca BOM para UTF-16 I<big-endian>.  Si el archivo comienza con dos los dos bytes 0xFF 0xFE, es la marca BOM para UTF-16 I<little-endian>.  En una plataforma ASCII, si el archivo comienza con los tres bytes 0xEF 0xBB 0xBF, es la marca BOM para UTF-8.
+Las bien conocidas marcas Unicode I<Byte Order> (BOM) son así: si el archivo comienza con los dos bytes 0xFE y 0xFF, es la marca BOM para UTF-16 I<big-endian>.  Si el archivo comienza con los dos bytes 0xFF 0xFE, es la marca BOM para UTF-16 I<little-endian>.  En una plataforma ASCII, si el archivo comienza con los tres bytes 0xEF 0xBB 0xBF, es la marca BOM para UTF-8.
 Un mecanismo adaptado para la plataforma EBCDIC es:
 
   my $utf8_bom = "\x{FEFF}";
@@ -481,7 +481,7 @@ Los formateadores Pod deben hacer esfuerzos razonables para evitar que el texto 
 
 =item *
 
-Los intérpretes de Pod deberían, por defecto, expandir los tabuladores dentro de los párrafos literales a medida de que son procesador, antes de pasarlos al formateador o a otro procesador.  Los intérpretes también pueden permitir una opción que obvie esto.
+Los intérpretes de Pod deberían, por defecto, expandir los tabuladores dentro de los párrafos literales a medida de que son procesados, antes de pasarlos al formateador o a otro procesador.  Los intérpretes también pueden permitir una opción que obvie esto.
 
 =item *
 
@@ -489,7 +489,7 @@ Los intérpretes de Pod debería, por defecto, eliminar los caracteres de nueva 
 
 =item *
 
-Los intérpretes de Pod , cuando reportan errores, deberían hacer algunos esfuerzos para reportar un número de línea aproximado ("¡EE<lt>> anidados en el párrafo #52, cerca de la línea 633 de Thing/Foo.pm!"), en lugar de simplemente anotar el número de párrafo("¡EE<lt>> anidados en el párrafo #52 de Thing/Foo.pm!").  Donde sea problemático, el número del párrafo debería, al menos, acompañarse por un extracto del párrafo ("EE<lt>> anidados en el párrafo #52 de Thing/Foo.pm, que comienza así: 'Los accesores de lectura/escritura del atributo CE<lt>tasa de interés>...'").
+Los intérpretes de Pod, cuando reportan errores, deberían hacer algunos esfuerzos para reportar un número de línea aproximado ("¡EE<lt>> anidados en el párrafo #52, cerca de la línea 633 de Thing/Foo.pm!"), en lugar de simplemente anotar el número de párrafo("¡EE<lt>> anidados en el párrafo #52 de Thing/Foo.pm!").  Donde sea problemático, el número del párrafo debería, al menos, acompañarse por un extracto del párrafo ("EE<lt>> anidados en el párrafo #52 de Thing/Foo.pm, que comienza así: 'Los accesores de lectura/escritura del atributo CE<lt>tasa de interés>...'").
 
 =item *
 
@@ -510,7 +510,7 @@ A los intérpretes de Pod, donde sea factible, se les aconseja evitar dividir lo
 
 =item *
 
-Los intérpretes de Pod deben tratar a una línea que contenga solamente espacio en blanco o tabuladores como una "línea en blanco", como los que separa a los párrafos.  (Algunos intérpretes más antiguos reconocen solo dos caracteres de nueva línea adyacentes como una "línea en blanco" pero no reconocerían un carácter de nueva línea, un espacio, y otro carácter de nueva línea, como una línea en blanco.  Este no es un comportamiento deseable).
+Los intérpretes de Pod deben tratar a una línea que contenga solamente espacio en blanco o tabuladores como una "línea en blanco", como los que separa a los párrafos.  (Algunos intérpretes más antiguos reconocen solo dos caracteres de nuevas líneas adyacentes como una "línea en blanco" pero no reconocerían un carácter de nueva línea, un espacio, y otro carácter de nueva línea, como una línea en blanco.  Este no es un comportamiento deseable).
 
 =item *
 
@@ -591,12 +591,11 @@ EE<lt>...> puede aparecer libremente en cualquier código de formateo (distinto 
 
 =item *
 
-Algunos formateadores Pod imprimen a formatos que implementan espacios irrompibles como un carácter individual (que llamará "NBSP"), y otros imprimen a formatos que implementan espacios irrompibles solo como espacios rodeados con un código "no dividir en líneas".  Note que a nivel de Pod, pueden ocurrir ambas suertes de códigos: Pod puede contener un carácter NBSP (tanto de forma literal o como un código "EE<lt>160>" o "EE<lt>nbsp>"); y Pod puede contener códigos "SE<lt>foo IE<lt>barE<gt> baz>", donde se usan "meros espacios" (carácter 32) en tales códigos para representar los espacios irrompibles.  Los intérpretes Pod deberían considerar el soportar la interpretación opcional de "SE<lt>foo
-IE<lt>barE<gt> baz>" como si fuera "fooI<NBSP>IE<lt>barE<gt>I<NBSP>baz" y, yendo de otra manera, la interpretación opcional de grupos de palabras unidas por NBSP como si cada grupo estuviera en un código SE<lt>...>, para que así los formateadores puedan usar la representación que mejor mapee a lo que demanda la salida.
+Algunos formateadores Pod imprimen a formatos que implementan espacios irrompibles como un carácter individual (que llamará "NBSP"), y otros imprimen a formatos que implementan espacios irrompibles solo como espacios rodeados con un código "no dividir en líneas".  Note que a nivel de Pod, pueden ocurrir ambas suertes de códigos: Pod puede contener un carácter NBSP (tanto de forma literal o como un código "EE<lt>160>" o "EE<lt>nbsp>"); y Pod puede contener códigos "SE<lt>foo IE<lt>barE<gt> baz>", donde se usan "meros espacios" (carácter 32) en tales códigos para representar los espacios irrompibles.  Los intérpretes Pod deberían considerar el soportar la interpretación opcional de "SE<lt>fooIE<lt>barE<gt> baz>" como si fuera "fooI<NBSP>IE<lt>barE<gt>I<NBSP>baz" y, yendo de otra manera, la interpretación opcional de grupos de palabras unidas por NBSP como si cada grupo estuviera en un código SE<lt>...>, para que así los formateadores puedan usar la representación que mejor mapee a lo que demanda la salida.
 
 =item *
 
-Algunos procesadores pueden encontrar que el código C<SE<lt>...E<gt>> es más sencillo de implementar reemplazando cada espacio en el árbol de interpretación bajo el contenido de la S, con un NBSP.  Pero, atención: el reemplazo I<no> debería aplicarse a todos los espacios de I<todo> el texto, sino I<solo> a los espacios dentro del texto I<imprimible>.  (Esta distinción puede o no ser evidente en un particular modelo de árbol/evento implementado por el intérprete Pod).  Por ejemplo, considere este ejemplo poco usual:
+Algunos procesadores pueden encontrar que el código C<SE<lt> ... E<gt>> es más sencillo de implementar reemplazando cada espacio en el árbol de interpretación bajo el contenido de la S, con un NBSP.  Pero, atención: el reemplazo I<no> debería aplicarse a todos los espacios de I<todo> el texto, sino I<solo> a los espacios dentro del texto I<imprimible>.  (Esta distinción puede o no ser evidente en un particular modelo de árbol/evento implementado por el intérprete Pod).  Por ejemplo, considere este ejemplo poco usual:
 
    S<L</Funciones autocargadas>>
 
@@ -628,11 +627,11 @@ En la práctica, se prevé que este carácter no se use mucho, pero los formatea
 
 =item *
 
-Si cree que quiere añadir un nuevo comando a Pod (como, digamos, un comando "=biblio"), considere si podría obtener el mismo efecto con un for o una secuencia begin/end: "=for biblio ..." o "=begin biblio" ... "=end biblio".  Los procesadores de Pod processors que no entienden "=for biblio", etc., simplemente lo ignorará, mientras que puede quejarse ruidosamente si ve "=biblio".
+Si cree que quiere añadir un nuevo comando a Pod (como, digamos, un comando "=biblio"), considere si podría obtener el mismo efecto con un for o una secuencia begin/end: "=for biblio ..." o "=begin biblio" ... "=end biblio".  Los procesadores de Pod que no entienden "=for biblio", etc., simplemente lo ignorarán, mientras que puede quejarse ruidosamente si ven "=biblio".
 
 =item *
 
-A lo largo de este documento, "Pod" es la ortografía preferida para el nombre del formato de documentación.  También puede usar "POD" o "pod".  Para la documentación que está (típicamente) en formato Pod, puede usar "pod", "Pod" o "POD".  Entender estas distinciones es útil; pero no obsesionarse sobre cómo escribirlo.
+A lo largo de este documento, "Pod" es la ortografía preferida para el nombre del formato de la documentación.  También puede usar "POD" o "pod".  Para la documentación que está (típicamente) en formato Pod, puede usar "pod", "Pod" o "POD".  Entender estas distinciones es útil; pero no obsesionarse sobre cómo escribirlo.
 
 =back
 
@@ -655,11 +654,11 @@ En la interpretación de un código LE<lt>...>, los intérpretes Pod deben disti
 =item Primero:
 
 El texto del enlace.  Si no hay ninguno, debe ser C<undef>.  (Por ejemplo, en "LE<lt>Funciones Perl|perlfunc>", el texto del enlace es "Funciones Perl".
-En "LE<lt>Time::HiRes>" e incluso "LE<lt>|Time::HiRes>", no hay texto del enlace.  Note que el texto del enlace puede estar formateada).
+En "LE<lt>Time::HiRes>" e incluso "LE<lt>|Time::HiRes>", no hay texto del enlace.  Note que el texto del enlace puede contener códigos de formateo).
 
 =item Segundo:
 
-El texto del enlace posiblemente inferido; es decir, si no existe un texto del enlace, entonces este texto se inferirá en ese lugar.  (Por ejemplo, para "LE<lt>Getopt::Std>", el texto del enlace inferido es "Getopt::Std".)
+El texto del enlace posiblemente inferido; es decir, si no existe un texto del enlace, entonces este texto se inferirá en ese lugar.  (Por ejemplo, para "LE<lt>Getopt::Std>", el texto del enlace inferido es "Getopt::Std").
 
 =item Tercero:
 
@@ -667,7 +666,7 @@ El nombre o URL, o C<undef> si no hay ninguno.  (Por ejemplo, en "LE<lt>Funcione
 
 =item Cuarto:
 
-La sección (alias "item" en perlpod anteriores), o C<undef> si no hay nada.  Por ejemplo, en "LE<lt>Getopt::Std/DESCRIPCIÓNE<gt>", "DESCRIPCIÓN" es la sección.  (Note que no es lo mismo que la sección de una página de manual como el "5" en "man 5
+La sección (alias "ítem" en perlpod anteriores), o C<undef> si no hay nada.  Por ejemplo, en "LE<lt>Getopt::Std/DESCRIPCIÓNE<gt>", "DESCRIPCIÓN" es la sección.  (Note que no es lo mismo que la sección de una página de manual como el "5" en "man 5
 crontab".  "Sección Foo" en un sentido Pod significa la parte del texto que se inicia por la cabecera o elemento cuyo texto es "Foo").
 
 =back
@@ -753,7 +752,7 @@ Note que puede distinguir los enlaces/URL de cualquier otra cosa por el hecho qu
 
 En caso de los códigos LE<lt>...> sin la parte de "texto|", los viejos formateadores han mostrado una gran variabilidad en cómo mostrar el enlace o la referencia cruzada.  Por ejemplo, LE<lt>crontab(5)> se presentará como "la página de manual C<crontab(5)>" o "en la página de manual C<crontab(5)>" o solo "C<crontab(5)>".
 
-Los procesadores Pod processors ahora deben tratar enlaces sin "texto|" como sigue:
+Los procesadores Pod ahora deben tratar los enlaces sin "texto|" así:
 
   L<nombre>         =>  L<nombre|nombre>
   L</sección>       =>  L<"sección"|/sección>
@@ -771,7 +770,7 @@ o bien:
 
 entonces un enlace hacia él podría parecerse a esto:
 
-  L<algúndocumento/Sobre el operador C<-M>>
+  L<documento/Sobre el operador C<-M>>
 
 Los formateadores pueden escoger el ignorar el marcado con el propósito de resolver el enlace y usar solo los caracteres representables en el nombre de sección, como en:
 
@@ -780,8 +779,8 @@ Los formateadores pueden escoger el ignorar el marcado con el propósito de reso
 
   ...
 
-  <a href="algúndocumento#Sobre_el_operador_-M">Sobre <code>-M</code>
-  (operador)" en algúndocumento</a>
+  <a href="documento#Sobre_el_operador_-M">Sobre <code>-M</code>
+  (operador)" en documento</a>
 
 =item *
 
@@ -791,7 +790,7 @@ Pero para algunos procesadores/formateadores esto no se puede controlar de forma
 
 =item *
 
-En un código C<LE<lt>texto|...E<gt>>, el texto puede contener códigos de formateo para formatear o para escapes EE<lt>...> , como en:
+En un código C<LE<lt>texto|...E<gt>>, el texto puede contener códigos de formateo para formatear o para escapes EE<lt>...>, como en:
 
   L<B<ummE<234>cosas>|...>
 
@@ -901,7 +900,7 @@ Los procesadores Pod deben tolerar los comandos "=item *" / "=item I<número>" s
 
   =item 3
 
-  Paremos en el almacén.  Compra pastelitos rellenos de mantequilla de cacahuete, vodka y sillas de exterior, baratas.
+  Paremos en el almacén.  Compra pastelillos rellenos de mantequilla de cacahuete, vodka y sillas de exterior, baratas.
 
   =back
 
@@ -977,7 +976,7 @@ Pero (al menos hasta un próximo futuro), Pod no proporciona a los autores ningu
 
   Ut Enim
 
-Esto es: tendría que haber (al menos de forma aproximada) un espaciado igual entre los elementos que entre los párrafos (a pesar de que el espaciado puede ser menos que la altura de una línea de texto).  Esto le deja al lector para que use pistas (con)textuales para figurarse si el párrafo "Qui dolorem ipsum..." se aplica al elemento "Quisquam Est" o a los tres elementos "Neque", "Porro" y "Quisquam Est".  Mientras que no es una situación ideal, es preferible proporcionar pistas de formateo que, realmente, pueden ser contrarias a las intenciones del autor.
+Esto es: tendría que haber (al menos de forma aproximada) un espaciado igual entre los elementos que entre los párrafos (a pesar de que el espaciado puede ser menor que la altura de una línea de texto).  Esto le deja al lector para que use pistas (con)textuales para figurarse si el párrafo "Qui dolorem ipsum..." se aplica al elemento "Quisquam Est" o a los tres elementos "Neque", "Porro" y "Quisquam Est".  Mientras que no es una situación ideal, es preferible proporcionar pistas de formateo que, realmente, pueden ser contrarias a las intenciones del autor.
 
 =back
 
@@ -997,7 +996,7 @@ Se podría conseguir exactamente el mismo efecto con un simple párrafo "=for":
 
   =for rtf \par{\pard\qr\sa4500{\i Printed\~\chdate\~\chtime}\par}
 
- (A pesar de que no es, formalmente, un párrafo de datos, tiene el mismo significado que el primero, y los intérpretes Pod pueden leerlo como el primero).
+(A pesar de que no es, formalmente, un párrafo de datos, tiene el mismo significado que el primero, y los intérpretes Pod pueden leerlo como el primero).
 
 Otro ejemplo de párrafo de datos:
 
@@ -1020,7 +1019,7 @@ Como ejemplo añadido: En el momento de escribir esto, no se soporta ningún ide
 
   =end :biblio
 
-Esto señalaría al intérprete que los párrafos en esta región begin ... end están sujetos a una gestión normal como párrafos ordinarios/literales (mientras que este marcado tenga significado para los procesadores que entiendan el identificador "biblio").  El mismo efecto se podría tener así:
+Esto señalaría al intérprete que los párrafos en esta región begin...end están sujetos a una gestión normal como párrafos ordinarios/literales (mientras que este marcado tenga significado para los procesadores que entiendan el identificador "biblio").  El mismo efecto se podría tener así:
 
   =for :biblio
   Wirth, Niklaus.  1976.  I<Algorithms + Data Structures =
@@ -1043,7 +1042,7 @@ Note que una región "=begin I<identificador>" ... "=end I<identificador>" donde
   =item
 
   Wirth, Niklaus.  1975.  I<Algorithmen und Datenstrukturen.>
-  Teubner, Stuttgart.  [Sí, está en alemán.]
+  Teubner, Stuttgart.  (Sí, está en alemán).
 
   =item
 
@@ -1127,7 +1126,7 @@ Considere también esta estructura válida:
   =item
 
   Wirth, Niklaus.  1975.  I<Algorithmen und Datenstrukturen.>
-  Teubner, Stuttgart.  [Sí, está en alemán.]
+  Teubner, Stuttgart.  (Sí, está en alemán).
 
   =item
 
