@@ -13,16 +13,13 @@
 # TODO: ¿Es posible automatizar los comandos git, o seguimos a mano? Mejor a mano... de momento.
 
 # Joaquín Ferrero. 20110130
-# Última versión:  20170609 21:44:00
+# Última versión:  20171015 17:00
 #
 # Se supone que se debe ejecutar este programa después de haber ejecutado la orden
 # de generar los ficheros finales en el OmegaT, pero no es imprescindible.
 #
 
 use v5.18.2;
-
-use lib '/home/explorer/perl5/lib/perl5';
-
 use common::sense;					# TODO: buscar una alternativa mejor para este módulo
 
 use locale;
@@ -43,7 +40,7 @@ my $perl_version   = 'v5.24.0';
 my $user           = 'explorer';			# TMX user file
 
 # Ruta a los ficheros
-my $DIR_ROOT	   = '<ruta al directorio base de todo el proyecto>';
+my $DIR_ROOT	   = '/home/explorer/Proyectos/perldocES/v5';
 
 my $PROJECT        = 'work.github';
 my $DIR_PROJECT	   = "$DIR_ROOT/$PROJECT";		# ruta al proyecto OmegaT
@@ -119,7 +116,7 @@ my $oauth2 = Net::Google::DataAPI::Auth::OAuth2->new(
 #you can skip URL if you have your token saved and continue from RESTORE label
 
 # RESTORE:
-my $session_file = "$DIR_ROOT/<ruta al archivo de Google>/google_spreadsheet.session";
+my $session_file = "$DIR_ROOT/tools/google_spreadsheet.session";
 my $session;
 -f $session_file and $session = retrieve($session_file);
 
@@ -177,7 +174,7 @@ my %archivos_cambios;
 my %archivos_traduciendo;
 my %archivos_porciento;
 
-my $min_porcen	   = 50;			## Porcentaje mínimo docs traducidos, no asignados
+my $min_porcen	   = 30;			## Porcentaje mínimo docs traducidos, no asignados
 
 #open my $listado, q[>], "$dir_git/pod_traducidos.txt";
 
@@ -299,7 +296,7 @@ for my $i (0 .. $#filas) {
 ###############################################################################
 
 # Sacar el informe
-my $informe = "$DIR_PROJECT/informe_" . strftime("%Y%m%d", localtime);
+my $informe = "$DIR_ROOT/informes/informe_" . strftime("%Y%m%d", localtime);
 
 while (-f "$informe.txt") {				# evitar sobreescribir informes en el mismo día
     if ($informe =~ m/\d_(\d+)$/) {
@@ -375,8 +372,8 @@ my $origen = "$DIR_PROJECT/$PROJECT-omegat.tmx";
 my $target = "$DIR_GIT_TMX/perlspanish-omegat.$user.tmx";
 
 if (!-f $target  or  -M $origen < -M $target) {
-    copy($origen, $target) or die "ERROR: $!\n";
     say "Memoria de traducción => git";
+    copy($origen, $target) or die "ERROR: $!\n";
     # git add memory/work/perlspanish-omegat.explorer.tmx
     $archivos_en_git++;
 }
@@ -386,8 +383,8 @@ $origen = "$DIR_PROJECT/omegat/learned_words.txt";
 $target = "$DIR_GIT/omegat_stuff/omegat/learned_words.txt";
 
 if (!-f $target  or  -M $origen < -M $target) {
-    copy($origen, $target) or die "ERROR: $!\n";
     say "Palabras nuevas en diccionario personal => git";
+    copy($origen, $target) or die "ERROR: $!\n";
     # git add ?
     $archivos_en_git++;
 }
