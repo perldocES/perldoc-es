@@ -685,7 +685,7 @@ Cambia los permisos de una lista de archivos.  El primer elemento de la lista de
     my $modo = "0644"; chmod oct($modo), "foo"; # este es el mejor
     my $mode = 0644;   chmod $mode, "foo";      # este es mejor
 
-En sistemas que soporten L<fchmod(2)>, puede pasar identificadores de archivo entre los archivos.  En sistemas que no admiten L<fchmod(2)>, pasar un identificador de archivo lanza una excepción.  Identificadores de archivo se deben pasar como comodines o referencias a comodines para que sean reconocidos; las palabras sueltas se consideran como nombres de archivo.
+En sistemas que soporten L<fchmod(2)>, puede pasar identificadores de archivo entre los archivos.  En sistemas que no admiten L<fchmod(2)>, pasar identificadores de archivo lanza una excepción.  Identificadores de archivo se deben pasar como comodines o referencias a comodines para que sean reconocidos; las palabras sueltas se consideran como nombres de archivo.
 
     open(my $fh, "<", "foo");
     my $permisos = (stat $fh)[2] & 07777;
@@ -1586,10 +1586,10 @@ Aquí hay un ejemplo que establece un identificador de archivo llamado C<$REMOTE
     use Fcntl qw(F_GETFL F_SETFL O_NONBLOCK);
 
     my $flags = fcntl($REMOTE, F_GETFL, 0)
-        or die "No puedo obtener los flags para el socket: $!\n";
+        or die "No puedo obtener las marcas para el socket: $!\n";
 
     fcntl($REMOTE, F_SETFL, $flags | O_NONBLOCK)
-        or die "No puedo poner los flags para el socket: $!\n";
+        or die "No puedo poner las marcas para el socket: $!\n";
 
 Cuestiones de portabilidad: L<perlport/fcntl>.
 
@@ -5654,7 +5654,7 @@ X<sysseek> X<lseek>
 
 Establece la posición del IDENTIFICADOR_ARCHIVO en bytes usando L<lseek(2)>.  IDENTIFICADOR_ARCHIVO puede ser una expresión cuyo valor da el nombre del identificador de archivo.  Los valores de DÓNDE son C<0> para establecer la nueva posición a POSICIÓN; C<1> para establecerla a la actual más POSICIÓN; y C<2> para establecerla a EOF más POSICIÓN, normalmente negativa.
 
-Nota sobre lo de I<en bytes>: incluso si el identificador de archivo se ha establecido para operar en caracteres (por ejemplo usando la capa de open C<:encoding(utf8)>), L<C<tell>|/tell IDENTIFICADOR_ARCHIVO> devolverá desplazamientos en bytes, no en caracteres (porque implementando esto convertirían en inaceptablemente lentas a L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE> y L<C<tell>|/tell IDENTIFICADOR_ARCHIVO>).
+Nota sobre lo de I<en bytes>: incluso si el identificador de archivo se ha establecido para operar en caracteres (por ejemplo usando la capa de open C<:encoding(utf8)>), L<C<tell>|/tell IDENTIFICADOR_ARCHIVO> devolverá desplazamientos en bytes, no en caracteres (porque implementar esto convertiría L<C<sysseek>|/sysseek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE> en algo inaceptablemente lento).
 
 L<C<sysseek>|/sysseek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE> omite el búfer normal de E/S, por lo que mezclar esto con otros tipos de lecturas distintas de L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> (por ejemplo L<C<readline>|/readline EXPR> o L<C<read>|/read IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>), L<C<print>|/print IDENTIFICADOR_ARCHIVO LISTA>, L<C<write>|/write IDENTIFICADOR_ARCHIVO>, L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, L<C<tell>|/tell IDENTIFICADOR_ARCHIVO>, o L<C<eof>|/eof IDENTIFICADOR_ARCHIVO> pueden causar confusión.
 

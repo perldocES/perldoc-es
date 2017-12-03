@@ -811,7 +811,7 @@ Podría ser apropiado "auto cerrarse (CLOSE)" cuando suceda esto.  Vea L<El prob
 =item DESTROY esto
 X<DESTROY>
 
-Igual que con otros tipos de enlazados, a este método se le llamará cuando el identificador de archivo enlazado se vaya a destruir. Esto es útil para depuración y, posiblemente, limpieza.
+Igual que con otros tipos de enlazados, a este método se le llamará cuando el identificador enlazado se vaya a destruir. Esto es útil para depuración y, posiblemente, limpieza.
 
     sub DESTROY { print "</grito>\n" }
 

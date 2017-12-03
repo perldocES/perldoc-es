@@ -3,7 +3,7 @@
 This document is in Pod format.  Para leerlo, use un formateador de Pod,
 como "perldoc perlpod".
 
-=head1 NAME / NOMBRE
+=head1 NAME
 X<POD> X<plain old documentation> X<documentación sencilla vieja>
 
 perlpod - el formato de documentación POD (sencilla, vieja, documentación)
