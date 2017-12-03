@@ -1,0 +1,3382 @@
+-*- buffer-read-only: t -*-   NO EDITE ESTE ARCHIVO   !!!!!!!
+Este archivo se construye a partir de pod/perlmodlib.PL, extrayendo la documentación a partir de los archivos de código fuente de Perl.
+¡Se perderán todos los cambios que se realicen aquí!
+
+=head1 NAME
+
+perlmodlib - construir nuevos módulos Perl y encontrar los actuales
+
+=head1 LA BIBLIOTECA DE MÓDULOS DE PERL
+
+En una distribución Perl se incluyen muchos módulos.  Se describen más abajo, y todos terminan en F<.pm>.  Puede descubrir archivos de bibliotecas compiladas (normalmente terminados en F<.so>) o pequeñas piezas de módulos que se autocargan (terminados en F<.al>); estos se generaron de forma automática en el proceso de instalación.  También puede descubrir archivos en el directorio que terminan tanto en F<.pl> como en F<.ph>.  Estos son antiguas bibliotecas suministradas para que los programas antiguos que las usen puedan seguir corriendo.  Los archivos F<.pl> serán convertidos, eventualmente, en módulos estándar, y los archivos F<.ph> creados por B<h2ph> probablemente terminarán como extensiones de módulos, por medio de B<h2xs>.  (Algunos valores de F<.ph> pueden estar realmente ya disponibles a través de los módulos POSIX, Errno, o Fcntl).
+El archivo B<pl2pm> en la distribución puede ayudar en su conversión, pero solo es un proceso mecánico y por lo tanto lejos de ser a prueba de balas.
+
+=head2 Módulos pragmáticos
+
+Funcionan de forma parecida a directivas del compilador (I<pragmas>) en el sentido en que se cuidan de afectar la compilación de su programa, y así, funcionarán bien solo cuando se les use dentro de un C<use>, o C<no>.  La mayoría se ajustan al ámbito léxico, así que un BLOQUE interno puede dar una contraorden diciendo:
+
+    no integer;
+    no strict 'refs';
+    no warnings;
+
+que durará hasta el final de ese BLOQUE.
+
+Algunos I<pragmas> se ajustan léxicamente -de forma típica, los que afectan a la variable C<$^H>-.  Otros, en cambio, afectan al paquete actual, como C<use vars> y C<use subs>, que le permiten predeclarar variables o subrutinas dentro de un I<archivo> en particular, en lugar de justo un solo bloque.  Tales declaraciones son efectivas para el archivo entero en donde se declararon.  No las puede rescindir con C<no vars> o C<no subs>.
+
+Se definen los siguientes I<pragmas> (y con su propia documentación).
+
+=over 12
+
+=item arybase
+
+Establecer la base de indexación, por medio de $[
+
+=item attributes
+
+Obtiene/establece los atributos de subrutinas o variables
+
+=item autodie
+
+Reemplaza funciones con otras que tienen éxito o mueren, con ámbito léxico
+
+=item autodie::exception
+
+Excepciones de las funciones que se automueren.
+
+=item autodie::exception::system
+
+Excepciones para la auto muerte de system().
+
+=item autodie::hints
+
+Proporciona pistas de cómo auto morirse las subrutinas de usuario
+
+=item autodie::skip
+
+Salta un paquete cuando se lanzan excepciones de auto-muerte.
+
+=item autouse
+
+Pospone la carga de módulos hasta que se utilice una función
+
+=item base
+
+Establece una relación ISA con clases base en tiempo de compilación.
+
+=item bigint
+
+Soporte BigInteger transparente para Perl
+
+=item bignum
+
+Soporte BigNumber transparente para Perl
+
+=item bigrat
+
+Soporte BigNumber/BigRational transparente para Perl
+
+=item blib
+
+Usa la versión de MakeMaker no instalada de un paquete.
+
+=item bytes
+
+Expone los bytes individuales de los caracteres
+
+=item charnames
+
+Accede a los nombres de caracteres y secuencias de caracteres Unicode; también define nombres de caracteres
+
+=item constant
+
+Declara constantes
+
+=item deprecate
+
+Pragma Perl para la obsolescencia de la versión principal de un módulo
+
+=item diagnostics
+
+Produce diagnósticos verbosos de advertencias
+
+=item encoding
+
+Le permite escribir su I<script> en caracteres no-ASCII y no-UTF-8
+
+=item encoding::warnings
+
+Advierte sobre conversiones implícitas de codificación
+
+=item experimental
+
+Características experimentales de forma fácil
+
+=item feature
+
+Habilita nuevas características
+
+=item fields
+
+Campos de clase en tiempo de compilación
+
+=item filetest
+
+Controla los permisos de los operadores de pruebas de archivos
+
+=item if
+
+Usa (C<use>) a módulo Perl se cumple una condición (también puede negar (C<no>) un módulo)
+
+=item entero
+
+Usa aritmética entera en lugar de la de punto flotante
+
+=item less
+
+Solicita algo menos de algo
+
+=item lib
+
+Manipula @INC en tiempo de compilación
+
+=item locale
+
+Usa o evita locales POSIX para las operaciones incorporadas
+
+=item mro
+
+Método de orden de resolución
+
+=item ok
+
+Alternativa a Test::More::use_ok
+
+=item open
+
+Establece las capas PerlIO por defecto para la entrada y la salida
+
+=item ops
+
+Restringe operaciones inseguras cuando se compila
+
+=item overload
+
+Paquete para la sobrecarga de operaciones Perl
+
+=item sobrecargar
+
+Sobrecarga con control léxico
+
+=item parent
+
+Establece una relación ISA con clases base en tiempo de compilación.
+
+=item re
+
+Altera el comportamiento de las expresiones regulares
+
+=item sigtrap
+
+Habilita gestión simple de señales
+
+=item sort
+
+Controla el comportamiento de sort()
+
+=item strict
+
+Restringe construcciones inseguras
+
+=item subs
+
+Predeclara nombres de subrutinas
+
+=item threads
+
+Hilos basados en el intérprete Perl
+
+=item threads::shared
+
+Extensión Perl para compartir estructuras de datos entre hilos
+
+=item utf8
+
+Habilita/deshabilita UTF-8 (o UTF-EBCDIC) en el código fuente
+
+=item vars
+
+Predeclara nombres de variables globales
+
+=item version
+
+Extensión Perl para los Objetos de Versión
+
+=item vmsish
+
+Controla las características del lenguaje específicas de VMS
+
+=item warnings::register
+
+La función que importa las advertencias
+
+
+=back
+
+=head2 Módulos estándares
+
+Los estándares, módulos empaquetados de los que se espera que tengan un comportamiento bien definido con respecto a la polución del espacio de nombres, ya que utilizan el módulo Exporter.  Vea la documentación de cada uno para obtener más detalles.
+
+Es posible que no todos los módulos listados a continuación se puedan instalar en su sistema. Por ejemplo, el módulo GDBM_File no se instalará si no tiene la biblioteca gdbm.
+
+=over 12
+
+=item Amiga::ARexx
+
+Extensión Perl para soporte de ARexx
+
+=item Amiga::Exec
+
+Extensión Perl para soporte de bajo nivel en el amiga
+
+=item AnyDBM_File
+
+Proporciona marco de trabajo para múltiples DBM
+
+=item App::Cpan
+
+Interactúa fácilmente con CPAN desde la línea de comandos
+
+=item App::Prove
+
+Implementa el comando C<prove>.
+
+=item App::Prove::State
+
+Almacenamiento estático para el comando C<prove>.
+
+=item App::Prove::State::Result
+
+Resultados individuales del conjunto de pruebas
+
+=item App::Prove::State::Result::Test
+
+Resultados individuales de pruebas.
+
+=item Archive::Tar
+
+Módulo para la manipulación de archivos tar
+
+=item Archive::Tar::File
+
+Una subclase para un archivo almacenado en memoria desde Archive::Tar
+
+=item Attribute::Handlers
+
+La más simple definición de gestores de atributos
+
+=item AutoLoader
+
+Carga subrutinas solo bajo demanda
+
+=item AutoSplit
+
+Divide un paquete para hacer autocarga
+
+=item B
+
+La trastienda del compilador de Perl
+
+=item B::Concise
+
+Pasea por el árbol de sintaxis Perl, imprime información sobre los códigos de operación
+
+=item B::Debug
+
+Pasea por el árbol de sintaxis Perl, imprime información de depuración sobre los códigos de operación
+
+=item B::Deparse
+
+Trastienda del compilador de Perl para producir código perl
+
+=item B::Op_private
+
+ Definiciones del indicador OP op_private
+
+=item B::Showlex
+
+Muestra las variables léxicas usadas en las funciones o archivos
+
+=item B::Terse
+
+Pasea por el árbol de sintaxis Perl, imprime información concisa sobre los códigos de operación
+
+=item B::Xref
+
+Genera informes de referencia cruzada para programas Perl
+
+=item Benchmark
+
+Ejecuta pruebas de rendimiento de código Perl
+
+=item C<IO::Socket::IP>
+
+IP socket, de familia neutral, que soporta tanto IPv4 e IPv6
+
+=item C<Socket>
+
+Funciones y constantes para soporte de red
+
+=item CORE
+
+Espacio de nombres para las rutinas principales de Perl
+
+=item CPAN
+
+Consulta, descarga y compila módulos perl desde sitios CPAN
+
+=item CPAN::API::HOWTO
+
+Un recetario para programar con CPAN.pm
+
+=item CPAN::Debug
+
+Depuración interna para CPAN.pm
+
+=item CPAN::Distroprefs
+
+Lee y coincide con distroprefs
+
+=item CPAN::FirstTime
+
+Utilidad para la inicialización del archivo de configuración CPAN::Config
+
+=item CPAN::HandleConfig
+
+Gestión de la configuración interna para CPAN.pm
+
+=item CPAN::Kwalify
+
+Interfaz entre CPAN.pm y Kwalify.pm
+
+=item CPAN::Meta
+
+Los metadatos para una distribución de CPAN
+
+=item CPAN::Meta::Converter
+
+Convierte estructuras de metadatos de una distribución de CPAN
+
+=item CPAN::Meta::Feature
+
+Una característica opcional proporcionada por una distribución de CPAN
+
+=item CPAN::Meta::History
+
+Historia de los campos de la especificación de los metadatos de una distribución de CPAN
+
+=item CPAN::Meta::History::Meta_1_0
+
+Versión 1.0 de la especificación de metadatos para META.yml
+
+=item CPAN::Meta::History::Meta_1_1
+
+Versión 1.1 de la especificación de metadatos para META.yml
+
+=item CPAN::Meta::History::Meta_1_2
+
+Versión 1.2 de la especificación de metadatos para META.yml
+
+=item CPAN::Meta::History::Meta_1_3
+
+Versión 1.3 de la especificación de metadatos para META.yml
+
+=item CPAN::Meta::History::Meta_1_4
+
+Versión 1.4 de la especificación de metadatos para META.yml
+
+=item CPAN::Meta::Merge
+
+Mezclar fragmentos de metadatos de CPAN
+
+=item CPAN::Meta::Prereqs
+
+Un conjunto de prerequisitos para una distribución, por fase y tipo
+
+=item CPAN::Meta::Requirements
+
+Un conjunto de requisitos de versión para una distribución CPAN
+
+=item CPAN::Meta::Spec
+
+Especificación para los metadatos de una distribución de CPAN
+
+=item CPAN::Meta::Validator
+
+Valida estructuras de metadatos de una distribución de CPAN
+
+=item CPAN::Meta::YAML
+
+Lee y escribe un subconjunto de YAML para los archivos de metadatos de CPAN
+
+=item CPAN::Nox
+
+Envoltorio alrededor de CPAN.pm que no usa ningún módulo XS
+
+=item CPAN::Plugin
+
+Clase base para todas las extensiones de shell de CPAN
+
+=item CPAN::Plugin::Specfile
+
+Prueba de concepto de implementación de un CPAN::Plugin trivial
+
+=item CPAN::Queue
+
+Soporte interno para colas, para CPAN.pm
+
+=item CPAN::Tarzip
+
+Gestión interna de archivos tar, para CPAN.pm
+
+=item CPAN::Version
+
+Funciones de utilidad para comparar versiones de CPAN
+
+=item Carp
+
+warn y die alternativos para módulos
+
+=item Class::Struct
+
+Declara tipos de datos parecidos a estructuras, como clases Perl
+
+=item Compress::Raw::Bzip2
+
+Interfaz de bajo nivel a la biblioteca de compresión bzip2
+
+=item Compress::Raw::Zlib
+
+Interfaz de bajo nivel a la biblioteca de compresión zlib
+
+=item Compress::Zlib
+
+Interfaz a la biblioteca de compresión zlib
+
+=item Config
+
+Accede a la información de configuración de Perl
+
+=item Config::Perl::V
+
+Recuperación estructura de los datos que perl -V ofrece
+
+=item Cwd
+
+Obtiene el nombre de la ruta del directorio de trabajo actual
+
+=item DB
+
+Interfaz programática a la API de depuración de Perl
+
+=item DBM_Filter
+
+Filter DBM keys/values 
+
+=item DBM_Filter::compress
+
+Filtro para DBM_Filter
+
+=item DBM_Filter::encode
+
+Filtro para DBM_Filter
+
+=item DBM_Filter::int32
+
+Filtro para DBM_Filter
+
+=item DBM_Filter::null
+
+Filtro para DBM_Filter
+
+=item DBM_Filter::utf8
+
+Filtro para DBM_Filter
+
+=item DB_File
+
+Perl5 accede a la versión 1.x de Berkeley DB
+
+=item Data::Dumper
+
+Conversión a texto de estructuras de datos perl, de forma conveniente para imprimirlas y C<eval>uarlas
+
+=item Devel::PPPort
+
+Perl/Pollution/Portability
+
+=item Devel::Peek
+
+Una herramienta de depuración de datos para el programador de XS
+
+=item Devel::SelfStubber
+
+Genera códigos para un módulo SelfLoading
+
+=item Digest
+
+Módulos que calculan compendios de mensaje
+
+=item Digest::MD5
+
+Interfaz para Perl al algoritmo MD5
+
+=item Digest::SHA
+
+Extensión Perl para SHA-1/224/256/384/512
+
+=item Digest::base
+
+Clase base de Digest
+
+=item Digest::file
+
+Calcula compendios de archivos
+
+=item DirHandle
+
+Ofrece métodos de objetos para los identificadores de directorio
+
+=item Dumpvalue
+
+Proporciona volcados de pantalla de datos Perl.
+
+=item DynaLoader
+
+Carga dinámicamente bibliotecas C en el código Perl
+
+=item Encode
+
+Codificaciones de caracteres en Perl
+
+=item Encode::Alias
+
+Definiciones de alias a las codificaciones
+
+=item Encode::Byte
+
+Codificaciones de un solo byte
+
+=item Encode::CJKConstants
+
+Utilizada internamente por Encode::??::ISO_2022_*
+
+=item Encode::CN
+
+Codificaciones chinas basadas en China
+
+=item Encode::CN::HZ
+
+Utilizada internamente por Encode::CN
+
+=item Encode::Config
+
+Internamente utilizado por Encode
+
+=item Encode::EBCDIC
+
+Codificaciones EBCDIC
+
+=item Encode::Encoder
+
+Codificador orientado a objetos
+
+=item Encode::Encoding
+
+Clase base de la implementación de Encode
+
+=item Encode::GSM0338
+
+Codificación ESTI GSM 03.38
+
+=item Encode::Guess
+
+Hace suposiciones sobre la codificación a partir de los datos
+
+=item Encode::JP
+
+Codificaciones Japoneses
+
+=item Encode::JP::H2Z
+
+Utilizada internamente por Encode::JP::2022_JP*
+
+=item Encode::JP::JIS7
+
+Utilizada internamente por Encode::JP
+
+=item Encode::KR
+
+Codificaciones coreanas
+
+=item Encode::KR::2022_KR
+
+Utilizada internamente por Encode::KR
+
+=item Encode::MIME::Header
+
+Codificación de las cabeceras MIME 'B' y 'Q'
+
+=item Encode::MIME::Name
+
+Internamente utilizado por Encode
+
+=item Encode::PerlIO
+
+Un documento detallado sobre Encode y PerlIO
+
+=item Encode::Supported
+
+Codificaciones que soporta Encode
+
+=item Encode::Symbol
+
+Codificaciones de símbolos
+
+=item Encode::TW
+
+Codificaciones chinas basadas en Taiwan
+
+=item Encode::Unicode
+
+Formatos de transformación de diversos Unicode
+
+=item Encode::Unicode::UTF7
+
+Codificación UTF-7
+
+=item English
+
+Usa nombres en Inglés amable (o awk) para las feas variables de puntuación
+
+=item Env
+
+Módulo Perl que importa variables de entorno como escalares o arrays
+
+=item Errno
+
+Constantes errno del sistema
+
+=item Exporter
+
+Implementa el método de importación por defecto, para los módulos
+
+=item Exporter::Heavy
+
+Las tripas de Exporter
+
+=item ExtUtils::CBuilder
+
+Compilar y enlazar código C para módulos Perl
+
+=item ExtUtils::CBuilder::Platform::Windows
+
+Clase constructor para las plataformas Windows
+
+=item ExtUtils::Command
+
+Utilidades para reemplazar comandos comunes de UNIX en Makefiles, etc.
+
+=item ExtUtils::Command::MM
+
+Comandos para las MM, para usarse en los Makefiles
+
+=item ExtUtils::Constant
+
+Genera códigos XS para importar cabeceras de C, de constantes
+
+=item ExtUtils::Constant::Base
+
+Clase base para los objetos ExtUtils::Constant
+
+=item ExtUtils::Constant::Utils
+
+Funciones auxiliares para ExtUtils::Constant
+
+=item ExtUtils::Constant::XS
+
+Genera código C para las constantes de los módulos XS.
+
+=item ExtUtils::Embed
+
+Utilidades para incrustar Perl en aplicaciones C/C++
+
+=item ExtUtils::Install
+
+Instala archivos de aquí hacia allí
+
+=item ExtUtils::Installed
+
+Gestión del inventario de los módulos instalados
+
+=item ExtUtils::Liblist
+
+Determina las bibliotecas que hay que usar y cómo usarlas
+
+=item ExtUtils::MM
+
+Subclase ExtUtils::MakeMaker ajustada al SO
+
+=item ExtUtils::MM_AIX
+
+Subclase específica de AIX de ExtUtils::MM_Unix
+
+=item ExtUtils::MM_Any
+
+Métodos MM independientes de la plataforma
+
+=item ExtUtils::MM_BeOS
+
+Métodos para sobreescribir el comportamiento UN*X en ExtUtils::MakeMaker
+
+=item ExtUtils::MM_Cygwin
+
+Métodos para sobreescribir el comportamiento UN*X en ExtUtils::MakeMaker
+
+=item ExtUtils::MM_DOS
+
+Subclase específica de DOS de ExtUtils::MM_Unix
+
+=item ExtUtils::MM_Darwin
+
+Comportamiento especial para OS X
+
+=item ExtUtils::MM_MacOS
+
+Produce archivos Makefile para el MacOS Classic
+
+=item ExtUtils::MM_NW5
+
+Métodos para sobreescribir el comportamiento UN*X en ExtUtils::MakeMaker
+
+=item ExtUtils::MM_OS2
+
+Métodos para sobreescribir el comportamiento UN*X en ExtUtils::MakeMaker
+
+=item ExtUtils::MM_QNX
+
+Subclase específica de QNX de ExtUtils::MM_Unix
+
+=item ExtUtils::MM_UWIN
+
+Subclase especica de U/WIN de ExtUtils::MM_Unix
+
+=item ExtUtils::MM_Unix
+
+Métodos utilizados por ExtUtils::MakeMaker
+
+=item ExtUtils::MM_VMS
+
+Métodos para sobreescribir el comportamiento UN*X en ExtUtils::MakeMaker
+
+=item ExtUtils::MM_VOS
+
+Subclase específica de VOS de ExtUtils::MM_Unix
+
+=item ExtUtils::MM_Win32
+
+Métodos para sobreescribir el comportamiento UN*X en ExtUtils::MakeMaker
+
+=item ExtUtils::MM_Win95
+
+Método para personalizar MakeMaker para Win9X
+
+=item ExtUtils::MY
+
+Subclase de ExtUtils::MakeMaker para personalización
+
+=item ExtUtils::MakeMaker
+
+Crea un módulo Makefile
+
+=item ExtUtils::MakeMaker::Config
+
+Envoltorio alrededor de Config.pm
+
+=item ExtUtils::MakeMaker::FAQ
+
+Cuestiones más frecuentes sobre MakeMaker
+
+=item ExtUtils::MakeMaker::Locale
+
+Empaqueta Encode::Locale
+
+=item ExtUtils::MakeMaker::Tutorial
+
+Escribir un módulo con MakeMaker
+
+=item ExtUtils::Manifest
+
+Utilidades para escribir y comprobar un archivo MANIFEST (manifiesto)
+
+=item ExtUtils::Miniperl
+
+Escribe el código en C para perlmain.c
+
+=item ExtUtils::Mkbootstrap
+
+Hace un archivo de arranque para que DynaLoader lo use
+
+=item ExtUtils::Mksymlists
+
+Escribe archivos de opciones del enlazador para la extensión dinámica
+
+=item ExtUtils::Packlist
+
+Gestiona archivos .packlist
+
+=item ExtUtils::ParseXS
+
+Convierte código XS de Perl en código C
+
+=item ExtUtils::ParseXS::Constants
+
+Valores de inicialización para algunos términos globales
+
+=item ExtUtils::ParseXS::Eval
+
+Paquete limpio para evaluar código en él
+
+=item ExtUtils::ParseXS::Utilities
+
+Subrutinas utilizadas con with ExtUtils::ParseXS
+
+=item ExtUtils::Typemaps
+
+Lee/escribe/modifica archivos de mapa de tipo Perl/XS
+
+=item ExtUtils::Typemaps::Cmd
+
+Comandos rápidos para el manejo de mapas de tipos
+
+=item ExtUtils::Typemaps::InputMap
+
+Entrada en la sección INPUT de un mapa de tipos
+
+=item ExtUtils::Typemaps::OutputMap
+
+Entrada en la sección OUTPUT de un mapa de tipos
+
+=item ExtUtils::Typemaps::Type
+
+Entrada en la sección TYPEMAP de un mapa de tipos
+
+=item ExtUtils::XSSymSet
+
+Mantiene conjuntos de nombres de símbolos para el enlazador de VMS
+
+=item ExtUtils::testlib
+
+Añade directorios blib/* a @INC
+
+=item Fatal
+
+Reemplaza funciones con equivalentes que, o tienen éxito o mueren
+
+=item Fcntl
+
+Carga las definiciones Fcntl.h de C
+
+=item File::Basename
+
+Interpreta las rutas de archivo en directorio, nombre de archivo y sufijo.
+
+=item File::Compare
+
+Compara archivos o identificadores de archivos
+
+=item File::Copy
+
+Copia archivos o identificadores de archivos
+
+=item File::DosGlob
+
+Expansión de patrones parecidos a los de la familia DOS
+
+=item File::Fetch
+
+Un mecanismo genérico de obtención de archivos
+
+=item File::Find
+
+Recorre un árbol de directorios.
+
+=item File::Glob
+
+Extensión Perl para la rutina de expansión de patrones BSD
+
+=item File::GlobMapper
+
+Extiende File::Glob para permitir entrada y salida de (nombres de) archivos
+
+=item File::Path
+
+Crea o elimina árboles de directorios
+
+=item File::Spec
+
+Realiza operaciones sobre nombres de archivos, de forma portable
+
+=item File::Spec::AmigaOS
+
+File::Spec para AmigaOS
+
+=item File::Spec::Cygwin
+
+Métodos para archivos específicos de Cygwin
+
+=item File::Spec::Epoc
+
+Métodos para archivos especícos de Epoc
+
+=item File::Spec::Functions
+
+Realiza operaciones sobre nombres de archivos, de forma portable
+
+=item File::Spec::Mac
+
+File::Spec para Mac OS (Classic)
+
+=item File::Spec::OS2
+
+Métodos para archivos específicos de OS/2
+
+=item File::Spec::Unix
+
+File::Spec para Unix, base para los otros módulos File::Spec
+
+=item File::Spec::VMS
+
+Métodos para archivos específicos de VMS
+
+=item File::Spec::Win32
+
+Métodos para archivos específicos de Win32
+
+=item File::Temp
+
+Devuelve de forma segura un nombre y un gestor de un archivo temporal
+
+=item File::stat
+
+Interfaz basado en nombres de las funciones internas stat() de Perl
+
+=item FileCache
+
+Mantiene más archivos abiertos de los que permite el sistema
+
+=item FileHandle
+
+Ofrece métodos de objetos para los identificadores de archivo
+
+=item Filter::Simple
+
+Filtrado de código fuente, de forma sencilla
+
+=item Filter::Util::Call
+
+Módulo extra para el filtrado de código fuente Perl
+
+=item FindBin
+
+Localiza el directorio original del script perl
+
+=item GDBM_File
+
+Puente entre Perl5 y la biblioteca gdbm.
+
+=item Getopt::Long
+
+Procesamiento extendido de opciones en la línea de comandos
+
+=item Getopt::Std
+
+Procesa opciones de una sola letra, con agrupamiento de opciones
+
+=item HTTP::Tiny
+
+Un cliente de HTTP/1.1, pequeño, simple, correcto
+
+=item Hash::Util
+
+Una selección de subrutinas de utilerías generales para hashes
+
+=item Hash::Util::FieldHash
+
+Soporte para clases Inside-Out
+
+=item I18N::Collate
+
+Compara datos escalares de 8 bit de acuerdo a la configuración regional actual
+
+=item I18N::LangTags
+
+Funciones para tratar con el lenguaje de marcas del estilo RFC3066
+
+=item I18N::LangTags::Detect
+
+Detecta las preferencias del lenguaje del usuario
+
+=item I18N::LangTags::List
+
+Marcas y nombres para las lenguas humanas
+
+=item I18N::Langinfo
+
+Consulta la información de la configuración regional
+
+=item IO
+
+Carga diversos módulos de E/S
+
+=item IO::Compress::Base
+
+Clase base para los módulos IO::Compress 
+
+=item IO::Compress::Bzip2
+
+Escribe archivos/búferes bzip2
+
+=item IO::Compress::Deflate
+
+Escribe archivos/búferes RFC 1950
+
+=item IO::Compress::FAQ
+
+Cuestiones más frecuentes sobre IO::Compress
+
+=item IO::Compress::Gzip
+
+Escribe archivos/búferes RFC 1952
+
+=item IO::Compress::RawDeflate
+
+Escribe archivos/búferes RFC 1951
+
+=item IO::Compress::Zip
+
+Escribe archivos/búferes zip
+
+=item IO::Dir
+
+Ofrece métodos de objetos para los identificadores de directorio
+
+=item IO::File
+
+Ofrece métodos de objetos para los identificadores de archivo
+
+=item IO::Handle
+
+Suministra métodos de objeto para los gestores de E/S
+
+=item IO::Pipe
+
+Suministra métodos de objeto para tuberías
+
+=item IO::Poll
+
+Interfaz objeto para la llamada del sistema poll
+
+=item IO::Seekable
+
+Suministra métodos basados en seek para los objetos E/S
+
+=item IO::Select
+
+Interfaz orientado a objetos para la llamada del sistema select
+
+=item IO::Socket
+
+Interfaz objeto para las comunicaciones con socket
+
+=item IO::Socket::INET
+
+Interfaz de objeto para los sockets del dominio AF_INET
+
+=item IO::Socket::UNIX
+
+Interfaz de objeto para los sockets del dominio AF_UNIX
+
+=item IO::Uncompress::AnyInflate
+
+Descomprime archivo/búfer basado en zlib (zip, gzip)
+
+=item IO::Uncompress::AnyUncompress
+
+Descomprime archivo/búfer gzip, zip, bzip2 o lzop
+
+=item IO::Uncompress::Base
+
+Clase base para los módulos IO::Uncompress 
+
+=item IO::Uncompress::Bunzip2
+
+Lee archivos/búferes bzip2
+
+=item IO::Uncompress::Gunzip
+
+Lee archivos/búferes RFC 1952
+
+=item IO::Uncompress::Inflate
+
+Lee archivos/búferes RFC 1950
+
+=item IO::Uncompress::RawInflate
+
+Lee archivos/búferes RFC 1951
+
+=item IO::Uncompress::Unzip
+
+Lee archivos/búferes zip
+
+=item IO::Zlib
+
+Interfaz estilo IO:: para L<Compress::Zlib>
+
+=item IPC::Cmd
+
+Encontrar y ejecutar comandos del sistema de forma fácil
+
+=item IPC::Msg
+
+Clase de objetos de mensajes SysV IPC
+
+=item IPC::Open2
+
+Abre un proceso tanto para lectura como para escritura usando open2()
+
+=item IPC::Open3
+
+Abre un proceso para lectura, escritura, y gestión de errores, usando open3()
+
+=item IPC::Semaphore
+
+Clase de objetos de semáforos SysV IPC
+
+=item IPC::SharedMem
+
+Clase de objetos de memoria compartida SysV IPC
+
+=item IPC::SysV
+
+Constantes y llamadas del sistema System V IPC
+
+=item JSON::PP
+
+Módulo escrito solo en Perl, compatible con JSON::XS
+
+=item JSON::PP::Boolean
+
+Módulo ficticio que ofrece JSON::PP::Boolean
+
+=item List::Util
+
+Una selección de subrutinas de utilerías generales para listas
+
+=item List::Util::XS
+
+Indica si List::Util se compiló con un compilador C
+
+=item Locale::Codes
+
+Una distribución de módulos para manjar códigos de configuraciones regionales
+
+=item Locale::Codes::API
+
+Una descripción de cada función que se puede llamar, en cada módulo
+
+=item Locale::Codes::Changes
+
+Detalla los cambios en Locale::Codes
+
+=item Locale::Codes::Country
+
+Códigos estándares para la identificación de país
+
+=item Locale::Codes::Currency
+
+Códigos estándares para identificación de la moneda
+
+=item Locale::Codes::LangExt
+
+Códigos estándares para la identificación de la extensión del idioma
+
+=item Locale::Codes::LangFam
+
+Códigos estándares para la identificación de la extensión del idioma
+
+=item Locale::Codes::LangVar
+
+Códigos estándares para la identificación de la variación del idioma 
+
+=item Locale::Codes::Language
+
+Códigos estándares para la identificación del idioma
+
+=item Locale::Codes::Script
+
+Códigos estándar para la identificación de script
+
+=item Locale::Country
+
+Códigos estándares para la identificación de país
+
+=item Locale::Currency
+
+Códigos estándares para identificación de la moneda
+
+=item Locale::Language
+
+Códigos estándares para la identificación del idioma
+
+=item Locale::Maketext
+
+Entorno de trabajo para la localización
+
+=item Locale::Maketext::Cookbook
+
+Recetas para usar Locale::Maketext
+
+=item Locale::Maketext::Guts
+
+Módulo obsoleto para la carga del código utf8 de Locale::Maketext
+
+=item Locale::Maketext::GutsLoader
+
+Módulo obsoleto para la carga del código utf8 de Locale::Maketext
+
+=item Locale::Maketext::Simple
+
+Interfaz simple para Locale::Maketext::Lexicon
+
+=item Locale::Maketext::TPJ13
+
+Artículo sobre localización de software
+
+=item Locale::Script
+
+Códigos estándar para la identificación de script
+
+=item MIME::Base64
+
+Codificación y decodificación de cadenas en base64
+
+=item MIME::QuotedPrint
+
+Codificación y decodificación de cadenas imprimibles entrecomilladas
+
+=item Math::BigFloat
+
+Paquete matemático para punto flotante de tamaño arbitrario
+
+=item Math::BigInt
+
+Paquete matemático para entero/flotante de tamaño arbitrario
+
+=item Math::BigInt::Calc
+
+Módulo escrito solo en Perl para dar soporte a Math::BigInt
+
+=item Math::BigInt::CalcEmu
+
+Emula matemática a bajo nivel con código BigInt
+
+=item Math::BigInt::FastCalc
+
+Math::BigInt::Calc con algo de XS para aumentar la velocidad
+
+=item Math::BigRat
+
+Grandes números racionales arbitrarios
+
+=item Math::Complex
+
+Números complejos y funciones matemáticas asociadas
+
+=item Math::Trig
+
+Funciones trigonométricas
+
+=item Memoize
+
+Hace a las funciones más rápidas cambiando espacio por tiempo
+
+=item Memoize::AnyDBM_File
+
+Pegamento para ofrecer EXISTS para AnyDBM_File para usarlo con Storable
+
+=item Memoize::Expire
+
+Módulo enchufable para la expiración automática de valores I<memoizados>
+
+=item Memoize::ExpireFile
+
+Prueba para la semántica de expiración de Memoize
+
+=item Memoize::ExpireTest
+
+Prueba para la semántica de expiración de Memoize
+
+=item Memoize::NDBM_File
+
+Pegamento para ofrecer EXISTS para NDBM_File para usarlo con Storable
+
+=item Memoize::SDBM_File
+
+Pegamento para ofrecer EXISTS para SDBM_File para usarlo con Storable
+
+=item Memoize::Storable
+
+Almacena datos I<Memoizados> en una base de datos Storable
+
+=item Module::CoreList
+
+Qué módulos se empaquetaron con qué versiones de perl
+
+=item Module::CoreList::Utils
+
+Qué utilidades se empaquetaron con qué versiones de perl
+
+=item Module::Load
+
+require en tiempo de ejecución tanto para módulos como para archivos
+
+=item Module::Load::Conditional
+
+Obtiene información / carga módulos en tiempo de ejecución
+
+=item Module::Loaded
+
+Marca a los módulos como cargados o descargados
+
+=item Module::Metadata
+
+Reúne información sobre paquetes y POD de módulos perl
+
+=item NDBM_File
+
+Acceso enlazado a archivos ndbm
+
+=item NEXT
+
+Ofrece una pseudo-clase NEXT (y asociados) que permite el despacho de métodos
+
+=item Net::Cmd
+
+Clase de comandos de red (utilizados por FTP, SMTP, etc.)
+
+=item Net::Config
+
+Datos de configuración local para libnet
+
+=item Net::Domain
+
+Intenta evaluar el nombre de internet y dominio del host actual
+
+=item Net::FTP
+
+Clase de cliente de FTP
+
+=item Net::FTP::dataconn
+
+Clase de datos de conexión de un cliente FTP
+
+=item Net::NNTP
+
+Clase de cliente de NNTP
+
+=item Net::Netrc
+
+Interfaz orientado a objetos para usuarios de archivos netrc
+
+=item Net::POP3
+
+Clase cliente para el Post Office Protocol 3 (RFC1939)
+
+=item Net::Ping
+
+Comprueba la disponibilidad de un servidor
+
+=item Net::SMTP
+
+Cliente del Simple Mail Transfer Protocol
+
+=item Net::Time
+
+Interfaz cliente para fechas y horas en formato de red
+
+=item Net::hostent
+
+Interfaz basado en nombres de las funciones internas gethost*() de Perl
+
+=item Net::libnetFAQ
+
+Preguntas más frecuentes sobre libnet
+
+=item Net::netent
+
+Interfaz basado en nombres de las funciones internas getnet*() de Perl
+
+=item Net::protoent
+
+Interfaz basado en nombres de las funciones internas getproto*() de Perl
+
+=item Net::servent
+
+Interfaz basado en nombres de las funciones internas getserv*() de Perl
+
+=item O
+
+Interfaz genérico para la trastienda del compilador de Perl
+
+=item ODBM_File
+
+Acceso enlazado a archivos odbm
+
+=item Opcode
+
+Desactiva códigos de operación con nombre cuando se compila código perl
+
+=item POSIX
+
+Interfaz Perl al IEEE Std 1003.1
+
+=item Params::Check
+
+Un mecanismo genérico de interpretación/comprobación
+
+=item Parse::CPAN::Meta
+
+Interpreta los archivos de metadatos CPAN META.yml y META.json
+
+=item Perl::OSType
+
+Mapea nombres de Perl del sistema operativo a tipos genéricos
+
+=item PerlIO
+
+Cargador bajo demanda para las capas PerlIO y raíz del espacio de nombres PerlIO::*
+
+=item PerlIO::encoding
+
+Capa de codificación
+
+=item PerlIO::mmap
+
+E/S mapeada en memoria
+
+=item PerlIO::scalar
+
+E/S en memoria, en un escalar
+
+=item PerlIO::via
+
+Clase de apoyo para las capas PerlIO implementadas en perl
+
+=item PerlIO::via::QuotedPrint
+
+Capa PerlIO para las cadenas imprimibles entrecomilladas
+
+=item Pod::Escapes
+
+Para resolver secuencias Pod EE<lt>...E<gt>
+
+=item Pod::Find
+
+Encuentra documentos POD en los árboles de directorios
+
+=item Pod::Functions
+
+Agrupa funciones de Perl al estilo de perlfunc.pod
+
+=item Pod::Html
+
+Módulo para convertir archivos pod a HTML
+
+=item Pod::InputObjects
+
+Objetos que representan entrada de párrafos POD, comandos, etc.
+
+=item Pod::Man
+
+Convierte datos POD a texto preparado para *roff
+
+=item Pod::ParseLink
+
+Interpreta un código de formateo LE<lt>E<gt> en texto POD
+
+=item Pod::ParseUtils
+
+Utilidades auxiliares para la interpretación y conversión de POD
+
+=item Pod::Parser
+
+Clase base para la creación de filtros y traductores de POD
+
+=item Pod::Perldoc
+
+Mostrar documentación Perl en formato POD
+
+=item Pod::Perldoc::BaseTo
+
+Clase base para los formateadores de Pod::Perldoc
+
+=item Pod::Perldoc::GetOptsOO
+
+Opción personalizada del intérprete para Pod::Perldoc
+
+=item Pod::Perldoc::ToANSI
+
+Despliega Pod con secuencias escape de color ANSI color 
+
+=item Pod::Perldoc::ToChecker
+
+Permite que Perldoc compruebe errores Pod
+
+=item Pod::Perldoc::ToMan
+
+Permite que Perldoc despliegue Pod como páginas man
+
+=item Pod::Perldoc::ToNroff
+
+Permite que Perldoc convierte Pod a nroff
+
+=item Pod::Perldoc::ToPod
+
+Permite que Perldoc despliegue Pod como ... Pod!
+
+=item Pod::Perldoc::ToRtf
+
+Permite que Perldoc despliegue Pod como RTF
+
+=item Pod::Perldoc::ToTerm
+
+Despliegue Pod con secuencias de escape de terminal 
+
+=item Pod::Perldoc::ToText
+
+Permite que Perldoc despliegue Pod como texto en plano
+
+=item Pod::Perldoc::ToTk
+
+Permite que Perldoc use Tk::Pod para desplegar Pod
+
+=item Pod::Perldoc::ToXml
+
+Permite que Perldoc despliegue Pod como XML
+
+=item Pod::PlainText
+
+Convierte datos POD a texto ASCII formateado
+
+=item Pod::Select
+
+Extrae secciones seleccionadas de POD como entrada
+
+=item Pod::Simple
+
+Entorno de trabajo para interpretar Pod
+
+=item Pod::Simple::Checker
+
+Comprueba la sintaxis Pod de un documento
+
+=item Pod::Simple::Debug
+
+Pone Pod::Simple en modo traza/depuración
+
+=item Pod::Simple::DumpAsText
+
+Vuelca eventos de interpretación de Pod como texto
+
+=item Pod::Simple::DumpAsXML
+
+Convierte Pod a XML
+
+=item Pod::Simple::HTML
+
+Convierte Pod a HTML
+
+=item Pod::Simple::HTMLBatch
+
+Convierte algunos archivos Pod a archivos HTML
+
+=item Pod::Simple::LinkSection
+
+Representa los atributos de la "sección" de los códigos L
+
+=item Pod::Simple::Methody
+
+Convierte eventos Pod::Simple en llamadas de métodos
+
+=item Pod::Simple::PullParser
+
+Una interfaz a un I<pull>-intérprete para interpretar Pod
+
+=item Pod::Simple::PullParserEndToken
+
+Tokens finales de Pod::Simple::PullParser
+
+=item Pod::Simple::PullParserStartToken
+
+Tokens de inicio de Pod::Simple::PullParser
+
+=item Pod::Simple::PullParserTextToken
+
+Tokens de texto de Pod::Simple::PullParser
+
+=item Pod::Simple::PullParserToken
+
+Tokens de Pod::Simple::PullParser
+
+=item Pod::Simple::RTF
+
+Formatea Pod como RTF
+
+=item Pod::Simple::Search
+
+Encuentra documentos POD en los árboles de directorios
+
+=item Pod::Simple::SimpleTree
+
+Interpreta Pod en un árbol sencillo de interpretación 
+
+=item Pod::Simple::Subclassing
+
+Escribe un formateador como una subclase de Pod::Simple
+
+=item Pod::Simple::Text
+
+Formatea Pod como texto plano
+
+=item Pod::Simple::TextContent
+
+Obtiene el contenido de texto del Pod
+
+=item Pod::Simple::XHTML
+
+Formatea Pod como XHTML válido
+
+=item Pod::Simple::XMLOutStream
+
+Convierte Pod a XML
+
+=item Pod::Text
+
+Convierte datos POD a texto formateado
+
+=item Pod::Text::Color
+
+Convierte datos POD a texto ASCII formateado en color
+
+=item Pod::Text::Termcap
+
+Convierte datos POD a texto ASCII con secuencias de escapes de formateo
+
+=item Pod::Usage
+
+Imprime un mensaje de uso a partir de la documentación pod incrustada
+
+=item SDBM_File
+
+Acceso enlazado a archivos sdbm
+
+=item Safe
+
+Compila y ejecuta código en compartimentos restringidos
+
+=item Scalar::Util
+
+Una selección de subrutinas de utilerías generales para escalares
+
+=item Search::Dict
+
+Busca y encuentra a partir de una clave en un archivo de diccionario
+
+=item SelectSaver
+
+Salva y recupera gestores de archivo seleccionados
+
+=item SelfLoader
+
+Carga funciones solo bajo demanda
+
+=item Storable
+
+Persistencia para estructuras de datos Perl
+
+=item Sub::Util
+
+Una selección de subrutinas de utilerías para subrutinas y referencias de CODE (código)
+
+=item Symbol
+
+Manipula símbolos Perl y sus nombres
+
+=item Sys::Hostname
+
+Intenta toda forma concebible de obtener el nombre del servidor
+
+=item Sys::Syslog
+
+Interfaz Perl a las llamadas syslog(3) del UNIX
+
+=item Sys::Syslog::Win32
+
+Soporte Win32 para Sys::Syslog
+
+=item TAP::Base
+
+Clase base que proporciona funcionalidad común a L<TAP::Parser>
+
+=item TAP::Formatter::Base
+
+Clase base para delegar el entramado de la salida
+
+=item TAP::Formatter::Color
+
+Ejecuta programas de pruebas Perl con color
+
+=item TAP::Formatter::Console
+
+Delega el entramado de la salida para la salida por defecto en consola
+
+=item TAP::Formatter::Console::ParallelSession
+
+Delega el entramado de la salida para la salida en paralelo por defecto en consola
+
+=item TAP::Formatter::Console::Session
+
+Delega el entramado de la salida para la salida por defecto en consola
+
+=item TAP::Formatter::File
+
+Delega el entramado de la salida para la salida en archivos
+
+=item TAP::Formatter::File::Session
+
+Delega el entramado de la salida para la salida en archivos
+
+=item TAP::Formatter::Session
+
+Clase base abstracta para delegar el entramado de la salida 
+
+=item TAP::Harness
+
+Ejecuta programas de prueba con estadísticas
+
+=item TAP::Harness::Env
+
+Interpreta el entramado de variables de entorno relacionadas donde sea apropiado
+
+=item TAP::Object
+
+Clase base que proporciona funcionalidad común a todos los módulos C<TAP::*>
+
+=item TAP::Parser
+
+Interpreta la salida de L<TAP|Test::Harness::TAP>
+
+=item TAP::Parser::Aggregator
+
+Acumula los resultados de TAP::Parser
+
+=item TAP::Parser::Grammar
+
+Una gramática para el I<Test Anything Protocol> (TAP, Protocolo para comprobar cualquier cosa).
+
+=item TAP::Parser::Iterator
+
+Clase base para los iteradores fuente TAP
+
+=item TAP::Parser::Iterator::Array
+
+Iterador para las fuentes TAP basadas en array
+
+=item TAP::Parser::Iterator::Process
+
+Iterador para las fuentes TAP basadas en procesos
+
+=item TAP::Parser::Iterator::Stream
+
+Iterador para las fuentes TAP basadas en identificadores de archivo
+
+=item TAP::Parser::IteratorFactory
+
+Se figura qué objetos SourceHandler usar para una Source dada
+
+=item TAP::Parser::Multiplexer
+
+Multiplexa múltiples TAP::Parsers
+
+=item TAP::Parser::Result
+
+Clase base para la salida de los objetos TAP::Parser
+
+=item TAP::Parser::Result::Bailout
+
+Token del resultado del rescate.
+
+=item TAP::Parser::Result::Comment
+
+Token comentario del resultado.
+
+=item TAP::Parser::Result::Plan
+
+Token plan del resultado.
+
+=item TAP::Parser::Result::Pragma
+
+Token pragma para TAP.
+
+=item TAP::Parser::Result::Test
+
+Token resultado del test.
+
+=item TAP::Parser::Result::Unknown
+
+Token de resultado desconocido.
+
+=item TAP::Parser::Result::Version
+
+Token de versión de sintaxis TAP.
+
+=item TAP::Parser::Result::YAML
+
+Token resultado en YAML.
+
+=item TAP::Parser::ResultFactory
+
+Factoría para la creación de objetos de salida TAP::Parser
+
+=item TAP::Parser::Scheduler
+
+Agenda comprobaciones durante la comprobación en paralelo
+
+=item TAP::Parser::Scheduler::Job
+
+Una única tarea de comprobación.
+
+=item TAP::Parser::Scheduler::Spinner
+
+Un trabajo de no-operación.
+
+=item TAP::Parser::Source
+
+Una fuente TAP y metadatos sobre él
+
+=item TAP::Parser::SourceHandler
+
+Clase base para los diferentes manejadores de fuentes TAP
+
+=item TAP::Parser::SourceHandler::Executable
+
+Flujo de salida desde una fuente TAP ejecutable
+
+=item TAP::Parser::SourceHandler::File
+
+Flujo TAP desde un archivo de texto.
+
+=item TAP::Parser::SourceHandler::Handle
+
+Flujo TAP desde un gestor de archivo IO::Handle o un GLOB.
+
+=item TAP::Parser::SourceHandler::Perl
+
+Flujo TAP desde un ejecutable Perl
+
+=item TAP::Parser::SourceHandler::RawTAP
+
+Flujo de salida desde un TAP en crudo en una ref. a un escalar/array.
+
+=item TAP::Parser::YAMLish::Reader
+
+Leer datos YAMLish desde un iterador
+
+=item TAP::Parser::YAMLish::Writer
+
+Escribe datos YAMLish
+
+=item Term::ANSIcolor
+
+Salida en pantalla de color usando secuencias de escape ANSI
+
+=item Term::Cap
+
+Interfaz Perl a termcap
+
+=item Term::Complete
+
+Módulo Perl para el completado de palabras
+
+=item Term::ReadLine
+
+Interfaz Perl a diversos paquetes C<readline>.
+
+=item Test
+
+Proporciona un único entorno de trabajo para la escritura de programas de pruebas
+
+=item Test::Builder
+
+Trastienda para la construcción de bibliotecas de pruebas
+
+=item Test::Builder::IO::Scalar
+
+Una copia de IO::Scalar para Test::Builder
+
+=item Test::Builder::Module
+
+Clase base para los módulos de pruebas
+
+=item Test::Builder::Tester
+
+Comprueba las baterías de test que se hayan construido
+
+=item Test::Builder::Tester::Color
+
+Convierte en color la salida de Test::Builder::Tester
+
+=item Test::Harness
+
+Ejecuta programas de pruebas estándares con estadísticas
+
+=item Test::Harness::Beyond
+
+Hacer pruebas más allá
+
+=item Test::More
+
+Otro entorno de trabajo para escribir programas de pruebas
+
+=item Test::Simple
+
+Utilidades básicas para escribir pruebas.
+
+=item Test::Tester
+
+Facilita la comprobación de módulos de test construido con Test::Builder
+
+=item Test::Tester::Capture
+
+Ayudar en la comprobación de módulos de test construido con Test::Builder
+
+=item Test::Tester::CaptureRunner
+
+Ayudar en la comprobación de módulos de test construido con Test::Builder
+
+=item Test::Tutorial
+
+Un tutorial sobre cómo escribir pruebas realmente básicas
+
+=item Test::use::ok
+
+Alternativa a Test::More::use_ok
+
+=item Text::Abbrev
+
+Abbrev - crea un tabla de abreviaturas a partir de una lista
+
+=item Text::Balanced
+
+Extrae secuencias de texto delimitado a partir de cadenas.
+
+=item Text::ParseWords
+
+Interpreta texto en un array de token o un array de arrays
+
+=item Text::Tabs
+
+Expande y contrae tabuladors como los comandos unix expand(1) y unexpand(1)
+
+=item Text::Wrap
+
+Corta líneas para formar párrafos sencillos
+
+=item Thread
+
+Manipula hilos en Perl (solo para código antiguo)
+
+=item Thread::Queue
+
+Colas que funcionan con hilos
+
+=item Thread::Semaphore
+
+Semáforos que funcionan con hilos
+
+=item Tie::Array
+
+Clase base para los arrays enlazados
+
+=item Tie::File
+
+Accede a las líneas de un archivo en disco a través de un array Perl
+
+=item Tie::Handle
+
+Definiciones de clases bases para manejadores enlazados
+
+=item Tie::Hash
+
+Definiciones de clases bases para hashes enlazados
+
+=item Tie::Hash::NamedCapture
+
+Búferes de captura con nombre, de I<regexp>
+
+=item Tie::Memoize
+
+Añade dato a un hash cuando se necesita
+
+=item Tie::RefHash
+
+Usar las referencias como claves hash
+
+=item Tie::Scalar
+
+Definiciones de clases bases para escalares enlazados
+
+=item Tie::StdHandle
+
+Definiciones de clases bases para manejadores enlazados
+
+=item Tie::SubstrHash
+
+Hashes con claves de tamaño fijo, en una tabla de tamaño fijo
+
+=item Time::HiRes
+
+Temporizadores de alta resolución para alarm, sleep, gettimeofday
+
+=item Time::Local
+
+Cálculo eficiente del tiempo local y GMT
+
+=item Time::Piece
+
+Objetos de tiempo orientados a objetos
+
+=item Time::Seconds
+
+Una API sencilla para convertir segundos a otros valores temporales
+
+=item Time::gmtime
+
+Interfaz basado en nombres de la función interna gmtime() de Perl
+
+=item Time::localtime
+
+Interfaz basado en nombres de la función interna localtime() de Perl
+
+=item Time::tm
+
+Objeto interno utilizado por Time::gmtime y Time::localtime
+
+=item UNIVERSAL
+
+Clase base para TODAS las clases (referencias bendecidas)
+
+=item Unicode::Collate
+
+Algoritmo para el cotejo Unicode
+
+=item Unicode::Collate::CJK::Big5
+
+Ponderación de idiogramas CJK unificados
+
+=item Unicode::Collate::CJK::GB2312
+
+Ponderación de idiogramas CJK unificados
+
+=item Unicode::Collate::CJK::JISX0208
+
+Ponderación JIS KANJI para Unicode::Collate
+
+=item Unicode::Collate::CJK::Korean
+
+Ponderación de idiogramas CJK unificados
+
+=item Unicode::Collate::CJK::Pinyin
+
+Ponderación de idiogramas CJK unificados
+
+=item Unicode::Collate::CJK::Stroke
+
+Ponderación de idiogramas CJK unificados
+
+=item Unicode::Collate::CJK::Zhuyin
+
+Ponderación de idiogramas CJK unificados
+
+=item Unicode::Collate::Locale
+
+Localización lingüística para DUCET por medio de Unicode::Collate
+
+=item Unicode::Normalize
+
+Formatos de normalización Unicode
+
+=item Unicode::UCD
+
+Base de datos de caracteres Unicode
+
+=item User::grent
+
+Interfaz basado en nombres de las funciones internas getgr*() de Perl
+
+=item User::pwent
+
+Interfaz basado en nombres de las funciones internas getpw*() de Perl
+
+=item VMS::DCLsym
+
+Extensión Perl para manipular símbolos DCL
+
+=item VMS::Filespec
+
+Convertir entre las sintaxis de especificación de archivos VMS y Unix
+
+=item VMS::Stdio
+
+Funciones estándares E/S vía extensiones VMS
+
+=item Win32
+
+Interfaces API para algunas funciones Win32
+
+=item Win32API::File
+
+Acceso a bajo nivel a las llamadas API de Win32 para archivos/directorios.
+
+=item Win32CORE
+
+Código base de las principales funciones (CORE) Win32
+
+=item XS::APItest
+
+Probar la API C de perl
+
+=item XS::Typemap
+
+Módulo para comprobar los mapas de tipos XS distribuidos con perl
+
+=item XSLoader
+
+Carga dinámicamente bibliotecas C en el código Perl
+
+=item autodie::Scope::Guard
+
+Clase para envolver llamadas a subrutinas al final del ámbito
+
+=item autodie::Scope::GuardStack
+
+ Pila de enganches para gestionar ámbitos a través de %^H
+
+=item autodie::Util
+
+Subrutinas internas de utilidad para autodie y Fatal
+
+=item version::Internals
+
+Extensión Perl para los Objetos de Versión
+
+
+=back
+
+Para descubrir I<todos> los módulos instalados en su sistema, incluyendo aquellos sin documentación o fuera de la distribución estándar, simplemente use el siguiente comando (bajo la línea de comandos por defecto en win32, se deberían usar dobles comillas en lugar de las simples).
+
+    % perl -MFile::Find=find -MFile::Spec::Functions -Tlwe \
+      'find { wanted => sub { print canonpath $_ if /\.pm\z/ },
+      no_chdir => 1 }, @INC'
+
+(El -T está aquí para impedir que '.' se liste en @INC).
+Todos deberían tener su propia documentación instalada y accesible a través del comando del sistema man(1).  Si no tiene un programa B<find>, puede usar en su lugar el programa Perl B<find2perl>, que genera código Perl como salida, que puede ejecutar con perl.  Si tiene un programa B<man> pero no encuentra sus módulos, tendrá que arreglar su manpath.  Vea L<perl> para más detalles.  Si no tiene un comando del sistema B<man>, podría intentar con el programa B<perldoc>.
+
+Note también que el comando C<perldoc perllocal> le da (quizás de forma incompleta) una lista de los módulos que se instalaron en su sistema. (El archivo perllocal.pod se actualizó por el proceso estándar de instalación MakeMaker).
+
+=head2 Módulos de extensión
+
+Los módulos de extensión se escriben en C (o una mezcla de Perl y C).  Normalmente se cargan dinámicamente en Perl cuando las necesite, pero también se puede enlazar estáticamente.  Los módulos de extensión soportados incluyen Socket, Fcntl y POSIX.
+
+Muchos módulos de extensión en C no vienen incluidos (al menos, completamente) debido a sus tamaños, volatilidad, o simplemente, falta de tiempo para una comprobación adecuada y una configuración a lo largo de multitud de plataformas en las que Perl está en fase beta.  Se le anima para que les busque en CPAN (descrito más abajo), o usar motores de búsqueda web como Alta Vista o Google.
+
+=head1 CPAN
+
+CPAN quiere decir I<Comprehensive Perl Archive Network> (Amplia red de archivos Perl); es un tesoro de materiales Perl replicados de forma global, incluyendo documentación, guías de estilo, trucos y trampas, versiones alternativas para sistemas no-Unix y, ocasionalmente, distribuciones binarias para estos.   Motores de búsqueda para CPAN se pueden encontrar en http://www.cpan.org/
+
+Lo más importante, CPAN incluye alrededor de un millar de módulos sin empaquetar, algunos de los cuales requiere compilarse con un compilador de C.  Las principales categorías de los módulos son:
+
+=over
+
+=item *
+
+Extensiones del lenguaje y herramientas de la documentación
+
+=item *
+
+Soporte al desarrollo
+
+=item *
+
+Interfaces para el sistema operativo
+
+=item *
+
+Redes, Control de dispositivos (módems) y comunicación entre procesos
+
+=item *
+
+Tipos de datos y utilidades para tipos de datos
+
+=item *
+
+Interfaces para base de datos
+
+=item *
+
+Interfaces de usuario
+
+=item *
+
+Interfaces para/emulación de otros lenguajes de programación
+
+=item *
+
+Nombres de archivos, sistemas de archivos y bloqueo de archivos (vea también los gestores de archivo)
+
+=item *
+
+Procesamiento de cadenas, procesamiento de texto del lenguaje, interpretación y búsqueda
+
+=item *
+
+Opción, argumento, parámetro y configuración de procesamiento de archivos
+
+=item *
+
+Internacionalización u localización
+
+=item *
+
+Autenticación, seguridad y cifrado
+
+=item *
+
+I<World Wide Web>, HTML, HTTP, CGI, MIME
+
+=item *
+
+Utilidades para servidor y demonios
+
+=item *
+
+Archivado y compresión
+
+=item *
+
+Manipulación, dibujo y pintado de imágenes, mapas de píxel y bits
+
+=item *
+
+Correo electrónico y noticias Usenet
+
+=item *
+
+Utilidades de control de flujo (retrollamadas, excepciones, etc.)
+
+=item *
+
+Utilidades para gestores de archivo y flujos de entrada/salida
+
+=item *
+
+Módulos misceláneos
+
+=back
+
+Sigue la lista de sitios CPAN registrados.
+Por favor, note que la ordenación es alfabética en estos campos:
+
+Continente
+   |
+   |-->País
+         |
+         |-->[estado/provincia]
+                   |
+                   |-->ftp
+                   |
+                   |-->[http]
+
+y por eso los servidores norteamericanos aparecen listados entre los sitios europeos y suramericanos.
+
+Sitios CPAN registrados
+
+=for mantenedores
+Generado por Porting/make_modlib_cpan.pl
+
+=head2 África
+
+=over 4
+
+=item Sudáfrica
+
+  http://cpan.mirror.ac.za/
+  ftp://cpan.mirror.ac.za/
+  http://mirror.is.co.za/pub/cpan/
+  ftp://ftp.is.co.za/pub/cpan/
+  ftp://ftp.saix.net/pub/CPAN/
+
+=back
+
+=head2 Asia
+
+=over 4
+
+=item China
+
+  http://cpan.wenzk.com/
+
+=item Hong Kong
+
+  http://ftp.cuhk.edu.hk/pub/packages/perl/CPAN/
+  ftp://ftp.cuhk.edu.hk/pub/packages/perl/CPAN/
+  http://mirrors.geoexpat.com/cpan/
+
+=item India
+
+  http://perlmirror.indialinks.com/
+
+=item Indonesia
+
+  http://cpan.biz.net.id/
+  http://komo.vlsm.org/CPAN/
+  ftp://komo.vlsm.org/CPAN/
+  http://cpan.cermin.lipi.go.id/
+  ftp://cermin.lipi.go.id/pub/CPAN/
+  http://cpan.pesat.net.id/
+
+=item Japón
+
+  ftp://ftp.u-aizu.ac.jp/pub/CPAN
+  ftp://ftp.kddilabs.jp/CPAN/
+  http://ftp.nara.wide.ad.jp/pub/CPAN/
+  ftp://ftp.nara.wide.ad.jp/pub/CPAN/
+  http://ftp.jaist.ac.jp/pub/CPAN/
+  ftp://ftp.jaist.ac.jp/pub/CPAN/
+  ftp://ftp.dti.ad.jp/pub/lang/CPAN/
+  ftp://ftp.ring.gr.jp/pub/lang/perl/CPAN/
+  http://ftp.riken.jp/lang/CPAN/
+  ftp://ftp.riken.jp/lang/CPAN/
+  http://ftp.yz.yamagata-u.ac.jp/pub/lang/cpan/
+  ftp://ftp.yz.yamagata-u.ac.jp/pub/lang/cpan/
+
+=item República de Corea
+
+  http://ftp.kaist.ac.kr/pub/CPAN
+  ftp://ftp.kaist.ac.kr/pub/CPAN
+  http://cpan.mirror.cdnetworks.com/
+  ftp://cpan.mirror.cdnetworks.com/CPAN/
+  http://cpan.sarang.net/
+  ftp://cpan.sarang.net/CPAN/
+
+=item Rusia
+
+  http://cpan.tomsk.ru/
+  ftp://cpan.tomsk.ru/
+
+=item Singapur
+
+  http://mirror.averse.net/pub/CPAN
+  ftp://mirror.averse.net/pub/CPAN
+  http://cpan.mirror.choon.net/
+  http://cpan.oss.eznetsols.org
+  ftp://ftp.oss.eznetsols.org/cpan
+
+=item Taiwan
+
+  http://ftp.cse.yzu.edu.tw/pub/CPAN/
+  ftp://ftp.cse.yzu.edu.tw/pub/CPAN/
+  http://cpan.nctu.edu.tw/
+  ftp://cpan.nctu.edu.tw/
+  ftp://ftp.ncu.edu.tw/CPAN/
+  http://cpan.cdpa.nsysu.edu.tw/
+  ftp://cpan.cdpa.nsysu.edu.tw/Unix/Lang/CPAN/
+  http://cpan.stu.edu.tw
+  ftp://ftp.stu.edu.tw/CPAN
+  http://ftp.stu.edu.tw/CPAN
+  ftp://ftp.stu.edu.tw/pub/CPAN
+  http://cpan.cs.pu.edu.tw/
+  ftp://cpan.cs.pu.edu.tw/pub/CPAN
+
+=item Tailandia
+
+  http://mirrors.issp.co.th/cpan/
+  ftp://mirrors.issp.co.th/cpan/
+  http://mirror.yourconnect.com/CPAN/
+  ftp://mirror.yourconnect.com/CPAN/
+
+=item Turquía
+
+  http://cpan.gazi.edu.tr/
+
+=back
+
+=head2 América Central
+
+=over 4
+
+=item Costa Rica
+
+  http://mirrors.ucr.ac.cr/CPAN/
+  ftp://mirrors.ucr.ac.cr/CPAN/
+
+=back
+
+=head2 Europe
+
+=over 4
+
+=item Austria
+
+  http://cpan.inode.at/
+  ftp://cpan.inode.at
+  http://gd.tuwien.ac.at/languages/perl/CPAN/
+  ftp://gd.tuwien.ac.at/pub/CPAN/
+
+=item Bélgica
+
+  http://ftp.belnet.be/mirror/ftp.cpan.org/
+  ftp://ftp.belnet.be/mirror/ftp.cpan.org/
+  http://ftp.easynet.be/pub/CPAN/
+  http://cpan.weepee.org/
+
+=item Bosnia y Herzegovina
+
+  http://cpan.blic.net/
+
+=item Bulgaria
+
+  http://cpan.cbox.biz/
+  ftp://cpan.cbox.biz/cpan/
+  http://cpan.digsys.bg/
+  ftp://ftp.digsys.bg/pub/CPAN
+
+=item Croacia
+
+  http://ftp.carnet.hr/pub/CPAN/
+  ftp://ftp.carnet.hr/pub/CPAN/
+
+=item República Checa
+
+  ftp://ftp.fi.muni.cz/pub/CPAN/
+  http://archive.cpan.cz/
+
+=item Dinamarca
+
+  http://mirrors.dotsrc.org/cpan
+  ftp://mirrors.dotsrc.org/cpan/
+  http://www.cpan.dk/
+  http://mirror.uni-c.dk/pub/CPAN/
+
+=item Finlandia
+
+  ftp://ftp.funet.fi/pub/languages/perl/CPAN/
+  http://mirror.eunet.fi/CPAN
+
+=item Francia
+
+  http://cpan.enstimac.fr/
+  ftp://ftp.inria.fr/pub/CPAN/
+  http://distrib-coffee.ipsl.jussieu.fr/pub/mirrors/cpan/
+  ftp://distrib-coffee.ipsl.jussieu.fr/pub/mirrors/cpan/
+  ftp://ftp.lip6.fr/pub/perl/CPAN/
+  http://mir2.ovh.net/ftp.cpan.org
+  ftp://mir1.ovh.net/ftp.cpan.org
+  ftp://ftp.oleane.net/pub/CPAN/
+  http://ftp.crihan.fr/mirrors/ftp.cpan.org/
+  ftp://ftp.crihan.fr/mirrors/ftp.cpan.org/
+  http://ftp.u-strasbg.fr/CPAN
+  ftp://ftp.u-strasbg.fr/CPAN
+  http://cpan.cict.fr/
+  ftp://cpan.cict.fr/pub/CPAN/
+
+=item Alemania
+
+  ftp://ftp.fu-berlin.de/unix/languages/perl/
+  http://mirrors.softliste.de/cpan/
+  ftp://ftp.rub.de/pub/CPAN/
+  http://www.planet-elektronik.de/CPAN/
+  http://ftp.hosteurope.de/pub/CPAN/
+  ftp://ftp.hosteurope.de/pub/CPAN/
+  http://www.mirrorspace.org/cpan/
+  http://mirror.netcologne.de/cpan/
+  ftp://mirror.netcologne.de/cpan/
+  ftp://ftp.freenet.de/pub/ftp.cpan.org/pub/CPAN/
+  http://ftp-stud.hs-esslingen.de/pub/Mirrors/CPAN/
+  ftp://ftp-stud.hs-esslingen.de/pub/Mirrors/CPAN/
+  http://mirrors.zerg.biz/cpan/
+  http://ftp.gwdg.de/pub/languages/perl/CPAN/
+  ftp://ftp.gwdg.de/pub/languages/perl/CPAN/
+  http://dl.ambiweb.de/mirrors/ftp.cpan.org/
+  http://cpan.mirror.clusters.kg/
+  http://cpan.mirror.iphh.net/
+  ftp://cpan.mirror.iphh.net/pub/CPAN/
+  http://cpan.mirroring.de/
+  http://mirror.informatik.uni-mannheim.de/pub/mirrors/CPAN/
+  ftp://mirror.informatik.uni-mannheim.de/pub/mirrors/CPAN/
+  http://www.chemmedia.de/mirrors/CPAN/
+  http://ftp.cw.net/pub/CPAN/
+  ftp://ftp.cw.net/pub/CPAN/
+  http://cpan.cpantesters.org/
+  ftp://cpan.cpantesters.org/CPAN/
+  http://cpan.mirrored.de/
+  ftp://mirror.petamem.com/CPAN/
+  http://cpan.noris.de/
+  ftp://cpan.noris.de/pub/CPAN/
+  ftp://ftp.mpi-sb.mpg.de/pub/perl/CPAN/
+  ftp://ftp.gmd.de/mirrors/CPAN/
+
+=item Grecia
+
+  ftp://ftp.forthnet.gr/pub/languages/perl/CPAN
+  ftp://ftp.ntua.gr/pub/lang/perl/
+  http://cpan.cc.uoc.gr/
+  ftp://ftp.cc.uoc.gr/mirrors/CPAN/
+
+=item Hungría
+
+  http://cpan.mirrors.enexis.hu/
+  ftp://cpan.mirrors.enexis.hu/mirrors/cpan/
+  http://cpan.hu/
+
+=item Islandia
+
+  http://ftp.rhnet.is/pub/CPAN/
+  ftp://ftp.rhnet.is/pub/CPAN/
+
+=item Irlanda
+
+  http://ftp.esat.net/pub/languages/perl/CPAN/
+  ftp://ftp.esat.net/pub/languages/perl/CPAN/
+  http://ftp.heanet.ie/mirrors/ftp.perl.org/pub/CPAN
+  ftp://ftp.heanet.ie/mirrors/ftp.perl.org/pub/CPAN
+
+=item Italia
+
+  http://bo.mirror.garr.it/mirrors/CPAN/
+  http://cpan.panu.it/
+  ftp://ftp.panu.it/pub/mirrors/perl/CPAN/
+
+=item Letonia
+
+  http://kvin.lv/pub/CPAN/
+
+=item Lituania
+
+  http://ftp.litnet.lt/pub/CPAN/
+  ftp://ftp.litnet.lt/pub/CPAN/
+
+=item Malta
+
+  http://cpan.waldonet.net.mt/
+
+=item Holanda
+
+  ftp://ftp.quicknet.nl/pub/CPAN/
+  http://mirror.hostfuss.com/CPAN/
+  ftp://mirror.hostfuss.com/CPAN/
+  http://mirrors3.kernel.org/cpan/
+  ftp://mirrors3.kernel.org/pub/CPAN/
+  http://cpan.mirror.versatel.nl/
+  ftp://ftp.mirror.versatel.nl/cpan/
+  ftp://download.xs4all.nl/pub/mirror/CPAN/
+  http://mirror.leaseweb.com/CPAN/
+  ftp://mirror.leaseweb.com/CPAN/
+  ftp://ftp.cpan.nl/pub/CPAN/
+  http://archive.cs.uu.nl/mirror/CPAN/
+  ftp://ftp.cs.uu.nl/mirror/CPAN/
+  http://luxitude.net/cpan/
+
+=item Noruega
+
+  ftp://ftp.uninett.no/pub/languages/perl/CPAN
+  ftp://ftp.uit.no/pub/languages/perl/cpan/
+
+=item Polonia
+
+  http://piotrkosoft.net/pub/mirrors/CPAN/
+  ftp://ftp.piotrkosoft.net/pub/mirrors/CPAN/
+  http://ftp.man.poznan.pl/pub/CPAN
+  ftp://ftp.man.poznan.pl/pub/CPAN
+  ftp://ftp.ps.pl/pub/CPAN/
+  ftp://sunsite.icm.edu.pl/pub/CPAN/
+  ftp://ftp.tpnet.pl/d4/CPAN/
+
+=item Portugal
+
+  http://cpan.dei.uc.pt/
+  ftp://ftp.dei.uc.pt/pub/CPAN
+  ftp://ftp.ist.utl.pt/pub/CPAN/
+  http://cpan.perl.pt/
+  http://cpan.ip.pt/
+  ftp://cpan.ip.pt/pub/cpan/
+  http://mirrors.nfsi.pt/CPAN/
+  ftp://mirrors.nfsi.pt/pub/CPAN/
+  http://cpan.dcc.fc.up.pt/
+
+=item Rumanía
+
+  http://ftp.astral.ro/pub/CPAN/
+  ftp://ftp.astral.ro/pub/CPAN/
+  ftp://ftp.lug.ro/CPAN
+  http://mirrors.xservers.ro/CPAN/
+  http://mirrors.hostingromania.ro/ftp.cpan.org/
+  ftp://ftp.hostingromania.ro/mirrors/ftp.cpan.org/
+  ftp://ftp.iasi.roedu.net/pub/mirrors/ftp.cpan.org/
+
+=item Rusia
+
+  ftp://ftp.aha.ru/CPAN/
+  http://cpan.rinet.ru/
+  ftp://cpan.rinet.ru/pub/mirror/CPAN/
+  ftp://ftp.SpringDaemons.com/pub/CPAN/
+  http://mirror.rol.ru/CPAN/
+  http://ftp.silvernet.ru/CPAN/
+  http://ftp.spbu.ru/CPAN/
+  ftp://ftp.spbu.ru/CPAN/
+
+=item Eslovaquia
+
+  http://cpan.fyxm.net/
+
+=item Eslovenia
+
+  http://www.klevze.si/cpan
+
+=item España
+
+  http://osl.ugr.es/CPAN/
+  ftp://ftp.rediris.es/mirror/CPAN/
+  http://ftp.gui.uva.es/sites/cpan.org/
+  ftp://ftp.gui.uva.es/sites/cpan.org/
+
+=item Suecia
+
+  http://mirrors4.kernel.org/cpan/
+  ftp://mirrors4.kernel.org/pub/CPAN/
+
+=item Suiza
+
+  http://cpan.mirror.solnet.ch/
+  ftp://ftp.solnet.ch/mirror/CPAN/
+  ftp://ftp.adwired.ch/CPAN/
+  http://mirror.switch.ch/ftp/mirror/CPAN/
+  ftp://mirror.switch.ch/mirror/CPAN/
+
+=item Ucrania
+
+  http://cpan.makeperl.org/
+  ftp://cpan.makeperl.org/pub/CPAN
+  http://cpan.org.ua/
+  http://cpan.gafol.net/
+  ftp://ftp.gafol.net/pub/cpan/
+
+=item Reino Unido
+
+  http://www.mirrorservice.org/sites/ftp.funet.fi/pub/languages/perl/CPAN/
+  ftp://ftp.mirrorservice.org/sites/ftp.funet.fi/pub/languages/perl/CPAN/
+  http://mirror.tje.me.uk/pub/mirrors/ftp.cpan.org/
+  ftp://mirror.tje.me.uk/pub/mirrors/ftp.cpan.org/
+  http://www.mirror.8086.net/sites/CPAN/
+  ftp://ftp.mirror.8086.net/sites/CPAN/
+  http://cpan.mirror.anlx.net/
+  ftp://ftp.mirror.anlx.net/CPAN/
+  http://mirror.bytemark.co.uk/CPAN/
+  ftp://mirror.bytemark.co.uk/CPAN/
+  http://cpan.etla.org/
+  ftp://cpan.etla.org/pub/CPAN
+  ftp://ftp.demon.co.uk/pub/CPAN/
+  http://mirror.sov.uk.goscomb.net/CPAN/
+  ftp://mirror.sov.uk.goscomb.net/pub/CPAN/
+  http://ftp.plig.net/pub/CPAN/
+  ftp://ftp.plig.net/pub/CPAN/
+  http://ftp.ticklers.org/pub/CPAN/
+  ftp://ftp.ticklers.org/pub/CPAN/
+  http://cpan.mirrors.uk2.net/
+  ftp://mirrors.uk2.net/pub/CPAN/
+  http://mirror.ox.ac.uk/sites/www.cpan.org/
+  ftp://mirror.ox.ac.uk/sites/www.cpan.org/
+
+=back
+
+=head2 Norte América
+
+=over 4
+
+=item Bahamas
+
+  http://www.securehost.com/mirror/CPAN/
+
+=item Canadá
+
+  http://cpan.arcticnetwork.ca
+  ftp://mirror.arcticnetwork.ca/pub/CPAN
+  http://cpan.sunsite.ualberta.ca/
+  ftp://cpan.sunsite.ualberta.ca/pub/CPAN/
+  http://theoryx5.uwinnipeg.ca/pub/CPAN/
+  ftp://theoryx5.uwinnipeg.ca/pub/CPAN/
+  http://arwen.cs.dal.ca/mirror/CPAN/
+  ftp://arwen.cs.dal.ca/pub/mirror/CPAN/
+  http://CPAN.mirror.rafal.ca/
+  ftp://CPAN.mirror.rafal.ca/pub/CPAN/
+  ftp://ftp.nrc.ca/pub/CPAN/
+  http://mirror.csclub.uwaterloo.ca/pub/CPAN/
+  ftp://mirror.csclub.uwaterloo.ca/pub/CPAN/
+
+=item México
+
+  http://www.msg.com.mx/CPAN/
+  ftp://ftp.msg.com.mx/pub/CPAN/
+
+=item Estados Unidos
+
+=over 8
+
+=item Alabama
+
+  http://mirror.hiwaay.net/CPAN/
+  ftp://mirror.hiwaay.net/CPAN/
+
+=item Arizona
+
+  http://cpan.ezarticleinformation.com/
+
+=item California
+
+  http://cpan.knowledgematters.net/
+  http://cpan.binkerton.com/
+  http://cpan.develooper.com/
+  http://mirrors.gossamer-threads.com/CPAN
+  http://cpan.schatt.com/
+  http://mirrors.kernel.org/cpan/
+  ftp://mirrors.kernel.org/pub/CPAN
+  http://mirrors2.kernel.org/cpan/
+  ftp://mirrors2.kernel.org/pub/CPAN/
+  http://cpan.mirror.facebook.net/
+  http://mirrors1.kernel.org/cpan/
+  ftp://mirrors1.kernel.org/pub/CPAN/
+  http://cpan-sj.viaverio.com/
+  ftp://cpan-sj.viaverio.com/pub/CPAN/
+  http://www.perl.com/CPAN/
+
+=item Florida
+
+  ftp://ftp.cise.ufl.edu/pub/mirrors/CPAN/
+  http://mirror.atlantic.net/pub/CPAN/
+  ftp://mirror.atlantic.net/pub/CPAN/
+
+=item Idaho
+
+  http://mirror.its.uidaho.edu/pub/cpan/
+  ftp://mirror.its.uidaho.edu/cpan/
+
+=item Illinois
+
+  http://cpan.mirrors.hoobly.com/
+  http://cpan.uchicago.edu/pub/CPAN/
+  ftp://cpan.uchicago.edu/pub/CPAN/
+  http://mirrors.servercentral.net/CPAN/
+  http://www.stathy.com/CPAN/
+  ftp://www.stathy.com/CPAN/
+
+=item Indiana
+
+  ftp://ftp.uwsg.iu.edu/pub/perl/CPAN/
+  http://cpan.netnitco.net/
+  ftp://cpan.netnitco.net/pub/mirrors/CPAN/
+  http://ftp.ndlug.nd.edu/pub/perl/
+  ftp://ftp.ndlug.nd.edu/pub/perl/
+
+=item Massachusetts
+
+  http://mirrors.ccs.neu.edu/CPAN/
+
+=item Michigan
+
+  http://ftp.wayne.edu/cpan/
+  ftp://ftp.wayne.edu/cpan/
+
+=item Minnesota
+
+  http://cpan.msi.umn.edu/
+
+=item New Jersey
+
+  http://mirror.datapipe.net/CPAN/
+  ftp://mirror.datapipe.net/pub/CPAN/
+
+=item New York
+
+  http://mirrors.24-7-solutions.net/pub/CPAN/
+  ftp://mirrors.24-7-solutions.net/pub/CPAN/
+  http://mirror.cc.columbia.edu/pub/software/cpan/
+  ftp://mirror.cc.columbia.edu/pub/software/cpan/
+  http://cpan.belfry.net/
+  http://cpan.erlbaum.net/
+  ftp://cpan.erlbaum.net/CPAN/
+  http://cpan.hexten.net/
+  ftp://cpan.hexten.net/
+  ftp://mirror.nyi.net/CPAN/
+  http://mirror.rit.edu/CPAN/
+  ftp://mirror.rit.edu/CPAN/
+
+=item Carolina del Norte
+
+  http://www.ibiblio.org/pub/mirrors/CPAN
+  ftp://ftp.ncsu.edu/pub/mirror/CPAN/
+
+=item Oregón
+
+  http://ftp.osuosl.org/pub/CPAN/
+  ftp://ftp.osuosl.org/pub/CPAN/
+
+=item Pensilvania
+
+  http://ftp.epix.net/CPAN/
+  ftp://ftp.epix.net/pub/languages/perl/
+  http://cpan.pair.com/
+  ftp://cpan.pair.com/pub/CPAN/
+
+=item Carolina del Sur
+
+  http://cpan.mirror.clemson.edu/
+
+=item Tennessee
+
+  http://mira.sunsite.utk.edu/CPAN/
+
+=item Texas
+
+  http://mirror.uta.edu/CPAN
+
+=item Utah
+
+  ftp://mirror.xmission.com/CPAN/
+
+=item Virginia
+
+  http://cpan-du.viaverio.com/
+  ftp://cpan-du.viaverio.com/pub/CPAN/
+  http://perl.secsup.org/
+  ftp://perl.secsup.org/pub/perl/
+  ftp://mirror.cogentco.com/pub/CPAN/
+
+=item Washington
+
+  http://cpan.llarian.net/
+  ftp://cpan.llarian.net/pub/CPAN/
+  ftp://ftp-mirror.internap.com/pub/CPAN/
+
+=item Wisconsin
+
+  http://cpan.mirrors.tds.net
+  ftp://cpan.mirrors.tds.net/pub/CPAN
+  http://mirror.sit.wisc.edu/pub/CPAN/
+  ftp://mirror.sit.wisc.edu/pub/CPAN/
+
+=back
+
+=back
+
+=head2 Oceanía
+
+=over 4
+
+=item Australia
+
+  http://mirror.internode.on.net/pub/cpan/
+  ftp://mirror.internode.on.net/pub/cpan/
+  http://cpan.mirror.aussiehq.net.au/
+  http://mirror.as24220.net/cpan/
+  ftp://mirror.as24220.net/cpan/
+
+=item Nueva Zelanda
+
+  ftp://ftp.auckland.ac.nz/pub/perl/CPAN/
+  http://cpan.inspire.net.nz
+  ftp://cpan.inspire.net.nz/cpan
+  http://cpan.catalyst.net.nz/CPAN/
+  ftp://cpan.catalyst.net.nz/pub/CPAN/
+
+=back
+
+=head2 Sudamérica
+
+=over 4
+
+=item Argentina
+
+  http://cpan.patan.com.ar/
+  http://cpan.localhost.net.ar
+  ftp://mirrors.localhost.net.ar/pub/mirrors/CPAN
+
+=item Brasil
+
+  ftp://cpan.pop-mg.com.br/pub/CPAN/
+  http://ftp.pucpr.br/CPAN
+  ftp://ftp.pucpr.br/CPAN
+  http://cpan.kinghost.net/
+
+=item Chile
+
+  http://cpan.dcc.uchile.cl/
+  ftp://cpan.dcc.uchile.cl/pub/lang/cpan/
+
+=item Colombia
+
+  http://www.laqee.unal.edu.co/CPAN/
+
+=back
+
+=head2 Espejos RSYNC
+
+                      mirror.as24220.net::cpan
+                      cpan.inode.at::CPAN
+                      gd.tuwien.ac.at::CPAN
+                      ftp.belnet.be::packages/cpan
+                      rsync.linorg.usp.br::CPAN
+                      rsync.arcticnetwork.ca::CPAN
+                      CPAN.mirror.rafal.ca::CPAN
+                      mirror.csclub.uwaterloo.ca::CPAN
+                      theoryx5.uwinnipeg.ca::CPAN
+                      www.laqee.unal.edu.co::CPAN
+                      mirror.uni-c.dk::CPAN
+                      rsync.nic.funet.fi::CPAN
+                      rsync://distrib-coffee.ipsl.jussieu.fr/pub/mirrors/cpan/
+                      mir1.ovh.net::CPAN
+                      miroir-francais.fr::cpan
+                      ftp.crihan.fr::CPAN
+                      rsync://mirror.cict.fr/cpan/
+                      rsync://mirror.netcologne.de/cpan/
+                      ftp-stud.hs-esslingen.de::CPAN/
+                      ftp.gwdg.de::FTP/languages/perl/CPAN/
+                      cpan.mirror.iphh.net::CPAN
+                      cpan.cpantesters.org::cpan
+                      cpan.hu::CPAN
+                      komo.vlsm.org::CPAN
+                      mirror.unej.ac.id::cpan
+                      ftp.esat.net::/pub/languages/perl/CPAN
+                      ftp.heanet.ie::mirrors/ftp.perl.org/pub/CPAN
+                      rsync.panu.it::CPAN
+                      cpan.fastbull.org::CPAN
+                      ftp.kddilabs.jp::cpan
+                      ftp.nara.wide.ad.jp::cpan/
+                      rsync://ftp.jaist.ac.jp/pub/CPAN/
+                      rsync://ftp.riken.jp/cpan/
+                      mirror.linuxiso.kz::CPAN
+                      rsync://mirrors3.kernel.org/mirrors/CPAN/
+                      rsync://rsync.osmirror.nl/cpan/
+                      mirror.leaseweb.com::CPAN
+                      cpan.nautile.nc::CPAN
+                      mirror.icis.pcz.pl::CPAN
+                      piotrkosoft.net::mirrors/CPAN
+                      rsync://cpan.perl.pt/
+                      ftp.kaist.ac.kr::cpan
+                      cpan.sarang.net::CPAN
+                      mirror.averse.net::cpan
+                      rsync.oss.eznetsols.org
+                      mirror.ac.za::cpan
+                      ftp.is.co.za::IS-Mirror/ftp.cpan.org/
+                      rsync://ftp.gui.uva.es/cpan/
+                      rsync://mirrors4.kernel.org/mirrors/CPAN/
+                      ftp.solnet.ch::CPAN
+                      ftp.ulak.net.tr::CPAN
+                      gafol.net::cpan
+                      rsync.mirrorservice.org::ftp.funet.fi/pub/
+                      rsync://rsync.mirror.8086.net/CPAN/
+                      rsync.mirror.anlx.net::CPAN
+                      mirror.bytemark.co.uk::CPAN
+                      ftp.plig.net::CPAN
+                      rsync://ftp.ticklers.org:CPAN/
+                      mirrors.ibiblio.org::CPAN
+                      cpan-du.viaverio.com::CPAN
+                      mirror.hiwaay.net::CPAN
+                      rsync://mira.sunsite.utk.edu/CPAN/
+                      cpan.mirrors.tds.net::CPAN
+                      mirror.its.uidaho.edu::cpan
+                      rsync://mirror.cc.columbia.edu::cpan/
+                      ftp.fxcorporate.com::CPAN
+                      rsync.atlantic.net::CPAN
+                      mirrors.kernel.org::mirrors/CPAN
+                      rsync://mirrors2.kernel.org/mirrors/CPAN/
+                      cpan.pair.com::CPAN
+                      rsync://mirror.rit.edu/CPAN/
+                      rsync://mirror.facebook.net/cpan/
+                      rsync://mirrors1.kernel.org/mirrors/CPAN/
+                      cpan-sj.viaverio.com::CPAN
+
+Para un listado actualizado de los sitios CPAN, vea http://www.cpan.org/SITES o ftp://www.cpan.org/SITES
+
+=head1 Módulos: creación, uso y abuso
+
+(La siguiente sección se ha tomado directamente del archivo de módulos de Tim Bunce, disponible en sitio CPAN más cercano).
+
+Perl implementa una clase usando un package, pero la presencia de un package no implica la presencia de una clase.  Un package solo es un espacio de nombres.  Una clase es un package que proporciona subrutinas que se pueden usar como métodos.  Un método solo es una subrutina que espera, como primer argumento, tanto el nombre de un package (para métodos "estáticos"), o una referencia a otra cosa (para métodos "virtuales").
+
+Un módulo es un archivo que (por convención) proporciona una clase del mismo nombre (sin el .pm), más un método import al que se le puede llamar para obtener símbolos exportados.  Este módulo puede implementar algunos de sus métodos por medio de la carga dinámica de objetos en C o C++, pero eso debería ser totalmente transparente al usuario del módulo.  Así mismo, el módulo podría tener una función AUTOLOAD para absorber definiciones de subrutinas bajo demanda, pero esto también es transparente.  Solo se requiere que exista el archivo F<.pm>.  Vea L<perlsub>, L<perlobj> y L<AutoLoader> para mas detalles sobre el mecanismo AUTOLOAD.
+
+=head2 Directrices para la creación de módulos
+
+=over 4
+
+=item  *
+
+¿Ya existen, de alguna manera, módulos similares?
+
+Si es así, por favor intente reutilizar los módulos existentes tanto de forma entera o heredando características útiles en una nueva clase.  Si esto no es práctico intente contactar con los autores del módulo para trabajar en extender o mejorar la funcionalidad de los módulos existentes.
+Un ejemplo perfecto es la plétora de paquetes en perl4 para tratar opciones en la línea de comandos.
+
+Si está escribiendo un módulo para expandir un grupo ya existente de módulos, por favor coordínese con el autor del paquete.  Ayuda si sigue el mismo esquema de nombrado e interacción del autor original.
+
+=item  *
+
+Intente diseñar el nuevo módulo para que sea fácil de extender y reutilizar.
+
+Intente con C<use warnings;> (o C<use warnings qw(...);>).
+Recuerde que puede añadir C<no warnings qw(...);> a bloques individuales de código que necesita menos advertencias.
+
+Use referencias bendecidas.  Use la forma de dos argumentos de bless para bendecirlo con el nombre de la clase indicado en el primer parámetro del constructor, p.e.:
+
+ sub new {
+     my $clase = shift;
+     return bless {}, $clase;
+ }
+
+o incluso esto si quiere usarlo tanto como método estático o virtual.
+
+ sub new {
+     my $self  = shift;
+     my $clase = ref($self) || $self;
+     return bless {}, $clase;
+ }
+
+Pase los arrays como referencias para que se puedan añadir más parámetros más tarde (también es más rápido).  Convierta funciones en métodos donde sea apropiado.  Divida grandes métodos en más pequeños y flexibles.
+Herede métodos desde otros módulos, si es apropiado.
+
+Evite comprobaciones de nombres de clase, como: C<die "Inválido" unless ref $ref eq 'FOO'>.
+Generalmente, puede eliminar la parte C<eq 'FOO'> sin sufrir ningún daño.
+¡Permita que los objetos se observen a sí mismos! Generalmente, evite poner nombres de clase fijos, tanto como sea posible.
+
+Evite C<< $r->Clase::func() >> cuando use C<@ISA=qw(... Clase ...)> mientras funcione C<< $r->func() >>.
+
+Use AutoSplit para que las nuevas funciones añadidas o poco utilizadas no sean una carga para programas que no las usen. Añada funciones de comprobación al módulo después de __END__ tanto al usar AutoSplit o escribiendo:
+
+ eval join('',<main::DATA>) || die $@ unless caller();
+
+¿Su módulo pasa la prueba de 'subclase vacía'? Si dice C<@SUBCLASE::ISA = qw(SUCLASE);> sus aplicaciones deberían ser capaces de usar SUBCLASE en exactamente la misma manera que SUCLASE.  Por ejemplo, ¿su aplicación sigue funcionando si cambia C<< $obj = SUCLASE->new(); >> en C<< $obj = SUBCLASE->new(); >> ?
+
+Evite mantener ninguna información de estado en sus paquetes. Hace difícil para muchos otros paquetes usar el suyo. Mantenga la información de estado en los objetos.
+
+Siempre use B<-w>.
+
+Pruebe con C<use strict;> (o C<use strict qw(...);>).
+Recuerde que puede añadir C<no strict qw(...);> a bloques individuales de código que necesita ser menos estricto.
+
+Siempre use B<-w>.
+
+Siga las directrices de L<perlstyle>.
+
+Siempre use B<-w>.
+
+=item  *
+
+Algunas sencillas directrices de estilo
+
+El manual de perlstyle suministrado con Perl tiene muchos puntos útiles.
+
+El estilo de codificación es una cuestión de gusto personal. Muchas personas evolucionan su estilo durante años mientras aprenden qué les ayuda a escribir y mantener un buen código.  Aquí hay un conjunto de sugerencias que parece que se usan ampliamente por los desarrolladores experimentados:
+
+Utilice guiones bajos para separar palabras.  Generalmente resulta más fácil leer $nombres_de_variable_como_este, especialmente para los no castellanohablantes. Es una regla sencilla que también se aplica a NOMBRES_DE_VARIABLE_COMO_ESTE.
+
+Nombres de paquetes/módulos son una excepción a esta regla. De manera informal, Perl reserva los nombres de módulo en minúsculas para los módulos de tipo "pragma", como C<integer> y C<strict>. Otros módulos normalmente comienzan con una letra en mayúscula y seguir una mezcla de minúsculas y mayúsculas sin guiones bajos (se necesita que sea corto y portable).
+
+Puede encontrar útil usar el tamaño de caja de las letras para indicar el ámbito o la naturaleza de una variable. Por ejemplo:
+
+ $TODO_MAYUSCULAS    Solo constantes (evitar conflictos con variables Perl)
+ $Algunas_Mayusculas Ámbito global/estático de paquete
+ $sin_mayusculas     Variables definidas con my() o local() en un ámbito de función
+
+Para los nombres de funciones y métodos es mejor usar minúsculas.
+e.g., C<< $obj->as_string() >>.
+
+Puede agregar un guión bajo inicial al principio del nombre de una variable o función para indicar no se debe usar fuera del paquete en el que se definió.
+
+=item  *
+
+Seleccione qué exportar.
+
+¡NO exporte nombres de método!
+
+¡NO exporte nada por defecto sin tener una buena razón!
+
+Las exportaciones contaminan el espacio de nombres del módulo del usuario.  Si tiene que exportar intente utilizar @EXPORT_OK mejor que @EXPORT y evite nombres cortos o comunes para reducir el riesgo de colisión de nombres.
+
+Generalmente, cualquier cosa que no se exporte sigue siendo accesible desde el exterior del módulo usando la sintaxis NombreModulo::nombre_elemento (o C<< $bendecida_ref->metodo >>).  Por convención puede usar un guión bajo inicial en los nombres, para indicar, de manera informal, que son 'internos' y no para uso público.
+
+(Es de hecho posible conseguir funciones privadas diciendo: C<my $subref = sub { ... };  &$subref;>.  Pero no hay forma de llamarlas directamente como un método, porque los métodos deben tener un nombre en la tabla de símbolos).
+
+Como regla general, si el módulo está intentando ser orientado a objetos entonces no exporte nada. Si solo es una colección de funciones entonces ponga todo en @EXPORT_OK y use @EXPORT con precaución.
+
+=item  *
+
+Seleccione un nombre para el módulo.
+
+Este nombre debe ser tan descriptivo, preciso y completo como sea posible.  Evite cualquier riesgo de ambigüedad. Siempre intente usar dos o más palabras completas.  Generalmente, el nombre debería reflejar lo especial sobre lo que el módulo hace en lugar de cómo lo hace.  Por favor, use nombres de módulo anidados para agrupar informalmente o categorizar un módulo.
+Tendría que haber una muy buena razón para que un módulo no tenga un nombre anidado.
+Los nombres de módulos deberían comenzar con una letra en mayúscula.
+
+Tener 57 módulos que se llamen Sort no le hace la vida más fácil para nadie (aunque tener 23 llamados Sort::Quick solo es algo ligeramente mejor :-).
+Imagine a alguien intentando instalar su módulo al lado de muchos otros.
+
+Si está desarrollando un paquete de módulos/clases relacionados es buena práctica usar clases anidadas con un prefijo común ya que esto evitará colisiones en el espacio de nombres. Por ejemplo: Xyz::Control, Xyz::View, Xyz::Model, etc. Use los módulos de esta lista como una guía de nombrado.
+
+Si añade un nuevo módulo a un conjunto, siga los estándares del autor original para el nombrado de módulos y el interfaz a los métodos en esos módulos.
+
+Si desarrolla módulos para usarlo específicamente en un proyecto interno o privado, que nunca se hará publico, entonces debería asegurarse de que sus nombres no colisionarán con futuros módulos públicos. Puede realizar esto usando la categoría reservada Local::* o usando un nombre de categoría que incluya un guión bajo, como Foo_Corp::*.
+
+Para que sea portátil cada componente de un nombre de módulo debería limitarse a 11 caracteres. Si va a usarse en MS-DOS intente asegurarse de que los 8 primeros caracteres son únicos. Módulos anidados hace esto más fácil.
+
+Para una guía adicional en el nombrado de módulos, por favor consulte:
+
+    http://pause.perl.org/pause/query?ACTION=pause_namingmodules
+
+o envíe un correo a la lista de correo <module-authors@perl.org>.
+
+=item  *
+
+¿Lo consiguió?
+
+¿Cómo sabe que tomó las decisiones correctas? ¿Ha escogido un diseño de interfaz que más tarde causará problemas? ¿Ha escogido el nombre más apropiado? ¿Tiene alguna pregunta?
+
+La mejor manera de estar seguro y tener muchas sugerencias útiles, es la de preguntar a quien sabe. La lista de correo <module-authors@perl.org> es útil para este propósito; también es accesible a través del interfaz de news como perl.module-authors en nntp.perl.org.
+
+Todo lo que necesita hacer es mandar un correo con un resumen del módulo, su propósito e interfaces. Es suficiente unas pocas líneas de cada uno de los métodos principales. (Si envía todo el módulo puede ser ignorado por las personas ocupadas, ¡generalmente las personas que quiere que lo lea!).
+
+No se preocupe si no puede decir cuándo el módulo estará disponible; sólo dígalo así en el mensaje. Podría valer la pena invitar a otros a que le ayuden, ¡pueden ser capaces de completarlo por usted!
+
+=item  *
+
+README y otros archivos adicionales.
+
+Es bien sabido que los desarrolladores de software documentan completamente el software que escriban, normalmente. Si, sin embargo, el mundo necesita urgentemente su software y no hay tiempo suficiente para escribir toda la documentación, por favor, proporcione un archivo README que contenga:
+
+=over 10
+
+=item *
+
+Una descripción del módulo/paquete/extensión, etc.
+
+=item *
+
+Una nota de derechos de propiedad; vea más abajo.
+
+=item *
+
+Prerequisitos; que otras cosas necesita tener.
+
+=item *
+
+Cómo compilarlo; posibles cambios a Makefile.PL, etc.
+
+=item *
+
+Cómo instalarlo.
+
+=item *
+
+Cambios recientes en esta distribución, especialmente en incompatibilidades
+
+=item *
+
+Cambios/mejoras que planea hacer en el futuro.
+
+=back
+
+Si el archivo README se está volviendo muy largo puede desear dividir algunas secciones en archivos separados: INSTALL, Copying, ToDo, etc.
+
+=over 4
+
+=item *
+
+Añadir una nota sobre derechos de propiedad.
+
+Cómo elegir el modo de licencia para su trabajo es una decisión personal.
+El mecanismo general es reafirmar su Copyright y hacer luego una declaración de cómo otras personas pueden copiar/usar/modificar su trabajo.
+
+Perl, por ejemplo, se proporciona con dos tipos de licencia: la GNU GPL y The Artistic Licence (vea los archivos README, Copying y Artistic o L<perlgpl> y L<perlartistic>).  Larry tiene buenas razones para NO usar solo la GNU GPL.
+
+Mi recomendación personal, con respeto para Larry, Perl y la comunidad Perl, es declararlo con algo tan simple como:
+
+ Copyright (c) 2017 Tu nombre. Todos los derechos reservados.
+ Este programa es software libre; puede redistribuirlo y/o
+ modificarlo bajo los mismos términos que el propio Perl.
+
+Esta sentencia debería aparecer en el archivo README. También puede desear incluirlo en un archivo Copying y en sus archivos fuentes.
+Recuerde incluir las otras palabras además del Copyright.
+
+=item  *
+
+Dele al módulo un número de versión/emisión/distribución.
+
+Para que sea totalmente compatible con los módulos Exporter y MakeMaker debería almacenar su número de versión de módulo en una variable no léxica llamada $VERSION.  Debería ser un número positivo en punto flotante con al menos dos dígitos después del decimal (es decir, centésimas, por ejemplo, C<$VERSION = "0.01">).  No use el estilo de versión "1.3.2".
+Vea L<Exporter> para los detalles.
+
+Puede ser útil añadir una función o método para recuperar el número.
+Use el número en anuncios y nombres de archivo cuando publique el módulo (NombreMódulo-1.02.tar.Z).
+Vea perldoc ExtUtils::MakeMaker.pm para los detalles.
+
+=item  *
+
+Cómo publicar y distribuir un módulo.
+
+Es una buena idea mandar un anuncio de la disponibilidad de su módulo (o el propio módulo si es pequeño) al grupo de news de Usenet comp.lang.perl.announce.  Esto le asegurará una publicidad muy amplia.
+
+Si es posible, registre el módulo en CPAN.  Debería incluir detalles de su ubicación, en su anuncio.
+
+Algunas notas sobre archivos ftp: Por favor, usar un nombre de archivo largo y descriptivo, que incluya el número de versión. La mayor parte de los directorios no serán leíbles/listables, es decir, no será capaz de ver su archivo después de subirlo. Recuerde enviar su mensaje de notificación por correo electrónico tan pronto como sea posible después de subirlo, o su archivo será borrado automáticamente. Permita un tiempo para que el archivo se procese y/o compruebe antes de anunciar su ubicación.
+
+Archivos FTP para módulos Perl:
+
+Siga las instrucciones y enlaces en:
+
+   http://www.cpan.org/modules/00modlist.long.html
+   http://www.cpan.org/modules/04pause.html
+
+o súbalos a uno de estos sitios:
+
+   https://pause.kbx.de/pause/
+   http://pause.perl.org/
+
+y notifíquelo a <modules@perl.org>.
+
+¡Usando el interfaz web puede pedir al servidor de subidas copiar sus módulos desde su sitio ftp o web en su propio directorio en CPAN!
+
+¡Por favor, recuerde enviarme una entrada actualizada para la lista de módulos!
+
+=item  *
+
+Tenga cuidado cuando cambie un módulo publicado.
+
+Esfuércese siempre en mantener su compatibilidad con las versiones publicadas antes.
+O intente añadir un mecanismo para revertir al comportamiento anterior si la gente confía más en él.  Documente los cambios incompatibles.
+
+=back
+
+=back
+
+=head2 Directrices para convertir bibliotecas de scripts en Perl 4, a módulos
+
+=over 4
+
+=item  *
+
+No hay ningún requisito para convertir nada.
+
+¡Si no está roto, no lo arregle! La biblioteca de scripts de Perl 4 deben continuar funcionando sin problemas. Puede necesitar hacer algunos cambios menores (como escapar las '@' que no sean array dentro de las cadenas entrecomilladas dobles) pero no es necesario convertir un archivo .pl en un módulo solo por eso.
+
+=item  *
+
+Considere las implicaciones.
+
+Todas las aplicaciones Perl que hacen uso del script necesitarán cambiarse (ligeramente) si el script se convierte en un módulo.  ¿No merece la pena tener un plan para hacer otros cambios, al mismo tiempo?
+
+=item  *
+
+Aproveche la oportunidad al máximo.
+
+Si va a convertir el script a un módulo puede aprovechar la oportunidad para rediseñar la interfaz.  Las anteriores guías para la creación de módulos incluyen muchos de los problemas que debe considerar.
+
+=item  *
+
+La utilidad pl2pm le ayudará a empezar.
+
+Esta utilidad leerá archivos *.pl (indicados como parámetros) y escribirá los correspondientes archivos *.pm. La utilidad pl2pm hace lo siguiente:
+
+=over 10
+
+=item *
+
+Añade las líneas estándares del prólogo de un módulo.
+
+=item *
+
+Convierte los especificadores de paquete, de ' a ::
+
+=item *
+
+Convierte die(...) a croak(...)
+
+=item *
+
+Muchos otros cambios menores
+
+=back
+
+Al ser un proceso mecánico, pl2pm no es un bala de plata. El código convertido necesitará comprobarse cuidadosamente, especialmente cualquier sentencia de paquete.
+¡No elimine el archivo .pl original hasta que funcione el nuevo .pm!
+
+=back
+
+=head2 Directrices para la reutilización de código de aplicaciones
+
+=over 4
+
+=item  *
+
+Es muy raro que aplicaciones completas pertenezcan a la biblioteca de módulos Perl.
+
+=item  *
+
+Muchas aplicaciones contienen algo de código Perl que podría reutilizarse.
+
+¡Ayude a salvar el mundo! Comparta su código de una forma que haga sencillo reutilizarlo.
+
+=item  *
+
+Divida el código reutilizable en uno o más archivos de módulos.
+
+=item  *
+
+Tome la oportunidad de reconsiderar y rediseñar las interfaces.
+
+=item  *
+
+En algunos casos la 'aplicación' se puede reducir a un pequeño
+
+fragmento de código construido basado en los módulos reutilizados. En estos casos la aplicación podría invocarse como:
+
+     % perl -e 'use Módulo::Nombre; método(@ARGV)' ...
+o
+     % perl -mMódulo::Nombre ...    (en perl5.002 o superior)
+
+=back
+
+=head1 NOTA
+
+Perl no obliga a tener partes públicas y privadas en sus módulos, como quizás haya usado en otros lenguajes como C++, Ada o Modula-17.  Perl no se ha encaprichado con la privacidad forzada.  Prefiere que se quede fuera de su zona de confort porque no está invitado, no porque tenga una escopeta.
+
+El módulo y su usuario tienen un contrato, parte del cual se sobreentiende y otra parte está "escrito".  Parte de lo sobreentendido del contrato es que un módulo no polucione ningún espacio de nombres a no ser que se lo pidamos.  El contrato escrito para el módulo (es decir, documentación) puede hacer otras provisiones.  Pero entonces usted sabe que cuando pone C<use RedefineTheWorld> está redefiniendo el mundo y dispuesto a asumir las consecuencias.
+
+=cut
+
+ex: set ro:
