@@ -1,0 +1,341 @@
+Este documento está escrito en formato pod y por ello hay caracteres de marcas en sitios extraños.  No se preocupe, parecer que le funcionó correctamente la traducción EBCDIC->ASCII.  Puede leer más acerca pod/perlpod.pod o el resumen en el archivo INSTALL.
+
+=head1 NAME
+
+perlos390 - compilar e instalar Perl para OS/390 y z/OS
+
+=head1 SINOPSIS
+
+Este documento le ayudará a configurar, compilar, probar e instalar Perl en OS/390 (o sea, z/OS) Unix System Services.
+
+B<Este documento necesita actualizarse, pero no sabemos qué debería decir.
+Por favor, envíe sus comentarios por correo a L<perlbug@perl.org|mailto:perlbug@perl.org>>
+
+=head1 DESCRIPCIÓN
+
+Esta es una versión de Perl completamente portado para OS/390 versión 2 subversiones 3, 5, 6, 7, 8 y 9.  Es posible que funcione en otras versiones o subversiones, pero esta es la única en la que lo hemos probado.
+
+Quizás necesite llevar a cabo algunas tareas de configuración del sistema antes de ejecutar el I<script> Configure para Perl.
+
+
+=head2 Herramientas
+
+La lista de herramientas B<z/OS Unix Tools and Toys> quizás sea útil y contiene enlaces a adaptaciones a mucho software útil para la compilación de Perl.
+http://www.ibm.com/servers/eserver/zseries/zos/unix/bpxa1toy.html
+
+
+=head2 Desempaquetar la distribución Perl en OS/390
+
+Si usa ftp, recuerde transferir la distribución en formato binario.
+
+Se habla de gunzip/gzip para OS/390 en:
+
+  http://www.ibm.com/servers/eserver/zseries/zos/unix/bpxa1ty1.html
+
+para extraer un archivo tar ASCII en OS/390, intente esto:
+
+   pax -o to=IBM-1047,from=ISO8859-1 -r < latest.tar
+
+o bien
+
+   zcat latest.tar.Z | pax -o to=IBM-1047,from=ISO8859-1 -r
+
+Si obtiene montones de errores, de la forma
+
+ tar: FSUM7171 ...: cannot set uid/gid: EDC5139I Operation not permitted
+
+no ha leído lo anterior e intentó usar tar en lugar de pax. Tendrá primero que quitar el ahora corrupto directorio perl
+
+   rm -rf perl-...
+
+y luego usar pax.
+
+=head2 Puesta en marcha y utilidades para Perl en OS/390
+
+Asegúrese que su instalación de yacc es correcta incluyendo cualquier archivo de plantilla de interpretación. Si aún no lo ha hecho entonces asegúrese con:
+
+  cp /samples/yyparse.c /etc
+
+Este puede ser un buen momento para asegurarse que sus archivos /etc/resolv.conf o /etc/hosts están en su sitio.
+El documento de IBM que describe esos problemas de puesta en marcha del USS era el SC28-1890-07 "OS/390 UNIX System Services Planning", en particular, el capítulo 6 sobre la personalización del shell OE.
+
+GNU make para OS/390, que se recomienda para la compilación de perl (así como la compilación de módulos de CPAN y extensiones), está disponible en L</Tools>.
+
+Algunas personas han reportado errores de I<"Out of memory!"> (agotamiento de memoria) mientras intentan compilar Perl usando los binarios make de GNU.  Si se encuentra con tal problema entonces intente descargar el kit del código fuente y compile GNU make para eliminar tal problema.  También podría encontrar GNU make (así como Perl y Apache) en el libro rojo "Open Source Software for OS/390 UNIX", SG24-5944-00 de IBM.
+
+Si en lugar del recomendado GNU make quiere usar el programa make suministrado por el sistema, entonces asegúrese de instalar el archivo apropiado de reglas por defecto por medio del comando de shell:
+
+    cp /samples/startup.mk /etc
+
+y asegúrese también de establecer la variable de entorno _C89_CCMODE=1 (exportar _C89_CCMODE=1 también es una buena idea para los usuarios de GNU make).
+
+También podría querer tener instalado GNU groff para OS/390 antes de ejecutar el paso "make install" para Perl.
+
+Hay un error de sintaxis en el archivo de cabecera /usr/include/sys/socket.h que IBM suministra con USS V2R7, V2R8, y posiblemente V2R9.  El problema con el archivo de cabecera es que cerca de la definición de la constante SO_REUSEPORT hay un carácter '/' extra fuera del comentario, así:
+
+ #define SO_REUSEPORT    0x0200    /* allow local address & port
+                                      reuse */                    /
+
+Podría editar usted mismo la cabecera para quitar el último '/', o podría notar que el Language Environment (LE) APAR PQ39997 describe el problema y que los UQ46272 y UQ46271 (al menos del R8) del PTF los arregla.
+Si no se atiende este error de sintaxis se convertirá en una incapacidad para que Perl pueda compilar su extensión "Socket".
+
+Para que las pruebas sean exitosas puede activar el sticky bit para su directorio /tmp si aún no lo hecho (vea man chmod).
+
+=head2 Configure Perl en OS/390
+
+Una vez que ha desempaquetado la distribución, ejecute "sh Configure" (vea INSTALL para ver un detalle completo de las opciones de Configure).  Hay un archivo "hints" (sugerencias) para vmesa que especifica los valores correctos para la mayoría de las cosas.  Algunas cosas a tener en cuenta son:
+
+=over 4
+
+=item *
+
+Un mensaje con este aspecto:
+
+ (I see you are using the Korn shell.  Some ksh's blow up on
+ Configure, mainly on older exotic systems.  If yours does, try the
+ Bourne shell instead.)
+
+no es nada de lo que tenga que preocuparse.
+
+=item *
+
+Algunos archivos de plantillas por defecto del intérprete en /samples se necesitan en /etc.
+En particular, asegúrese que tiene al menos una copia de /samples/yyparse.c en /etc antes de ejecutar el Configure de Perl.  Este paso asegura una extracción exitosa de las versiones EBCDIC de los archivos del intérprete tales como perly.c y perly.h.
+Esto se tiene que hacer antes de ejecutar Configure por primera vez.  Si falló a la hora de hacer esto entonces la forma más sencilla de reconfigurar Perl es borrar su raíz de compilación desconfigurada y volver a extraer el código fuente desde el paquete tar.
+Y luego debe asegurarse que /etc/yyparse.c se coloca adecuadamente antes de intentar volver a ejecutar Configure.
+
+=item *
+
+Esta adaptación soportara carga dinámica, pero no se selecciona por defecto.  Si le gusta experimentar con la carga dinámica entonces asegúrese de especificar -Dusedl en la lista de argumentos del I<script> Configure.
+Vea los comentarios en hints/os390.sh para más información en carga dinámica.
+Si compila con carga dinámica entonces necesitará añadir el directorio $archlibexp/CORE a su variable de entorno LIBPATH para que perl funcione.  Vea el archivo config.sh para el valor de $archlibexp.
+Si intenta usar Perl verá un mensaje de error similar a:
+
+ CEE3501S The module libperl.dll was not found.
+   From entry point __dllstaticinit at compile unit offset +00000194
+   at
+
+es porque su LIBPATH no tiene la posición de libperl.x o libperl.dll o libperl.so.  Añade ese directorio a su LIBPATH y proceda.
+
+=item *
+
+No active el indicador de optimización del compilador "-O".  Existe un error tanto en el optimizador como en perl que provoca que perl no funcione correctamente cuando el optimizador está activo.
+
+=item *
+
+Algunos de los archivos de configuración en /etc que se usan por la API de red o faltan o tienen nombres equivocados.  En particular, asegúrese que exista o bien un /etc/resolv.conf o un /etc/hosts, para que gethostbyname() funcione, y asegúrese que el archivo /etc/proto se renombró a /etc/protocol (NO /etc/protocols, como se usa en Unix systems).
+Puede que tenga que mirar cosas como HOSTNAME y DOMAINORIGIN en el miembro PDS "//'SYS1.TCPPARMS(TCPDATA)'" para establecer de forma correcta sus archivos de red en /etc.
+
+=back
+
+=head2 Compilar, comprobar e instalar Perl en OS/390
+
+Sencillamente ponga
+
+    sh Configure
+    make
+    make test
+
+si todo parece estar bien (vea la siguiente sección para las comprobaciones de diagnóstico IVP) entonces:
+
+    make install
+
+este último paso puede o no requerir privilegios UID=0 dependiendo de cómo respondió a las preguntas que Configure le hizo, y si tiene o no acceso de escritura a los directorios que especificó.
+
+=head2 Anomalías en la compilación de Perl en OS/390
+
+Los mensajes del tipo "Out of memory!" (¡Se agotó la memoria!) durante la compilación de Perl se arreglan recompilando la utilidad make de GNU para OS/390 desde el kit de código fuente.
+
+Otro elemento que limita la memoria que hay que comprobar es su parámetro MAXASSIZE en su conjunto de datos 'SYS1.PARMLIB(BPXPRMxx)' (note también que se pueden establecer límites en el espacio de direcciones V2R8 para cada ID de usuario en el segmento USS de un perfil RACF).  Se ha informado de compilaciones exitosas de Perl con parámetros MAXASSIZE tan pequeños como 503316480 (y quizás es posible que se pueda compilar Perl con un MAXASSIZE aún más pequeño).
+
+Dentro de su USS, su /etc/profile o $HOME/.profile puede limitar los parámetros de ulimit.  Compruebe que el siguiente comando devuelve valores razonables:
+
+    ulimit -a
+
+Para ahorrar memoria debería cargar los módulos de compilación en el Link Pack Area (LPA/ELPA) en lugar de en una lista de enlaces o biblioteca aledaña.
+
+Si el compilador c89 se queja de errores de sintaxis durante la compilación de la extensión Socket entonces asegúrese de arreglar el error de sintaxis en el archivo de cabecera del sistema /usr/include/sys/socket.h.
+
+=head2 Comprobar anomalías con Perl en OS/390
+
+El paso "make test" ejecuta un I<Perl Verification Procedure>, normalmente antes de la instalación.  Podría encontrar mensajes en STDERR incluso durante una ejecución exitosa de "make test".  Aquí tiene una guía de algunas de las anomalías que se ven más a menudo:
+
+=over 4
+
+=item *
+
+Un mensaje con este aspecto:
+
+ io/openpid...........CEE5210S The signal SIGHUP was received.
+ CEE5210S The signal SIGHUP was received.
+ CEE5210S The signal SIGHUP was received.
+ ok
+
+indica que ha pasado la comprobación t/io/openpid.t de Perl pero ha terminado con mensajes extraños en stderr, desde CEE.
+
+=item *
+
+Un mensaje con este aspecto:
+
+ lib/ftmp-security....File::Temp::_gettemp: Parent directory (/tmp/)
+ is not safe (sticky bit not set when world writable?) at
+ lib/ftmp-security.t line 100
+ File::Temp::_gettemp: Parent directory (/tmp/) is not safe (sticky
+ bit not set when world writable?) at lib/ftmp-security.t line 100
+ ok
+
+indica un problema con los permisos en su directorio /tmp dentro del HFS.
+Para corregir el problema ejecute el comando:
+
+     chmod a+t /tmp
+
+desde una cuenta con acceso de escritura a la entrada de directorio para /tmp.
+
+=item *
+
+I<Out of Memory!> (¡Agotamiento de memoria!)
+
+El juego de comprobaciones perl más reciente es muy hambriento de memoria. Además de los comentarios anteriores sobre limitaciones de memoria, también hay que comprobar _CEE_RUNOPTS en su entorno. Perl tiene ahora (en miniperlmain.c) un #pragma en C para establecer las opciones de ejecución CEE, pero la variable de entorno prevalece.
+
+El código C es:
+
+ #pragma runopts(HEAP(2M,500K,ANYWHERE,KEEP,8K,4K) STACK(,,ANY,) ALL31(ON))
+
+Las partes importantes son el segundo argumento (el incremento) al HEAP, y permitir que la pila "esté por encima de la línea 16M". Si el incremento del I<heap> es demasiado pequeño entonces cuando perl (por ejemplo al cargar unicode/Name.pl) intenta crear una cadena "grande" (+400K) no puede encajarlo en un único segmento y obtiene un "Out of Memory!", incluso si hay abundancia de memoria disponible.
+
+Un problema parecido es con el uso del malloc de perl. El malloc de Perl usa C<sbrk()> para obtener memoria, y C<sbrk()> está limitado a la primera asignación, así que en este caso algo como esto:
+
+  HEAP(8M,500K,ANYWHERE,KEEP,8K,4K)
+
+es necesario para que se ejecute el juego de comprobaciones.
+
+
+=back
+
+=head2 Anomalías en la instalación de Perl en OS/390
+
+El script installman intentará ejecutarse en OS/390.  Habrá unos pocos errores si la utilidad roff está instalada.  Puede obtener GNU groff desde el sitio ftp Redbook SG24-5944-00.
+
+=head2 Pistas para el uso de Perl en OS/390
+
+Cuando se utiliza perl en OS/390 por favor, tenga en cuenta que los juegos de caracteres EBCDIC y ASCII son diferentes.  Vea perlebcdic.pod para más información sobre las cuestiones sobre tal conjunto de caracteres.  Las funciones predefinidas de Perl que pueden comportarse de manera diferente en EBCDIC también se mencionan en el documento perlport.pod.
+
+La Open Edition (UNIX System Services) de V2R8 en adelante soporta la invocación de script con la forma #!/path/to/perl.  Hay un PTF disponible desde IBM para V2R7 que permitirá soporte del shell/kernel para #!.  Versiones de USS anteriores a V2R7 no soporta la invocación de un script por medio de #!.
+Si está ejecutando V2R6 o anteriores, vea entonces
+
+    head `whence perldoc`
+
+por un ejemplo de cómo usar el truco del "eval exec" para pedir al shell que Perl ejecute sus scripts en las versiones más viejas de Unix System Services.
+
+Si está teniendo problemas con los corchetes entonces considere cambiar su rlogin o cliente de telnet.  Intente evitar los emuladores más viejos de 3270 e ISHELL para trabajar con Perl en USS.
+
+=head2 Anomalías de punto flotante con Perl en OS/390
+
+Parece que existe un error en la implementación de punto flotante en sistemas S/390, tal que llamar a int() en el producto de un número con un número de magnitud muy pequeña no es lo mismo que llamar a int() en el cociente de ese número y un número de magnitud muy grande.  Por ejemplo, en el siguiente código Perl:
+
+    my $x = 100000.0;
+    my $y = int($x * 1e-5) * 1e5; # '0'
+    my $z = int($x / 1e+5) * 1e5;  # '100000'
+    print "\$y es $y y \$z es $z\n"; # $y es 0 y $z es 100000
+
+A pesar de que uno esperaría que las cantidades $y y $z sean la misma e iguales a 100000, diferirán y, en su lugar será 0 y 100000, respectivamente.
+
+El problema se puede examinar en un programa en C parecido a este:
+
+    #include <stdio.h>
+    #include <math.h>
+    main()
+    {
+    double r1,r2;
+    double x = 100000.0;
+    double y = 0.0;
+    double z = 0.0;
+    x = 100000.0 * 1e-5;
+    r1 = modf (x,&y);
+    x = 100000.0 / 1e+5;
+    r2 = modf (x,&z);
+    printf("y es %e y z es %e\n",y*1e5,z*1e5);
+    /* y es 0.000000e+00 y z es 1.000000e+05 (with c89) */
+    }
+
+=head2 Módulos y extensiones para Perl en OS/390
+
+Módulos en puro Perl (es decir, sin xs) se pueden instalar de la forma usual:
+
+    perl Makefile.PL
+    make
+    make test
+    make install
+
+Si compila perl con la capacidad de carga dinámica entonces esa sería también la forma de compilar extensiones basadas en xs.  Aun así, si compila perl con el enlazado estático por defecto, puede seguir compilando extensiones basadas en xs para OS/390 pero necesitará seguir las instrucciones en ExtUtils::MakeMaker para compilar binarios perl enlazados estáticamente.  En las configuraciones más sencillas de compilación de un perl estático + extensión xs se reduce a:
+
+    perl Makefile.PL
+    make
+    make perl
+    make test
+    make install
+    make -f Makefile.aperl inst_perl MAP_TARGET=perl
+
+En la mayor parte de los casos, la gente ha reportado de mejores resultados con GNU make en lugar del programa /bin/make del sistema, si es para módulos sencillos o extensiones basadas en xs.
+
+Si el proceso make encuentra un problema con la compilación o el enlazado entonces intente establecer _C89_CCMODE a 1.  Asumiendo que sh es su shell al entrar, entonces ejecute:
+
+    export _C89_CCMODE=1
+
+Si tcsh es su shell de entrada entonces use el comando setenv.
+
+=head1 AUTORES
+
+David Fiander y Peter Prymmer con agradecimiento para Dennis Longnecker y William Raffloer por sus valioso informes, y retroalimentación de LPAR y PTF.
+Gracias a Mike MacIsaac y Egon Terwedow para SG24-5944-00.
+Gracias a Ignasi Roca por apuntarnos problemas en el punto flotante.
+Gracias a John Goodyear para ayudar en la carga dinámica.
+
+=head1 VEA TAMBIÉN
+
+L<INSTALL>, L<perlport>, L<perlebcdic>, L<ExtUtils::MakeMaker>.
+
+ http://www.ibm.com/servers/eserver/zseries/zos/unix/bpxa1toy.html
+
+ http://www.redbooks.ibm.com/redbooks/SG245944.html
+
+ http://www.ibm.com/servers/eserver/zseries/zos/unix/bpxa1ty1.html#opensrc
+
+ http://www.xray.mpe.mpg.de/mailing-lists/perl-mvs/
+
+ http://publibz.boulder.ibm.com:80/cgi-bin/bookmgr_OS390/BOOKS/ceea3030/
+
+ http://publibz.boulder.ibm.com:80/cgi-bin/bookmgr_OS390/BOOKS/CBCUG030/
+
+=head2 Lista de correo para Perl en OS/390
+
+Si está interesado en las versiones z/OS (anteriormente conocido como OS/390) y POSIX-BC (BS2000) de Perl entonces vea la lista de correo perl-mvs.
+Para suscribirse, envíe un mensaje vacío a perl-mvs-subscribe@perl.org
+
+Vea también:
+
+    http://lists.perl.org/list/perl-mvs.html
+
+Hay archivos web de la lista de correo en:
+
+    http://www.xray.mpe.mpg.de/mailing-lists/perl-mvs/
+    http://archive.develooper.com/perl-mvs@perl.org/
+
+=head1 HISTORIA
+
+Este documento lo escribió originalmente David Fiander para la versión 5.005 de Perl.
+
+Este documento se I<podificó> para la distribución 5.005_03 de Perl el 11 de marzo de 1999.
+
+Actualizado el 28 de noviembre de 2001 debido a URL rotos.
+
+Actualizado el 12 de noviembre de 2000 para la distribución 5.7.1 de Perl.
+
+Actualizado el 15 de enero de 2001 para la distribución 5.7.1 de Perl.
+
+Actualizado el 24 de enero de 2001 para mencionar la carga dinámica.
+
+Actualizado el 12 de marzo de 2001 para mencionar //'SYS1.TCPPARMS(TCPDATA)'.
+
+=cut
+

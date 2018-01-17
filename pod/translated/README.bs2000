@@ -1,0 +1,189 @@
+Este documento está escrito en formato pod y por ello hay caracteres de marcas en sitios extraños.  No se preocupe, parecer que le funcionó correctamente la traducción EBCDIC->ASCII.  Puede leer más acerca pod/perlpod.pod o el resumen en el archivo INSTALL.
+
+=head1 NAME
+
+perlbs2000 - compilar e instalar Perl para BS2000.
+
+B<Este documento necesita actualizarse, pero no sabemos qué debería decir.
+Por favor, envíe sus comentarios por correo a L<perlbug@perl.org|mailto:perlbug@perl.org>>
+
+=head1 SINOPSIS
+
+Este documento le ayudará a configurar, compilar, probar e instalar Perl en BS2000 en el subsistema POSIX.
+
+=head1 DESCRIPCIÓN
+
+Es un perl portado para el subsistema POSIX en BS2000 VERSIÓN OSD V3.1A o superior.  Es posible que funcione en otras versiones, pero empezamos a portarlo y comprobarlo con 3.1A y actualmente usando la versión v4.0A.
+
+Puede necesitar los siguientes programas GNU para instalar perl:
+
+=head2 gzip en BS2000
+
+Usamos la versión 1.2.4, que podría instalarse desde el empaquetado original, con un fallo durante 'make check'.
+
+=head2 bison en BS2000
+
+El yacc que viene con BS2000 POSIX no nos funciona.  Así que usamos bison.  Tuvimos que hacer unos pocos cambios en perl para poder usar el intérprete puro (reentrante) de bison.  Usamos la versión 1.25, pero tuvimos que añadir unos pocos cambios debidos al EBCDIC.  Siga leyendo para obtener más detalles al respecto de yacc.
+
+=head2 Desempaquetando la distribución Perl en BS2000
+
+Para extraer un archivo tar ASCII en POSIX BS2000 necesita un sistema de archivos ASCII (usamos para esto el punto de montaje /usr/local/ascii).  Ahora extraiga el archivo en el sistema de archivos sin conversión de E/S:
+
+cd /usr/local/ascii
+export IO_CONVERSION=NO
+gunzip < /usr/local/src/perl.tar.gz | pax -r
+
+Puede ignorar el mensaje de error para el primer elemento del archivo (esto no parece un archivo tar / saltando al siguiente archivo...), solo es el directorio que, de todas formas, se creará automáticamente.
+
+Después de extraer el archivo, falta copiar todo el árbol de directorios a su sistema de archivos EBCDIC.  B<Esta vez use la conversión de E/S>:
+
+cd /usr/local/src
+IO_CONVERSION=YES
+cp -r /usr/local/ascii/perl5.005_02 ./
+
+=head2 Compilar Perl en BS2000
+
+Hay un archivo de "pistas" para BS2000 llamado hints.posix-bc (porque posix-bc es el nombre del SO que `uname` devuelve) que especifica los valores correctos para la mayor parte de las configuraciones.  El problema principal es (naturalmente) el conjunto de caracteres EBCDIC.  Nosotros tenemos la versión alemana de EBCDIC.
+
+Debido a que nuestros problemas con el yacc nativo usamos GNU bison para generar un intérprete puro (=reentrante) para perly.y.  Así que nuestro yacc es, realmente, el siguiente script:
+
+-----8<-----/usr/local/bin/yacc-----8<-----
+#! /usr/bin/sh
+
+# Bison como un yacc reentrante:
+
+# guardar parámetros:
+params=""
+while [[ $# -gt 1 ]]; do
+    params="$params $1"
+    shift
+done
+
+# añadir el indicador %pure_parser:
+
+tmpfile=/tmp/bison.$$.y
+echo %pure_parser > $tmpfile
+cat $1 >> $tmpfile
+
+# llamar a bison:
+
+echo "/usr/local/bin/bison --yacc $params $1\t\t\t(Pure Parser)"
+/usr/local/bin/bison --yacc $params $tmpfile
+
+# limpieza:
+
+rm -f $tmpfile
+-----8<----------8<-----
+
+¡Aún así seguimos usando el yacc normal para a2p.y!  Hicimos un enlace simbólico llamado byacc para distinguir entre las dos versiones:
+
+ln -s /usr/bin/yacc /usr/local/bin/byacc
+
+Compilamos perl usando GNU make.  Una vez probamos el make nativo y también funcionó.
+
+=head2 Comprobar Perl en BS2000
+
+Seguimos teniendo unos pocos errores durante el C<make test>.  Algunos de ellos son resultado de usar bison.  Bison imprime I<parser error> (error de interpretación) en lugar de I<syntax error> (error de sintaxis), así que les podemos ignorar.  La siguiente lista muestra nuestros errores; sus resultados pueden diferir:
+
+op/numconvert.......FAILED tests 1409-1440
+op/regexp...........FAILED tests 483, 496
+op/regexp_noamp.....FAILED tests 483, 496
+pragma/overload.....FAILED tests 152-153, 170-171
+pragma/warnings.....FAILED tests 14, 82, 129, 155, 192, 205, 207
+lib/bigfloat........FAILED tests 351-352, 355
+lib/bigfltpm........FAILED tests 354-355, 358
+lib/complex.........FAILED tests 267, 487
+lib/dumper..........FAILED tests 43, 45
+Failed 11/231 test scripts, 95.24% okay. 57/10595 subtests failed, 99.46% okay.
+
+=head2 Instalar Perl en BS2000
+
+Aún no tenemos nroff en POSIX BS2000, así que ignoramos todos los errores mientras instalamos la documentación.
+
+
+=head2 Usar Perl el en shell Posix de BS2000
+
+POSIX BS2000 no soporta la notación shebang (C<#!/usr/local/bin/perl>), así que en su lugar tiene que usar las siguientes líneas:
+
+: # use perl
+    eval 'exec /usr/local/bin/perl -S $0 ${1+"$@"}'
+        if $ejecutando_bajo_algun_shell;
+
+=head2 Usar Perl en BS2000 "nativo"
+
+Aún no tenemos mucha experiencia con esto, pero intente lo siguiente:
+
+Copie su ejecutable Perl a BS2000 LLM usando bs2cp:
+
+C<bs2cp /usr/local/bin/perl 'bs2:perl(perl,l)'>
+
+Ahora puede iniciarlo con el siguiente comando (SDF):
+
+C</START-PROG FROM-FILE=*MODULE(PERL,PERL),PROG-MODE=*ANY,RUN-MODE=*ADV>
+
+Primero obtiene el prompt de la línea de comandos BS2000 ('*').  Aquí puede entrar sus parámetros, por ejemplo, C<-e 'print "¡Hola, Mundo!\\n";'> (¡fíjese en la doble barra inclinada inversa!) o C<-w> y el nombre de su script Perl.
+Los nombres de archivo que comienzan por C</> se buscan en el sistema de archivos Posix, los demás se buscan en el sistema de archivos BS2000.  Incluso puede usar comodines si pone un C<%> delante de su nombre de archivo (por ejemplo, C<-w checkfiles.pl %*.c>).  Lea su manual de C/C++ para posibilidades adicionales del prompt de la línea de comandos (mire por PARAMETER-PROMPTING).
+
+=head2 Anomalías de punto flotante en BS2000
+
+Parece que existe un error en la implementación de punto flotante en sistemas POSIX BS2000, tal que llamar a int() en el producto de un número con un número de magnitud muy pequeña no es lo mismo que llamar a int() en el cociente de ese número y un número de magnitud muy grande.  Por ejemplo, en el siguiente código Perl:
+
+    my $x = 100000.0;
+    my $y = int($x * 1e-5) * 1e5; # '0'
+    my $z = int($x / 1e+5) * 1e5;  # '100000'
+    print "\$y es $y y \$z es $z\n"; # $y es 0 y $z es 100000
+
+A pesar de que uno esperaría que las cantidades $y y $z sean la misma e iguales a 100000, diferirán y, en su lugar será 0 y 100000, respectivamente.
+
+=head2 Usar PerlIO y diferentes codificaciones en particiones ASCII y EBCDIC
+
+Desde la versión 5.8 de Perl usa el nuevo PerlIO en BS2000.  Esto le habilita para usar diferentes codificaciones por canal de E/S.  Por ejemplo, puede usar
+
+    use Encode;
+    open($f, ">:encoding(ascii)", "test.ascii");
+    print $f "Hola, Mundo\n";
+    open($f, ">:encoding(posix-bc)", "test.ebcdic");
+    print $f "Hola, Mundo\n";
+    open($f, ">:encoding(latin1)", "test.latin1");
+    print $f "Hola, Mundo\n";
+    open($f, ">:encoding(utf8)", "test.utf8");
+    print $f "Hola, Mundo\n";
+
+para obtener dos archivos conteniendo "Hola, Mundo\n" en ASCII, EBCDIC, ISO Latin-1 (en este ejemplo, idéntica a ASCII) y el respectivo UTF-EBCDIC (en este ejemplo idéntico a un EBCDIC normal).  Vea la documentación de Encode::PerlIO para los detalles.
+
+Como la capa PerlIO usa internamente E/S en crudo, se ignora completamente el tipo de su sistema de archivos (ASCII o EBCDIC) y la variables de entorno IO_CONVERSION.  Si quiere volver al comportamiento anterior, entonces las funciones de E/S de BS2000 que determinan la conversión dependiendo del sistema de archivos PerlIO, sigue siendo sus amigas.  Use IO_CONVERSION de forma normal e indique a Perl que debe usar la capa de E/S nativa:
+
+    export IO_CONVERSION=YES
+    export PERLIO=stdio
+
+Ahora su E/S sería ASCII en particiones ASCII, y EBCDIC en particiones EBCDIC.  Vea la documentación de PerlIO (¡sin C<Encode::>!) para más posibilidades.
+
+=head1 AUTORES
+
+Thomas Dorner
+
+=head1 VEA TAMBIÉN
+
+L<INSTALL>, L<perlport>.
+
+=head2 Lista de correo
+
+Si está interesado en las versiones z/OS (anteriormente conocido como OS/390) y POSIX-BC (BS2000) de Perl entonces vea la lista de correo perl-mvs.
+Para suscribirse, envíe un mensaje vacío a perl-mvs-subscribe@perl.org
+
+Vea también:
+
+    http://lists.perl.org/list/perl-mvs.html
+
+Hay archivos web de la lista de correo en:
+
+    http://www.xray.mpe.mpg.de/mailing-lists/perl-mvs/
+    http://archive.develooper.com/perl-mvs@perl.org/
+
+=head1 HISTORIA
+
+Este documento lo escribió originalmente Thomas Dorner para la distribución 5.005 de Perl.
+
+Este documento se I<podificó> para la distribución 5.6 publicada el 11 de julio de 2000.
+
+=cut

@@ -1,0 +1,243 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos). Está escrito en formato POD (ver la página de manual perlpod) que está específicamente diseñado para ser legible de forma sencilla.
+
+=head1 NAME
+
+perldos - Perl en DOS, W31, W95.
+
+=head1 SINOPSIS
+
+Estas son las instrucciones para la compilación de Perl bajo DOS (o W??), usando DJGPP v2.03 o superior.  Bajo w95, se da soporte a nombres de archivo largos.
+
+=head1 DESCRIPCIÓN
+
+Antes de empezar, debería mirar el archivo README que se encuentra en el directorio superior en el que la distribución Perl se descomprimió.  Asegúrese que lee y entiende los términos bajo los que se distribuye este software.
+
+Esta adaptación soporta actualmente MakeMaker (el conjunto de módulos que se usan para compilar extensiones de perl).  Por tanto, debería ser capaz de generar e instalar la mayor parte de las extensiones que se encuentra en los sitios CPAN.
+
+Se incluyen instrucciones de cómo compilar e instalar módulos perl, incluyendo módulos del tipo XS.  Vea 'COMPILANDO E INSTALANDO MÓDULOS'.
+
+=head2 Prerrequisitos para compilar Perl en DOS
+
+=over 4
+
+=item DJGPP
+
+DJGPP es una adaptación del compilador GNU C/C++ y herramientas de desarrollo para 32 bit, entorno de modo protegido en CPU Intel 32 bit ejecutando sistemas operativos MS-DOS y compatibles, por DJ Delorie <dj@delorie.com> y amigos.
+
+Para más detalles (P+F), visite la página oficial de DJGPP en:
+
+        http://www.delorie.com/djgpp/
+
+Si tiene cuestiones sobre DJGPP, intente enviar un correo al grupo de news de DJGPP: comp.os.msdos.djgpp, o use la pasarela de correo djgpp@delorie.com.
+
+Puede encontrar la distribución completa de DJGPP en cualquiera de los espejos listados aquí:
+
+        http://www.delorie.com/djgpp/getting.html
+
+Necesita los siguientes archivos para compilar perl (o añadir nuevos módulos):
+
+        v2/djdev203.zip
+        v2gnu/bnu2112b.zip
+        v2gnu/gcc2953b.zip
+        v2gnu/bsh204b.zip
+        v2gnu/mak3791b.zip
+        v2gnu/fil40b.zip
+        v2gnu/sed3028b.zip
+        v2gnu/txt20b.zip
+        v2gnu/dif272b.zip
+        v2gnu/grep24b.zip
+        v2gnu/shl20jb.zip
+        v2gnu/gwk306b.zip
+        v2misc/csdpmi5b.zip
+
+o, posiblemente, cualquier nueva versión.
+
+=item Pthreads
+
+No se ha comprobado el soporte de hilos de ejecución en esta versión de perl compilado con djgpp.
+
+=back
+
+=head2 Limitaciones de Perl bajo DOS
+
+Perl bajo DOS carece de algunas características de perl bajo UNIX debido a las deficiencias en la emulación de UNIX, destacando:
+
+=over 4
+
+=item *
+
+fork() y pipe()
+
+=item *
+
+algunas características del sistema de archivos UNIX con respecto al número de enlaces y fechas de los archivos
+
+=item *
+
+la operación in-situ está un poco rota, en los nombres de archivo cortos
+
+=item *
+
+sockets
+
+=back
+
+=head2 Compilando Perl en DOS
+
+=over 4
+
+=item *
+
+Desempaquete el paquete del código fuente F<perl5.8*.tar.gz> con djtarx. Si quiere usar nombres de archivo largos bajo w95 y también que Perl pase todos sus pruebas, no olvide usar
+
+        set LFN=y
+        set FNCASE=y
+
+antes de desempaquetar el archivo.
+
+=item *
+
+Cree un "enlace simbólico" o copie su bash.exe a sh.exe en su directorio C<($DJDIR)/bin>.
+
+        ln -s bash.exe sh.exe
+
+(Si tiene la versión de bash recomendada para DJGPP, esto ya estará hecho).
+
+Y haga que la variable de entorno C<SHELL> apunte a este F<sh.exe>:
+
+        set SHELL=c:/djgpp/bin/sh.exe (¡use la ruta completa!)
+
+También puede hacerlo en F<djgpp.env>. Añada esta línea ANTES de cualquier sección de definición:
+
+        +SHELL=%DJDIR%/bin/sh.exe
+
+=item *
+
+Si tiene a F<split.exe> y F<gsplit.exe> en su ruta, entonces renombre F<split.exe> a F<djsplit.exe> y F<gsplit.exe> a F<split.exe>.
+Copie o enlace F<gecho.exe> a F<echo.exe> si no tiene F<echo.exe>.
+Copie o enlace F<gawk.exe> a F<awk.exe> si no tiene F<awk.exe>.
+
+(Si tiene las versiones recomendadas de djdev, utilidades de shell y gawk, esto ya se ha hecho y no necesitará hacer nada).
+
+=item *
+
+Chdir al subdirectorio superior de perl de djgpp y escriba los siguientes comandos:
+
+        set FNCASE=y
+        configure.bat
+
+Esto hará por usted algún preprocesado y ejecución del script Configure.
+El script Configure es interactivo, pero en la mayor parte de los casos solo necesita pulsar ENTER.  El comando "set" asegura que DJGPP preserva el tamaño de caja de los nombres de archivo cuando se lee directorios.  Si ya lanzó este comando set cuando desempaquetó el archivo, y está en la misma sesión DOS que cuando desempaquetó el archivo, no necesita lanzar de nuevo el comando set.  Este comando es necesario *antes* de empezar a (re)configurar o (re)compilar perl, para asegurarse tanto que perl se compila correctamente y que se compilan bien los módulos de tipo XS.  Para más información, vea la entrada de info de "_preserve_fncase" en DJGPP:
+
+        info libc alphabetical _preserve_fncase
+
+Si el script dice que su paquete está incompleto, y le pregunta si continuar, simplemente responda con Y (esto solo puede pasar si no usa nombres de archivo largos u olvidó ejecutar antes "set FNCASE=y").
+
+Cuando Configure le pregunte sobre las extensiones, le sugiero IO y Fcntl, y si quiere manejar una base de datos, SDBM_File o GDBM_File (necesita instalar gdbm para este último). Si quiere usar la extensión POSIX (está por defecto), asegúrese que el tamaño de pila de su F<cc1.exe> sea al menos de 512 kbyte (puede comprobarlo con: C<stubedit cc1.exe>).
+
+También puede usar el script Configure en modo no interactivo.
+Cuando compilo mi F<perl.exe>, usa algo como esto:
+
+        configure.bat -des
+
+Puede encontrar más información sobre las opciones de línea de comando de Configure en el archivo F<INSTALL>.
+
+Cuando termina el script, y quiere cambiar algunos de los valores en el archivo generado F<config.sh>, entonces ejecute
+
+        sh Configure -S
+
+después de hacer sus modificaciones.
+
+IMPORTANTE: si usa la opción C<-S>, asegúrese de borrar la variable de entorno CONFIG antes de ejecutar el script:
+
+        set CONFIG=
+
+=item *
+
+Ahora ya puede compilar Perl. Escriba:
+
+        make
+
+=back
+
+=head2 Probar Perl en DOS
+
+Escriba:
+
+        make test
+
+Si tiene suerte, debería ver "I<All tests successful>" (todas las pruebas con éxito). Pero puede que fallen algunas pruebas menores (si hay suerte, menos de 5) dependiendo de algunas condiciones externas (p.e. algunas pruebas fallan en linux/dosemu o en un DOS normal con nombres de archivos cortos).
+
+=head2 Instalación de Perl en DOS
+
+Escriba:
+
+        make install
+
+Esto copiará el nuevo perl y bibliotecas compiladas en su estructura de directorio DJGPP. Perl.exe y las utilidades van en C<($DJDIR)/bin> y las bibliotecas bajo C<($DJDIR)/lib/perl5>. La documentación pod va bajo C<($DJDIR)/lib/perl5/pod>.
+
+=head1 COMPILAR E INSTALAR MÓDULOS EN DOS
+
+=head2 Compilar prerrequisitos para Perl en DOS
+
+Para compilar e instalar módulos no XS, todo lo que necesita es un perl funcional bajo DJGPP.  Los módulos no XS no requieren reenlazar el binario de perl, y por eso es más sencillo compilarlo e instalarlo.
+
+Los módulos tipo XS requieren reenlazar el binario de perl, porque parte de un módulo XS se escribe en "C", y se ha de enlazar junto con el binario de perl que se va a ejecutar.  Esto es necesario porque perl bajo DJGPP se compilar con la opción "enlazado estático", debido a la carencia del "enlazado dinámico" en el entorno DJGPP.
+
+Ya que los módulos XS requieren un reenlazado del binario de perl, necesita tanto la distribución del binario de perl y la distribución del código fuente del perl en el que se compilará el módulo en XS.  Además, tendrá que compilar su binario de perl desde la distribución de código fuente, así que todos los componentes del binario de perl están disponibles para el paso necesario de enlazado.
+
+=head2 Desempaquetar módulos CPAN en DOS
+
+Primero, descargue el paquete del módulo desde CPAN (p.e., el paquete de texto con "valores separado por comas", Text-CSV-0.01.tar.gz).  Entonces expanda los contenidos del paquete en alguna ubicación de su disco.  La mayor parte de los módulos CPAN se compilan con una estructura interna de directorios, así que normalmente es seguro expandirlo en la raíz de su instalación DJGPP.  Algunas personas prefieren colocar los árboles de código fuente bajo /usr/src (p.e., C<($DJDIR)/usr/src>), pero puede ponerlo en cualquier parte que le parezca más lógico, *EXCEPTO* bajo el mismo directorio del código fuente de perl.  Existen unas reglas especiales que se aplican a módulos que residen en el árbol del código fuente de perl que no se aplican a la mayor parte de los módulos en CPAN.
+
+A diferencia de otros paquetes DJGPP, que son archivos "zip" normales, la mayor parte de los paquetes de módulos de CPAN son "bolas de brea gzipeadas".  Versiones recientes de WinZip los desempaquetará y expandirá de forma segura, *A MENOS QUE* tengan archivos de cero bytes.  Es un error conocido de WinZip (hasta la v7.0) que no extraerá archivos de tamaño cero.
+
+Desde la línea de comandos, puede usar la utilidad djtar proporcionada con DJGPP para desempaquetar y expandir estos archivos.  Por ejemplo:
+
+        C:\djgpp>djtarx -v Text-CSV-0.01.tar.gz
+
+Esto creará el nuevo directorio C<($DJDIR)/Text-CSV-0.01>, rellenándolo con el código fuente de este módulo.
+
+=head2 Compilar módulos no XS en DOS
+
+Para compilar un módulo no XS, puede usar las instrucciones estándares de compilación de módulos, distribuido con los módulos perl.
+
+    perl Makefile.PL
+    make
+    make test
+    make install
+
+Esto es suficiente porque los módulos no XS instalan solo archivos ".pm" y (algunas veces) pod y/o documentación man.  No se necesita reenlazar el binario de perl en la compiación, instalación o uso de módulos XS.
+
+=head2 Compilar módulos XS en DOS
+
+Para compilar módulos XS, debe usar las instrucciones estándares de compilación de módulos con los módulos perl *MÁS* tres instrucciones adicionales específicas del entorno de compilación de "enlazado estático" DJGPP.
+
+    set FNCASE=y
+    perl Makefile.PL
+    make
+    make perl
+    make test
+    make -f Makefile.aperl inst_perl MAP_TARGET=perl.exe
+    make install
+
+La primera instrucción extra establece la variable de entorno de DJGPP FNCASE así que el nuevo binario de perl que debe compilar para un módulo de tipo XS se compilará correctamente.  La segunda instrucción extra recompila el binario de perl en su directorio del módulo antes de ejecutar "make test", así que estará probando con el código del nuevo módulo que compiló con "make".  La tercera instrucción extra instala el binario de perl desde el directorio de su módulo en el directorio de binarios estándar del DJGPP, C<($DJDIR)/bin>, reemplazando su binario de perl anterior.
+
+Note que el valor MAP_TARGET *debe* tener la extensión ".exe" o no creará un "perl.exe" que reemplace al que está en C<($DJDIR)/bin>.
+
+Cuando termine, el proceso de instalación del módulo XS añadirá información a la que trae su "perllocal" contando que el binario perl se reemplazó y que el módulo se instaló.  Puede ver esta información en cualquier momento usando el comando:
+
+        perl -S perldoc perllocal
+
+=head1 AUTOR
+
+Laszlo Molnar, F<laszlo.molnar@eth.ericsson.se> [Instalar/compilar perl]
+
+Peter J. Farley III F<pjfarley@banet.net> [Compilar/instalar módulos]
+
+=head1 VEA TAMBIÉN
+
+perl(1).
+
+=cut
+

@@ -1,0 +1,351 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos).  Está escrito en formato POD (vea pod/perlpod.pod), un formato diseñado específicamente para ser legible tal cual.
+
+=head1 NAME
+
+perlce - Perl para WinCE
+
+=head1 Compilar Perl para WinCE
+
+=head2 ADVERTENCIA
+
+B<< La mayor parte de este documento ha envejecido y necesita actualizarse, reescribirse o eliminarse. El proceso de compilación se revisó durante el desarrollo de la versión 5.19 y las instrucciones actuales como las de aquella época se indican en L</INSTRUCCIONES DE COMPILACIÓN ACTUALES>; las anteriores instrucciones de compilación, largamente superadas, pero pueden seguir conteniendo alguna información útil, residen en L</INSTRUCCIONES DE COMPILACIÓN ANTERIORES> pero, realmente, necesitan eliminarse después de extraer esa información. >>
+
+=head1 DESCRIPCIÓN
+
+Este archivo proporciona las instrucciones para compilar Perl5.8 y superiores para WinCE.  Por favor, asegúrese que lee y entiende los términos bajo los que se distribuye este software.
+
+=head2 Explicaciones generales en la compilación cruzada para WinCE
+
+=over
+
+=item *
+
+F<miniperl> se compiló. Este es un único ejecutable (sin DLL), para ejecutarse en Win32 y facilitará el proceso de compilación restante; todos los binarios compilados después de él son foráneos y no deberían ejecutarse localmente.
+
+F<miniperl> se compila usando F<./win32/Makefile>; esto es parte del proceso normal de compilación invocado como dependencia desde wince/Makefile.ce
+
+=item *
+
+Después de compilarse F<miniperl>, se invoca a F<configpm> para crear F<Config.pm> en el lugar adecuado en su correspondiente Cross.pm.
+
+A diferencia de la compilación de Win32, miniperl no usará el F<Config.pm> del equipo donde se encuentra; en lugar de eso, usará el F<Config.pm> del interior de los directorios de la compilación cruzada.
+
+El archivo F<Cross.pm> es muy simple: para los lugares proporcionados en @INC para la arquitectura cruzada donde indican la ruta de los módulos perl, y agrega ese lugar a F<Config.pm>.
+
+Dicho eso, C<miniperl -Ilib -MConfig -we 1> debería reportar un error sino encuentra F<Config.pm>. Si no da un error, se sustituye un F<Config.pm> erróneo, y los binarios resultantes estarán desordenados.
+
+C<miniperl -MCross -MConfig -we 1> debería funcionar, y proporcionará un correcto F<Config.pm> para compilaciones consecuentes.
+
+=item *
+
+Durante la fase de compilación de las extensiones, se invoca el script F<./win32/buildext.pl> que, en turnos, visita los subdirectorios de F<./ext> y realiza una compilación de cada extensión.
+
+Todas las invocaciones de F<Makefile.PL> se proporcionan con C<-MCross> para habilitar la compilación cruzada.
+
+=back
+
+=head2 INSTRUCCIONES DE COMPILACIÓN ACTUALES
+
+(Estas instrucciones asumen que el equipo es un Windows de 32 bit. Si está en un Windows de 64 bit entonces cambie "C:\Program Files" a "C:\Program Files (x86)" en todos los archivos).
+
+1. Instale EVC4 desde
+
+ http://download.microsoft.com/download/c/3/f/c3f8b58b-9753-4c2e-8b96-2dfe3476a2f7/eVC4.exe
+
+Use la clave mencionada en 
+
+ http://download.cnet.com/Microsoft-eMbedded-Visual-C/3000-2212_4-10108490.html?tag=bc
+
+El instalador es antiguo y tiene unos pocos errores en las rutas que usa. Tendrá que arreglarlo más tarde. Básicamente, algunas cosas van en "C:/Program Files/Windows CE Tools", otras van en "C:/Windows CE Tools" sin importar la ruta que le des al instalador (por defecto será "C:/Windows  CE Tools"). El instalador requerirá reinicios para poder seguir. También se podrían sobreescribir las asociaciones .c y .h con Visual Studio cuando se instale EVC4. Queda advertido.
+
+2. Descargue celib desde GitHub (usando "Download ZIP") en
+
+    https://github.com/bulk88/celib 
+
+Extráigalo a una ruta sin espacios, pero no en el código fuente de la compilación perl.
+Yo llamo a este directorio "celib-palm-3.0" pero en el almacén en GitHub se llamará "celib-master". Haga una copia de la carpeta "wince-arm-pocket-wce300-release" y renombre la copia a "wince-arm-pocket-wce400". Esto es un hack para poder compilar un binario CE 4.0 enlazándolo con ensamblador CE 3.0 ARM; al enlazador no le preocupa. Windows Mobile/WinCE son compatibles hacia atrás con código máquina como Windows Desktop.
+
+3. Descargue console-1.3-src.tar.gz desde 
+
+ http://sourceforge.net/projects/perlce/files/PerlCE%20support%20files/console/
+
+Extráigalo a una ruta sin espacios, pero no en el código fuente de la compilación perl. 
+No lo extraiga en el mismo directorio que celib. Haga una copia de la carpeta "wince-arm-pocket-wce300" y renombre la copia a "wince-arm-pocket-wce400". Esto es un hack para poder compilar un binario CE 4.0 enlazándolo con ensamblador CE 3.0 ARM; al enlazador no le preocupa. Windows Mobile/WinCE son compatibles hacia atrás con código máquina como Windows Desktop.
+
+4. Abra un prompt de comandos, ejecute su archivo batch normal para establecer el entorno para la compilación con la aplicación de escritorio Visual C, vaya al directorio de código fuente perl, entre en win32/, rellene el Makefile y haga un "nmake all" para compilar Perl.
+
+5. Abra win32/Makefile.ce en un editor de texto y haga algo similar al siguiente parche.
+
+    -CELIBDLLDIR  = h:\src\wince\celib-palm-3.0
+    -CECONSOLEDIR = h:\src\wince\w32console
+    +CELIBDLLDIR  = C:\sources\celib-palm-3.0
+    +CECONSOLEDIR = C:\sources\w32console
+
+También cambie
+
+    !if "$(MACHINE)" == ""
+    MACHINE=wince-arm-hpc-wce300
+    #MACHINE=wince-arm-hpc-wce211
+    #MACHINE=wince-sh3-hpc-wce211
+    #MACHINE=wince-mips-hpc-wce211
+    #MACHINE=wince-sh3-hpc-wce211
+    #MACHINE=wince-mips-hpc-wce200
+    #MACHINE=wince-arm-pocket-wce300
+    #MACHINE=wince-mips-pocket-wce300
+    #MACHINE=wince-sh3-pocket-wce300
+    #MACHINE=wince-x86em-pocket-wce300
+    #MACHINE=wince-mips-palm-wce211
+    #MACHINE=wince-sh3-palm-wce211
+    #MACHINE=wince-x86em-palm-wce211
+    #MACHINE=wince-x86-hpc-wce300
+    #MACHINE=wince-arm-pocket-wce400
+    !endif
+
+a
+
+    !if "$(MACHINE)" == ""
+    #MACHINE=wince-arm-hpc-wce300
+    #MACHINE=wince-arm-hpc-wce211
+    #MACHINE=wince-sh3-hpc-wce211
+    #MACHINE=wince-mips-hpc-wce211
+    #MACHINE=wince-sh3-hpc-wce211
+    #MACHINE=wince-mips-hpc-wce200
+    #MACHINE=wince-arm-pocket-wce300
+    #MACHINE=wince-mips-pocket-wce300
+    #MACHINE=wince-sh3-pocket-wce300
+    #MACHINE=wince-x86em-pocket-wce300
+    #MACHINE=wince-mips-palm-wce211
+    #MACHINE=wince-sh3-palm-wce211
+    #MACHINE=wince-x86em-palm-wce211
+    #MACHINE=wince-x86-hpc-wce300
+    MACHINE=wince-arm-pocket-wce400
+    !endif
+
+así que wince-arm-pocket-wce400 es el tipo de MACHINE.
+
+6. Use un editor de texto para abrir "C:\Program Files\Microsoft eMbedded C++ 4.0\EVC\WCE400\BIN\WCEARMV4.BAT". Busque por
+
+    if "%SDKROOT%"=="" set SDKROOT=...
+
+En una nueva instalación es "C:\Windows CE Tools". Vaya a "C:\Windows CE Tools" en un gestor de archivos y vea si "C:\Windows CE 
+Tools\wce400\STANDARDSDK\Include\Armv4" existe en su disco. Si no es así, necesita cambiar SDKROOT a "C:\Program Files\Windows CE Tools".
+
+Vaya a celib-palm-3.0\inc\cewin32.h, busque por
+
+    typedef struct _ABC {
+
+y descomente la estructura.
+
+7. Abra otro prompt de comandos, asegúrese que no se ha establecido PLATFORM a nada a menos que sepa lo que está haciendo (para que los valores por defecto correctos se establezcan por el siguiente comando), y ejecute "C:\Program Files\Microsoft eMbedded C++ 4.0\EVC\WCE400\BIN\WCEARMV4.BAT"
+
+8. En el prompt de comandos de WinCE que arrancó con WCEARMV4.BAT, vaya al directorio de código fuente de perl, entre en win32/ y ejecute "nmake -f Makefile.ce".
+
+9. El intérprete de perl en ARM (perl519.dll y perl.exe) estará en algo como "C:\perl519\src\win32\wince-arm-pocket-wce400", con las DLL XS en "C:\perl519\src\xlib\wince-arm-hpc-wce400\auto".
+
+Para probar que funciona en el equipo, ejecute "dumpbin /headers wince-arm-pocket-wce400\perl.exe" desde la carpeta win32/ y busque por "machine (ARM)" en el FILE HEADER VALUES y "subsystem (Windows CE GUI)" en el OPTIONAL HEADER VALUES.
+
+=head2 INSTRUCCIONES DE COMPILACIÓN ANTERIORES
+
+Esta sección describe los pasos que hay que realizar para compilar PerlCE.
+Puede encontrar información adicional sobre la compilación perl para WinCE en L<http://perlce.sourceforge.net> y algunos binarios precompilados.
+
+=head3 Herramientas y kit de desarrollo (SDK)
+
+Para compilar, necesita lo siguiente:
+
+=over 4
+
+=item * Microsoft Embedded Visual Tools
+
+=item * Microsoft Visual C++
+
+=item * celib-sources de Rainer Keuchel
+
+=item * console-sources de Rainer Keuchel
+
+=back
+
+Los códigos fuente necesarios se pueden descargar desde L<http://perlce.sourceforge.net>
+
+=head3 Make
+
+Normalmente, solo necesita editar F<./win32/ce-helpers/compile.bat> para indicar su sistema y ejecutarlo.
+
+El archivo F<./win32/ce-helpers/compile.bat> es, realmente, un envoltorio que llama C<nmake -f makefile.ce> con los parámetros apropiados y acepta parámetros extras y los traslada al comando C<nmake> como argumentos adicionales. Debe pasar el objetivo de esta manera.
+
+Para preparar la distribución debe hacer lo siguiente:
+
+=over 4
+
+=item * vaya al subdirectorio F<./win32>
+
+=item * edite el archivo F<./win32/ce-helpers/compile.bat>
+
+=item * run 
+  compile.bat
+
+=item * run 
+  compile.bat dist
+
+=back
+
+F<Makefile.ce> tiene la macro C<CROSS_NAME>, y se usa más adelante para referirse al esquema de su compilación cruzada. Podría asignarle un nombre, pero no es necesario, porque, por defecto, se le asigna uno en base al nombre configurado en su máquina, tal como "wince-sh3-hpc-wce211", y esto es suficiente para distinguir diferentes compilaciones simultáneamente. Esta opción podría ser útil para realizar diferentes compilaciones en la misma plataforma, algo así como una compilación por hilos. En el siguiente ejemplo asumimos que todas las variables de entorno se han establecido correctamente para un compilador cruzado para C (un archivo *.bat especial podría encajar perfectamente para este propósito) y su F<compile.bat> establece un parámetro "MACHINE", a, digamos, C<wince-mips-pocket-wce300>.
+
+  compile.bat
+  compile.bat dist
+  compile.bat CROSS_NAME=mips-wce300-thr "USE_ITHREADS=define" ^
+    "USE_IMP_SYS=define" "USE_MULTI=define"
+  compile.bat CROSS_NAME=mips-wce300-thr "USE_ITHREADS=define" ^
+    "USE_IMP_SYS=define" "USE_MULTI=define" dist
+
+Si todo va bien y no hay errores durante una compilación, obtendrá dos distribuciones independientes: C<wince-mips-pocket-wce300> y C<mips-wce300-thr>.
+
+El objetivo C<dist> prepara el conjunto de archivos de la distribución. El objetivo C<zipdist> realiza lo mismo que C<dist> pero, además, comprime los archivos de la distribución en un archivo zip.
+
+NOTA: durante una compilación se podría crear uno o más F<Config.pm> para la compilación cruzada (F<Config.pm> "extranjeros") y están escondidos dentro de F<../xlib/$(CROSS_NAME)> con otros archivos auxiliares, pero, y esto es importante anotar, B<no> debería existir un F<Config.pm> para un miniperl residente.
+Si obtiene un error de que perl no puede encontrar Config.pm por ningún lado en el proceso de compilación, esto quiere decir que algo fue mal. Lo más probable es que olvidó especificar una compilación cruzada al invocar miniperl.exe a Makefile.PL Cuando compile una extensión para compilación cruzada, su línea de comandos debería parecerse a esto
+
+  ..\miniperl.exe -I..\lib -MCross=mips-wce300-thr Makefile.PL
+
+o sólo
+
+  ..\miniperl.exe -I..\lib -MCross Makefile.PL
+
+para referirse a la última compilación cruzada creada.
+
+Todas las cuestiones relacionadas con la compilación para dispositivos WinCE se pueden hacer en la lista de correo F<perlce-user@lists.sourceforge.net>.
+
+=head1 Usar Perl en WinCE
+
+=head1 DESCRIPCIÓN
+
+PerlCE, actualmente, se enlaza con una única ventana de consola, así que también funciona en dispositivos distintos de hpc.
+
+La sencilla implementación de stdio crea los archivos F<stdin.txt>, F<stdout.txt> y F<stderr.txt>, así que puede examinarlos si su consola tiene un número limitado de columnas.
+
+Cuando el código de salida es distinto de cero, aparece un caja de mensajes, y si no, se cierra la consola. Eso implica que tendrá que detectar cuándo una salida del programa tendrá un estado 0 si, además, se quiere mostrar otras salidas.
+
+stdout/stderr ahora va en los archivos F</perl-stdout.txt> y F</perl-stderr.txt.>
+
+PerlIDE se maneja bien con perlce.
+
+=head2 LIMITACIONES
+
+No fork(), pipe(), popen(), etc.
+
+=head2 ENTORNO
+
+Todas las variables de entorno se deben almacenar en HKLM\Environment como cadenas. Se leen en el proceso de arranque.
+
+=over
+
+=item PERL5LIB
+
+Rutas normales de bibliotecas perl (semi-lista).
+
+=item PATH
+
+Semi-lista para ejecutables.
+
+=item TMP
+
+- Directorio temporal.
+
+=item UNIXROOTPATH
+
+- Raíz para acceder algunos archivos especiales, es decir, F</dev/null>, F</etc/services>.
+
+=item ROWS/COLS
+
+- Filas/columnas de la consola.
+
+=item DIRECTORIO INICIAL (en inglés, I<HOME>)
+
+- Directorio del usuario.
+
+=item CONSOLEFONTSIZE
+
+- Tamaño de la fuente de letras de la consola.
+
+=back
+
+Puede establecerlas con cereg.exe, un editor (remoto) del registro o por medio de PerlIDE.
+
+=head2 REGISTRO
+
+Para iniciar perl haciendo clic sobre un archivo código fuente perl, tiene que poner las entradas correspondientes en HKCR (vea F<ce-helpers/wince-reg.bat>).
+Se ha informado que cereg.exe (que se debe ejecutar en un PC de escritorio con ActiveSync) no funciona en algunos dispositivos.
+Tendrá que crear manualmente las entradas del registro usando un editor del registro.
+
+=head2 XS
+
+Los siguientes métodos Win32 se incorporan dentro del intérprete:
+
+	newXS("Win32::GetCwd", w32_GetCwd, file);
+	newXS("Win32::SetCwd", w32_SetCwd, file);
+	newXS("Win32::GetTickCount", w32_GetTickCount, file);
+	newXS("Win32::GetOSVersion", w32_GetOSVersion, file);
+	newXS("Win32::IsWinNT", w32_IsWinNT, file);
+	newXS("Win32::IsWin95", w32_IsWin95, file);
+	newXS("Win32::IsWinCE", w32_IsWinCE, file);
+	newXS("Win32::CopyFile", w32_CopyFile, file);
+	newXS("Win32::Sleep", w32_Sleep, file);
+	newXS("Win32::MessageBox", w32_MessageBox, file);
+	newXS("Win32::GetPowerStatus", w32_GetPowerStatus, file);
+	newXS("Win32::GetOemInfo", w32_GetOemInfo, file);
+	newXS("Win32::ShellEx", w32_ShellEx, file);
+
+=head2 ERRORES
+
+Actualmente no se soporta la apertura de archivos en modo lectura/escritura si se usa stdio (algo normal para identificadores de archivo perl).
+
+Si encuentra errores o si no funciona de ninguna manera en su dispositivo, mande un correo a la dirección de más abajo. Por favor, reporte los detalles de su dispositivo (procesador, versión CE, tipo de dispositivo (hpc/palm/pocket)) y la fecha de los archivos descargados. 
+
+=head2 INSTALACIÓN
+
+Las instrucciones de instalación están en L<http://perlce.sourceforge.net/>.
+
+En cuanto la instalación y procesos de comprobación se estabilicen, la información será más precisa.
+
+=head1 AGRADECIMIENTOS
+
+Se usó como referencia la adaptación para Win32.
+
+=head1 Historia de la adaptación WinCE
+
+=over
+
+=item 5.6.0
+
+Adaptación inicial de perl a WinCE. Se realizó en un directorio aparte llamado F<wince>. Esta adaptación se basa en los contenidos del directorio F<./win32>.
+F<miniperl> no se compiló; el usuario debe tener un perl en su sistema y editar apropiadamente F<makefile.ce> para indicarlo.
+
+=item 5.8.0
+
+La adaptación de wince se mantuvo en el mismo directorio F<./wince>, y se usó F<wince/Makefile.ce> para invocar el compilador nativo para crear un miniperl en su sistema, que facilite el proceso de compilación cruzada.
+Se añadió soporte para la compilación de extensiones.
+
+=item 5.9.4
+
+Los directorios F<./win32> y F<./wince> se mezclaron, por lo que la compilación de perlce aparece en el directorio F<./win32>.
+
+=back
+
+=head1 AUTORES
+
+=over
+
+=item Rainer Keuchel <coyxc@rainer-keuchel.de>
+
+proporcionó la adaptación inicial de Perl, que parece ser el trabajo más esencial, ya que sería todo un logro adaptar todo el Perl.
+¡Muchas gracias y agradecimientos a Rainer!
+
+=item Vadim Konovalov
+
+hizo el siguiente soporte de la adaptación de WinCE.
+
+=item Daniel Dragan
+
+actualizó el proceso de compilación durante el desarrollo de la versión 5.19.
+
+=back
