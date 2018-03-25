@@ -1,0 +1,97 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos).
+Está escrito en formato POD (vea pod/perlpod.pod), un formato diseñado específicamente para ser legible tal cual.
+
+=head1 NAME
+
+perlplan9 - Plan 9 - documentación específica para Perl
+
+=head1 DESCRIPCIÓN
+
+Estas son unas notas que describen características peculiares de Plan 9 Perl. Como tal, no se pretende que sea un reemplazo del resto de la documentación de Perl 5 (que es al mismo tiempo copiosa y excelente). Si tiene alguna pregunta de la que no encuentre respuesta en estas páginas de manual, contacto con Luther Huffman en lutherh@stratcom.com e intentaremos responderlas.
+
+=head2 Invocar Perl
+
+Perl se invoca desde la línea de comandos como se describe en L<perl>. La mayor parte de los I<scripts> perl, sin embargo, tienen una primera línea como esta: "#!/usr/local/bin/perl". Esto se conoce como una sentencia I<shebang> (shell-bang) e indica al shell del SO dónde encontrar el intérprete perl. En Plan 9 Perl, esta sentencia debería ser "#!/bin/perl" si desea invocar directamente el I<script> por su nombre.
+     De forma alternativa, puede invocar perl con el comando "Perl" en lugar de "perl". Esto producirá mensajes de error, compatibles con Acme, de la forma "archivo:18".
+
+Algunas I<scripts>, identificados normalmente con una extensión *.PL, se autoconfiguran y son capaces de crear correctamente su propia ruta shebang a partir de la información de configuración localizada en Plan 9 Perl. Así que no necesita preocuparse.
+
+=head2 Qué hay en Plan 9 Perl
+
+A pesar de que el Plan 9 Perl solo proporcione, actualmente, carga estática, se compila con una serie de extensiones útiles. 
+Estas incluyen Opcode, FileHandle, Fcntl y POSIX. Se espera ver otras (¡y con DynaLoad!) en el futuro.
+
+=head2 Qué es lo que no hay en el Plan 9 Perl
+
+Como se mencionó antes, la carga dinámica no está disponible actualmente ni MakeMaker. Ambos son temas de alta prioridad.
+
+=head2 Funciones Perl5 no soportadas en estos momentos en el Plan 9 Perl
+
+Algunas, como C<chown> y C<umask> no se proporcionan porque el concepto no existe en Plan 9. Otras, tales como algunas funciones relacionadas con los socket, simplemente, aún no se han escrito. Muchas en esta última categoría podrían existir en el futuro.
+
+Las funciones que actualmente no están implementadas, son:
+
+    chown, chroot, dbmclose, dbmopen, getsockopt, 
+    setsockopt, recvmsg, sendmsg, getnetbyname, 
+    getnetbyaddr, getnetent, getprotoent, getservent, 
+    sethostent, setnetent, setprotoent, setservent, 
+    endservent, endnetent, endprotoent, umask
+
+Existen muchas otras funciones que tienen un comportamiento indefinido, así que esta lista no se debe considerar que está completa.
+
+=head2 Señales en el Plan 9 Perl
+
+Para mantener compatibilidad con I<scripts> perl escritos para el entorno Unix, el Plan 9 Perl usa una emulación de señales POSIX proporcionada por el I<ANSI POSIX Environment (APE)> de Plan 9. El apilamiento de señales no está soportado. Las señales soportadas son:
+
+    SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGABRT,
+    SIGFPE, SIGKILL, SIGSEGV, SIGPIPE, SIGPIPE, SIGALRM, 
+    SIGTERM, SIGUSR1, SIGUSR2, SIGCHLD, SIGCONT,
+    SIGSTOP, SIGTSTP, SIGTTIN, SIGTTOU
+
+=head1 COMPILAR E INSTALAR PERL EN PLAN 9
+
+¡BIENVENIDO a Plan 9 Perl, alma valiente!
+
+   Esta es una versión alfa preliminar de Plan 9 Perl. Lo que falta por implementar son MakeMaker y DynaLoader. Actualmente, muchos comandos perl faltan o se comportan de manera inescrutable. Estos vacíos serán remediados con perseverancia y una pizca de suerte, en un futuro próximo. Para instalar este software:
+
+1. Cree los directorios fuente y bibliotecas para perl ejecutando el comando plan9/setup.rc (es decir, localizado en el subdirectorio plan9).
+Nota: la rutina de inicialización asume que no ha desempaquetado estos archivos en /sys/src/cmd/perl. Después de ejecutar setup.rc puede borrar la copia del fuente originalmente destareado (tar), ya que ahora el código fuente se ha instalado en /sys/src/cmd/perl. Si planea instalar los binarios perl para todas las arquitecturas, ejecute "setup.rc -a".
+
+2. Después de asegurarse que tiene los privilegios adecuados para compilar software del sistema, desde /sys/src/cmd/perl/5.00301 (ajuste según la versión) ejecute:
+
+	mk install
+
+Si desea instalar versiones perl para todas las arquitecturas (68020, mips, sparc y 386) ejecute:
+
+	mk installall
+
+3. Espere. El proceso de compilación llevará un *largo* tiempo, porque se construye el propio perl. Una máquina con un Pentium a 75 MHz y 16 MB RAM le lleva aproximadamente 30 minutos para compilar la distribución desde cero.
+
+=head2 Instalar la documentación Perl en Plan 9
+
+Esta distribución perl viene con una tremenda cantidad de documentación. Para añadir estos manuales incorporados, que vienen con Plan 9, ejecute desde /sys/src/cmd/perl/5.00301 (ajuste con la versión adecuada):
+
+	mk man
+
+Para empezar a leer, comience con:
+
+	man perl
+
+Es una buena introducción y le dirigirá hacia otras páginas de manual que le pueden interesar.
+
+(Nota: "mk man" puede producir algún ruido extraño. No tema.)
+
+=head1 ERRORES
+
+"Tantos como granos de arena de todas las playas del mundo . . ." - Carl Sagan
+
+=head1 Fecha de revisión
+
+Este documento se revisó el 9 de octubre de 1996 para Perl 5.003_7.
+
+=head1 AUTOR
+
+Preguntas directas, comentarios directos, y un improbable reporte de errores (ejem), envíelos hacia:
+
+Luther Huffman, lutherh@stratcom.com, 
+Strategic Computer Solutions, Inc.		
