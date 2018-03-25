@@ -7,7 +7,7 @@ perlaix - Perl versión 5 en sistemass IBM AIX (UNIX)
 
 =head1 DESCRIPCIÓN
 
-Este documento describe varias características del sistema operativo UNIX AIX de IBM que afectará a cómo Perl versión 5 (de ahora en adelante sólo Perl) es compilado y/o ejecutado.
+Este documento describe varias características del sistema operativo UNIX AIX de IBM que afectará a cómo Perl versión 5 (de ahora en adelante sólo Perl) se compila y/o ejecuta.
 
 =head2 Compilar Perl 5 en AIX
 
