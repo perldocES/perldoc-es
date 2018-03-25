@@ -1,0 +1,108 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos).
+Está escrito en formato POD (vea pod/perlpod.pod), un formato diseñado específicamente para ser legible tal cual.
+
+=head1 NAME
+
+perltru64 - Perl versión 5 en sistemas Tru64 (anteriormente conocido como Digital UNIX conocido anteriormente como DEC OSF/1)
+
+=head1 DESCRIPCIÓN
+
+Este documento describe varias características del sistema operativo UNIX Tru64 de HP (anteriormente de Compaq, anteriormente de Digital) que afectará a cómo Perl versión 5 (de ahora en adelante sólo Perl) se compila y/o ejecuta.
+
+=head2 Compilar Perl en Tru64
+
+El compilador recomendado para usar en Tru64 es el compilador nativo de C.
+El compilador nativo produce código mucho más rápido (la diferencia de velocidad es notable: varias docenas de puntos de porcentaje) y también código más correcto: si está considerando usar el compilador GNU C debería usar al menos la versión de la distribución 2.95.3 ya que se sabe que todas las versiones anteriores de gcc producen código roto al compilar Perl.  Una manifestación de esta rotura es el volcado del núcleo de la comprobación lib/sdbm; otras son los volcados de núcleo de muchas de las comprobaciones de op/regexp y op/pat, o comprobaciones ext/Storable (el patrón exacto de fallos depende de la versión del GCC y de los indicadores de optimización).
+
+Tanto el cc nativo como el gcc parecen consumir grandes cantidades de memoria cuando se compila Perl.  Se sabe que toke.c tiene problemas cuando se optimiza; con 256 megabytes en la sección de datos parece que es suficiente.  Otro problema conocido es el script mktables, que compila las tablas de soporte para Unicode.  La configuración por defecto de la sección de datos del proceso en Tru64 debería ser un gigabyte, pero algunos sitios/sistemas podrían bajarlo.
+El proceso de configuración de Perl comprueba si hay límites de proceso demasiado bajos, y si es necesario baja la optimización para toke.c, y también da consejo en cómo elevar los límites del proceso (por ejemplo: C<ulimit -d 262144>)
+
+También, Configure podría abortar con
+
+ I<Build a threading Perl?> (¿Compilar Perl con soporte de hilos?) [n]
+ Configure[2437]: Syntax error at line 1 : 'config.sh' is not expected.
+
+Esto indica que Configure se ejecuta con un shell Korn roto (incluso aunque piense que esté usando un shell Bourne al usar "sh Configure" o "./Configure").  Se ha reportado el error del shell Korn a Compaq en febrero de 1999, pero mientras tanto, la razón por la que se usa ksh es que tiene la variable de entorno BIN_SH establecida a 'xpg4'.  Esto provoca que /bin/sh delegue sus deberes a /bin/posix/sh (a ksh).  Limpie la variable de entorno y vuelva a ejecutar Configure.
+
+=head2 Usar archivos grandes con Perl en Tru64
+
+En Tru64, Perl es capaz, automáticamente de usar archivos grandes, es decir, archivos superiores a 2 gigabytes, por lo que no es necesario la opción -Duselargefiles de Configure, como se describe en INSTALL (aunque si se pone no pasará nada).
+
+=head2 Perl multihebra en Tru64
+
+Si quiere usar hilos, debería primero usar el modelo de hilos de Perl 5.8.0 ejecutando Configure con -Duseithreads.
+
+Los hilos en Perl solo van a funcionar en Tru64 4.0 y nuevas versiones; versiones anteriores como 3.2 probablemente no vayan a funcionar apropiadamente con los hilos.
+
+En Tru64 V5 (al menos V5.1A, V5.1B) no puede compilar Perl con hilos con gcc porque la cabecera del sistema <pthread.h> comprueba explícitamente por ciertos compiladores de C, no siendo gcc (al menos 3.2.2) uno de ellos.  Pero el compilador de C del sistema debería funcionar bien.
+
+=head2 Dobles largos en Tru64
+
+No puede ejecutar Configure para que Perl use dobles largos excepto que tenga al menos la versión V5.0 de Tru64; el soporte de dobles largos, sencillamente, no es lo suficientemente funcional antes de esa versión.  El Configure de Perl sobrescribirá los intentos de usar los dobles largos (notará esto al ver que Configure encuentra que la función modfl() no funciona como debiera).
+
+En el momento de escribir esto (junio de 2002), existe un error conocido en la libc de Tru64 al imprimir dobles largos cuando no se usa la notación "e".
+Los valores son correctos y utilizables, pero solo obtendrá un número limitado de dígitos mostrados a menos que fuerce el tema usando C<printf "%.33e",$num> o parecido.  Para versiones Tru64 V5.0A hasta la V5.1A, se espera que aparezca algún parche después de la salida de perl 5.8.0.  Si su libc todavía no se ha parcheado, obtendrá una advertencia desde Configure cuando seleccione dobles largos.
+
+=head2 Comprobaciones DB_File fallan en Tru64
+
+Las comprobaciones de DB_File (db-btree.t, db-hash.t, db-recno.t) pueden fallar si instaló una nueva versión de Berkeley DB en el sistema; y los indicadores -I y -L del compilador y enlazador introducen conflictos de versión con las cabeceras de DB 1.85 y bibliotecas que vienen con Tru64.  Por ejemplo, mezclar una biblioteca DB v2 con las cabeceras de DB v1 es una mala idea.  Eche un vistazo a las opciones de Configure -Dlocincpth y -Dloclibpth, y compruebe su /usr/local/include y /usr/local/lib ya que, por defecto, se incluyen.
+
+La segunda opción es instruir explícitamente a Configure el detectar la nueva instalación de Berkeley DB, suministrando los directorios correctos con C<-Dlocincpth=/algún/include> y C<-Dloclibpth=/alguna/lib> B<y> antes de ejecutar "make test" establecer su LD_LIBRARY_PATH a F</alguna/lib>.
+
+La tercera opción es arreglar el problema desactivando DB_File completamente cuando se compila Perl especificando -Ui_db en Configure, y luego usar el módulo BerkeleyDB desde CPAN en lugar de DB_File.
+BerkeleyDB funciona con versiones de Berkeley DB 2.* o superior.
+
+El Berkeley DB 4.1.25 se ha probado con Tru64 V5.1A y se sabe que funciona.  El último Berkeley DB se puede encontrar en L<http://www.sleepycat.com>.
+
+=head2 Perl de 64-bit en Tru64
+
+Los enteros de Perl de Tru64 son automáticamente de 64 bit de ancho, por lo que no es necesario usar la opción -Duse64bitint de Configure como se describe en INSTALL.  De modo parecido, no es necesario -Duse64bitall ya que los punteros son, automáticamente, de 64 bit de ancho.
+
+=head2 Advertencias sobre el desbordamiento de punto flotante cuando se compila Perl en Tru64
+
+Cuando se compila Perl en Tru64 puede (dependiendo de la versión del compilador) vewr dos advertencias como estas
+
+ cc: Warning: numeric.c, line 104: In this statement, floating-point
+ overflow occurs in evaluating the expression "1.8e308". (floatoverfl)
+     return HUGE_VAL;
+ -----------^
+
+y al compilar la extensión POSIX
+
+ cc: Warning: const-c.inc, line 2007: In this statement, floating-point
+ overflow occurs in evaluating the expression "1.8e308". (floatoverfl)
+             return HUGE_VAL;
+ -------------------^
+
+Los números de línea exactos puede variar entre las distintas versiones de Perl.  Las advertencias son benignas y se puede ignorar: en las últimas versiones del compilador de C las advertencias no deberían aparecer.
+
+Cuando se compila el archivo F<pp_sys.c>  puede (dependiendo de la versión del sistema operativo) ver que se usa un indicador de compilación adicional: C<-DNO_EFF_ONLY_OK>.  Esto es normal y se refiere a una característica que es relevante solo si usa el pragma C<filetest>.  En versiones anteriores del sistema operativo la característica estaba rota y NO_EFF_ONLY_OK instruye a Perl para que no la use.
+
+=head2 Comprobar Perl en Tru64
+
+Durante el "make test", el C<comp>/C<cpp> se obviará porque en Tru64 no se puede probar antes de que Perl se instale.  La comprobación se refiere al uso de la opción C<-P> de Perl.
+
+=head1 Fallo de comprobación de ext/ODBM_File/odbm con compilaciones estáticas
+
+Se sabe que ext/ODBM_File/odbm falla con compilaciones estáticas (Configure -Uusedl) debido a un error conocido en la biblioteca estática libdbm de Tru64.  Las buenas noticias es que probablemente no necesitará usar nunca la extensión ODBM_File ya que el más avanzado NDBM_File funciona bien, sin mencionar el más avanzado DB_File.
+
+=head1 Perl falla debido a la no resolución del símbolo sockatmark
+
+Si obtiene un error como
+
+    Can't load '.../OSF1/lib/perl5/5.8.0/alpha-dec_osf/auto/IO/IO.so' for module IO: Unresolved symbol in .../lib/perl5/5.8.0/alpha-dec_osf/auto/IO/IO.so: sockatmark at .../lib/perl5/5.8.0/alpha-dec_osf/XSLoader.pm line 75.
+
+necesita o bien recompilar su Perl en Tru64 4.0D o actualizar su Tru64 4.0D al menos a la versión 4.0F: la llamada del sistema sockatmark() se añadió en Tru64 4.0F, y la extensión de E/S refiere a ese símbolo.
+
+=head1 read_cur_obj_info: bad file magic number
+
+Puede mezcla el cc/ar/ld de Tru64 con el gcc/ar/ld de GNU.
+Esto puede funcionar, pero algunas veces no (su gcc o utilerías GNU se pueden haber compilador para una versión incompatible del sistema operativo).
+
+Intente 'which ld' y 'which ld' (o intente 'ar --version' y 'ld --version', que funciona solo para las herramientas GNU, y se anunciará como tal), y ajustar su PATH para que use de forma coherente tanto las herramientas nativas o las herramientas GNU.  Después de ajustar su PATH, debe hacer un 'make distclean' e iniciar todo a partir de la ejecución de Configure ya que sino puede encontrarse en una situación confusa.
+
+=head1 AUTOR
+
+Jarkko Hietaniemi <jhi@iki.fi>
+
+=cut
