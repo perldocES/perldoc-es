@@ -1,0 +1,142 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos).
+Está escrito en formato POD (vea pod/perlpod.pod), un formato diseñado específicamente para ser legible tal cual.
+
+=head1 NAME
+
+perlqnx - Perl versión 5 en QNX
+
+=head1 DESCRIPCIÓN
+
+En perl5.7.2, todas las pruebas pasan bajo:
+
+  QNX 4.24G
+  Watcom 10.6 with Beta/970211.wcc.update.tar.F
+  socket3r.lib Nov21 1996.
+
+En perl5.8.1 hay al menos una prueba que sigue fallando.
+
+Algunas pruebas pueden quejarse bajo algunas circunstancias.
+
+Vea más abajo y en hints/qnx.sh para más información.
+
+Bajo QNX 6.2.0 todavía existen unas pocas pruebas que fallan.
+Vea más abajo y en hints/qnx.sh para más información.
+
+=head2 Software necesario para compilar Perl en QNX4
+
+Al igual que muchas adaptaciones unix, esta depende de unas pocas utilidades unix "estándares" que no son necesariamente estándares para QNX4.
+
+=over 4
+
+=item /bin/sh
+
+Este se usa mucho por parte de Configure y por el propio perl. La versión de QNX4 está bien, pero Configure se ahogará en la versión de 16 bit, así que si está ejecutando QNX 4.22, enlace /bin/sh a /bin32/ksh
+
+=item ar
+
+Este es el constructor estándar de bibliotecas unix.
+Nosotros usamos wlib. Con Watcom 10.6, cuando wlib se enlaza con "ar", se comporta como ar y todo va bien. Bajo 9.5, se necesita un envoltorio. Se incluye uno en ../qnx
+
+=item nm
+
+Este se usa (opcionalmente) por configure para listar los contenidos de las bibliotecas. Generará al vuelo una función de envoltorio en el directorio UU.
+
+=item cpp
+
+Configure y perl necesitan una manera de invocar un preprocesador de C. He creado un envoltorio sencillo para cc que hace lo correcto. Sin él, Configure creará su propio envoltorio que funciona, pero no maneja algunos de los argumentos de la línea de comandos que perl le envíe.
+
+=item make
+
+Para compilar esto, necesita el GNU make. GNU make viene por defecto con QNX 4.23, pero puede obtenerlo fácilmente para versiones anteriores.
+
+=back
+
+=head2 Cuestiones pendientes con Perl en QNX4
+
+No existe soporte para bibliotecas enlazadas dinámicamente en QNX4.
+
+Si desea compilar con la extensión Socket, necesita tener el kit de herramientas TCP/IP, y necesita asegurarse que -lsocket localiza la copia correcta de socket3r.lib. Cuidado que el compilador Watcom viene con una versión mínima de socket3r.lib que tiene muy poca funcionalidad. También tenga cuidado con el orden en que wlink busca en los directorios por las bibliotecas. Puede tener /usr/lib/socket3r.lib apuntando a la biblioteca correcta, pero wlink puede en su lugar escoger /usr/watcom/10.6/usr/lib/socket3r.lib. Asegúrese que los dos apuntan a la biblioteca correcta, es decir, /usr/tcptk/current/usr/lib/socket3r.lib.
+
+Las siguientes pruebas pueden reportar errores bajo QNX4:
+
+dist/Cwd/Cwd.t se quejará si `pwd` y cwd no proporcionan los mismos resultados. cwd llama a `fullpath -t`, así si hace cd `fullpath -t` antes de ejecutar la prueba, entonces la pasará.
+
+lib/File/Find/taint.t se quejará si '.' está en su PATH. La prueba PATH se dispara porque cwd llama a `fullpath -t`.
+
+ext/IO/lib/IO/t/io_sock.t: las subpruebas 14 y 22 se obvian debido al hecho de que la funcionalidad para devolver el estado no bloqueante de un socket no está implementada en el TCP/IP de QNX. Se ha informado a QNX y puede que funcione en las últimas versiones de TCP/IP.
+
+t/io/tell.t: La subprueba 27 falla. Seguimos investigando.
+
+=head2 Archivos auxiliares de QNX
+
+Los archivos en el directorio "qnx" son:
+
+=over 4
+
+=item qnx/ar
+
+Un I<script> que emula la herramienta de archivado (es decir, biblioteca) estándar unix.  Bajo Watcom 10.6, ar se enlaza a wlib y proporciona la interfaz esperada. Con Watcom 9.5, se requiere una función de recubrimiento. Es muy crudo decirlo así, pero se ha probado que es lo adecuado para compilar perl.
+
+=item qnx/cpp
+
+Un I<script> que proporciona la funcionalidad de preprocesado C.  Configure puede generar un recubrimiento similar, pero no maneja todas las opciones de la línea de comandos que perl le envía. Sería razonable colocarlo en /usr/local/bin.
+
+=back
+
+=head2 Cuestiones pendientes con Perl en QNX6
+
+Las siguientes pruebas siguen fallando para Perl 5.8.1 bajo QNX 6.2.0:
+
+  op/sprintf.........................FAILED at test 91
+  lib/Benchmark......................FAILED at test 26
+
+Es debido a un error en la rutina printf de la biblioteca C.
+printf("'%e'", 0. ) produce '0.000000e+0', pero ANSI requiere '0.000000e+00'. QNX ha reconocido el error.
+
+=head2 Compilación cruzada
+
+Perl soporta compilación cruzada para QNX NTO en el kit de desarrollo nativo (I<Native Development Kit (NDK)>) para la Blackberry 10.  Esto significa que puede compilar de forma cruzada tanto para las versiones ARM como x86 de la plataforma.
+
+=head3 Estableciendo un entorno de compilación cruzada
+
+Puede descargar el NDK desde L<http://developer.blackberry.com/native/downloads/>.
+
+Vea L<http://developer.blackberry.com/native/documentation/cascades/getting_started/setting_up.html> para instrucciones para establecer su dispositivo antes de intentar nada.
+
+Una vez que instale el NDK y establezca su dispositivo, todo lo que resta es establecer el dispositivo y el entorno de compilación cruzada.  Blackberry proporciona un I<script>, C<bbndk-env.sh> (que de forma ocasional puede llamarse algo como C<bbndk-env_10_1_0_4828.sh>) que se puede usar para hacer esto.  Aún así, hay un pequeño inconveniente que tenemos que solventar: el I<script> modifica PATH así que 'gcc' o 'ar' apunta a sus equivalentes de la compilación cruzada, que detiene el proceso de compilación.
+
+Así que en cambio querrá hacer algo como esto:
+
+    $ orig_path=$PATH
+    $ source $location_of_bbndk/bbndk-env*.sh
+    $ export PATH="$orig_path:$PATH"
+
+Además de poner el compilador cruzado y el resto de la cadena de herramientas en su PATH, también proporcionará la variable QNX_TARGET, que pasará a Configure por medio de -Dsysroot.
+
+=head3 Preparando el sistema objetivo
+
+Es muy posible que el sistema objetivo no tenga disponible un /tmp legible, así que es, generalmente, más seguro hacer algo como esto:
+
+ $ ssh $TARGETUSER@$TARGETHOST 'rm -rf perl; mkdir perl; mkdir perl/tmp'
+ $ export TARGETDIR=`ssh $TARGETUSER@$TARGETHOST pwd`/perl
+ $ export TARGETENV="export TMPDIR=$TARGETDIR/tmp; "
+
+Más tarde, pasaremos esto a Configure por medio de -Dtargetenv
+
+=head3 Llamar a Configure
+
+Si está compilando para un dispositivo ARM -que actualmente incluye la vasta mayoría de teléfonos y tabletas- le pasará -Dcc=arm-unknown-nto-qnx8.0.0eabi-gcc a Configure.  Alternativamente, si se dirige a un dispositivo x86, o usar el simulador proporcionado con NDK, debería especificar en su lugar -Dcc=ntox86-gcc.
+
+Un ejemplo de invocación de Configure se parece a algo como esto:
+
+    ./Configure -des -Dusecrosscompile \
+        -Dsysroot=$QNX_TARGET          \
+        -Dtargetdir=$TARGETDIR         \
+        -Dtargetenv="$TARGETENV"       \
+        -Dcc=ntox86-gcc                \
+        -Dtarghost=... # opciones habituales en compilación cruzada
+
+=head1 AUTOR
+
+Norton T. Allen (allen@huarp.harvard.edu)
+

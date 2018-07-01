@@ -326,7 +326,7 @@ La secuencia de pasos tomados por el depurador es
   1. comprueba que exista un punto de parada en esta línea
   2. Imprime la línea, si es necesario (traza)
   3. realiza cualquier acción asociada con esa línea
-  4. presenta un prompt al usuario si es un punto de parada o un paso simple
+  4. presenta un símbolo del sistema al usuario si es un punto de parada o un paso simple
   5. evalúa la línea
 
 Por ejemplo, esto imprimirá el valor de $foo cada vez que se pase por la línea 53:
@@ -386,53 +386,53 @@ La C<option> se puede abreviar, pero por claridad, no debería hacerse.  Se pued
 =item < ?
 X<debugger command, < >> X<comando del depurador, < >>
 
-Lista todas los comandos Perl de acciones, anteriores a la presentación del prompt.
+Lista todas los comandos Perl de acciones, anteriores a la presentación del símbolo del sistema.
 
 =item < [ comando ]
 X<< debugger command, < >> X<comando del depurador, < >>
 
-Establece una acción (comando Perl) para que se ejecute antes de todas las apariciones del prompt del depurador.
+Establece una acción (comando Perl) para que se ejecute antes de todas las apariciones del símbolo del sistema del depurador.
 Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea.
 
 =item < *
 X<< debugger command, < >> X<< comando del depurador, < >>
 
-Borra todas los comandos Perl de las acciones anteriores a la presentación del prompt.
+Borra todas los comandos Perl de las acciones anteriores a la presentación del símbolo del sistema.
 
 =item << comando
 X<< debugger command, << >> X<< comando del depurador, << >>
 
-Añade una acción (comando Perl) para que se ejecute antes de todas las apariciones del prompt del depurador.
+Añade una acción (comando Perl) para que se ejecute antes de todas las apariciones del símbolo del sistema del depurador.
 Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea.
 
 =item > ?
 X<< debugger command, > >> X<< comando del depurador, > >>
 
-Lista todas los comandos Perl de acciones, posteriores a la presentación del prompt.
+Lista todas los comandos Perl de acciones, posteriores a la presentación del símbolo del sistema.
 
 =item > comando
 X<< debugger command, > >> X<< comando del depurador, > >>
 
-Establece una acción (comando Perl) para que se ejecute después de que salga el prompt del depurador que sale justo después de regresar de ejecutar el script.  Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea (apostamos  que no la habría adivinado).
+Establece una acción (comando Perl) para que se ejecute después de que salga el símbolo del sistema del depurador que sale justo después de regresar de ejecutar el script.  Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea (apostamos  que no la habría adivinado).
 
 =item > *
 X<< debugger command, > >> X<< comando del depurador, > >>
 
-Borra todas los comandos Perl de las acciones posteriores a la presentación del prompt.
+Borra todas los comandos Perl de las acciones posteriores a la presentación del símbolo del sistema.
 
 =item >> comando
 X<<< debugger command, >> >>> X<<< comando del depurador, >> >>>
 
-Añade una acción (comando Perl) para que se ejecute después de que salga el prompt del depurador que sale justo después de regresar de ejecutar el script.  Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea.
+Añade una acción (comando Perl) para que se ejecute después de que salga el símbolo del sistema del depurador que sale justo después de regresar de ejecutar el I<script>.  Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea.
 
 =item { ?
 X<debugger command, {> X<comando del depurador, {>
 
-Lista los comandos del depurador antes del prompt.
+Lista los comandos del depurador antes del símbolo del sistema.
 
 =item { [ comando ]
 
-Establece una acción (comando del depurador) para que se ejecute antes de todas las apariciones del prompt del depurador.
+Establece una acción (comando del depurador) para que se ejecute antes de todas las apariciones del símbolo del sistema del depurador.
 Se puede entrar un comando de varias líneas de la forma acostumbrada.
 
 Ya que este comando es, en ciertos aspectos, nuevo, se emite una advertencia si parece que, en su lugar, y accidentalmente, entró un bloque.  Si esto es lo que quería hacer, escríbalo como C<;{ ... }> , o incluso C<do { ... }>.
@@ -440,12 +440,12 @@ Ya que este comando es, en ciertos aspectos, nuevo, se emite una advertencia si 
 =item { *
 X<debugger command, {> X<comando del depurador, {>
 
-Borra todos los comandos del depurador antes del prompt.
+Borra todos los comandos del depurador antes del símbolo del sistema.
 
 =item {{ comando
 X<debugger command, {{> X<comando del depurador, {{>
 
-Añade una acción (comando del depurador) para que se ejecute antes de todas las apariciones del prompt del depurador.
+Añade una acción (comando del depurador) para que se ejecute antes de todas las apariciones del símbolo del sistema del depurador.
 Se puede entrar un comando de varias líneas si adivina cómo: véalo más arriba.
 
 =item ! número
@@ -562,7 +562,7 @@ Debido a que el depurador usa sus características de la terminal actual para la
 =item C<tkRunning>
 X<debugger option, tkRunning> X<opción del depurador, tkRunning>
 
-Ejecuta Tk mientras muestra el prompt (con ReadLine).
+Ejecuta Tk mientras muestra el símbolo del sistema (con ReadLine).
 
 =item C<signalLevel>, C<warnLevel>, C<dieLevel>
 X<debugger option, signalLevel> X<opción del depurador, signalLevel> X<debugger option, warnLevel> X<opción del depurador, warnLevel> X<debugger option, dieLevel> X<opción del depurador, dieLevel>
@@ -687,7 +687,7 @@ El contador de líneas guardadas en la historia (asumiendo el C<HistFile> anteri
 
 =back
 
-Después de que se lea el archivo rc, el depurador lee la variable de entorno C<$ENV{PERLDB_OPTS}> y lo interpreta como si se hubiera entrado el resto de una línea "O ..." en el prompt del depurador.  Puede colocar allí las opciones de inicialización C<TTY>, C<noTTY>, C<ReadLine> y C<NonStop>.
+Después de que se lea el archivo rc, el depurador lee la variable de entorno C<$ENV{PERLDB_OPTS}> y lo interpreta como si se hubiera entrado el resto de una línea "O ..." en el símbolo del sistema del depurador.  Puede colocar allí las opciones de inicialización C<TTY>, C<noTTY>, C<ReadLine> y C<NonStop>.
 
 Si su archivo rc contiene:
 
@@ -749,9 +749,9 @@ Vea L<perldebguts/"Interioridades del depurador"> para más detalles.
 
 =over 8
 
-=item Prompt
+=item Prompt (símbolo del sistema)
 
-El prompt del depurador es algo así
+El símbolo del sistema del depurador es algo así
 
     DB<8>
 

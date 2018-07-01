@@ -121,8 +121,8 @@ Ahora puede iniciarlo con el siguiente comando (SDF):
 
 C</START-PROG FROM-FILE=*MODULE(PERL,PERL),PROG-MODE=*ANY,RUN-MODE=*ADV>
 
-Primero obtiene el prompt de la línea de comandos BS2000 ('*').  Aquí puede entrar sus parámetros, por ejemplo, C<-e 'print "¡Hola, Mundo!\\n";'> (¡fíjese en la doble barra inclinada inversa!) o C<-w> y el nombre de su script Perl.
-Los nombres de archivo que comienzan por C</> se buscan en el sistema de archivos Posix, los demás se buscan en el sistema de archivos BS2000.  Incluso puede usar comodines si pone un C<%> delante de su nombre de archivo (por ejemplo, C<-w checkfiles.pl %*.c>).  Lea su manual de C/C++ para posibilidades adicionales del prompt de la línea de comandos (mire por PARAMETER-PROMPTING).
+Primero obtiene el símbolo del sistema de la línea de comandos BS2000 ('*').  Aquí puede entrar sus parámetros, por ejemplo, C<-e 'print "¡Hola, Mundo!\\n";'> (¡fíjese en la doble barra inclinada inversa!) o C<-w> y el nombre de su script Perl.
+Los nombres de archivo que comienzan por C</> se buscan en el sistema de archivos Posix, los demás se buscan en el sistema de archivos BS2000.  Incluso puede usar comodines si pone un C<%> delante de su nombre de archivo (por ejemplo, C<-w checkfiles.pl %*.c>).  Lea su manual de C/C++ para posibilidades adicionales del símbolo del sistema de la línea de comandos (mire por PARAMETER-PROMPTING).
 
 =head2 Anomalías de punto flotante en BS2000
 

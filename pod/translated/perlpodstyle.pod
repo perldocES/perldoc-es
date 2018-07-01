@@ -108,7 +108,7 @@ Cosas que están rotas o que no funcionan de forma correcta.
 
 =item RESTRICCIONES
 
-Errores que no planea arreglar.   
+Errores que no planea arreglar.  :-)
 
 =item NOTAS
 

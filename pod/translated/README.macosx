@@ -1,0 +1,163 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos).
+Está escrito en formato POD (vea pod/perlpod.pod), un formato diseñado específicamente para ser legible tal cual.
+
+=head1 NAME
+
+perlmacosx - Perl para Mac OS X
+
+=head1 SINOPSIS
+
+Este documento describe brevemente Perl bajo Mac OS X.
+
+  curl -O http://www.cpan.org/src/perl-5.24.0.tar.gz
+  tar -xzf perl-5.24.0.tar.gz
+  cd perl-5.24.0
+  ./Configure -des -Dprefix=/usr/local/
+  make
+  make test
+  sudo make install
+
+=head1 DESCRIPCIÓN
+
+La última publicación Perl (5.24.0 en el momento de escribir esto) se compila sin cambios bajo todas las versiones de Mac OS X desde 10.3 "Panther" en adelante. 
+
+Para construir su propia versión de Perl necesitará 'make', que es parte de las herramientas de desarrollo de Apple, también conocidas como Xcode. Desde Mac OS X 10.7 "Lion" en adelante, se puede descargar por separado en el paquete 'Herramientas de línea de comandos' directamente desde L<https://developer.apple.com/downloads/> (necesitará una cuenta libre para entrar), o como parte de la distribución Xcode, disponible libremente en el I<App Store>. Xcode es una app bastante grande, así que si al menos ya lo tiene o realmente lo quiere tener, es aconsejable obtener el paquete 'Herramientas de línea de comandos' de forma separada desde el enlace anterior. Si lo quiere hacer desde Xcode, vaya a Xcode -> Preferencias -> Descargas y seleccione la opción 'Herramientas de línea de comandos'.
+
+Entre Mac OS X 10.3 "Panther" y 10.6 "Snow Leopard", el paquete 'Herramientas de línea de comandos' se llamó 'herramientas unix', y se suministraba con los DVD de instalación de Mac OS.
+
+Las primeras publicaciones de Mac OS X (10.2 "Jaguar" y anteriores) no incluyen una libc completamente segura con los hilos, así que el proceso con hilos no está totalmente soportado. También, las primeras publicaciones incluían una libdb con errores, así que se sabe que algunas pruebas fallan en estas publicaciones.
+
+
+=head2 Prefijo de instalación
+
+La ubicación de la instalación por defecto para esta publicación usa la disposición tradicional de directorios UNIX bajo /usr/local. Esta es la ubicación recomendada para la mayor parte de los usuarios, y dejará tranquilos al Perl suministrado por Apple y a sus módulos.
+
+Usar un prefijo de instalación de '/usr' resultará en una disposición de directorios que se asemeja al Perl por defecto de Apple, con los módulos principales almacenados en '/System/Library/Perl/${version}', módulos CPAN almacenados en '/Library/Perl/${version}', y la adición de '/Network/Library/Perl/${version}' a @INC para los módulos que se almacenan en un servidor de archivos y utilizadas por muchos Mac.
+
+
+=head2 Soporte para SDK
+
+Primero, exporte la ruta al SDK en el entorno de compilación:
+
+ export SDK=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
+
+Por favor, asegúrese que la versión SDK (p.e. los números correctos antes de '.sdk') coincide con los de su sistema (en este caso, Mac OS X 10.8 "Mountain Lion"), ya que es posible tener instalado más de un SDK. También, asegúrese de que la ruta existe en su sistema, y si no es así, por favor, asegúrese que el SDK se ha instalado adecuadamente, como viene en el paquete 'Herramientas de línea de comando' mencionada antes. Finalmente, si tiene un Mac OS X más viejo (10.6 "Snow Leopard" y anterior) ejecutando Xcode 4.2 o inferior, la ruta SDK podría ser algo como C<'/Developer/SDKs/MacOSX10.3.9.sdk'>.
+
+Puede usar el SDK exportando algunas variables adicionales a las de configuración de Perl 'ccflags' y '..flags':
+
+    ./Configure -Accflags="-nostdinc -B$SDK/usr/include/gcc \
+                           -B$SDK/usr/lib/gcc -isystem$SDK/usr/include \
+                           -F$SDK/System/Library/Frameworks" \
+                -Aldflags="-Wl,-syslibroot,$SDK" \
+                -de
+
+=head2 Soporte binario universal
+
+Nota: desde Mac OS X 10.6 "Snow Leopard" en adelante, Apple solo soporta hardware basado en Intel. Esto significa que puede saltarse sin prolemas esta sección a menos que tenga un ordenador Apple más viejo corriendo en ppc o desee crear un binario perl compatible hacia atrás.
+
+Puede compilar perl como un binario universal (compilar tanto para ppc como intel).
+En Mac OS X 10.4 "Tiger", debe exportar la variante 'u' del SDK:
+
+    export SDK=/Developer/SDKs/MacOSX10.4u.sdk
+
+Mac OS X 10.5 "Leopard" y superiores no requieren la variante 'u'.
+
+Además de los indicadores del compilador utilizados para seleccionar el SDK, también añade los indicadores para crear un binario universal:
+
+ ./Configure -Accflags="-arch i686 -arch ppc -nostdinc               \
+                         -B$SDK/usr/include/gcc                      \
+                        -B$SDK/usr/lib/gcc -isystem$SDK/usr/include  \
+                        -F$SDK/System/Library/Frameworks"            \
+             -Aldflags="-arch i686 -arch ppc -Wl,-syslibroot,$SDK"   \
+             -de
+
+Recuerde que estas opciones del compilador y enlazador también se usarán cuando compile módulos CPAN. Para compilar módulos XS como binarios universales, también deben ser binarios universales cualquiera de las bibliotecas que enlace. El sistema de bibliotecas que Apple incluye con el SDK 10.4u son todas universales, pero las bibliotecas instaladas por el usuario pueden necesitar reinstalarse como binarios universales.
+
+=head2 Soporte para PPC 64 bit
+
+Siga las instrucciones en F<INSTALL> para compilar perl con soporte para enteros de 64 bit (C<use64bitint>) o enteros y direccionamiento de 64 bit (C<use64bitall>). En este último caso, el binario resultante solo se ejecutará en servidores basados en G5.
+
+El soporte para el direccionamiento de 64 bit: algunos aspectos de Perl pueden quedar omitidos o funcionar de forma errónea. Fíjese en los mensajes que salen desde F<Configure> para tener más información. Por favor, use C<perlbug> para enviar informes de problemas en el caso de que encuentre dificultades.
+
+Cuando compile módulos en 64 bit, es responsabilidad suya asegurarse que las bibliotecas y entornos de trabajo externos enlazados proporcionen soporte de 64 bit: si no es así, la compilación de módulos podría parecer exitosa, pero los intentos de usar el módulo resultará en errores de enlazado dinámico, y consecuentes fallos de pruebas.
+Puede usar C<file> para descubrir qué arquitecturas soporta una biblioteca:
+
+    $ file libgdbm.3.0.0.dylib 
+    libgdbm.3.0.0.dylib: Mach-O fat file with 2 architectures
+    libgdbm.3.0.0.dylib (for architecture ppc):      Mach-O dynamically linked shared library ppc
+    libgdbm.3.0.0.dylib (for architecture ppc64):    Mach-O 64-bit dynamically linked shared library ppc64
+
+Fíjese que este problema impide la compilación de muchos módulos CPAN específicos de Macintosh (C<Mac::*>), ya que los entornos de trabajo de Apple necesarios no proporcionan soporte para PPC64. De modo parecido, las descargas desde Fink o Darwinports es poco probable que proporcionen soporte 64 bit; las bibliotecas deben recompilarse desde el código fuente con el compilador e indicadores del enlazador apropiados. Para más información, vea I<64-Bit Transition Guide> de Apple en L<http://developer.apple.com/documentation/Darwin/Conceptual/64bitPorting/index.html>.
+
+=head2 libperl y el preenlazado
+
+Mac OS X viene con un libperl que se carga dinámicamente, pero la opción por omisión para esta distribución es compilar un libperl estático. La razón para esto es el preenlazado. Las bibliotecas dinámicas se pueden atar a una dirección específica en memoria para reducir el tiempo de carga. Para conseguirlo, necesita ser consciente de la posición y tamaño de todas las bibliotecas cargadas antes. Apple recoge esta información como parte de su proceso de construcción global del SO, y así tiene un acceso fácil cuando compila Perl, pero los usuarios normales podrían necesitar hacer un gran esfuerzo para obtener la información que necesitan para el preenlazado.
+
+Puede omitir el valor por defecto y compilar un libperl compartido si así lo desea (S<Configure ... -Duseshrplib>).
+
+Con Mac OS X 10.4 "Tiger" y superior, casi no hay penalización en las prestaciones para las bibliotecas no preenlazadas. Las primeras distribuciones sufrirán de un mayor tiempo de carga que las bibliotecas estáticas, o de las bibliotecas dinámicas preenlazadas de Apple.
+
+=head2 Actualizar el Perl de Apple
+
+En una palabra: no, al menos que exista una *muy* buena razón. De forma muy sencilla, sus I<scripts> pueden comenzar tanto con "#!/usr/local/bin/perl" como con "#!/usr/bin/perl". Los I<scripts> suministrados por Apple y otras terceras partes como parte de la instalación de paquetes y cosas así, solo se han probado de forma general con el /usr/bin/perl instalado por Apple.
+
+Si encuentra que necesita actualizar el Perl del sistema, un tema que hay que recordar es la cuestión entre bibliotecas estáticas o dinámicas. Si actualiza utilizando la libperl estática por defecto, encontrará que la libperl dinámica suministrada por Apple no se borrará. Si las dos bibliotecas están presentes cuando se compila una aplicación que se enlaza con libperl, ld se enlazará, por defecto, contra la biblioteca dinámica. Así, si necesita reemplazar la libperl dinámica de Apple, necesita asegurarse de que borra la biblioteca dinámica anterior después de instalar la actualización.
+
+
+=head2 Problemas conocidos
+
+Si ha instalado bibliotecas extra tales como GDBM por medio de Fink (en otras palabras, tiene bibliotecas bajo F</sw/lib>), o libdlcompat en F</usr/local/lib>, necesitará tener cuidado especial cuando ejecute Configure para no confundir a Configure y Perl sobre qué bibliotecas utilizar.  La confusión se mostrará, por ejemplo, con errores "dyld" sobre problemas de símbolos, por ejemplo al ejecutar "make test". La apuesta más segura es ejecutar Configure como
+
+    Configure ... -Uloclibpth -Dlibpth=/usr/lib
+
+para hacer que Configure busque por las bibliotecas del sistema.  Si tiene algunos directorios de bibliotecas que realmente quiere usar (como las nuevas bibliotecas Berkeley DB en los sistemas pre-Panther), añádalos a la libpth:
+
+    Configure ... -Uloclibpth -Dlibpth='/usr/lib /opt/lib'
+
+La compilación por defecto de Perl estáticamente puede causar problemas con aplicaciones complejos como Tk: en ese caso considere compilar Perl en modo compartido
+
+    Configure ... -Duseshrplib
+
+pero recuerde que en ese caso hay que pagar un costo por arrancar (vea más arriba sobre "libperl y Prebinding").
+
+A partir de Tiger (Mac OS X 10.4), Apple empaquetaba archivos de localización estropeados para la zona eu_ES (País Vasco, España).  En versiones anteriores de Perl, esto resultaba en fallos para la prueba F<lib/locale>. Estos fallos se han suprimido en la versión actual de Perl haciendo que la prueba ignore la zona rota.
+Si necesita usar la localización eu_ES, debe contactar con soporte de Apple.
+
+
+=head2 Cocoa
+
+Hay dos formas de usar Cocoa desde Perl. El módulo PerlObjCBridge de Apple, incluido con Mac OS X, se puede usar por I<scripts> aislados para acceder a las clases y objetos Foundation (p.e. no GUI).
+
+Una alternativa es CamelBones, un entorno de trabajo que permite accesos a clases y objetos de tanto Foundation como de AppKit, así que se pueden crear aplicaciones GUI completas en Perl. CamelBones se puede encontrar en SourceForge, en L<http://www.sourceforge.net/projects/camelbones/>.
+
+
+=head1 Empezando desde cero
+
+Desafortunadamente, no es difícil para alguien romper de forma severa alguno de los Perl de Mac OS X.  Si todo esto falla y quiere, realmente, B<REALMENTE>, empezar desde cero e incluso quitar su Perl instalado por Apple (que se haya podido corromper), debe seguir las siguientes instrucciones.  B<Por favor, piénselo dos veces antes de seguir estas instrucciones: es muy parecido a realizar cirugía cerebral a si mismo.  Sin anestesia.> Nosotros B<no> iremos a arreglar su sistema si lo hace.
+
+Primero, deshágase de libperl.dylib:
+
+    # cd /System/Library/Perl/darwin/CORE
+    # rm libperl.dylib
+
+Entonces elimine todo archivo .bundle que se encuentre en cualquiera de las carpetas:
+
+    /System/Library/Perl
+    /Library/Perl
+
+Puede encontrarlos, por ejemplo, con
+
+    # find /System/Library/Perl /Library/Perl -name '*.bundle' -print
+
+Después de esto puede tanto copiar Perl desde su disco del sistema operativo (necesitará al menos el /System/Library/Perl y /usr/bin/perl), o recompilar Perl desde el código fuente con C<Configure -Dprefix=/usr -Duseshrplib> NOTA: el C<-Dprefix=/usr> para reemplazar el Perl del sistema trabaja mucho mejor con Perl 5.8.1 y siguientes; en Perl 5.8.0 las configuraciones no eran muy correctas.
+
+"Pacifist" de CharlesSoft (L<http://www.charlessoft.com/>) es una buena forma de estraer los binarios Perl desde el disco del SO, sin tener que reinstalar el SO entero.
+
+
+=head1 AUTOR
+
+Este README lo escribió Sherm Pendley E<lt>sherm@dot-app.orgE<gt>, y actualizado después por Dominic Dunlop E<lt>domo@computer.orgE<gt> y Breno G. de Oliveira E<lt>garu@cpan.orgE<gt>. La recera "Empezar desde cero" es una contribución de John Montbriand E<lt>montbriand@apple.comE<gt>.
+
+=head1 FECHA
+
+Última modificación: 2013-04-29.

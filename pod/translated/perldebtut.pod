@@ -401,7 +401,7 @@ Por alguna razón, la conversión de Farenheit a Celsius falla a la hora de devo
  > temp -f33.3
  162.94 c
 
-¡No muy consistente!  Pondremos manualmente un punto de parada en el código y lo ejecutaremos bajo el depurador para ver qué sucede.  Un punto de parada es un indicador, en que el depurador se ejecutará sin interrupción, hasta que llegue al punto de parada, en que parará y ofrecerá un prompt para esperar más interacción.  En un uso normal, estos comandos del depurador se ignoran completamente; y son seguros -si acaso un poco liosos, pero suficientes para usarse-.
+¡No muy consistente!  Pondremos manualmente un punto de parada en el código y lo ejecutaremos bajo el depurador para ver qué sucede.  Un punto de parada es un indicador, en que el depurador se ejecutará sin interrupción, hasta que llegue al punto de parada, en que parará y ofrecerá un símbolo del sistema para esperar más interacción.  En un uso normal, estos comandos del depurador se ignoran completamente; y son seguros -si acaso un poco liosos, pero suficientes para usarse-.
 
 	my ($in, $out) = ($num, $num);
 	$DB::single=2; # ¡insertar en la línea 9!
@@ -579,7 +579,7 @@ Diversas técnicas útiles para la redirección de los identificadores de archiv
 
 =head1 CGI
 
-Solo un truco rápido, aquí, para todos los programadores CGI que no pueden adivinar cómo, en este mundo, obtener el I<prompt> de 'esperando por entrada', cuando se ejecuta su I<script> CGI desde la línea de comandos, intente algo como esto:
+Solo un truco rápido, aquí, para todos los programadores CGI que no pueden adivinar cómo, en este mundo, obtener el símbolo del sistema de 'esperando por entrada', cuando se ejecuta su I<script> CGI desde la línea de comandos, intente algo como esto:
 
 	> perl -d my_cgi.pl -nodebug 
 
