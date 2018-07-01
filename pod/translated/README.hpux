@@ -1,0 +1,489 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos).
+Está escrito en formato POD (vea pod/perlpod.pod), un formato diseñado específicamente para ser legible tal cual.
+
+=head1 NAME
+
+perlhpux - Perl versión 5 en sistemas Hewlett-Packard Unix (HP-UX)
+
+=head1 DESCRIPCIÓN
+
+Este documento describe varias características del sistema operativo Unix de HP (HP-UX) que afectará a cómo Perl versión 5 (de ahora en adelante sólo Perl) se compila y/o ejecuta.
+
+=head2 Usar perl que viene con HP-UX
+
+La distribución de septiembre de 2001, HP-UX 11.00 es el primero en traer Perl. En ese momento era perl-5.6.1 en /opt/perl. La primera aparición está en el CD 5012-7954 y se puede instalar usando
+
+  swinstall -s /cdrom perl
+
+asumiendo que ha montado ese CD en /cdrom.
+
+Esa versión era una compilación multihilo portable hppa-1.1 que soporta archivos grandes compilado con gcc-2.9-hppa-991112.
+
+Si realiza una nueva instalación, entonces (un nuevo) Perl se instalará automáticamente.  Sistemas HP-UX preinstalados ahora tienen versiones de Perl más recientes y módulos actualizados.
+
+La compilación oficial (con hilos) de HP, tal y como se distribuye en los DVD/CD de Aplicaciones están disponibles en L<http://www.software.hp.com/portal/swdepot/displayProductInfo.do?productNumber=PERL> tanto para PA-RISC como IPF (familia de los procesadores Itanium). Se compilaron con el compilador ANSI-C de HP. Hasta la 5.8.8 esto lo hacía ActiveState.
+
+Para ver qué versión se incluye en el DVD (asumiendo que se montó en /cdrom), lance este comando:
+
+  # swlist -s /cdrom perl
+  # perl           D.5.8.8.B  5.8.8 Perl Programming Language
+    perl.Perl5-32  D.5.8.8.B  32-bit 5.8.8 Perl Programming Language
+                                           with Extensions
+    perl.Perl5-64  D.5.8.8.B  64-bit 5.8.8 Perl Programming Language
+                                           with Extensions
+
+Para ver cuál está instalado en su sistema:
+
+  # swlist -R perl
+  # perl                    E.5.8.8.J  Perl Programming Language
+  # perl.Perl5-32           E.5.8.8.J  32-bit Perl Programming Language
+                                       with Extensions
+    perl.Perl5-32.PERL-MAN  E.5.8.8.J  32-bit Perl Man Pages for IA
+    perl.Perl5-32.PERL-RUN  E.5.8.8.J  32-bit Perl Binaries for IA
+  # perl.Perl5-64           E.5.8.8.J  64-bit Perl Programming Language
+                                       with Extensions
+    perl.Perl5-64.PERL-MAN  E.5.8.8.J  64-bit Perl Man Pages for IA
+    perl.Perl5-64.PERL-RUN  E.5.8.8.J  64-bit Perl Binaries for IA
+
+=head2 Usar perl desde el centro de adaptaciones de HP
+
+El centro de adaptación de HP intenta seguir la demanda del cliente y publicar actualizaciones desde la comunidad de Código Abierto. Es obvio tener binarios precompilados de Perl, aunque "actualizados" es algo relativo. En el momento de escribir esto, solo estaba disponible perl-5.10.1 (con 5.16.3 siendo la última versión estable desde el punto de vista de los desarrolladores).
+
+Los centros de adaptación de HP están limitados a qué sistemas pueden adaptar y normalmente elijen las dos versiones disponibles más recientes del SO.
+
+HP ha pedido al centro de adaptación que mueva los binarios de Código Abierto desde /opt a /usr/local, así los binarios producidos desde el inicio de julio de 2002 se localizan en /usr/local.
+
+Uno de las URL de los centros de adaptación de HP es L<http://hpux.connect.org.uk/> La adaptación actualmente disponible se compila con GNU gcc.
+
+=head2 Otros binarios perl precompilados
+
+Para obtener adaptaciones más recientes de perl para todo el rango de HP-UX, visite el sitio de H.Merijn Brand en L<http://mirrors.develooper.com/hpux/#Perl>.
+Lea con cuidado las notas para ver si la versión disponible se ajusta a sus necesidades.
+
+=head2 Compilar Perl 5 en HP-UX
+
+Al compilar Perl, debe utilizar un compilador ANSI C.  El compilador de C que viene con todos los sistemas HP-UX es un compilador K&R que solo se debería usar para compilar nuevos núcleos.
+
+Perl se puede compilar tanto como con el compilador de ANSI C como con el gcc.  El primero es lo recomendado, ya que no sólo puede compilar Perl sin ninguna dificultad, sino que también puede tomar ventaja de las características que se enumeran más adelante que requieren el uso de opciones en línea de comandos específicos del compilador de HP.
+
+Si decide usar gcc, asegúrese de que su instalación es reciente y completa, y asegúrese de leer el archivo INSTALL de Perl para más detalles específicos de gcc.
+
+=head2 PA-RISC
+
+Los sistemas HP9000 Unix de HP se ejecutan en el propio chip de la arquitectura Precision Architecture (PA-RISC).  HP-UX se ejecutaba en la familia de chips de Motorola MC68000, pero todas estas máquinas son muy obsoletas y en este documento no se intentará resolver problemas de compilación de Perl para el chipset Motorola.
+
+La versión de PA-RISC en el momento de escribir la última versión de este documento es la 2.0, que también será la última. A los sistemas HP PA-RISC se les suele referir con la descripción del modelo "HP 9000". La última CPU en esta serie es el PA-8900.  El soporte para las máquinas de la arquitectura PA-RISC terminó oficialmente según lo indicado en esta tabla:
+
+   Plan de fin de vida de PA-RISC
+ +--------+----------------+----------------+-----------------+
+ | HP9000 | Superdome      | PA-8700        | primavera 2011  |
+ | 4-128  |                | PA-8800/sx1000 | verano 2012     |
+ | cores  |                | PA-8900/sx1000 | 2014            |
+ |        |                | PA-8900/sx2000 | 2015            |
+ +--------+----------------+----------------+-----------------+
+ | HP9000 | rp7410, rp8400 | PA-8700        | primavera 2011  |
+ | 2-32   | rp7420, rp8420 | PA-8800/sx1000 | 2012            |
+ | cores  | rp7440, rp8440 | PA-8900/sx1000 | otoño 2013      |
+ |        |                | PA-8900/sx2000 | 2015            |
+ +--------+----------------+----------------+-----------------+
+ | HP9000 | rp44x0         | PA-8700        | primavera 2011  |
+ | 1-8    |                | PA-8800/rp44x0 | 2012            |
+ | cores  |                | PA-8900/rp44x0 | 2014            |
+ +--------+----------------+----------------+-----------------+
+ | HP9000 | rp34x0         | PA-8700        | primavera 2011  |
+ | 1-4    |                | PA-8800/rp34x0 | 2012            |
+ | cores  |                | PA-8900/rp34x0 | 2014            |
+ +--------+----------------+----------------+-----------------+
+
+Copiada desde L<http://www.hp.com/products1/evolution/9000/faqs.html>
+
+ La fecha de la última orden para los sistemas HP 9000 fue el 31 de diciembre de 2008.
+
+Una lista completa de los modelos en el momento en que se compiló el SO está en el archivo /usr/sam/lib/mo/sched.models. La primera columna corresponde a la última parte de la salida del comando "model".  La segunda columna es la versión de PA-RISC y la tercera columna es el chip exacto utilizado.
+(Empezar a navegar por el final para impedir más confusión ;-)
+
+  # model
+  9000/800/L1000-44
+  # grep L1000-44 /usr/sam/lib/mo/sched.models
+  L1000-44        2.0     PA8500
+
+=head2 Portabilidad entre versiones de PA-RISC
+
+Un ejecutable compilador en una plataforma PA-RISC 2.0 no se ejecuta en una plataforma PA-RISC 1.1, incluso si están ejecutan la misma versión de HP-UX.  Si está compilando Perl en una plataforma PA-RISC 2.0 y quiere que ese Perl también se ejecute en un PA-RISC 1.1, deberían usarse los indicadores del compilador +DAportable y +DS32.
+
+Ya no es posible compilar ejecutables PA-RISC 1.0 ni en plataformas PA-RISC 1.1 o 2.0.  Se aceptan los indicadores en la línea de comandos, pero el ejecutable resultante no se ejecutará cuando se transfiera a un sistema PA-RISC 1.0.
+
+=head2 PA-RISC 1.0
+
+De la versión original de PA-RISC, HP ya no vende ningún sistema con este chip.
+
+Los siguientes sistemas que contenían chips PA-RISC 1.0:
+
+  600, 635, 645, 808, 815, 822, 825, 832, 834, 835, 840, 842, 845, 850,
+  852, 855, 860, 865, 870, 890
+
+=head2 PA-RISC 1.1
+
+Una actualización del diseño PA-RISC, vendido durante muchos años en muchos sistemas diferentes.
+
+Los siguientes sistemas contienen chips PA-RISC 1.1:
+
+  705, 710, 712, 715, 720, 722, 725, 728, 730, 735, 742, 743, 744, 745,
+  747, 750, 755, 770, 777, 778, 779, 800, 801, 803, 806, 807, 809, 811,
+  813, 816, 817, 819, 821, 826, 827, 829, 831, 837, 839, 841, 847, 849,
+  851, 856, 857, 859, 867, 869, 877, 887, 891, 892, 897, A180, A180C,
+  B115, B120, B132L, B132L+, B160L, B180L, C100, C110, C115, C120,
+  C160L, D200, D210, D220, D230, D250, D260, D310, D320, D330, D350,
+  D360, D410, DX0, DX5, DXO, E25, E35, E45, E55, F10, F20, F30, G30,
+  G40, G50, G60, G70, H20, H30, H40, H50, H60, H70, I30, I40, I50, I60,
+  I70, J200, J210, J210XC, K100, K200, K210, K220, K230, K400, K410,
+  K420, S700i, S715, S744, S760, T500, T520
+
+=head2 PA-RISC 2.0
+
+La actualización más reciente del diseño PA-RISC, al que se le ha añadido soporte para datos enteros de 64 bit.
+
+En el momento de escribir la última actualización de este documento, los siguientes sistemas contienen chips PA-RISC 2.0:
+
+  700, 780, 781, 782, 783, 785, 802, 804, 810, 820, 861, 871, 879, 889,
+  893, 895, 896, 898, 899, A400, A500, B1000, B2000, C130, C140, C160,
+  C180, C180+, C180-XP, C200+, C400+, C3000, C360, C3600, CB260, D270,
+  D280, D370, D380, D390, D650, J220, J2240, J280, J282, J400, J410,
+  J5000, J5500XM, J5600, J7000, J7600, K250, K260, K260-EG, K270, K360,
+  K370, K380, K450, K460, K460-EG, K460-XP, K470, K570, K580, L1000,
+  L2000, L3000, N4000, R380, R390, SD16000, SD32000, SD64000, T540,
+  T600, V2000, V2200, V2250, V2500, V2600
+
+Justo antes de que HP comprara Compaq, algunos sistemas se renombraron. el enlace que contenía la explicación está muerto, así que hay un breve resumen:
+
+  HP 9000 A-Clase de servidores, ahora renombrados a series HP Server rp2400.
+  HP 9000 L-Clase de servidores, ahora renombrados a series HP Server rp5400.
+  HP 9000 N-Clase de servidores, ahora renombrados a HP Server rp7400.
+
+  rp2400, rp2405, rp2430, rp2450, rp2470, rp3410, rp3440, rp4410,
+  rp4440, rp5400, rp5405, rp5430, rp5450, rp5470, rp7400, rp7405,
+  rp7410, rp7420, rp7440, rp8400, rp8420, rp8440, Superdome
+
+La convención actual del nombrado es:
+
+  aadddd
+  ||||`+- 00 - 99 capacidad relativa y novedad (revisiones, etc.)
+  |||`--- número único para cada arquitectura para asegurar que diferentes
+  |||     sistemas no tengan la misma numeración entre
+  |||     arquitecturas
+  ||`---- 1 - 9 identifica la familia o posicionamiento relativo
+  ||
+  |`----- c = ia32 (cisc)
+  |       p = pa-risc
+  |       x = ia-64 (Itanium & Itanium 2)
+  |       h = housing
+  `------ t = tower
+          r = rack optimizado
+          s = súper escalable
+          b = blade
+          sa = appliance
+
+=head2 Familia del procesador Itanium (I<Itanium Processor Family> (IPF)) y HP-UX
+
+HP-UX también corre en el nuevo procesador Itanium.  Esto requiere el uso de una versión diferente de HP-UX (actualmente 11.23 o 11i v2), y con la excepción de unas pocas diferencias detalladas más abajo y en sección posteriores, Perl debería compilarse sin problemas.
+
+A pesar de que los binarios PA-RISC se pueden ejecutar en sistemas Itanium, no debería intentar usar una versión Perl PA-RISC en un sistema Itanium.  Esto es porque las bibliotecas compartidas creadas en un sistema Itanium no se puede cargar mientras corre un ejecutable PA-RISC.
+
+A los sistemas HP Itanium 2 se les refiere con la descripción del modelo "HP Integrity".
+
+=head2 Itanium, Itanium 2 y Madison 6
+
+HP también vende servidores con los procesadores Itanium de 128 bits. Se dice que cx26x0 tiene instalado Madison 6. En el momento de escribir la última actualización de este documento, los siguientes sistemas contienen los chips Itanium o Itanium 2 (probablemente esto estará desfasado):
+
+  BL60p, BL860c, BL870c, BL890c, cx2600, cx2620, rx1600, rx1620, rx2600,
+  rx2600hptc, rx2620, rx2660, rx2800, rx3600, rx4610, rx4640, rx5670,
+  rx6600, rx7420, rx7620, rx7640, rx8420, rx8620, rx8640, rx9610,
+  sx1000, sx2000
+
+Para ver toda la información de su máquina, escriba
+
+  # model
+  ia64 hp server rx2600
+  # /usr/contrib/bin/machinfo
+
+=head2 Versiones HP-UX
+
+No todas las arquitecturas (PA = PA-RISC, IPF = I<Itanium Processor Family>) soportan todas las versiones de HP-UX; aquí hay una lista breve
+
+  Versión HP-UX  Kernel  Arquitectura Fin de soporte industrial
+  -------------  ------  ------------ ----------------------------------
+  10.20          32 bit  PA           30-jun-2003
+  11.00          32/64   PA           31-dic-2006
+  11.11  11i v1  32/64   PA           31-dic-2015
+  11.22  11i v2     64        IPF     30-abr-2004
+  11.23  11i v2     64   PA & IPF     31-dic-2015
+  11.31  11i v3     64   PA & IPF     31-dic-2020 (PA) 31-dic-2022 (IPF)
+
+Vea aquí la lista completa del soporte hardware/SO y fin de vida esperado
+L<http://www.hp.com/go/hpuxservermatrix>
+
+=head2 Compilando extensiones dinámicas en HP-UX
+
+HP-UX soporta bibliotecas que se pueden cargar de forma dinámica (bibliotecas compartidas).
+Las bibliotecas compartidas terminan con el sufijo .sl.  En sistemas Itanium, terminan con el sufijo .so.
+
+Bibliotecas compartidas creadas en una plataforma usando una versión particular de PA-RISC no se pueden usar en plataformas que usen una versión anterior de PA-RISC.  Sin embargo, esta retrocompatibilidad se puede activar usando el mismo indicador de compilador +DAportable (con el mismo problema en PA-RISC 1.0 mencionado antes).
+
+Bibliotecas compartidas creadas en una plataforma Itanium no se puede cargar en una plataforma PA-RISC.  Bibliotecas compartidas creadas en una plataforma PA-RISC solo se puede cargar en una plataforma Itanium si es un ejecutable PA-RISC el que está intentando cargar la biblioteca PA-RISC.  Una biblioteca compartida PA-RISC no se puede cargar en un ejecutable Itanium, y viceversa.
+
+Para crear una biblioteca compartida, se deben realizar los siguientes pasos:
+
+  1. Compilar el código fuente de los módulos con los indicadores +z o +Z para crear un módulo .o
+     que contiene el Código independiente de la posición (I<Position-Independent Code (PIC)).  En enlazador le
+     indicará en el siguiente paso si +Z era necesario.
+     (Para gcc, el indicador apropiado es -fpic o -fPIC).
+
+  2. Enlace la biblioteca compartida usando el indicador -b.  Si el código llama
+     a cualquier función en otras bibliotecas del sistema (p.e., libm), debe
+     incluirse en esta línea.
+
+(Note que estos pasos se manejan, normalmente, de forma automática por el Makefile de las extensiones).
+
+Si estas bibliotecas dependientes no se listan en el momento de la creación de la biblioteca compartida, obtendrá errores fatales del tipo "I<Unresolved symbol>" (símbolo no resuelto) en tiempo de ejecución cuando se cargue la biblioteca.
+
+Puede crear una biblioteca compartida que refiera a otra biblioteca, que puede ser tanto una biblioteca estática como compartida.  Si esta segunda biblioteca es una biblioteca compartida, se le llama "biblioteca dependiente".  El nombre de la biblioteca dependiente se guarda en la biblioteca compartida principal, pero no se enlaza en la biblioteca compartida.  En cambio, se carga cuando se carga la biblioteca compartida.  Esto puede provocar problemas si compila una extensión en un sistema y lo mueve a otro sistema donde las bibliotecas no se posicionan en el mismo sitio que en el primer sistema.
+
+Si la biblioteca referida es una biblioteca estática, entonces se le trata como una colección sencilla de módulos .o (todos los cuales deben contener código PIC).  Estos módulos se enlazan entonces en la biblioteca compartida.
+
+Note que está bien el crear una biblioteca que contenga una biblioteca dependiente que esté realmente enlazada dentro de perl.
+
+Algunas extensiones, como DB_File y Compress::Zlib usan/requiren bibliotecas precompiladas para que funcionen las extensiones/módulos perl. Si estas bibliotecas se compilan usan la configuración por defecto, podría suceder que apareciera un error como "I<invalid loader fixup>" (arreglo del cargador inválido) durante la fase de carga.
+HP conoce este problema.  Busque en los foros de HP-UX cxx-dev para ver discusiones sobre el tema.  La respuesta corta es que B<todo> (todas las bibliotecas, todo) se deben compilar con C<+z> o C<+Z> para que sean PIC (código independiente de la posición).  (Para gcc, se podría hacer con C<-fpic> o C<-fPIC>).  En HP-UX 11.00 o superiores, el mensaje de error del enlazador debería indicarle el nombre del archivo objeto con problemas.
+
+Una aproximación más general es el de intervenir manualmente, como por ejemplo para el módulo DB_File, que requiere la libdb.sl de SleepyCat:
+
+  # cd .../db-3.2.9/build_unix
+  # vi Makefile
+  ... añade +Z a todos los cflags para crear objetos compartidos
+  CFLAGS=         -c $(CPPFLAGS) +Z -Ae +O2 +Onolimit \
+                  -I/usr/local/include -I/usr/include/X11R6
+  CXXFLAGS=       -c $(CPPFLAGS) +Z -Ae +O2 +Onolimit \
+                  -I/usr/local/include -I/usr/include/X11R6
+
+  # make clean
+  # make
+  # mkdir tmp
+  # cd tmp
+  # ar x ../libdb.a
+  # ld -b -o libdb-3.2.sl *.o
+  # mv libdb-3.2.sl /usr/local/lib
+  # rm *.o
+  # cd /usr/local/lib
+  # rm -f libdb.sl
+  # ln -s libdb-3.2.sl libdb.sl
+
+  # cd .../DB_File-1.76
+  # make distclean
+  # perl Makefile.PL
+  # make
+  # make test
+  # make install
+
+En db-4.2.x ya no es necesario hacer esto a mano. Sleepycat ha cambiado el proceso de configuración para añadir +z en HP-UX automáticamente.
+
+  # cd .../db-4.2.25/build_unix
+  # env CFLAGS=+DD64 LDFLAGS=+DD64 ../dist/configure
+
+debería funcionar para generar bibliotecas compartidas de 64 bit para HP-UX 11.00 y 11i.
+
+Ya no es posible enlazar a PA-RISC 1.0 bibliotecas compartidas (incluso aunque los indicadores en línea de comandos sigan presentes).
+
+Archivos PA-RISC e Itanium no son intercambiables.  Aunque puede usar ar para crear una biblioteca estática de archivos objeto PA-RISC en un sistema Itanium, no puede enlazarlo contra él usando el editor de enlazado de Itanium.
+
+=head2 El compilador de ANSI C de HP
+
+Cuando se usa este compilador para crear Perl, debería asegurarse que el indicador -Aa esté añadido a las variables cpprun y cppstdin en el archivo config.sh (aún así vea la sección sobre perl de 64 bit, más abajo). Si está usando una versión reciente de la distribución de Perl, estos indicadores se establecen automáticamente.
+
+Incluso aunque HP-UX 10.20 y 11.00 ya no estén mantenidas actualmente por HP, actualizaciones para el compilador ANSI C para HP siguen estando disponibles, de tiempo en tiempo, y sería aconsejable ver si se le pueden aplicar esas actualizaciones.
+En el momento de escribir esto, los últimos parches para 11.00 que deberían aplicarse son PHSS_35098, PHSS_35175, PHSS_35100, PHSS_33036 y PHSS_33902). Si tiene una cuenta SUM, puede usarla para buscar por actualizaciones/parches. Entre "ANSI" como palabra clave.
+
+=head2 El compilador GNU C
+
+Cuando vaya a utilizar el compilador GNU C (gcc), y aún no lo tenga, puede compilarlo usted mismo a partir de las fuentes (disponible, por ejemplo, en L<http://gcc.gnu.org/mirrors.html>) o descargar un binario precompilado desde el centro de portabilidad de HP en L<http://hpux.connect.org.uk/hppd/cgi-bin/search?term=gcc&Search=Search> o desde DSPP (necesitará ser miembro) en L<http://h21007.www2.hp.com/portal/site/dspp/menuitem.863c3e4cbcdc3f3515b49c108973a801?ciid=2a08725cc2f02110725cc2f02110275d6e10RCRD&jumpid=reg_r1002_usen_c-001_title_r0001>
+(Navegue por la lista, porque existen múltiples versiones disponibles del mismo paquete).
+
+Las distribuciones más mencionadas son depósitos. H.Merijn Brand ha creado binarios gcc precompilados disponibles en L<http://mirrors.develooper.com/hpux/> y/o L<http://www.cmve.net/~merijn/> para HP-UX 10.20 (solo 32 bit), HP-UX 11.00, HP-UX 11.11 (HP-UX 11i v1) y HP-UX 11.23 (HP-UX 11i v2 PA-RISC) en versiones tanto de 32 y 64 bit. También están disponibles los depósitos para HP-UX 11.23 IPF y HP-UX 11.31 IPF. Las versiones IPF no necesitan dos versiones de GNU gcc.
+
+En PA-RISC necesita un compilador diferente para las aplicaciones de 32 bit y de 64 bit. En PA-RISC, no se mezclan objetos de 32 bit y 64 bit. Punto. No hay diferencia de comportamiento entre el ANSI C de HP o el GNU gcc. Si necesita que su binario perl pueda usar bibliotecas de 64 bit, como Oracle 64 bit, DEBE compilar un perl de 64 bit.
+
+Compilar un gcc de 64 bit en PA-RISC a partir del código fuente es posible solo cuando tiene el compilador ANSI C de HP o disponer de un binario funcional de gcc de 64 bit. El mejor rendimiento para perl se consigue con el compilador nativo de HP.
+
+=head2 Usando archivos grandes con Perl en HP-UX
+
+A partir de HP-UX versión 10.20, se pueden crear y manipular los archivos con tamaño superior a 2 GB (2^31 bytes).  Se dispone de tres métodos distintos para hacerlo.  De estos métodos, el mejor para Perl es el de compilarlo usando el indicador -Duselargefiles en Configure.  Esto hace que Perl se compile usando estructuras y funciones con soporte para anchos de 64 bit, en lugar de 32 bit.  (Note que esto solo funcionará con el compilador ANSI C de HP.  Si quiere compilar Perl usando gcc, tendrá que obtener una versión del compilador que soporte operaciones de 64 bit. Vea más arriba para saber por dónde encontrarlo).
+
+Existen algunos inconvenientes con este planteamiento.  Uno es que cualquier extensión que llame a cualquier función C de manipulación de archivos necesitará recompilarse (siga simplemente el procedimiento habitual de "perl Makefile.PL; make; make test; make install").
+
+La lista de funciones que necesitará recompilar es:
+  creat,          fgetpos,        fopen,
+  freopen,        fsetpos,        fstat,
+  fstatvfs,       fstatvfsdev,    ftruncate,
+  ftw,            lockf,          lseek,
+  lstat,          mmap,           nftw,
+  open,           prealloc,       stat,
+  statvfs,        statvfsdev,     tmpfile,
+  truncate,       getrlimit,      setrlimit
+
+Otro inconveniente es solo para las versiones de Perl anteriores a 5.6.0.  Este inconveniente es que las funciones seek y tell (tanto la versión incrustada como la versión del módulo POSIX) no actuarán de forma correcta.
+
+Se recomienda fuertemente que use este indicador cuando ejecute Configure.  Si no lo hace, pero responde más tarde las cuestiones sobre archivos grandes que Configure le hará, puede obtener una configuración que no se pueda compilar, o que no funcione como se espera.
+
+=head2 Perl con hilos en HP-UX
+
+Es posible compilar una versión de Perl con hilos en cualquier versión de HP-UX anteriores a la 10.30, pero se sugiere fuertemente que al menos se ejecute en HP-UX 11.00.
+
+Para compilar Perl con hilos, añada -Dusethreads a los argumento de Configure.  Verifique que el indicador -D_POSIX_C_SOURCE=199506L del compilador se añade automáticamente a la lista de indicadores.  También asegúrese que -lpthread se lista antes que -lc en la lista de bibliotecas para enlazar con Perl. Las pistas proporcionadas por HP-UX durante el Configure intentará hacerlo por usted.
+
+Versiones HP-UX anteriores a 10.30 requieren una instalación separada de un paquete de biblioteca de hilos POSIX. Dos ejemplos son el paquete HP DCE, disponible en "HP-UX Hardware Extensions 3.0, Install and Core OS, Release 10.20, April 1999 (B3920-13941)" o el "Freely available PTH package", disponible en el sitio de H.Merijn (L<http://mirrors.develooper.com/hpux/>). El uso de PTH dejará de recibir soporte en perl-5.12 y superiores, y tiene bastantes fallos en 5.11.x.
+
+Si va a usar el paquete HP DCE, la biblioteca que se usa para hilos es /usr/lib/libcma.sl, pero con el tiempo ha recibido múltiples actualizaciones de esa biblioteca. Perl se compilará con la primera versión, pero no pasará la batería de pruebas. Versiones viejas de Oracle podrían ser razones suficientes para no actualizar la biblioteca; de otra forma, por favor, busque una versión más nueva en uno de los siguientes parches: PHSS_19739, PHSS_20608 o PHSS_23672
+
+salida formateada:
+
+  d3:/usr/lib 106 > what libcma-*.1
+  libcma-00000.1:
+     HP DCE/9000 1.5               Module: libcma.sl (Export)
+                                   Date: Apr 29 1996 22:11:24
+  libcma-19739.1:
+     HP DCE/9000 1.5 PHSS_19739-40 Module: libcma.sl (Export)
+                                   Date: Sep  4 1999 01:59:07
+  libcma-20608.1:
+     HP DCE/9000 1.5 PHSS_20608    Module: libcma.1 (Export)
+                                   Date: Dec  8 1999 18:41:23
+  libcma-23672.1:
+     HP DCE/9000 1.5 PHSS_23672    Module: libcma.1 (Export)
+                                   Date: Apr  9 2001 10:01:06
+  d3:/usr/lib 107 >
+
+Si elige el paquete PTH, use swinstall para instalar pth en la posición por defecto (/opt/pth), y luego hacer enlaces simbólicos a las bibliotecas desde /usr/lib
+
+  # cd /usr/lib
+  # ln -s /opt/pth/lib/libpth* .
+
+Para compilar perl para que soporte Oracle, es necesario enlazarlo con libcl y libpthread. Incluso si su perl es una compilación sin hilos, estas bibliotecas podrían necesitarse. Vea "Oracle on HP-UX" más abajo.
+
+=head2 Perl de 64 bit en HP-UX
+
+A partir de HP-UX 11.00, los programas compilados bajo HP-UX pueden aprovecharse del entorno de programación LP64 (LP64 significa I<Longs and Pointers are 64 bits wide> -los punteros y largos son de 64 bit de ancho-), en que las variables escalares serán capaces de almacenar números superiores a 2^32 con precisión completa.  Perl ha probado ser consistente y fiable en modo de 64 bit desde 5.8.1 en todos los HP-UX 11.xx.
+
+En el momento de escribir este documento, Perl es totalmente funcional con 64 bit en HP-UX 11.00 y para las compilaciones con cc- y gcc. Si va a compilar un perl de 64 bit con GNU gcc, por favor lea con atención la sección gcc.
+
+Si un usuario necesitase compilar Perl en el entorno LP64, use el indicador -Duse64bitall en Configure.  Esto forzará a que Perl se compile en un entorno LP64 puro (con el indicador +DD64 para HP C o ANSI-C, sin opciones adiciones para GNU gcc 64 bit en PA-RISC, y con -mlp64 para GNU gcc en Itanium).
+Si quiere compilar Perl usando gcc, tendrá que obtener una versión del compilador que soporte operaciones de 64 bit.
+
+También puede usar el indicador -Duse64bitint en Configure.  A pesar de algunas pequeñas diferencias entre compilar Perl con este indicador contra el indicador -Duse64bitall, no debería ser apreciable desde la perspectiva de un usuario de Perl. Cuando configure -Duse64bitint usando un gcc de 64 bit en una arquitectura pa-risc, -Duse64bitint se promociona silenciosamente a -Duse64bitall.
+
+En ambos casos, se recomienda fuertemente el que use estos indicadores cuando ejecute Configure.  Si no lo hace, pero responde más tarde las cuestiones sobre números de 64 bit que Configure le hará, puede obtener una configuración que no se pueda compilar, o que no funcione como se espera.
+
+=head2 Oracle en HP-UX
+
+Usar perl para conectarse a bases de datos Oracle a través de DBI y DBD::Oracle ha provocado un montón de dolores de cabeza a mucha gente. Lea README.hpux en DBD::Oracle para más información. La razón de mencionarlo aquí es que Oracle requiere un perl compilado con libcl y libpthread, esta última incluso cuando perl se compila sin hilos. Compilar perl usando todos los valores por defecto, pero teniendo aún habilitada la compilación posterior de DBD::Oracle se puede conseguir con
+
+  Configure -A prepend:libswanted='cl pthread ' ...
+
+No olvide el espacio antes de la comilla final.
+
+También note que esto no funciona (todavía) con todas las configuraciones; se sabe que falla con versiones 64 bit de GCC.
+
+=head2 GDBM e hilos en HP-UX
+
+Si intenta compilar Perl con hilos POSIX en un sistema 11.X y también enlaza con la biblioteca GDBM, Perl provocará un volcado de núcleo de forma inmediata, cuando arranque.  La única forma de saltar esto es volver a enlazar la biblioteca GDBM bajo 11.X, y luego volver a enlazarlo Perl.
+
+el error podría mostrar algo como:
+
+Pthread internal error: message: __libc_reinit() failed, file: ../pthreads/pthread.c, line: 1096
+Return Pointer is 0xc082bf33
+sh: 5345 Quit(coredump)
+
+y Configure se detendrá.
+
+=head2 Sistemas de archivo NFS y utime(2) en HP-UX
+
+Si está compilando Perl en un sistema de archivos NFS montado de forma remota, la comprobación io/fs.t puede fallar en el test #18.  Esto aparece como un error en HP-UX y actualmente no existe un arreglo.
+
+=head2 Parámetros del núcleo HP-UX (maxdsiz) para compilar Perl
+
+Por defecto, HP-UX viene configurado con un tamaño de segmento de datos máximo de 64 MB.  Esto es demasiado pequeño para compilar Perl de forma correcta con los niveles máximos de optimizando.  Puede incrementar el tamaño del parámetro del núcleo maxdsiz a través del uso de SAM.
+
+Cuando use la versión GUI de SAM, pulse en el icono de Configuración del núcleo, y luego en el icono Parámetros configurables.  Desplázese hacia abajo y seleccione la línea maxdsiz.  Del menú Acciones, seleccione el elemento Modificar parámetro configurable.  Inserte la nueva fórmula en la caja Fórmula/Valor.
+Y luego siga las instrucciones para recompilar su núcleo y reinicie el sistema.
+
+En general, un valor de 256 MB (o "256*1024*1024") es suficiente para que Perl se compile con la máxima optimización.
+
+=head1 volcado de núcleo nss_delete desde op/pwent u op/grent
+
+Puede obtener un volcado de núcleo por error de bus desde las pruebas op/pwent u op/grent. Si se compiló con -g verá una pila de trazas muy parecido a lo siguiente:
+
+  #0  0xc004216c in  () from /usr/lib/libc.2
+  #1  0xc00d7550 in __nss_src_state_destr () from /usr/lib/libc.2
+  #2  0xc00d7768 in __nss_src_state_destr () from /usr/lib/libc.2
+  #3  0xc00d78a8 in nss_delete () from /usr/lib/libc.2
+  #4  0xc01126d8 in endpwent () from /usr/lib/libc.2
+  #5  0xd1950 in Perl_pp_epwent () from ./perl
+  #6  0x94d3c in Perl_runops_standard () from ./perl
+  #7  0x23728 in S_run_body () from ./perl
+  #8  0x23428 in perl_run () from ./perl
+  #9  0x2005c in main () from ./perl
+
+La clave aquí es la llamada C<nss_delete>.  Un arreglo temporal de este error parece que es añadir (al menos) las siguientes líneas al archivo F</etc/nsswitch.conf>
+
+  group: files
+  passwd: files
+
+No importa si está usando NIS.  Por si no es suficientemente asombroso, este error también afecta a Solaris.
+
+=head1 error: pasting ")" and "l" does not give a valid preprocessing token
+
+Parece que hay una cabecera del sistema rota en HP-UX 11.00 que rompe la compilación de perl en modo de 32 bit con GNU gcc-4.x y provoca este error. El mismo archivo para HP-UX 11.11 (incluso aunque el archivo sea más viejo) no muestra este fallo, y tiene la definición correcta, así que el mejor arreglo es el parchear la cabecera para que sea igual:
+
+ --- /usr/include/inttypes.h  2001-04-20 18:42:14 +0200
+ +++ /usr/include/inttypes.h  2000-11-14 09:00:00 +0200
+ @@ -72,7 +72,7 @@
+  #define UINT32_C(__c)                   __CONCAT_U__(__c)
+  #else /* __LP64 */
+  #define INT32_C(__c)                    __CONCAT__(__c,l)
+ -#define UINT32_C(__c)                   __CONCAT__(__CONCAT_U__(__c),l)
+ +#define UINT32_C(__c)                   __CONCAT__(__c,ul)
+  #endif /* __LP64 */
+
+  #define INT64_C(__c)                    __CONCAT_L__(__c,l)
+
+=head1 Redeclaración de "sendpath" con un diferente especificador de clase de almacenamiento
+
+La siguiente recopilación de advertencias puede suceder en versiones de HP-UX anteriores a la 11.31 pero que no son problemas graves:
+
+ cc: "/usr/include/sys/socket.h", line 535: warning 562:
+    Redeclaration of "sendfile" with a different storage class
+    specifier: "sendfile" will have internal linkage.
+ cc: "/usr/include/sys/socket.h", line 536: warning 562:
+    Redeclaration of "sendpath" with a different storage class
+    specifier: "sendpath" will have internal linkage.
+
+Parecen provocados por archivos de cabecera del sistema rotos, y también otros proyectos de código abierto los ven así.  Los siguientes parches HP-UX deberían conseguir que las advertencias desaparezcan:
+
+  CR JAGae12001: PHNE_27063
+  Warning 562 on sys/socket.h due to redeclaration of prototypes
+
+  CR JAGae16787:
+  Warning 562 from socket.h sendpath/sendfile -D_FILEFFSET_BITS=64
+
+  CR JAGae73470 (11.23)
+  ER: Compiling socket.h with cc -D_FILEFFSET_BITS=64 warning 267/562
+
+=head1 Miscelánea
+
+Se ha informado que el parche Y2K para HP-UX 11 "Y2K-1100 B.11.00.B0125 HP-UX Core OS Year 2000 Patch Bundle" rompe la prueba io/fs #18 que comprueba si utime() puede cambiar marcas de tiempo.  El parche Y2K parece que rompe utime(), por lo que no cambian las marcas de tiempo en NFS (en sistemas de archivo locales, utime() sigue funcionando). Esto quizás se haya arreglado ya en su sistema.
+
+=head1 AUTOR
+
+H.Merijn Brand <h.m.brand@xs4all.nl>
+Jeff Okamoto <okamoto@corp.hp.com>
+
+Con la gran asistencia sobre bibliotecas compartidas de parte de Marc Sabatella.
+
+=cut

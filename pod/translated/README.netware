@@ -1,0 +1,177 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos).  Está escrito en formato POD (vea pod/perlpod.pod), un formato diseñado específicamente para ser legible tal cual.
+
+=head1 NAME
+
+perlnetware - Perl para NetWare
+
+=head1 DESCRIPCIÓN
+
+Este archivo ofrece instrucciones para la compilación de Perl 5.7 y superiores, y también módulos Perl, para NetWare. Antes de empezar, quizás quiera leer el archivo README encontrado en el directorio de nivel superior en que se extrajo el código fuente de la distribución Perl. Asegúrese que lee y entiende los términos bajo los que se distribuye este software.
+
+=head1 COMPILACIÓN
+
+Esta sección describes los pasos que se deben realizar para compilar Perl NLM y otros NLM asociados.
+
+=head2 Herramientas y kit de desarrollo (SDK)
+
+La compilación requiere el compilador y enlazador CodeWarrior.  Además, son necesarios "NetWare SDK", "NLM & NetWare Libraries por C" y "NetWare Server Protocol Libraries for C", todo disponible en L<http://developer.novell.com/wiki/index.php/Categoría:Novell_Developer_Kit>. También es necesario Microsoft Visual C++ versión 4.2.
+
+=head2 Inicialización
+
+El proceso de compilación depende de la localización de NetWare SDK.
+Una vez que se instale las herramientas y kit de desarrollo, se tiene que inicializar el entorno de compilación.  Los siguientes archivo de procesamiento por lotes inicializan el entorno.
+
+=over 4
+
+=item SetNWBld.bat
+
+La ejecución de este archivo requiere dos parámetros como entrada. El primero es la ruta al SDK de NetWare; el segundo es la ruta al compilador y herramientas CodeWarrior. La ejecución de este archivo establece estas rutas y también establece el tipo de compilación para distribuirse por defecto.
+
+=item Buildtype.bat
+
+Este se usa para establecer el tipo de compilación para depurar o distribuir. Cambie el tipo de compilación solo después de ejecutar SetNWBld.bat
+
+Ejemplo:
+
+=over
+
+=item 1.
+
+Escribir "buildtype d on" en el símbolo del sistema de comandos hace que el tipo de compilación se establezca a tipo Debug con el indicador D2 activado. 
+
+=item 2.
+
+Escribir "buildtype d off" o "buildtype d" en el símbolo del sistema de comandos hace que el tipo de compilación se establezca a tipo Debug con el indicador D1 activado. 
+
+=item 3.
+
+Escribir "buildtype r" en el símbolo del sistema de comandos establece el tipo de compilación en distribución.
+
+=back
+
+=back
+
+=head2 Make
+
+El proceso make solo se ejecuta bajo la shell WinNT.  El makefile NetWare se localiza bajo la carpeta NetWare.  Hace uso de miniperl.exe para ejecutar algunos I<scripts> Perl. Para crear miniperl.exe, primero establezca las rutas requerida para el compilador Visual c++ (especifique la posición de vcvars32) en el símbolo del sistema de comandos.  Y luego ejecutar nmake desde la carpeta win32 desde símbolo del sistema de comandos de WinNT.  El proceso de compilación se puede parar después de que se termine de compilar miniperl.exe. Y luego ejecutar nmake desde la carpeta NetWare desde el símbolo del sistema de comandos de WinNT.
+
+Actualmente, se han comprobado los siguientes dos tipos de compilación en NetWare:
+
+=over 4
+
+=item *
+
+Si están definidos USE_MULTI, USE_ITHREADS & USE_IMP_SYS
+
+=item *
+
+Si no están definidos USE_MULTI & USE_IMP_SYS defined and USE_ITHREADS
+
+=back
+
+=head2 Intérprete
+
+Una vez terminada la creación de miniperl.exe, ejecute nmake desde la carpeta NetWare.
+Esto compilará el intérprete Perl para NetWare como I<perl.nlm>.
+Este se copia bajo la carpeta I<Release> si está construyendo una distribución, pero si no, se copiará en la carpeta I<Debug> para la depuración de compilación.
+
+=head2 Extensiones
+
+El proceso make también crea las extensiones Perl como I<<Extension>.nlm>
+
+=head1 INSTALACIÓN
+
+Para instalar Perl NetWare en un servidor NetWare, primero mapee el volumen Sys de un servidor NetWare a I<i:>. Esto es así porque el makefile establece, por defecto, la letra de dispositivo a I<i:>.  Escriba I<nmake nwinstall> desde la carpeta NetWare en un símbolo del sistema de comandos de WinNT.  Esto copiará los binarios y archivos de módulos en el servidor NetWare bajo la carpeta I<sys:\Perl>. El intérprete, I<perl.nlm>, se copia bajo la carpeta I<sys:\perl\system>.  Cópielo a la carpeta I<sys:\system>.
+
+Ejemplo: En el símbolo del sistema, escriba "nmake nwinstall".
+          Esto instalará NetWare Perl en el servidor NetWare.
+          De modo parecido, si escribe "nmake install",
+          hará que se instalen los binarios en la máquina local.
+          (Típicamente bajo la carpeta c:\perl)
+
+=head1 COMPILAR NUEVAS EXTENSIONES
+
+Para compilar otras extensiones distintas de las estándares, NetWare Perl se tiene que instalar en Windows junto con Windows Perl. El Perl para Windows puede tanto descargarse desde el sitio CPAN y compilarse usando los códigos fuente, o se pueden descargar los binarios directamente desde el sitio de ActiveState.  La instalación se puede hacer invocando I<nmake install> desde la carpeta NetWare en el símbolo del sistema de un WinNT después de compilar NetWare Perl siguiendo los pasos anteriores.  Esto copiará todos los archivos *.pm y otros archivos requeridos.  Los archivos de documentación no se copian.  Para ello, primero debe instalar Windows Perl, y luego instalar NetWare Perl.
+
+Una vez hecho esto, haga lo siguiente para compilar cualquier extensión:
+
+=over 4
+
+=item *
+
+Cambia al directorio de la extensión donde residen sus archivos de código fuente.
+
+=item *
+
+Ejecute el siguiente comando en el símbolo del sistema:
+
+    perl -II<ruta al dir. lib de NetWare> -II<ruta a lib> Makefile.pl
+
+Ejemplo:
+
+    perl -Ic:/perl/5.6.1/lib/NetWare-x86-multi-thread           \
+                                -Ic:\perl\5.6.1\lib MakeFile.pl
+
+o bien
+
+    perl -Ic:/perl/5.8.0/lib/NetWare-x86-multi-thread           \
+                                -Ic:\perl\5.8.0\lib MakeFile.pl
+
+=item *
+
+nmake
+
+=item *
+
+nmake install
+
+La instalación copiará los archivos en la máquina Windows donde se instale NetWare Perl y es posible que tenga que copiar manualmente estos archivos al servidor NetWare. De otra forma, ponga I<INSTALLSITELIB=i:\perl\lib> por delante de makefile.pl anterior. Aquí, I<i:> es el dispositivo mapeado al volumen sys: del servidor donde se instaló Perl en NetWare. Ahora escriba I<nmake install>, que copiará los archivos en el servidor NetWare.
+
+Ejemplo: Puede ejecutar lo siguiente en el símbolo del sistema.
+
+  perl -Ic:/perl/5.6.1/lib/NetWare-x86-multi-thread             \
+                                -Ic:\perl\5.6.1\lib MakeFile.pl
+  INSTALLSITELIB=i:\perl\lib
+
+o bien
+
+  perl -Ic:/perl/5.8.0/lib/NetWare-x86-multi-thread             \
+                                -Ic:\perl\5.8.0\lib MakeFile.pl
+  INSTALLSITELIB=i:\perl\lib
+
+=item * 
+
+Nota: Algunos módulos descargados desde CPAN pueden requerir una API relacionada con NetWare para poder compilarse en NetWare.  Otros módulos pueden, sin embargo, compilarse fácilmente con o sin cambios menores dependiendo del tipo de módulo.
+
+=back
+
+=head1 AGRADECIMIENTOS
+
+El makefile para Win32 se usa como referencia para crear el makefile para NetWare.  También, el proceso make para la adaptación NetWare usa miniperl.exe para ejecutar I<scripts> durante el proceso de creación e instalación.
+
+=head1 AUTORES
+
+Anantha Kesari H Y (hyanantha@novell.com)
+Aditya C (caditya@novell.com)
+
+=head1 FECHA
+
+=over 4
+
+=item *
+
+Creado - 18 enero 2001
+
+=item *
+
+Modificado - 25 junio 2001
+
+=item *
+
+Modificado - 13 julio 2001
+
+=item *
+
+Modificado - 28 mayo 2002
+
+=back

@@ -72,7 +72,7 @@ Yo llamo a este directorio "celib-palm-3.0" pero en el almacén en GitHub se lla
 Extráigalo a una ruta sin espacios, pero no en el código fuente de la compilación perl. 
 No lo extraiga en el mismo directorio que celib. Haga una copia de la carpeta "wince-arm-pocket-wce300" y renombre la copia a "wince-arm-pocket-wce400". Esto es un hack para poder compilar un binario CE 4.0 enlazándolo con ensamblador CE 3.0 ARM; al enlazador no le preocupa. Windows Mobile/WinCE son compatibles hacia atrás con código máquina como Windows Desktop.
 
-4. Abra un prompt de comandos, ejecute su archivo batch normal para establecer el entorno para la compilación con la aplicación de escritorio Visual C, vaya al directorio de código fuente perl, entre en win32/, rellene el Makefile y haga un "nmake all" para compilar Perl.
+4. Abra un símbolo del sistema de comandos, ejecute su archivo batch normal para establecer el entorno para la compilación con la aplicación de escritorio Visual C, vaya al directorio de código fuente perl, entre en win32/, rellene el Makefile y haga un "nmake all" para compilar Perl.
 
 5. Abra win32/Makefile.ce en un editor de texto y haga algo similar al siguiente parche.
 
@@ -136,9 +136,9 @@ Vaya a celib-palm-3.0\inc\cewin32.h, busque por
 
 y descomente la estructura.
 
-7. Abra otro prompt de comandos, asegúrese que no se ha establecido PLATFORM a nada a menos que sepa lo que está haciendo (para que los valores por defecto correctos se establezcan por el siguiente comando), y ejecute "C:\Program Files\Microsoft eMbedded C++ 4.0\EVC\WCE400\BIN\WCEARMV4.BAT"
+7. Abra otro símbolo del sistema de comandos, asegúrese que no se ha establecido PLATFORM a nada a menos que sepa lo que está haciendo (para que los valores por defecto correctos se establezcan por el siguiente comando), y ejecute "C:\Program Files\Microsoft eMbedded C++ 4.0\EVC\WCE400\BIN\WCEARMV4.BAT"
 
-8. En el prompt de comandos de WinCE que arrancó con WCEARMV4.BAT, vaya al directorio de código fuente de perl, entre en win32/ y ejecute "nmake -f Makefile.ce".
+8. En el símbolo del sistema de comandos de WinCE que arrancó con WCEARMV4.BAT, vaya al directorio de código fuente de perl, entre en win32/ y ejecute "nmake -f Makefile.ce".
 
 9. El intérprete de perl en ARM (perl519.dll y perl.exe) estará en algo como "C:\perl519\src\win32\wince-arm-pocket-wce400", con las DLL XS en "C:\perl519\src\xlib\wince-arm-hpc-wce400\auto".
 

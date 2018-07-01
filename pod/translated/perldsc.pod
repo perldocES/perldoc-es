@@ -148,7 +148,7 @@ entonces la asignación con la indirección en el lado izquierdo podría usar la
 
     @{$AoA[3]} = @array;
 
-Naturalmente, esto I<podría> tener el "interesante" efecto de sobreescribir @otro_array.  (¿Alguna vez ha notado que cuando un programador dice que algo es "interesante" en lugar de decir "intrigante", inquietantemente quiere decir que es algo "molesto", "difícil", o ambas cosas?   
+Naturalmente, esto I<podría> tener el "interesante" efecto de sobreescribir @otro_array.  (¿Alguna vez ha notado que cuando un programador dice que algo es "interesante" en lugar de decir "intrigante", inquietantemente quiere decir que es algo "molesto", "difícil", o ambas cosas?  :-)
 
 Así que recuerde siempre utilizar constructores de array o hash con C<[]> o C<{}>, y todo irá bien, aunque no siempre sea óptimamente eficiente.
 
