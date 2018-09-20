@@ -323,7 +323,7 @@ Esta sección de las preguntas más frecuentes ofrece respuestas para manipular 
 
 =item *
 
-¿Por qué obtengo largos decimales (p. e. 19.9499999999999) en lugar de los números que debería obtener (p. e., 19.95)?
+¿Por qué obtengo muchos decimales (p. e. 19.9499999999999) en lugar de los números que debería obtener (p. e., 19.95)?
 
 =item *
 
@@ -399,7 +399,7 @@ Esta sección de las preguntas más frecuentes ofrece respuestas para manipular 
 
 =item *
 
-¿Cómo quito es escapado de una cadena de caracteres?
+¿Cómo quito el escapado de una cadena de caracteres?
 
 =item *
 
@@ -439,7 +439,7 @@ Esta sección de las preguntas más frecuentes ofrece respuestas para manipular 
 
 =item *
 
-¿Cómo capitulizo todas las palabras de una línea?
+¿Cómo capitalizo todas las palabras de una línea?
 
 =item *
 
@@ -495,7 +495,7 @@ Esta sección de las preguntas más frecuentes ofrece respuestas para manipular 
 
 =item *
 
-¿Cómo comprueba si dos array o hash son iguales?
+¿Cómo compruebo si dos array o hash son iguales?
 
 =item *
 
@@ -607,11 +607,11 @@ Esta sección de las preguntas más frecuentes ofrece respuestas para manipular 
 
 =item *
 
-¿Cómo puedo impedir la adición de claves indeseadas en el hash?
+¿Cómo puedo impedir la adición de claves no deseadas en el hash?
 
 =item *
 
-¿Cómo puedo datos binarios de forma correcta?
+¿Cómo puedo gestionar datos binarios de forma correcta?
 
 =item *
 

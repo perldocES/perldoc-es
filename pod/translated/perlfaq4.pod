@@ -1,0 +1,2105 @@
+=head1 NAME
+
+perlfaq4 - Manipulación de datos
+
+=head1 VERSIÓN
+
+versión 5.021010
+
+=head1 DESCRIPCIÓN
+
+Esta sección de las preguntas más frecuentes ofrece respuestas para manipular números, fechas, cadenas de caracteres, array, hash y cuestiones varias sobre datos.
+
+=head1 Datos: Números
+
+=head2 ¿Por qué obtengo muchos decimales (p. e. 19.9499999999999) en lugar de los números que debería obtener (p. e., 19.95)?
+
+Para tener una explicación más larga, vea el artículo de David Goldberg "Lo que todo Informático debe saber sobre la aritmética de punto flotante"
+(L<http://web.cse.msu.edu/~cse320/Documents/FloatingPoint.pdf>).
+
+Internamente, su ordenador representa en binario los números de punto flotante.
+Los ordenadores digitales (como en las potencias de dos) no pueden almacenar todos los números de forma exacta. Algunos números reales pierden precisión en el proceso. Este es un problema con cómo los ordenadores almacenan los números y afecta a todos los lenguajes de ordenador, no solo a Perl.
+
+L<perlnumber> muestra los detalles sangrientos de la representación de números y conversiones.
+
+Para limitar el número de puestos decimales en sus números, puede usar la función C<printf> o C<sprintf>. Vea L<perlop/"Aritmética de punto flotante"> para más detalles.
+
+    printf "%.2f", 10/3;
+
+    my $numero = sprintf "%.2f", 10/3;
+
+=head2 ¿Por qué int() está roto?
+
+Es muy probable que su C<int()> esté funcionando bien. Son los números, que no son lo que cree.
+
+Primero, vea la respuesta a "¿Por qué obtengo muchos decimales (p. e. 19.9499999999999) en lugar de los números que debería obtener (p. e., 19.95)?"
+
+Por ejemplo, esto
+
+    print int(0.6/0.2-2), "\n";
+
+en la mayoría de ordenadores mostrará 0, no 1, porque incluso números tan simples como 0.6 y 0.2 no se pueden presentar de forma exacta como números en punto flotante. Lo que cree que lo anterior es un 'tres', realmente es más como un
+2.9999999999999995559.
+
+=head2 ¿Por qué mis datos en octal no se interpretan correctamente?
+
+(contribución de brian d foy)
+
+Probablemente esté intentando convertir una cadena a un número, que Perl solo lo convierte como número decimal. Cuando Perl convierte una cadena a un número, ignora los espacios y los ceros superfluos, y asume que el resto de los dígitos están en base 10:
+
+    my $cadena = '0644';
+
+    print $cadena + 0;  # imprime en pantalla 644
+
+    print $cadena + 44; # imprime 688, que, ciertamente, ¡no es octal!
+
+Este problema implica normalmente a uno de los comandos incluidos en Perl que tiene el mismo nombre que el comando Unix que usa números octales como argumentos en la línea de comandos. En este ejemplo, C<chmod> en la línea de comandos sabe que el primer argumento es octal porque así es como funciona:
+
+    %prompt> chmod 644 archivo
+
+Si quiere usar los mismos dígitos literales (644) en Perl, le debe decir a Perl que los trate como números octales, tanto prefijando los dígitos con un C<0> o usando C<oct>:
+
+    chmod(     0644, $archivo );   # correcto, tiene un cero por delante
+    chmod( oct(644), $archivo );   # también correcto
+
+El problema viene cuando tome los números de algo que Perl cree que es una cadena, como puede ser un argumento en la línea de comandos en C<@ARGV>:
+
+    chmod( $ARGV[0],      $archivo );   # error, aunque sea "0644"
+
+    chmod( oct($ARGV[0]), $archivo );   # correcto, trata la cadena como octal
+
+Siempre puede comprobar el valor que está usando imprimiéndole en notación octal para asegurarse que coincide con lo que cree que debe ser. Imprimir en formato octal y decimal:
+
+    printf "0%o %d", $numero, $numero;
+
+=head2 ¿Perl tiene una función round()? ¿Para qué sirven ceil() y floor()? ¿Y las funciones Trig?
+
+Recuerde que C<int()> meramente trunca hacia el 0. Para redondear a un determinado número de dígitos, C<sprintf()> o C<printf()> suele ser el camino más fácil.
+
+    printf("%.3f", 3.1415926535);   # imprime 3.142
+
+El módulo L<POSIX> (parte de la distribución estándar de Perl) implementa C<ceil()>, C<floor()>, y otras funciones matemáticas y trigonométricas.
+
+    use POSIX;
+    my $ceil   = ceil(3.5);   # 4
+    my $floor  = floor(3.5);  # 3
+
+En los perl 5.000 a 5.003, la trigonometría se hacía en el módulo L<Math::Complex>. Con 5.004, el módulo L<Math::Trig> (parte de la distribución estándar de Perl) implementa las funciones trigonométricas. Internamente, usa el módulo L<Math::Complex> y algunas funciones pueden pasar del eje real al plano complejo, por ejemplo, la inversa del seno de 2.
+
+El redondeo en las aplicaciones financieras puede tener consecuencias graves, y el método de redondeo utilizado debe ser descrito con precisión. En estos casos, es mejor no confiar en el sistema de redondeo que está utilizando Perl, sino que en su lugar deba implementar la función de redondeo que necesite.
+
+Para ver por qué, note cómo sigue teniendo un problema en la alternancia del punto-medio:
+
+    for (my $i = 0; $i < 1.01; $i += 0.05) { printf "%.1f ",$i}
+
+    0.0 0.1 0.1 0.2 0.2 0.2 0.3 0.3 0.4 0.4 0.5 0.5 0.6 0.7 0.7
+    0.8 0.8 0.9 0.9 1.0 1.0
+
+No culpe a Perl. Es lo mismo en C. IEEE dice que tenemos que hacerlo así. Los números Perl cuyos valores absolutos sean enteros menores de 2**31 (en máquinas de 32 bit) funcionarán más o menos como los enteros matemáticos.
+No se garantiza con otros números.
+
+=head2 ¿Cómo convierto entre representaciones/bases numéricas?
+
+Como siempre, con Perl hay más de una forma de hacerlo. Siguen abajo unos ejemplos para iniciarse en las conversiones más comunes entre representaciones de números. Se pretende que sea representativo en lugar de exhaustivo.
+
+Algunos de los ejemplos que siguen en L<perlfaq4> usan el módulo L<Bit::Vector> de CPAN. La razón por la cual elegir L<Bit::Vector> sobre las funciones incorporadas de perl es que trabaja con números de CUALQUIER tamaño, que está optimizado para velocidad en algunas operaciones, y para algunos programadores la notación les podría resultar familiar.
+
+=over 4
+
+=item Cómo se convierte de hexadecimal en decimal
+
+Con la notación C<0x> de perl incorporada:
+
+    my $dec = 0xDEADBEEF;
+
+Con la función C<hex>:
+
+    my $dec = hex("DEADBEEF");
+
+Con C<pack()>:
+
+    my $dec = unpack("N", pack("H8", substr("0" x 8 . "DEADBEEF", -8)));
+
+Con el módulo de CPAN C<Bit::Vector>:
+
+    use Bit::Vector;
+    my $vec = Bit::Vector->new_Hex(32, "DEADBEEF");
+    my $dec = $vec->to_Dec();
+
+=item Cómo se convierte de decimal a hexadecimal
+
+Con C<sprintf>:
+
+    my $hex = sprintf("%X", 3735928559); # mayúsculas A-F
+    my $hex = sprintf("%x", 3735928559); # minúsculas a-f
+
+Con C<unpack>:
+
+    my $hex = unpack("H*", pack("N", 3735928559));
+
+Con L<Bit::Vector>:
+
+    use Bit::Vector;
+    my $vec = Bit::Vector->new_Dec(32, -559038737);
+    my $hex = $vec->to_Hex();
+
+Y L<Bit::Vector> soporta cuentas impares de bits:
+
+    use Bit::Vector;
+    my $vec = Bit::Vector->new_Dec(33, 3735928559);
+    $vec->Resize(32); # suprime el 0 inicial si no se desea
+    my $hex = $vec->to_Hex();
+
+=item Cómo se convierte de octal en decimal
+
+Con la notación incorporada de Perl en números con ceros iniciales:
+
+    my $dec = 033653337357; # ¡note el cero inicial!
+
+Con la función C<oct>:
+
+    my $dec = oct("33653337357");
+
+Con L<Bit::Vector>:
+
+    use Bit::Vector;
+    my $vec = Bit::Vector->new(32);
+    $vec->Chunk_List_Store(3, split(//, reverse "33653337357"));
+    my $dec = $vec->to_Dec();
+
+=item Cómo se convierte de decimal a octal
+
+Con C<sprintf>:
+
+    my $oct = sprintf("%o", 3735928559);
+
+Con L<Bit::Vector>:
+
+    use Bit::Vector;
+    my $vec = Bit::Vector->new_Dec(32, -559038737);
+    my $oct = reverse join('', $vec->Chunk_List_Read(3));
+
+=item Cómo se convierte de binario a decimal
+
+Perl 5.6 le permite escribir números directamente con la notación C<0b>:
+
+    my $numero = 0b10110110;
+
+Con C<oct>:
+
+    my $input = "10110110";
+    my $decimal = oct( "0b$input" );
+
+Con C<pack> y C<ord>:
+
+    my $decimal = ord(pack('B8', '10110110'));
+
+Con C<pack> y C<unpack> para grandes cadenas:
+
+    my $int = unpack("N", pack("B32",
+    substr("0" x 32 . "11110101011011011111011101111", -32)));
+    my $dec = sprintf("%d", $int);
+
+    # substr() se usa para rellenar con ceros por la izquierda una cadena de 32 caracteres.
+
+Con L<Bit::Vector>:
+
+    my $vec = Bit::Vector->new_Bin(32, "11011110101011011011111011101111");
+    my $dec = $vec->to_Dec();
+
+=item Cómo se convierte de decimal a binario
+
+Con C<sprintf> (perl 5.6+):
+
+    my $bin = sprintf("%b", 3735928559);
+
+Con C<unpack>:
+
+    my $bin = unpack("B*", pack("N", 3735928559));
+
+Con L<Bit::Vector>:
+
+    use Bit::Vector;
+    my $vec = Bit::Vector->new_Dec(32, -559038737);
+    my $bin = $vec->to_Bin();
+
+El resto de transformaciones (p. e. hex -> oct, bin -> hex, etc.)
+se dejan como ejercicio para el lector interesado.
+
+=back
+
+=head2 ¿Por qué '&' no funciona de la forma que quiero?
+
+El comportamiento de los operadores aritméticos binarios depende de si se usan con números o cadenas de caracteres. Los operadores tratan las cadenas como una serie de bits (la cadena C<"3"> es el patrón de bits C<00110011>). Los operadores trabajan con la forma binaria de un número (el número C<3> se trata como el patrón de bits C<00000011>).
+
+Así, decir C<11 & 3> realiza la operación "and" sobre números (sacando C<3>). Decir C<"11" & "3"> realiza la operación "and" sobre cadenas (sacando C<"1">).
+
+La mayor parte de los problemas con C<&> y C<|> surgen porque el programador piensa que tiene un número pero realmente es una cadena, o viceversa. Para evitarlo, convierta a cadena los argumentos de forma explícita (usando C<""> o C<qq()>) o convertirlos a números explícitamente (usando C<0+$arg>). El resto surge porque el programador dice:
+
+    if ("\020\020" & "\101\101") {
+        # ...
+    }
+
+pero una palabra que consiste en dos bytes nulos (el resultado de C<"\020\020"
+& "\101\101">) no es un valor falso en Perl. Necesita:
+
+    if ( ("\020\020" & "\101\101") !~ /[^\000]/) {
+        # ...
+    }
+
+=head2 ¿Cómo multiplico matrices?
+
+Use los módulos L<Math::Matrix> o L<Math::MatrixReal> (disponible desde CPAN) o la extensión L<PDL> (también disponible desde CPAN).
+
+=head2 ¿Cómo realizo una operación en una serie de enteros?
+
+Para llamar a una función en cada elemento de un array, y coleccionar los resultados, use:
+
+    my @resultados = map { my_func($_) } @array;
+
+Por ejemplo:
+
+    my @triple = map { 3 * $_ } @single;
+
+Para llamar a una función en cada elemento de un array, pero ignorando los resultados:
+
+    foreach my $iterador (@array) {
+        some_func($iterador);
+    }
+
+Para llamar a una función en cada entero en un (pequeño) rango, B<puede> usar:
+
+    my @resultados = map { alguna_func($_) } (5 .. 25);
+
+pero debe tener en cuenta que, de esta forma, el operador C<..> crea una lista de todos los enteros en el rango, que pueden tomar un montón de memoria para rangos grandes. Aún así, el problema no ocurre cuando se usa C<..> dentro de un bucle C<for>, por que en ese caso el operador rango se optimiza para I<iterar> por el rango, sin crear la lista entera. Así que
+
+    my @resultados = ();
+    for my $i (5 .. 500_005) {
+        push(@resultados, alguna_func($i));
+    }
+
+o incluso
+
+   push(@resultados, alguna_func($_)) for 5 .. 500_005;
+
+no creará una lista intermedia de 500 000 enteros.
+
+=head2 ¿Cómo puedo sacar números en romano?
+
+Obtener el módulo L<http://www.cpan.org/modules/by-module/Roman>.
+
+=head2 ¿Por qué mis números aleatorios no son aleatorios?
+
+Si está usando una versión de Perl anterior a la 5.004, debe llamar una vez a C<srand> al principio de su programa para sembrar el generador de números aleatorios.
+
+     BEGIN { srand() if $] < 5.004 }
+
+5.004 y siguientes llaman automáticamente a C<srand> al principio de la ejecución. No llame a C<srand> más de una vez: hará que sus números sean menos aleatorios, en lugar de más.
+
+Los ordenadores son buenos en ser previsibles y malos en ser aleatorios (a pesar de las apariencias provocadas por los errores en sus programas :-). El artículo F<random> en la colección "I<Far More Than You Ever Wanted To Know>" (Más de lo que quisiera saber) L<http://www.cpan.org/misc/olddoc/FMTEYEWTK.tgz>, cortesía de Tom Phoenix, explica más sobre este tema. John von Neumann dijo, "Cualquiera que intente generar números aleatorios por medios deterministas está, naturalmente, viviendo en un estado de pecado".
+
+Perl confía en el sistema subyacente para la implementación de C<rand> y C<srand>; en algunos sistemas, los números aleatorios no son lo suficientemente aleatorios (especialmente en Windows: vea L<http://www.perlmonks.org/?node_id=803632>).
+Varios módulos CPAN en el espacio de nombres C<Math> implementan mejores generadores pseudoaleatorios; vea por ejemplo L<Math::Random::MT> ("Mersenne Twister", rápido), o L<Math::TrulyRandom> (usa las imperfecciones en el temporizador del sistema para generar números aleatorios, pero es algo lento).
+Se describen más algoritmos para números aleatorios en "I<Numerical Recipes in C>" (Recetas numéricas en C) en L<http://www.nr.com/>
+
+=head2 ¿Cómo obtengo un número aleatorio entre X e Y?
+
+Para obtener un número aleatorio entre dos valores, puede usar la C<rand()> incorporada para obtener un número aleatorio entre 0 y 1. A partir de ahí, lo desplaza al rango que necesita.
+
+C<rand($x)> devuelve un número tal que C<< 0 <= rand($x) < $x >>. Así que lo que quiere es que perl genere un número aleatorio en el rango que va desde 0 a la diferencia entre su I<X> e I<Y>.
+
+Es decir, para obtener un número entre 10 y 15, inclusive, quiere un número aleatorio entre 0 y 5 a lo que le sumará 10.
+
+    my $numero = 10 + int rand( 15-10+1 ); # ( 10,11,12,13,14, or 15 )
+
+De ello se deduce la siguiente función para abstraerlo. Selecciona un entero aleatorio entre los dos enteros dados (inclusive). Por ejemplo: C<aleatorio_entero_entre(50,120)>.
+
+    sub aleatorio_entero_entre {
+        my($min, $max) = @_;
+        # ¡Asume que los dos argumentos ya son enteros!
+        return $min if $min == $max;
+        ($min, $max) = ($max, $min)  if  $min > $max;
+        return $min + int rand(1 + $max - $min);
+    }
+
+=head1 Datos: Fechas
+
+=head2 ¿Cómo encuentro el día o semana del año?
+
+El día del año está en la lista devuelta por la función C<localtime>. Sin argumento C<localtime> usa la fecha actual.
+
+    my $dia_del_anno = (localtime)[7];
+
+El módulo L<POSIX> también puede formatear una fecha como el día del año o semana del año.
+
+    use POSIX qw/strftime/;
+    my $dia_del_anno  = strftime "%j", localtime;
+    my $semana_del_anno = strftime "%W", localtime;
+
+Para obtener el día del año para cualquier fecha, use C<mktime> de L<POSIX> para obtener el tiempo en segundos desde el epoch como argumento para C<localtime>.
+
+    use POSIX qw/mktime strftime/;
+    my $semana_del_anno = strftime "%W",
+        localtime( mktime( 0, 0, 0, 18, 11, 87 ) );
+
+También puede usar L<Time::Piece>, que viene con Perl y proporciona un C<localtime> que devuelve un objeto:
+
+    use Time::Piece;
+    my $dia_del_anno  = localtime->yday;
+    my $semana_del_anno = localtime->week;
+
+El módulo L<Date::Calc> también proporciona dos funciones para calcularlos:
+
+    use Date::Calc;
+    my $dia_del_anno  = Day_of_Year(  1987, 12, 18 );
+    my $semana_del_anno = Week_of_Year( 1987, 12, 18 );
+
+=head2 ¿Cómo encuentro el siglo o milenio actual?
+
+Use la sencilla función siguiente:
+
+    sub get_century    {
+        return int((((localtime(shift || time))[5] + 1999))/100);
+    }
+
+    sub get_millennium {
+        return 1+int((((localtime(shift || time))[5] + 1899))/1000);
+    }
+
+En algunos sistemas, la función C<strftime()> del módulo L<POSIX> se aumentó de una forma no estándar para usar el formato C<%C>, clamando que es el "siglo". No lo es, porque en la mayor parte de los sistemas solo son los dos primeros dígitos de los cuatro que tiene el año, y así no se puede determinar de forma fiable el siglo o milenio actual.
+
+=head2 ¿Cómo puedo comparar dos fechas y encontrar la diferencia?
+
+(contribución de brian d foy)
+
+Puede simplemente almacenar todas las fechas como un número y luego restarlos.
+Aunque la vida no siempre es tan sencilla.
+
+El módulo L<Time::Piece>, que viene con Perl, reemplaza L<localtime> con una versión que devuelve un objeto. También sobrecarga los operadores de comparación para que pueda compararlas directamente:
+
+    use Time::Piece;
+    my $fecha1 = localtime( $algun_tiempo );
+    my $fecha2 = localtime( $algun_otro_tiempo );
+
+    if( $fecha1 < $fecha2 ) {
+        print "La fecha estaba en el pasado\n";
+    }
+
+También puede obtener diferencias con una substracción, que devuelve un objeto L<Time::Seconds>:
+
+    my $fecha_diff = $fecha1 - $fecha2;
+    print "La diferencia es ", $fecha_diff->days, " días\n";
+
+Si quiere trabajar con fechas formateadas, pueden ayudarle los módulos L<Date::Manip>, L<Date::Calc> y L<DateTime>.
+
+=head2 ¿Cómo puedo tomar una cadena de caracteres y convertirla en segundos epoch?
+
+Si es una cadena lo suficientemente regular que siempre tiene el mismo formato, puede dividirla y pasar las partes a C<timelocal> en el módulo L<Time::Local>. De lo contrario, tendrá que mirar en los módulos L<Date::Calc>, L<Date::Parse> y L<Date::Manip> de CPAN.
+
+=head2 ¿Cómo puedo encontrar el día Juliano?
+
+(Contribución de brian d foy y Dave Cross)
+
+Puede usar el módulo L<Time::Piece>, parte de la biblioteca estándar, que puede convertir una fecha/hora a un día juliano:
+
+    $ perl -MTime::Piece -le 'print localtime->julian_day'
+    2455607.7959375
+
+O día juliano modificado:
+
+    $ perl -MTime::Piece -le 'print localtime->mjd'
+    55607.2961226851
+
+O incluso el día del año (que es lo que algunas personas creen que es el día juliano):
+
+    $ perl -MTime::Piece -le 'print localtime->yday'
+    45
+
+También puede hacer lo mismo con el módulo L<DateTime>:
+
+    $ perl -MDateTime -le 'print DateTime->today->jd'
+    2453401.5
+    $ perl -MDateTime -le 'print DateTime->today->mjd'
+    53401
+    $ perl -MDateTime -le 'print DateTime->today->doy'
+    31
+
+Puede usar el módulo L<Time::JulianDay> disponible en CPAN. Asegúrese que realmente quiere calcular el día juliano, ya que muchas personas tiene ideas diferentes sobre lo que son dias julianos (vea L<http://www.hermetic.ch/cal_stud/jdn.htm> por ejemplo):
+
+    $  perl -MTime::JulianDay -le 'print local_julian_day( time )'
+    55608
+
+=head2 ¿Cómo puedo encontrar la fecha de ayer?
+X<date> X<yesterday> X<DateTime> X<Date::Calc> X<Time::Local>
+X<daylight saving time> X<day> X<Today_and_Now> X<localtime>
+X<timelocal>
+
+(contribución de brian d foy)
+
+Para hacerlo de forma correcta, puede usar uno de los módulos C<Date> ya que trabajan con calendarios en lugar de con fechas. El módulo L<DateTime> lo hace simple, y le proporciona el mismo tiempo del día, pero del día anterior, aunque hubiese cambios de ahorro de energía:
+
+    use DateTime;
+
+    my $ayer = DateTime->now->subtract( days => 1 );
+
+    print "Ayer era $ayer\n";
+
+También puede usar el módulo L<Date::Calc>, con su función C<Today_and_Now>.
+
+    use Date::Calc qw( Today_and_Now Add_Delta_DHMS );
+
+    my @date_time = Add_Delta_DHMS( Today_and_Now(), -1, 0, 0, 0 );
+
+    print "@date_time\n";
+
+La mayor parte de la gente intenta usar el tiempo en lugar del calendario para calcular fechas, pero asumen que los días tienen 24 horas. Para otras personas, existen dos días al año que no son así: el paso hacia y desde el periodo de verano. El resto de sugerencias, también fallarán, en algunas ocasiones:
+
+A partir de Perl 5.10, L<Time::Piece> y L<Time::Seconds> forman parte de la distribución estándar, así que podría pensar que podría hacer algo como esto:
+
+    use Time::Piece;
+    use Time::Seconds;
+
+    my $ayer = localtime() - ONE_DAY; # MAL
+    print "Ayer era $ayer\n";
+
+El módulo L<Time::Piece> exporta un nuevo C<localtime> que retorna un objeto, y L<Time::Seconds> exporta la constante C<ONE_DAY> que se establece al número de segundos. Esto significa que siempre proporciona el tiempo de hace 24 horas, que no siempre será de ayer. Puede causar problemas alrededor del final del tiempo de ahorro de energía cuando este tenga una duración de 25 horas.
+
+Tiene el mismo problema con L<Time::Local>, que le proporcionará la respuesta incorrecta para algunos casos especiales:
+
+    # contribución de Gunnar Hjalmarsson
+     use Time::Local;
+     my $hoy = timelocal 0, 0, 12, ( localtime )[3..5];
+     my ($d, $m, $y) = ( localtime $today-86400 )[3..5]; # MAL
+     printf "Ayer: %d-%02d-%02d\n", $y+1900, $m+1, $d;
+
+=head2 ¿Perl tiene un problema con el año 2000 o con el 2038? ¿Es Perl compatible con los problemas del año 2000?
+
+(contribución de brian d foy)
+
+El propio Perl nunca tuvo un problema Y2K, pero eso no impidió que las personas crearan problemas Y2K en sus propios programas. Vea la documentación de C<localtime> para usarlo de forma apropiada.
+
+A partir de Perl 5.12, C<localtime> y C<gmtime> pueden gestionar fechas posteriores al 03:14:08 del 19 de enero de 2038, momento en que se producirá el desbordamiento de una fecha basada en 32 bits. Aún así podría obtener una advertencia en un C<perl> de 32 bits:
+
+    % perl5.12 -E 'say scalar localtime( 0x9FFF_FFFFFFFF )'
+    Integer overflow in hexadecimal number at -e line 1.
+    Wed Nov  1 19:42:39 5576711
+
+En un C<perl> de 64 bits, puede obtener incluso fechas más grandes para proyectos en ejecución realmente largos:
+
+    % perl5.12 -E 'say scalar gmtime( 0x9FFF_FFFFFFFF )'
+    Thu Nov  2 00:42:39 5576711
+
+No tendrá suerte si quiere seguirle el proceso de desintegración de los protones.
+
+=head1 Datos: Cadenas
+
+=head2 ¿Cómo valido la entrada?
+
+(contribución de brian d foy)
+
+Existen muchas maneras de asegurarse de que los valores son los que espera o quiere aceptar. Además de los ejemplos específicos que mostramos en perlfaq, también puede mirar en los módulos con "Assert" y "Validate" en sus nombres, junto con otros módulos tales como L<Regexp::Common>.
+
+Algunos módulos tienen validación para tipos particulares de entradas, tales como L<Business::ISBN>, L<Business::CreditCard>, L<Email::Valid> y L<Data::Validate::IP>.
+
+=head2 ¿Cómo quito el escapado de una cadena de caracteres?
+
+Depende de lo que entienda por "escapado". El escapado de URL se tratan en L<perlfaq9>. Los escapados con barras diagonales inversas (C<\>) se quitan con
+
+    s/\\(.)/$1/g;
+
+Esto no expandirá C<"\n"> o C<"\t"> o cualquier otro escapado especial.
+
+=head2 ¿Cómo elimino pares consecutivos de caracteres?
+
+(contribución de brian d foy)
+
+Puede usar el operador de sustitución para encontrar pares de caracteres (o conjuntos de caracteres) y reemplazarlos por una sola instancia. En esta sustitución, encontramos un carácter con C<(.)>. Los paréntesis de captura almacenan el carácter coincidente en la contrarreferencia C<\g1> y usamos esto para requerir que le sigue otro igual. Reemplazamos la parte de la cadena con el carácter en C<$1>.
+
+    s/(.)\g1/$1/g;
+
+Podemos usar también el operador de transliteración, C<tr///>. En este ejemplo, el lado de la lista de búsqueda de nuestro C<tr///> no contiene nada, pero la opción C<c> lo complementa, así que entonces contiene todo. La lista de reemplazo también no contiene nada, así que la transliteración es casi una no-operación ya que no hará ningún reemplazo (o más exactamente, reemplaza el carácter consigo mismo). Sin embargo, la opción C<s> aplasta los caracteres duplicados y consecutivos en una cadena así que un carácter ya no se muestra al lado de sí mismo
+
+    my $str = 'Haarlem';   # en Holanda
+    $str =~ tr///cs;       # Ahora Harlem, como en New York
+
+=head2 ¿Cómo expando llamadas de funciones en una cadena de caracteres?
+
+(contribución de brian d foy)
+
+Esto se documenta en L<perlref>, y aunque no es lo más fácil de leer, funciona. En cada uno de estos ejemplos, llamamos a la función dentro de las llaves utilizadas para desreferenciar una referencia. Si tenemos más de un valor de retorno, podemos construir y desreferenciar un array anónimo. En este caso, llamamos a la función en contexto de lista.
+
+    print "Los valores de fecha son @{ [localtime] }.\n";
+
+Si queremos llamar a la función en contexto escalar, tenemos que hacer un poco más de trabajo. Realmente podemos tener cualquier código que queramos dentro de las llaves, así que simplemente tenemos que terminar con la referencia escalar, aunque depende de usted, y puede usar código dentro de las llaves. Note que el uso de paréntesis crea un contexto de lista, así que necesitamos C<scalar> para forzar el contexto escalar en la función:
+
+    print "la fecha es ${\(scalar localtime)}.\n"
+
+    print "La fecha es ${ my $x = localtime; \$x }.\n";
+
+Si su función ya devuelve una referencia, no necesita crearla de nuevo.
+
+    sub timestamp { my $t = localtime; \$t }
+
+    print "La fecha es ${ timestamp() }.\n";
+
+El módulo C<Interpolation> también hace mucha magia. Puede especificar un nombre de variable, en este caso C<E>, para establecer un hash enlazado que hace la interpolación por usted. Tiene otros métodos para hacer esto mismo.
+
+    use Interpolation E => 'eval';
+    print "Los valores de fecha son $E{localtime()}.\n";
+
+En la mayor parte de los casos, probablemente sea más sencillo usar concatenación de cadenas, que también fuerza a un contexto escalar.
+
+    print "La fecha es " . localtime() . ".\n";
+
+=head2 ¿Cómo encuentro coincidencias/anidaciones?
+
+Para encontrar algo entre dos caracteres, un patrón como C</x([^x]*)x/> obtendrá los caracteres intermedios, en $1. Para más de un carácter, entonces necesitará algo más como esto C</alpha(.*?)omega/>. Para patrones anidados o expresiones balanceadas, vea la construcción L<< (?PARNO)|perlre/C<(?PARNO)> C<(?-PARNO)> C<(?+PARNO)> C<(?R)> C<(?0)> >> (disponible desde perl 5.10).
+El módulo de CPAN L<Regexp::Common> puede ayudar para construir tales expresiones regulares (vea, en particular, L<Regexp::Common::balanced> y L<Regexp::Common::delimited>).
+
+Casos más complejos requerirán escribir un intérprete, probablemente usando un módulo de interpretación, desde CPAN, como L<Regexp::Grammars>, L<Parse::RecDescent>, L<Parse::Yapp>, L<Text::Balanced> o L<Marpa::R2>.
+
+=head2 ¿Cómo invierto una cadena de caracteres?
+
+Use C<reverse()> en contexto escalar, como se documenta en L<perlfunc/reverse>.
+
+    my $invertida = reverse $cadena;
+
+=head2 ¿Cómo expando los tabuladores en una cadena de caracteres?
+
+Puede hacerlo usted mismo:
+
+    1 while $string =~ s/\t+/' ' x (length($&) * 8 - length($`) % 8)/e;
+
+O puede usar el módulo L<Text::Tabs> (parte de la distribución estándar de Perl).
+
+    use Text::Tabs;
+    my @lineas_expandidas = expand(@lineas_con_tabuladores);
+
+=head2 ¿Cómo reformateo un párrafo?
+
+Use L<Text::Wrap> (parte de la distribución estándar de Perl):
+
+    use Text::Wrap;
+    print wrap("\t", '  ', @parrafos);
+
+Los párrafos que ofrezca a L<Text::Wrap> no deberían contener caracteres de nueva línea. L<Text::Wrap> no justifica las líneas (relleno por la derecha).
+
+O use el módulo de CPAN L<Text::Autoformat>. El formateo de archivos se puede hacer fácilmente creando un alias de shell, como este:
+
+    alias fmt="perl -i -MText::Autoformat -n0777 \
+        -e 'print autoformat $_, {all=>1}' $*"
+
+Vea la documentación para L<Text::Autoformat> para apreciar sus muchas capacidades.
+
+=head2 ¿Cómo puedo acceder o cambiar N caracteres de una cadena de caracteres?
+
+Puede acceder a los primeros caracteres de una cadena con substr().
+Para obtener el primer carácter, por ejemplo, empieza en la posición 0 y tomamos una cadena de tamaño 1.
+
+
+    my $cadena = "Just another Perl Hacker";
+    my $primer_car = substr( $cadena, 0, 1 );  #  'J'
+
+Para cambiar parte de una cadena, puede usar el cuarto argumento opcional, que es una cadena de reemplazo.
+
+    substr( $cadena, 13, 4, "Perl 5.8.0" );
+
+También puede usar substr() como un valor a la izquierda.
+
+    substr( $cadena, 13, 4 ) =  "Perl 5.8.0";
+
+=head2 ¿Cómo cambio la n-ésima ocurrencia de algo?
+
+Tiene que llevar usted mismo la cuenta de N. Por ejemplo, digamos que quiere cambiar la quinta ocurrencia de C<"whoever"> o C<"whomever"> en C<"whosoever"> o C<"whomsoever">, independientemente del tamaño de caja. Todas asumen que $_ contiene la cadena a modificar.
+
+    $contador = 0;
+    s{((whom?)ever)}{
+    ++$contador == 5    # ¿es la quinta vez?
+        ? "${2}soever"  # sí, cambiar
+        : $1            # dejarlo como estaba
+        }ige;
+
+En un caso más general, puede usar el modificador C</g> en un bucle C<while>, llevando la cuenta de las coincidencias.
+
+    $BUSCAMOS = 3;
+    $contador = 0;
+    $_ = "pez amarillo pez negro pez rojo pez azul";
+    while (/\bpez\s+(\w+)/gi) {
+        if (++$contador == $BUSCAMOS) {
+            print "El tercer pez es $1.\n";
+        }
+    }
+
+Esto imprime: C<"El tercer pez es rojo.">. También puede usar un contador de repetición y patrón repetido como este:
+
+    /(?:pez\s+\w+\s+){2}pez\s+(\w+)/i;
+
+=head2 ¿Cómo puedo contar el número de ocurrencias de una subcadena dentro de una cadena de caracteres?
+
+Hay varias formas de hacerlo, de eficacia variable. Si quiere llevar la cuenta de un único carácter (X) dentro de una cadena, puede usar la función C<tr///> de esta manera:
+
+    my $cadena = "EstaXlíneaXtieneXalgunasXxXenXella";
+    my $cuenta = ($cadena =~ tr/X//);
+    print "Hay $cuenta X caracteres en la cadena";
+
+Esto está bien si solo está buscando por un único carácter. Sin embargo, si está intentando contar subcadenas de múltiples caracteres dentro de una cadena más grande, C<tr///> no funcionará. Lo que tiene que hacer es envolver un bucle while() alrededor de una coincidencia global de patrones. Por ejemplo, vamos a contar enteros negativos:
+
+    my $cadena = "-9 55 48 -2 23 -76 4 14 -44";
+    my $cuenta = 0;
+    while ($cadena =~ /-\d+/g) { $cuenta++ }
+    print "Hay $cuenta números negativos en la cadena";
+
+Otra versión usa una coincidencia global en contexto de lista, y luego asigna el resultado a un escalar, resultando una cuenta del número de coincidencias.
+
+    my $cuenta = () = $cadena =~ /-\d+/g;
+
+=head2 ¿Cómo capitalizo todas las palabras de una línea?
+X<Text::Autoformat> X<capitalize> X<case, title> X<case, sentence>
+
+(contribución de brian d foy)
+
+El L<Text::Autoformat> de Damian Conway lo controla todo.
+
+    use Text::Autoformat;
+    my $x = "Dr. Strangelove or: How I Learned to Stop ".
+      "Worrying and Love the Bomb";
+
+    print $x, "\n";
+    for my $style (qw( sentence title highlight )) {
+        print autoformat($x, { case => $style }), "\n";
+    }
+
+¿Cómo capitalizar estas palabras?
+
+    FRED AND BARNEY'S LODGE        # todo en mayúsculas
+    Fred And Barney's Lodge        # Mayúsculas tipo título (en inglés)
+    Fred and Barney's Lodge        # Mayúsculas en lo importante
+
+No es un problema tan sencillo como parece. ¿Cuántas palabras cree que hay? Espere... espere... Acertó si respondió 5. Palabras Perl son grupos de C<\w+>, pero esto no es lo que quiere capitalizar. ¿Cómo se supone que Perl sabe que no tiene capitalizar el C<s> después del apóstrofe? Podría intentarlo con una expresión regular:
+
+    $cadena =~ s/ (
+                 (^\w)    # al comienzo de la línea
+                   |      # o
+                 (\s\w)   # precedido por espacio en blanco
+                   )
+                /\U$1/xg;
+
+    $string =~ s/([\w']+)/\u\L$1/g;
+
+Ahora, ¿Qué pasa si no quiere capitalizar el "and"? Use L<Text::Autoformat> y pase al siguiente problema. :)
+
+=head2 ¿Cómo puedo dividir una cadena de caracteres delimitada por [carácter] excepto cuando está dentro de [carácter]?
+
+Diversos módulos pueden manejar esta suerte de interpretación: L<Text::Balanced>, L<Text::CSV>, L<Text::CSV_XS> y L<Text::ParseWords>, entre otros.
+
+Tome el caso de ejemplo de intentar dividir una cadena que tiene diferentes campos separados por comas. No puede usar C<split(/,/)> porque no debería dividir en el caso de que la coma esté dentro de unas comillas. Por ejemplo, tenemos una línea de datos como esta:
+
+    SAR001,"","Cimetrix, Inc","Bob Smith","CAM",N,8,1,0,7,"Error, Core Dumped"
+
+Debido a la restricción de las comillas, se trata de un problema bastante complejo. Afortunadamente, tenemos a Jeffrey Friedl, autor de I<Mastering Regular Expressions>, para hacerlo por nosotros. Sugiere (asumiendo que su cadena está en C<$texto>):
+
+     my @nuevo = ();
+     push(@nuevo, $+) while $texto =~ m{
+         "([^\"\\]*(?:\\.[^\"\\]*)*)",? # agrupa la frase dentro de las comillas
+        | ([^,]+),?
+        | ,
+     }gx;
+     push(@nuevo, undef) if substr($texto,-1,1) eq ',';
+
+Si quiere representar marcas de entrecomillado dentro de un campo delimitado por comillas, escápelas con barras diagonales inversas (ejemplo, C<"como \"esto\"">).
+
+Alternativamente, el módulo L<Text::ParseWords> (parte de la distribución estándar de Perl) le permite decir:
+
+    use Text::ParseWords;
+    @nuevo = quotewords(",", 0, $texto);
+
+Aún así, se recomienda usar L<Text::CSV> para interpretar o generar CSV, en lugar de implementarlo usted mismo; se ahorrará la futura aparición de extraños errores usando código que se ha probado en producción durante años.
+
+=head2 ¿Cómo descarto el espacio en blanco del comienzo/final de una cadena de caracteres?
+
+(contribución de brian d foy)
+
+Una sustitución puede hacerlo por usted. Para una única línea, querrá reemplazar todos los espacios en blanco que preceden o siguen, con nada. Puede hacerlo con un par de sustituciones:
+
+    s/^\s+//;
+    s/\s+$//;
+
+También puede escribirlo como una única sustitución, aunque resulta que las sentencias combinadas son más lentas que las que están separadas. Aunque podría no importarle:
+
+    s/^\s+|\s+$//g;
+
+En esta expresión regular, la alternativa coincide tanto al principio como al final de la cadena debido a que las anclas tienen una precedencia inferior que la alternativa. Con el modificador C</g>, la sustitución hace todas las posibles coincidencias, así que consigue ambas. Recuerde: el carácter de nueva línea coincide con C<\s+>, y el ancla C<$> puede coincidir con el fin absoluto de la cadena, así que el carácter de nueva línea también desaparece. Simplemente añada el carácter de nueva línea al resultado, que tiene el beneficio añadido de preservar las líneas "blancas" (las que consisten enteramente en espacio en blanco) que C<^\s+> eliminará:
+
+    while( <> ) {
+        s/^\s+|\s+$//g;
+        print "$_\n";
+    }
+
+Para una cadena multilínea, puede aplicar la expresión regular a cada línea lógica en la cadena añadiendo el modificador C</m> (por "multilínea"). Con el modificador C</m>, el C<$> coincide I<antes> del carácter de nueva línea, así que no lo elimina. Este patrón sigue eliminando el carácter de nueva línea al final de la cadena:
+
+    $cadena =~ s/^\s+|\s+$//gm;
+
+Recuerde que desaparecerán las líneas que consisten completamente en espacio en blanco, ya que la primera parte de la alternativa puede coincidir con toda la cadena y reemplazarla con nada. Si necesita mantener las líneas en blanco, tiene que hacer un poco más de trabajo. En lugar de coincidir con cualquier espacio en blanco (ya que incluye el carácter de nueva línea), simplemente busque por otro espacio en blanco:
+
+    $cadena =~ s/^[\t\f ]+|[\t\f ]+$//mg;
+
+=head2 ¿Cómo relleno una cadena de caracteres con blancos o rellenar un número con ceros?
+
+En los siguientes ejemplos, C<$pad_len> es la longitud de lo que deseas que se rellene la cadena, C<$text> o C<$num> contiene la cadena a rellenar, y C<$pad_char> contiene el carácter de relleno. Puede usar un único carácter constante en lugar de la variable C<$pad_char> si lo conoce por adelantado. Y de la misma manera puede usar un entero en lugar de C<$pad_len> si sabe la longitud de relleno por adelantado.
+
+El método más simple utiliza la función C<sprintf>. Puede rellenar a la izquierda o a la derecha con blancos y a la izquierda con ceros y no truncará el resultado. La función C<pack> solo puede rellenar cadenas a la derecha con blancos y truncará el resultado a la máxima longitud de C<$pad_len>.
+
+    # Relleno a la izquierda de una cadena con blancos (sin truncamiento):
+    my $rellenado = sprintf("%${pad_len}s", $texto);
+    my $rellenado = sprintf("%*s", $pad_len, $texto);  # lo mismo
+
+    # Relleno a la derecha de una cadena con blancos (sin truncamiento):
+    my $rellenado = sprintf("%-${pad_len}s", $texto);
+    my $rellenado = sprintf("%-*s", $pad_len, $texto); # lo mismo
+
+    # Relleno a la izquierda de un número con 0 (sin truncamiento):
+    my $rellenado = sprintf("%0${pad_len}d", $numero);
+    my $rellenado = sprintf("%0*d", $pad_len, $numero); # lo mismo
+
+    # Relleno a la derecha de una cadena con blancos usando pack (lo truncará):
+    my $rellenado = pack("A$pad_len",$texto);
+
+Si necesita rellenar con un carácter distinto de blanco o cero puede usar uno de los siguientes métodos. Todos generarán una cadena de relleno con el operador C<x> y lo combina con el C<$text>. Estos métodos no truncan C<$text>.
+
+Rellenar a la izquierda o derecha con cualquier carácter, creando una nueva cadena:
+
+    my $rellenado = $pad_char x ( $pad_len - length( $texto ) ) . $texto;
+    my $rellenado = $texto . $pad_char x ( $pad_len - length( $texto ) );
+
+Rellenar a la izquierda y derecha con cualquier carácter modificando el C<$texto>,  directamente:
+
+    substr( $texto, 0, 0 ) = $pad_char x ( $pad_len - length( $texto ) );
+    $texto .= $pad_char x ( $pad_len - length( $texto ) );
+
+=head2 ¿Cómo extraigo ciertas columnas de una cadena de caracteres?
+
+(contribución de brian d foy)
+
+Si sabe qué columnas contiene los datos, puede usar C<substr> para extraer un sola columna.
+
+    my $columna = substr( $linea, $inicio_columna, $longitud );
+
+Puede usar C<split> si las columnas se separan por espacio en blanco o algún otro delimitador, mientras el espacio en blanco o el delimitador no aparezca como parte de los datos.
+
+    my $linea    = ' fred barney   betty   ';
+    my @columnas = split /\s+/, $linea;
+        # ( '', 'fred', 'barney', 'betty' );
+
+    my $linea    = 'fred||barney||betty';
+    my @columnas = split /\|/, $linea;
+        # ( 'fred', '', 'barney', '', 'betty' );
+
+Si quiere trabajar con valores separados con comas, no haga esto, ya que ese formato es un poco más complicado. Use uno de los módulos que manejan ese formato, tales como L<Text::CSV>, L<Text::CSV_XS> o L<Text::CSV_PP>.
+
+Si quiere romper una línea entera de columnas fijas, puede usar C<unpack> con el formato A (ASCII). Usando un número después del especificador de formato, puede denotar el ancho de la columna. Vea las entradas C<pack> y C<unpack> en L<perlfunc>, para más detalles.
+
+    my @campos = unpack( $linea, "A8 A8 A8 A16 A4" );
+
+Note que los espacios que están en el argumento a C<unpack> no denota espacios literales. En cambio, si tiene datos separados por espacios, quizás quiera usar C<split>.
+
+=head2 ¿Cómo encuentro el valor soundex de una cadena de caracteres?
+
+(contribución de brian d foy)
+
+Puede usar el módulo C<Text::Soundex>. Si quiere hacer una coincidencia exacta o difusa, podría intentarlo con L<String::Approx> y los módulos L<Text::Metaphone> y L<Text::DoubleMetaphone>.
+
+=head2 ¿Cómo expando variables en cadenas de texto?
+
+(contribución de brian d foy)
+
+Si puede evitarlo, no lo haga, o en su lugar puede usar un sistema de plantillas, tales como L<Text::Template> o L<Template> Toolkit. Podría incluso ser capaz de hacer el trabajo con C<sprintf> o C<printf>:
+
+    my $cadena = sprintf 'Di hola a %s y %s', $foo, $bar;
+
+Sin embargo, para el caso más simple donde no quiere instalar un sistema completo de plantillas, use una cadena que tenga dos variables escalares Perl. En este ejemplo, quiero expandir C<$foo> y C<$bar> a los valores de las variables:
+
+    my $foo = 'Fred';
+    my $bar = 'Barney';
+    $cadena = 'Di hola a $foo y $bar';
+
+Una manera que puede usar implica el operador de sustitución y un doble modificador C</e>. El primer C</e> evalúa C<$1> en la parte de reemplazo y lo convierte a C<$foo>. El segundo /e empieza con C<$foo> y lo reemplaza con su valor. C<$foo>, entonces, lo convierte en 'Fred', y es lo que finalmente se deja en la cadena:
+
+    $cadena =~ s/(\$\w+)/$1/eeg; # 'Di hola a Fred y Barney'
+
+El C</e> también silenciará violaciones del modo estricto, reemplazando nombres de variables indefinidas con la cadena vacía. Ya que está usando el modificador C</e> (¡incluso dos veces!), tiene los mismos problemas de seguridad que tengo con un C<eval> de una cadena. Si hay algo extraño en C<$foo>, quizás algo como C<@{[ system "rm -rf /" ]}>, entonces se podría encontrar en problemas.
+
+Para evitar el problema de seguridad, también podría sacar los valores desde un hash en lugar de evaluar nombres de variables. Al usar un único C</e>, puede comprobar en el hash si el valor existe, y si no, puede reemplazar el valor que falta con un marcador, en este caso C<???> para señalar que le falta algo:
+
+    my $cadena = 'Esto tiene $foo y $bar';
+
+    my %Reemplazos = (
+        foo  => 'Fred',
+        );
+
+    # $cadena =~ s/\$(\w+)/$Reemplazos{$1}/g;
+    $cadena =~ s/\$(\w+)/
+        exists $Reemplazos{$1} ? $Reemplazos{$1} : '???'
+        /eg;
+
+    print $cadena;
+
+=head2 ¿Qué tiene de malo entrecomillar siempre "$var"?
+
+El problema es que esas dobles comillas fuerzan la conversión a cadena de caracteres de números y referencias, incluso cuando no quiere que sean cadenas de caracteres. Piénselo de esta manera: la expansión de las dobles comillas produce nuevas cadenas de caracteres. Si ya tiene una cadena, ¿qué más necesita?
+
+Si se encuentra escribiendo cosas extrañas como estas:
+
+    print "$var";           # MAL
+    my $nuevo = "$viejo";   # MAL
+    somefunc("$var");       # MAL
+
+Estará en problemas. Debería (en el 99.8% de los casos) ser más directo y simple:
+
+    print $var;
+    my $new = $old;
+    somefunc($var);
+
+De lo contrario, además de enlentecerlo, romperá código cuando el valor en el escalar no sea ni una cadena ni un número, sino una referencia:
+
+    func(\@array);
+    sub func {
+        my $aref = shift;
+        my $oref = "$aref";  # ERROR
+    }
+
+También puede encontrarse en problemas sutiles en aquellas operaciones en Perl que se fijan en la diferencia entre una cadena y un número, tales como el operador de autoincremento mágico C<++> o la función syscall().
+
+La conversión a cadena de caracteres también destruye a los arrays.
+
+    my @lineas = `comando`;
+    print "@lineas";     # ERROR - blancos extra
+    print @lineas;       # correcto
+
+=head2 ¿Por qué no funciona mi documento embebido E<lt>E<lt>HERE?
+
+Los documentos embebidos se explican en L<perlop>. Compruebe estos tres puntos:
+
+=over 4
+
+=item No debe haber ningún espacio después de la parte E<lt>E<lt>.
+
+=item Debería (probablemente) haber un punto y coma al final del token de apertura
+
+=item No puede (fácilmente) tener ningún espacio delante de la marca.
+
+=item Necesita tener al menos un separador de línea después del token final.
+
+=back
+
+Si quiere sangrar el texto en el documento embebido, puede hacer esto:
+
+    # todo en uno
+    (my $VAR = <<HERE_TARGET) =~ s/^\s+//gm;
+        su texto
+        va aquí
+    HERE_TARGET
+
+Pero HERE_TARGET debe seguir pegado al margen.
+Si quiere sangrarlo también, tendrá que entrecomillar el sangrado.
+
+    (my $quote = <<'    FINIS') =~ s/^\s+//gm;
+            ... tendremos paz, cuando tu trabajo y el de todos
+            perezcan--y el trabajo de su maestro oscuro se
+            nos entregue. Eres un mentiroso, Saruman, y un corruptor
+            de los corazones de los hombres. --Theoden en /usr/src/perl/taint.c
+        FINIS
+    $quote =~ s/\s+--/\n--/;
+
+Sigue una función de propósito general para el sangrado de documentos embebidos. Espera que se le pase como argumento un documento embebido.
+Mira a ver si cada línea comienza con una subcadena común, y si es así, extrae esa subcadena. Si no, toma la misma cantidad de espacio en blanco precedente que el que hay en la primera línea, y lo elimina en cada línea subsecuente.
+
+    sub fix {
+        local $_ = shift;
+        my ($blanco, $lider);  # espacio en blanco común y cadena precedente común
+        if (/^\s*(?:([^\w\s]+)(\s*).*\n)(?:\s*\g1\g2?.*\n)+$/) {
+            ($blanco, $lider) = ($2, quotemeta($1));
+        } else {
+            ($blanco, $lider) = (/^(\s+)/, '');
+        }
+        s/^\s*?$lider(?:$blanco)?//gm;
+        return $_;
+    }
+
+Esto funciona con cadenas especiales precedentes, determinado dinámicamente:
+
+    my $recuerda_lo_principal = fix<<'    MAIN_INTERPRETER_LOOP';
+    @@@ int
+    @@@ runops() {
+    @@@     SAVEI32(runlevel);
+    @@@     runlevel++;
+    @@@     while ( op = (*op->op_ppaddr)() );
+    @@@     TAINT_NOT;
+    @@@     return 0;
+    @@@ }
+    MAIN_INTERPRETER_LOOP
+
+O con un tamaño fijo de espacio en blanco precedente, con el resto del sangrado conservado correctamente:
+
+    my $poema = fix<<EVER_ON_AND_ON;
+       Ahora lejos adelante la carretera acaba,
+      Y tengo que seguir, si puedo,
+       Persiguiéndole con pies ansiosos,
+      Hasta que se unen algunos grandes caminos
+       Donde muchos caminos y erráticos conoce.
+      ¿Y dónde, entonces? No puedo decirlo.
+        --Bilbo en /usr/src/perl/pp_ctl.c
+    EVER_ON_AND_ON
+
+=head1 Datos: Arrays
+
+=head2 ¿Cuál es la diferencia entre una lista y un array?
+
+(contribución de brian d foy)
+
+Una lista es una colección fija de escalares. Un array es una variable que almacena una colección variable de escalares. Un array puede suministrar su colección para operaciones de lista, así que las operaciones de lista también funcionan en arrays:
+
+    # porciones
+    ( 'perro', 'gato', 'pájaro' )[2,3];
+    @animales[2,3];
+
+    # iteración
+    foreach ( qw( perro gato pájaro ) ) { ... }
+    foreach ( @animales ) { ... }
+
+    my @tres = grep { length == 3 } qw( perro gato pájaro );
+    my @tres = grep { length == 3 } @animales;
+
+    # suministrar una lista de argumentos
+    lavar_animales( qw( perro gato pájaro ) );
+    lavar_animales( @animales );
+
+Las operaciones de array, en las que se cambia los escalares, reubicarlos, o añadir o sustraer con otros escalares, solo funciona en arrays. No funcionan en listas, que son fijas. Las operaciones de array incluyen C<shift>, C<unshift>, C<push>, C<pop> y C<splice>.
+
+Un array también puede cambiar su longitud:
+
+    $#animales = 1;  # truncar a dos elementos
+    $#animales = 10000; # preextender a 10 001 elementos
+
+Puede cambiar un elemento del array, pero no puede cambiar un elemento de la lista:
+
+    $animales[0] = 'Rottweiler';
+    qw( perro gato pájaro )[0] = 'Rottweiler'; # ¡error de sintaxis!
+
+    foreach ( @animales ) {
+        s/^p/t/;  # funciona bien
+    }
+
+    foreach ( qw( perro gato pájaro ) ) {
+        s/^d/t/;  # ¡Error! ¡Modificación de un valor de solo lectura!
+    }
+
+Sin embargo, si la lista de elementos es en sí mismo una variable, parece que puede cambiar un elemento de la lista. Sin embargo, el elemento de la lista es la variable, no los datos. No está cambiando el elemento de la lista, sino algo a lo que el elemento de la lista refiere. El propio elemento de la lista no cambia: sigue siendo la misma variable.
+
+También debe tener cuidado con el contexto. Puede asignar un array a un escalar para obtener el número de elementos en el array. Esto solo funciona para arrays:
+
+    my $cuenta = @animales;  # solo funciona con arrays
+
+Si intenta hacer lo mismo con lo que usted cree que es una lista, obtiene un resultado muy diferente. A pesar de que parece que tiene una lista en el lado derecho, Perl, realmente, ve un conjunto de escalares separados por comas:
+
+    my $escalar = ( 'perro', 'gato', 'pájaro' );  # $escalar obtiene pájaro
+
+Ya que está asignando a un escalar, el lado derecho está en un contexto escalar. El operador coma (sí, ¡es un operador!) en contexto escalar evalúa su lado izquierdo, desecha el resultado, y evalúa su lado derecho y devuelve el resultado. En efecto, la asignación de una lista a C<$scalar> es su valor de más a la derecha. Muchas personas se pierden con esto porque elijen algo que se parece a una lista cuyo último elemento es también la cuenta que esperaba:
+
+    my $escalar = ( 1, 2, 3 );  # $escalar obtiene 3, de forma accidental
+
+=head2 ¿Cuál es la diferencia entre $array[1] y @array[1]?
+
+(contribución de brian d foy)
+
+La diferencia es el sigilo, ese carácter especial delante del nombre del array. El sigilo C<$> significa "exactamente un ítem", mientras que sigilo C<@> significa "cero o más ítems". El C<$> le devuelve un único escalar, mientras que C<@> le devuelve una lista.
+
+La confusión surge porque las personas asumen incorrectamente que el sigilo denota el tipo de variable.
+
+C<$array[1]> es el acceso a un único elemento del array. Va a devolver el ítem del índice 1 (o indefinido si no existe ese ítem).
+Si pretende obtener exactamente un elemento del array, es la forma que debería usar.
+
+C<@array[1]> es una porción de array, aunque solo tenga un índice.
+Puede sacar múltiples elementos simultáneamente especificando índices adicionales como una lista, como C<@array[1,4,3,0]>.
+
+Usar una porción en el lado izquierdo de la asignación implica contexto de lista al lado derecho. Esto puede llevar a resultados inesperados.
+Por ejemplo, es correcto si quiere leer una sola línea desde un identificador de archivo, asignando a un valor escalar:
+
+    $array[1] = <STDIN>;
+
+Sin embargo, en contexto de lista, el operador de entrada de líneas devuelve todas las líneas como una lista. La primera línea va a C<@array[1]> y el resto de líneas desaparecen misteriosamente:
+
+    @array[1] = <STDIN>;  # es muy probable que no sea lo que quiere hacer
+
+Tanto el pragma C<use warnings> o el indicador B<-w> le advertirán cuando use una porción de array con un único índice.
+
+=head2 ¿Cómo puedo eliminar elementos duplicados de una lista o array?
+
+(contribución de brian d foy)
+
+Use un hash. Cuando piense en las palabras "único" o "duplicado", piense en "claves hash".
+
+Si no le importa el orden de los elementos, podría simplemente crear el hash y luego extraer las claves. No importa cómo cree ese hash: solo use C<keys> para obtener los elementos únicos.
+
+    my %hash   = map { $_, 1 } @array;
+    # o una porción de hash: @hash{ @array } = ();
+    # o un foreach: $hash{$_} = 1 foreach ( @array );
+
+    my @unicos = keys %hash;
+
+Si quiere usar un módulo, pruebe la función C<uniq> de L<List::MoreUtils>. En contexto de lista devuelve los elementos únicos, preservando su orden en la lista. En contexto escalar, devuelve el número de elementos únicos.
+
+    use List::MoreUtils qw(uniq);
+
+    my @unicos = uniq( 1, 2, 3, 4, 4, 5, 6, 5, 7 ); # 1,2,3,4,5,6,7
+    my $unicos = uniq( 1, 2, 3, 4, 4, 5, 6, 5, 7 ); # 7
+
+También puede pasar por cada elemento y saltar aquellos que ya haya visto. Use un hash para hacer el seguimiento. La primera vez que el bucle ve un elemento, ese elemento no tiene clave en C<%vistos>. La sentencia C<next> crea la clave e inmediatamente usa su valor, que es C<undef>, así que el bucle continúa al C<push> e incrementa el valor para esa clave. La próxima vez que el bucle vea el mismo elemento, su clave existe en el hash I<y> el valor para esa clave es verdadero (ya que no es 0 o C<undef>), así que next salta esa iteración y el bucle va al siguiente elemento.
+
+    my @unicos = ();
+    my %vistos = ();
+
+    foreach my $item ( @array ) {
+        next if $vistos{ $item }++;
+        push @unicos, $item;
+    }
+
+Puede escribir esto de forma más breve usando un grep, que hace lo mismo.
+
+    my %vistos = ();
+    my @unicos = grep { ! $vistos{ $_ }++ } @array;
+
+=head2 ¿Cómo puedo asegurar que un cierto elemento está contenido en una lista o array?
+
+(partes de esta respuesta contribuidas por Anno Siegel y brian d foy)
+
+El escuchar la palabra "en" es una indicación de que, probablemente, debería usar un hash, no una lista o un array, para almacenar sus datos. Los hashes se diseñaron para responder a esa cuestión de forma rápida y eficiente. Los arrays, no.
+
+Dicho esto, existen diversas maneras de plantearse este problema. En Perl 5.10 y superiores, puede usar el operador de coincidencia inteligente para comprobar que un ítem está contenido dentro de un array o un hash:
+
+    use 5.010;
+
+    if( $item ~~ @array ) {
+        say "El array contiene $item"
+    }
+
+    if( $item ~~ %hash ) {
+        say "El hash contiene $item"
+    }
+
+En versiones anteriores de Perl, tiene que hacer un poco más de trabajo. Si va a hacer esta consulta muchas veces sobre valores de cadena arbitrarios, la manera más rápida es, probablemente, invertir el array original y mantener un hash cuyas claves son los valores del array:
+
+    my @azules = ('celeste', 'cerúleo', 'verde azul', 'turquesa', 'lapislázuli');
+    my %es_azul = ();
+    for (@azules) { $es_azul{$_} = 1 }
+
+Ahora puede comprobar si C<$es_azul{$algun_color}>. Podría ser una buena idea, al principio, mantener los azules en un hash.
+
+Si todos los valores son enteros pequeños, podría usar un sencillo array indexado. Esta clase de array consumirá menos espacio:
+
+    my @primos = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31);
+    my @es_primo = ();
+    for (@primos) { $es_primo[$_] = 1 }
+    # o sencillamente @es_primo[@primos] = (1) x @primos;
+
+Ahora puede comprobar si $es_primo[$algun_numero].
+
+Si los valores en cuestión son enteros en lugar de cadenas, puede ahorrar mucho espacio usando en su lugar cadenas de bits:
+
+    my @articulos = ( 1..10, 150..2000, 2017 );
+    undef $leido;
+    for (@articulos) { vec($leido,$_,1) = 1 }
+
+Ahora compruebe si C<vec($leido,$n,1)> es verdadero para algún C<$n>.
+
+Estos métodos garantizan comprobaciones individuales rápidas pero requiere una reorganización de la lista o array original. Merece la pena si tiene que comprobar múltiples valores contra el mismo array.
+
+Si solo lo va a comprobar una vez, el módulo estándar L<List::Util> exporta para este propósito la función C<first>. Se para una vez que encuentre el elemento. Está escrito en C, por velocidad, y su equivalente Perl se parece a esta subrutina:
+
+    sub first (&@) {
+        my $code = shift;
+        foreach (@_) {
+            return $_ if &{$code}();
+        }
+        undef;
+    }
+
+Si la velocidad no importa, el modismo más común es usar grep en contexto escalar (que devuelve el número de elementos que pasan su condición) para recorrer la lista entera. Aunque tiene el beneficio de decirle cuántas coincidencias encuentra.
+
+    my $esta_ahi = grep $_ eq $loquesea, @array;
+
+Si realmente quiere extraer los elementos coincidentes, use simplemente grep en contexto de lista.
+
+    my @coincidencias = grep $_ eq $loquesea, @array;
+
+=head2 ¿Cómo calculo la diferencia entre dos array? ¿Cómo calculo la intersección de dos array?
+
+Use un hash. Aquí está el código para hacer las dos tareas, y aún más. Asume que cada elemento es único en un determinado array:
+
+    my (@union, @interseccion, @diferencia);
+    my %cuenta = ();
+    foreach my $elemento (@array1, @array2) { $cuenta{$elemento}++ }
+    foreach my $elemento (keys %cuenta) {
+        push @union, $elemento;
+        push @{ $cuenta{$elemento} > 1 ? \@interseccion : \@diferencia }, $elemento;
+    }
+
+Note que es la I<diferencia simétrica>, es decir, todos los elementos que estén en A o en B pero no en ambos. Piense en él como en una operación xor.
+
+=head2 ¿Cómo compruebo si dos array o hash son iguales?
+
+Con Perl v5.10 y superiores, el operador de coincidencia puede darle la respuesta con la menor cantidad de esfuerzo:
+
+    use 5.010;
+
+    if( @array1 ~~ @array2 ) {
+        say "Los arrays son iguales";
+    }
+
+    if( %hash1 ~~ %hash2 ) # ¡no comprueba los valores!  {
+        say "Las claves hash son iguales";
+    }
+
+El siguiente código funciona para arrays de un único nivel. Usa la comparación de cadenas, y no distingue entre cadenas vacías definidas o indefinidas. Modifíquelo si tiene otras necesidades.
+
+    $son_iguales = comparar_arrays(\@ranas, \@sapos);
+
+    sub comparar_arrays {
+        my ($primero, $segundo) = @_;
+        no warnings;  # silenciar quejas espúreas sobre valores indefinidos
+        return 0 unless @$primero == @$segundo;
+        for (my $i = 0; $i < @$primero; $i++) {
+            return 0 if $primero->[$i] ne $segundo->[$i];
+        }
+        return 1;
+    }
+
+Para estructuras de múltiples niveles, puede desear usar una aproximación como esta. Usa el módulo de CPAN L<FreezeThaw>:
+
+    use FreezeThaw qw(cmpStr);
+    my @a = my @b = ( "este", "ese", [ "más", "cosas" ] );
+
+    printf "a y b contienen %s arrays\n",
+        cmpStr(\@a, \@b) == 0
+        ? "iguales"
+        : "diferentes";
+
+Esta aproximación también funciona al comparar hashes. Aquí demostraremos dos respuestas diferentes:
+
+    use FreezeThaw qw(cmpStr cmpStrHard);
+
+    my %a = my %b = ( "este" => "ese", "extra" => [ "más", "cosas" ] );
+    $a{EXTRA} = \%b;
+    $b{EXTRA} = \%a;
+
+    printf "a y b contienen %s hashes\n",
+    cmpStr(\%a, \%b) == 0 ? "iguales" : "diferentes";
+
+    printf "a y b contienen %s hashes\n",
+    cmpStrHard(\%a, \%b) == 0 ? "iguales" : "diferentes";
+
+
+El primero informa que estos dos hashes contienen los mismos datos, mientras que el segundo informa que no. El preferir uno u otro se deja como ejercicio para el lector.
+
+=head2 ¿Cómo encuentro el primer elemento de un array por el que se cumpla una condición como verdadera?
+
+Para encontrar el primer elemento de un array que satisface una condición, puede usar la función C<first()> en el módulo L<List::Util>, que viene con Perl 5.8. Este ejemplo encuentra el primer elemento que contiene "Perl".
+
+    use List::Util qw(first);
+
+    my $elemento = first { /Perl/ } @array;
+
+Si no puede usar L<List::Util>, puede realizar su propio bucle para hacer lo mismo. Una vez que encuentre el elemento, pare el bucle con last.
+
+    my $encontrado;
+    foreach ( @array ) {
+        if( /Perl/ ) { $encontrado = $_; last }
+    }
+
+Si quiere el índice del array, use la función C<firstidx()> de C<List::MoreUtils>:
+
+    use List::MoreUtils qw(firstidx);
+    my $indice = firstidx { /Perl/ } @array;
+
+O escríbalo usted mismo, iterando por los índices y comprobando el elemento del array en cada índice hasta que encuentre uno que satisfaga la condición:
+
+    my( $encontrado, $indice) = ( undef, -1 );
+    for( $i = 0; $i < @array; $i++ ) {
+        if( $array[$i] =~ /Perl/ ) {
+            $encontrado = $array[$i];
+            $indice = $i;
+            last;
+        }
+    }
+
+=head2 ¿Cómo gestiono listas enlazadas?
+
+(contribución de brian d foy)
+
+Los arrays de Perl no tienen un tamaño fijo, así que no necesita listas enlazadas si solo quiere añadir o eliminar elementos. Para esto puede usar operaciones de array tales como C<push>, C<pop>, C<shift>, C<unshift>, o C<splice>.
+
+A veces, sin embargo, las listas enlazadas pueden ser útiles en situaciones donde quiere "fragmentar" un array, por lo que tendrá muchos arrays pequeños en lugar de un único gran array. Puede mantener arrays más largos que el índice de array más largo permitido en Perl, bloquear arrays más pequeños en programas multihilo, reposicionar menos memoria, o insertar rápidamente elementos en mitad de la cadena.
+
+Steve Lembark pasa por estos detalles en su charla YAPC::NA 2009 "Perly
+Linked Lists" ( L<http://www.slideshare.net/lembark/perly-linked-lists> ), aunque también puede, simplemente, usar su módulo L<LinkedList::Single>.
+
+=head2 ¿Cómo gestiono listas circulares?
+X<circular> X<array> X<Tie::Cycle> X<Array::Iterator::Circular>
+X<cycle> X<modulus>
+
+(contribución de brian d foy)
+
+Si quiere circular sin fin a través de un array, puede incrementar el índice módulo el número de elementos del array:
+
+    my @array = qw( a b c );
+    my $i = 0;
+
+    while( 1 ) {
+        print $array[ $i++ % @array ], "\n";
+        last if $i > 20;
+    }
+
+También puede utilizar L<Tie::Cycle> para usar un escalar que siempre tiene el siguiente elemento del array circular:
+
+    use Tie::Cycle;
+
+    tie my $cycle, 'Tie::Cycle', [ qw( FFFFFF 000000 FFFF00 ) ];
+
+    print $cycle; # FFFFFF
+    print $cycle; # 000000
+    print $cycle; # FFFF00
+
+L<Array::Iterator::Circular> crea un objeto iterador para arrays circulares:
+
+    use Array::Iterator::Circular;
+
+    my $color_iterador = Array::Iterator::Circular->new(
+        qw(rojo verde azul naranja)
+        );
+
+    foreach ( 1 .. 20 ) {
+        print $color_iterador->next, "\n";
+    }
+
+=head2 ¿Cómo barajeo un array aleatoriamente?
+
+Tanto si tiene instalado Perl 5.8.0 o superiores, o si tiene instalado Scalar-List-Utils 1.03 o superior, puede escribir:
+
+    use List::Util 'shuffle';
+
+    @mezclado = shuffle(@lista);
+
+Si no, puede usar una mezcla Fisher-Yates.
+
+    sub mezcla_fisher_yates {
+        my $baraja = shift;  # $baraja es una referencia a un array
+        return unless @$baraja; # ¡no debe estar vacío!
+
+        my $i = @$baraja;
+        while (--$i) {
+            my $j = int rand ($i+1);
+            @$baraja[$i,$j] = @$baraja[$j,$i];
+        }
+    }
+
+    # mezclar mi colección de mpeg
+    #
+    my @mpeg = <audio/*/*.mp3>;
+    mezcla_fisher_yates( \@mpeg );    # mezcla el propio @mpeg
+    print @mpeg;
+
+Note que la anterior implementación mezcla el propio array, a diferencia de C<List::Util::shuffle()> que toma una lista y devuelve una nueva lista mezclada.
+
+Probablemente haya visto algoritmos de mezclado que usan splice, eligiendo aleatoriamente otro elemento para intercambiarlo con el actual
+
+    srand;
+    @nuevo = ();
+    @viejo = 1 .. 10;  # solo una demo
+    while (@viejo) {
+        push(@nuevo, splice(@viejo, rand @viejo, 1));
+    }
+
+Esto es malo porque splice ya es O(N), y ya que lo hace N veces, acaba de inventar un algoritmo cuadrático; es decir, O(N**2).
+Esto no escala, aunque Perl sea tan eficiente que probablemente no lo notará hasta que tenga arrays bastante más grandes.
+
+=head2 ¿Cómo proceso/modifico cada elemento de un array?
+
+Use C<for>/C<foreach>:
+
+    for (@lineas) {
+        s/foo/bar/;    # cambiar esa palabra
+        tr/XZ/ZX/;    # intercambiar esas letras
+    }
+
+Aquí hay otro; calculemos volúmenes esféricos:
+
+    my @volumenes = @radios;
+    for (@volumenes) {   # @volumenes cambiará
+        $_ **= 3;
+        $_ *= (4/3) * 3.14159;  # esta expresión se reducirá a una constante
+    }
+
+que también se puede hacer con C<map()> que se creó para transformar una lista en otra:
+
+    my @volumenes = map {$_ ** 3 * (4/3) * 3.14159} @radios;
+
+Si quiere hacer lo mismo para modificar los valores del hash, puede usar la función C<values>. A partir de Perl 5.6 los valores no se copian, así que si modifica $orbita (en este caso), modifica el valor.
+
+    for my $orbita ( values %orbitas ) {
+        ($orbita **= 3) *= (4/3) * 3.14159;
+    }
+
+Antes de perl 5.6 C<values> devolvía copias de los valores, así que el código perl viejo contiene construcciones tales como C<@orbitas{keys %orbitas}> en lugar de C<values %orbitas> para modificar el hash.
+
+=head2 ¿Cómo selecciono un elemento aleatorio de un array?
+
+Use la función C<rand()> (vea L<perlfunc/rand>):
+
+    my $indice   = rand @array;
+    my $elemento = $array[$indice];
+
+O, simplemente:
+
+    my $elemento = $array[ rand @array ];
+
+=head2 ¿Cómo permuto N elementos de una lista?
+X<List::Permutor> X<permute> X<Algorithm::Loops> X<Knuth> X<The Art of Computer Programming> X<Fischer-Krause>
+
+Use el módulo L<List::Permutor> en CPAN. Si la lista es realmente un array, pruebe el módulo L<Algorithm::Permute> (también en CPAN). Está escrito en código XS code y es muy eficiente:
+
+    use Algorithm::Permute;
+
+    my @array = 'a'..'d';
+    my $p_iterador = Algorithm::Permute->new ( \@array );
+
+    while (my @perm = $p_iterador->next) {
+       print "siguiente permutación: (@perm)\n";
+    }
+
+Para una ejecución incluso más rápida, podría hacer:
+
+    use Algorithm::Permute;
+
+    my @array = 'a'..'d';
+
+    Algorithm::Permute::permute {
+        print "siguiente permutación: (@array)\n";
+    } @array;
+
+Aquí tenemos un pequeño programa que genera todas las permutaciones de todas las palabras en cada línea de entrada. El algoritmo encarnado en la función C<permute()> se discute en el Volumen 4 del (todavía no publicado) I<The Art of Computer Programming> de Knuth y funcionará en cualquier lista:
+
+    #!/usr/bin/perl -n
+    # generador de permutaciones ordenadas Fischer-Krause
+
+    sub permute (&@) {
+        my $code = shift;
+        my @idx = 0..$#_;
+        while ( $code->(@_[@idx]) ) {
+            my $p = $#idx;
+            --$p while $idx[$p-1] > $idx[$p];
+            my $q = $p or return;
+            push @idx, reverse splice @idx, $p;
+            ++$q while $idx[$p-1] > $idx[$q];
+            @idx[$p-1,$q]=@idx[$q,$p-1];
+        }
+    }
+
+    permute { print "@_\n" } split;
+
+El módulo L<Algorithm::Loops> también proporciona las funciones C<NextPermute> y C<NextPermuteNum> que encuentran eficazmente todas las permutaciones únicas de un array, incluso si contiene valores duplicados, modificando el propio array: si sus elementos están en orden inverso entonces se invierte el array, dejándolo ordenado, y devuelve falso; sino, se devuelve la siguiente permutación.
+
+C<NextPermute> use el orden de cadenas de caracteres, y C<NextPermuteNum> el orden numérico, así que puede enumerar todas las permutaciones de C<0..9> de esta manera:
+
+    use Algorithm::Loops qw(NextPermuteNum);
+
+    my @lista= 0..9;
+    do { print "@lista\n" } while NextPermuteNum @lista;
+
+=head2 ¿Cómo ordeno un array por (lo que sea)?
+
+Suministre una función de comparación a sort() (descrito en L<perlfunc/sort>):
+
+    @lista = sort { $a <=> $b } @lista;
+
+La función de ordenación por defecto es cmp, comparación de cadenas, que ordenaría C<(1, 2, 10)> en C<(1, 10, 2)>. C<< <=> >>, usado antes, es el operador de comparación numérica.
+
+Si necesita usar una complicada función para extraer la parte ordenada, no lo haga dentro de la función sort. Extráigalo primero, porque el BLOQUE sort puede llamarse muchas veces para el mismo elemento. Aquí hay un ejemplo de cómo extraer la primera palabra después del primer número en cada elemento, y luego ordenar (sin tener en cuenta el tamaño de caja) esas palabras.
+
+    my @idx;
+    for (@data) {
+        my $item;
+        ($item) = /\d+\s*(\S+)/;
+        push @idx, uc($item);
+    }
+    my @ordenado = @data[ sort { $idx[$a] cmp $idx[$b] } 0 .. $#idx ];
+
+que también se podría escribir de esta manera, usando el truco que se ha venido a conocer como la Transformación Schwartziana:
+
+    my @ordenado = map  { $_->[0] }
+        sort { $a->[1] cmp $b->[1] }
+        map  { [ $_, uc( (/\d+\s*(\S+)/)[0]) ] } @data;
+
+Si necesita ordenar por varios campos, es útil el siguiente paradigma.
+
+    my @ordenado = sort {
+        campo1($a) <=> campo1($b) ||
+        campo2($a) cmp campo2($b) ||
+        campo3($a) cmp campo3($b)
+    } @data;
+
+Esto puede combinarse oportunamente con el precálculo de las claves, como se mostró antes.
+
+Vea el artículo sobre F<sort> en la colección "I<Far More Than You Ever Wanted To Know>" en L<http://www.cpan.org/misc/olddoc/FMTEYEWTK.tgz> para saber más sobre esta solución.
+
+Vea también la cuestión siguiente en L<perlfaq4> sobre ordenar hashes.
+
+=head2 ¿Cómo manipulo array de bits?
+
+Use C<pack()>, C<unpack()> o C<vec()> y las operaciones de bit.
+
+Por ejemplo, no tiene que almacenar bits individuales en un array (que significaría que está malgastando un montón de espacio). Para convertir un array de bits a una cadena, use C<vec()> para establecer los bits correctos. Aquí se establece que C<$vec> tenga un conjunto de N bits solo si se estableció C<$ints[N]>:
+
+    my @ints = (...); # array de bits, por ejemplo ( 1, 0, 0, 1, 1, 0 ... )
+    my $vec = '';
+    foreach( 0 .. $#ints ) {
+        vec($vec,$_,1) = 1 if $ints[$_];
+    }
+
+La cadena C<$vec> solo toma tantos bits como necesite. Por ejemplo, si tiene 16 entradas en C<@ints>, C<$vec> solo necesita dos bytes para almacenarlos (sin contar lo que ocupa la propia variable escalar).
+
+Aquí vemos como, dado un vector en C<$vec>, se puede recuperar estos bits en su array C<@ints>:
+
+    sub bitvec_a_lista {
+        my $vec = shift;
+        my @ints;
+        # Encontrar la acumulación de bytes vacíos y seleccionar el mejor algoritmo
+        if ($vec =~ tr/\0// / length $vec > 0.95) {
+            use integer;
+            my $i;
+
+            # Este método es más rápido que cuando hay bytes vacíos
+            while($vec =~ /[^\0]/g ) {
+                $i = -9 + 8 * pos $vec;
+                push @ints, $i if vec($vec, ++$i, 1);
+                push @ints, $i if vec($vec, ++$i, 1);
+                push @ints, $i if vec($vec, ++$i, 1);
+                push @ints, $i if vec($vec, ++$i, 1);
+                push @ints, $i if vec($vec, ++$i, 1);
+                push @ints, $i if vec($vec, ++$i, 1);
+                push @ints, $i if vec($vec, ++$i, 1);
+                push @ints, $i if vec($vec, ++$i, 1);
+            }
+        }
+        else {
+            # Este método es un algoritmo general rápido
+            use integer;
+            my $bits = unpack "b*", $vec;
+            push @ints, 0 if $bits =~ s/^(\d)// && $1;
+            push @ints, pos $bits while($bits =~ /1/g);
+        }
+
+        return \@ints;
+    }
+
+Este método es más rápido cuanto más disperso sea el vector de bits.
+(Cortesía de Tim Bunce y Winfried Koenig).
+
+Puede hacer el bucle while mucho más corto con esta sugerencia de Benjamin Goldberg:
+
+    while($vec =~ /[^\0]+/g ) {
+        push @ints, grep vec($vec, $_, 1), $-[0] * 8 .. $+[0] * 8;
+    }
+
+O use el módulo CPAN L<Bit::Vector>:
+
+    my $vector = Bit::Vector->new($num_of_bits);
+    $vector->Index_List_Store(@ints);
+    my @ints = $vector->Index_List_Read();
+
+L<Bit::Vector> proporciona métodos eficientes para los vectores de bits, conjuntos de pequeños enteros y matemática de "grandes enteros".
+
+Aquí se ilustra más el uso de vec():
+
+    # vec demo
+    my $vector = "\xff\x0f\xef\xfe";
+    print "La cadena de Ilya \\xff\\x0f\\xef\\xfe representa el número ",
+    unpack("N", $vector), "\n";
+    my $is_set = vec($vector, 23, 1);
+    print "El bit 23 está ", $is_set ? "puesto" : "vacío", ".\n";
+    pvec($vector);
+
+    set_vec(1,1,1);
+    set_vec(3,1,1);
+    set_vec(23,1,1);
+
+    set_vec(3,1,3);
+    set_vec(3,2,3);
+    set_vec(3,4,3);
+    set_vec(3,4,7);
+    set_vec(3,8,3);
+    set_vec(3,8,7);
+
+    set_vec(0,32,17);
+    set_vec(1,32,17);
+
+    sub set_vec {
+        my ($offset, $width, $value) = @_;
+        my $vector = '';
+        vec($vector, $offset, $width) = $value;
+        print "offset=$offset width=$width value=$value\n";
+        pvec($vector);
+    }
+
+    sub pvec {
+        my $vector = shift;
+        my $bits = unpack("b*", $vector);
+        my $i = 0;
+        my $BASE = 8;
+
+        print "longitud del vector en bytes: ", length($vector), "\n";
+        @bytes = unpack("A8" x length($vector), $bits);
+        print "Los bits son: @bytes\n\n";
+    }
+
+=head2 ¿Por qué defined() devuelve verdadero en array y hash vacíos?
+
+El resumen es que debería, probablemente, usar solo defined en escalares o funciones, no en agregados (arrays y hashes). Vea L<perlfunc/defined> en la distribución 5.004 o superior de Perl para más detalles.
+
+=head1 Datos: Hashes (Arrays asociativos)
+
+=head2 ¿Cómo proceso un hash entero?
+
+(contribución de brian d foy)
+
+Hay un par de maneras para procesar un hash entero. Puede obtener una lista de claves, entonces tratar cada clave, u obtener una pareja clave-valor cada vez.
+
+Para pasar por todas las claves, use la función C<keys>. Esto extrae todas las claves del hash y se las devuelve en una lista. Puede obtener el valor a partir de cada clave que está procesando:
+
+    foreach my $clave ( keys %hash ) {
+        my $valor = $hash{$clave}
+        ...
+    }
+
+Una vez que tiene la lista de claves, puede procesar esa lista antes de procesar los elementos hash. Por ejemplo, puede ordenar las claves para que pueda procesarlas en orden léxico:
+
+    foreach my $clave ( sort keys %hash ) {
+        my $valor = $hash{$clave}
+        ...
+    }
+
+O, podría querer procesar solo algunas de ellas. Si solo quiere tratar con claves que empiecen con C<texto:>, puede seleccionarlas usando C<grep>:
+
+    foreach my $clave ( grep /^texto:/, keys %hash ) {
+        my $valor = $hash{$clave}
+        ...
+    }
+
+Si el hash es muy grande, podría no querer crear una larga lista de claves. Para ahorrar memoria, puede obtener un par clave-valor al mismo tiempo usando C<each()>, que devuelve un par que todavía no haya visto:
+
+    while( my( $clave, $valor ) = each( %hash ) ) {
+        ...
+    }
+
+El operador C<each> devuelve los pares en un orden aparentemente aleatorio, así que si el orden le es importante, tendrá que seguir con el método de C<keys>.
+
+El operador C<each()> puede ser un poco delicado. No puede añadir o borrar claves del hash mientras las está usando sin, posiblemente, saltar o reprocesar algunos pares después de que Perl, internamente, recomponga la posición de todos los elementos. Adicionalmente, un hash solo tiene un iterador, así que si mezcla C<keys>, C<values> o C<each> sobre el mismo hash, se arriesga el reiniciar el iterador y mezclar su procesamiento. Vea la entrada C<each> en L<perlfunc> para más detalles.
+
+=head2 ¿Cómo mezclo dos hash?
+X<hash> X<merge> X<slice, hash>
+
+(contribución de brian d foy)
+
+Antes de decidir el mezclar dos hashes, debe decidir qué hacer si ambos hashes contiene claves coincidentes y si quiere dejar sin modificar a los hashes originales.
+
+Si quiere preservar los hashes originales, copie un hash (C<%hash1>) a un nuevo hash (C<%new_hash>), luego añada las claves del otro hash (C<%hash2> al nuevo. Al comprobar que la clave ya existe en C<%new_hash> le da la oportunidad para decidir qué hacer con las duplicadas:
+
+    my %new_hash = %hash1; # hacer una copia; dejar %hash1 aparte
+
+    foreach my $key2 ( keys %hash2 ) {
+        if( exists $new_hash{$key2} ) {
+            warn "¡Clave [$key2] está en ambos hashes!";
+            # manejar la duplicada (quizás solo una advertencia)
+            ...
+            next;
+        }
+        else {
+            $new_hash{$key2} = $hash2{$key2};
+        }
+    }
+
+Si no quiere crear un nuevo hash, puede seguir usando esta técnica del bucle; solo cambie el C<%new_hash> por C<%hash1>.
+
+    foreach my $key2 ( keys %hash2 ) {
+        if( exists $hash1{$key2} ) {
+            warn "¡Clave [$key2] está en ambos hashes!";
+            # manejar la duplicada (quizás solo una advertencia)
+            ...
+            next;
+        }
+        else {
+            $hash1{$key2} = $hash2{$key2};
+        }
+      }
+
+Si no le preocupa que un hash sobreescriba las claves y valores del otro, podría simplemente, usar el sistema de porciones de hash para añadir un hash a otro. En este caso, los valores de C<%hash2> reemplaza a los valores de C<%hash1> cuando tengan claves comunes:
+
+    @hash1{ keys %hash2 } = values %hash2;
+
+=head2 ¿Qué sucede si añado o quito claves de un hash mientras itero sobre él?
+
+(contribución de brian d foy)
+
+La respuesta sencilla es "¡No lo haga!"
+
+Si itera a través del hash con each(), puede borrar la clave más reciente que haya recuperado sin más preocupación. Si borra o añade otras claves, el iterador puede saltarlas o doblarlas ya que perl
+puede reacondicionar la tabla hash. Consulte la entrada sobre C<each()> en L<perlfunc>.
+
+=head2 ¿Cómo encuentro un elemento hash por su valor?
+
+Cree un hash invertido:
+
+    my %por_valor = reverse %por_clave;
+    my $clave = $por_valor{$valor};
+
+Esto no es particularmente eficiente. Podría ser más eficiente con el uso del espacio:
+
+    while (my ($clave, $valor) = each %por_clave) {
+        $por_valor{$valor} = $clave;
+    }
+
+Si su hash pudiera tener valores repetidos, los métodos anteriores solo encontrarán a una de sus claves asociadas.  Esto puede preocuparle o no. Si le preocupa, siempre puede invertir el hash en un hash de arrays:
+
+    while (my ($clave, $valor) = each %por_clave) {
+         push @{$lista_claves_por_valor{$valor}}, $clave;
+    }
+
+=head2 ¿Cómo puedo saber cuántas entradas hay en un hash?
+
+(contribución de brian d foy)
+
+Es muy similar a "¿Cómo proceso un hash entero?", también en L<perlfaq4>, pero un poco más simple en los cosas más comunes.
+
+Puede usar la función incorporada C<keys()> en contexto escalar para encontrar cuántas entradas tiene en un hash:
+
+    my $cuenta_claves = keys %hash; # ¡debe estar en contexto escalar!
+
+Si quiere saber cuántas entradas tienen un valor definido, es un poco diferente. Tiene que comprobar cada valor. Un C<grep> viene a mano:
+
+    my $contador_valores_definidos = grep { defined } values %hash;
+
+Puede usar la misma estructura para contar las entradas de la manera que quiera. Si quiere contar las claves que contenga vocales, compruébelo:
+
+    my $contador_vocales = grep { /[aeiou]/ } keys %hash;
+
+El C<grep> en contexto escalar devuelve la cuenta. Si quiere la lista de elementos coincidentes, úselo en contexto de lista:
+
+    my @valores_definidos = grep { defined } values %hash;
+
+La función C<keys()> también reinicia el iterador, que significa que quizás vea resultados extraños si la usa entre usos de otros operadores hash, tales como C<each()>.
+
+=head2 ¿Cómo ordeno un hash (opcionalmente por valor en lugar de por clave)?
+
+(contribución de brian d foy)
+
+Para ordenar un hash, empiece con las claves. En este ejemplo, entregamos la lista de claves a la función sort que entonces las compara por el orden ASCII (que podría quedar afectado por su configuración de localización). La lista de salida tiene las claves ordenadas según el indicado por ASCII. Una vez que tenemos las claves, podemos pasar por ellas para crear un informe que liste las claves en orden ASCII.
+
+    my @claves = sort { $a cmp $b } keys %hash;
+
+    foreach my $clave ( @claves ) {
+        printf "%-20s %6d\n", $clave, $hash{$clave};
+    }
+
+Aun así podríamos ser más elegantes con el bloque C<sort()>. En lugar de comparar las claves, podemos calcular un valor a partir de ellas, y usarlo como valor de comparación.
+
+Por ejemplo, para hacer nuestro informe ordenado sin tener en cuenta el tamaño de caja, usamos C<lc> para pasar a minúsculas las claves antes de compararlas:
+
+    my @claves = sort { lc $a cmp lc $b } keys %hash;
+
+Nota: si el cálculo es costoso o el hash tiene muchos elementos, quizás quiera mirar la Transformada de Schwartz para cachear los resultados del cálculo.
+
+Si queremos ordenar, en su lugar, por el valor del hash, usamos la clave hash para extraerlo. Seguimos obteniendo una lista de claves, pero esta vez están ordenadas por su valor.
+
+    my @claves = sort { $hash{$a} <=> $hash{$b} } keys %hash;
+
+A partir de aquí podemos hacerlo más complejo. Si los valores hash son iguales, podemos proporcionar un segundo sort sobre la clave hash.
+
+    my @claves = sort {
+        $hash{$a} <=> $hash{$b}
+            or
+        "\L$a" cmp "\L$b"
+    } keys %hash;
+
+=head2 ¿Cómo puedo mantener siempre ordenado mi hash?
+X<hash tie sort DB_File Tie::IxHash>
+
+Puede mirar en el módulo C<DB_File> y C<tie()> usando el enlazado del hash C<$DB_BTREE> como se documenta en L<DB_File/"In Memory
+Databases">. El módulo L<Tie::IxHash> de CPAN también podría ser instructivo. A pesar de que esto mantiene su hash ordenador, podría no gustarle el enlentecimiento que se sufre por el interfaz tie. ¿Está seguro de que lo necesita? :)
+
+=head2 ¿Cuál es la diferencia entre "delete" y "undef" con los hash?
+
+Los hashes contiene pares de escalares: los primeros son las claves; los segundos son los valores. La clave se convertirá a una cadena, mientras que el valor puede ser de cualquier clase de escalar: cadena, número o referencia. Si una clave C<$clave> está presente en C<%hash>, C<exists($hash{$clave})> devolverá verdadero. El valor para una clave dada puede ser C<undef>, en cuyo caso C<$hash{$clave}> será C<undef> mientras que C<exists $hash{$clave}> devolverá verdadero. Esto corresponde a tener (C<$clave>, C<undef>) en el hash.
+
+Las imágenes ayudan... Aquí está la tabla C<%hash>:
+
+      claves  valores
+    +------+------+
+    |  a   |  3   |
+    |  x   |  7   |
+    |  d   |  0   |
+    |  e   |  2   |
+    +------+------+
+
+Y estas son las condiciones que obtenemos
+
+    $hash{'a'}                       es verdadero
+    $hash{'d'}                       es falso
+    defined $hash{'d'}               es verdadero
+    defined $hash{'a'}               es verdadero
+    exists $hash{'a'}                es verdadero (solo en Perl 5)
+    grep ($_ eq 'a', keys %hash)     es verdadero
+
+Si ahora dice
+
+    undef $hash{'a'}
+
+su tabla aparece así:
+
+
+      claves  valores
+    +------+------+
+    |  a   | undef|
+    |  x   |  7   |
+    |  d   |  0   |
+    |  e   |  2   |
+    +------+------+
+
+y estás son las condiciones que se cumplen; los cambios en mayúsculas:
+
+    $hash{'a'}                       es FALSO
+    $hash{'d'}                       es falso
+    defined $hash{'d'}               es verdadero
+    defined $hash{'a'}               es FALSO
+    exists $hash{'a'}                es verdadero (solo en Perl 5)
+    grep ($_ eq 'a', keys %hash)     es verdadero
+
+Fíjese en las dos últimas: tiene un valor indefinido, ¡pero con una clave definida!
+
+Ahora, considere esto:
+
+    delete $hash{'a'}
+
+su tabla aparece así:
+
+      claves  valores
+    +------+------+
+    |  x   |  7   |
+    |  d   |  0   |
+    |  e   |  2   |
+    +------+------+
+
+y estás son las condiciones que se cumplen; los cambios en mayúsculas:
+
+    $hash{'a'}                       es falso
+    $hash{'d'}                       es falso
+    defined $hash{'d'}               es verdadero
+    defined $hash{'a'}               es falso
+    exists $hash{'a'}                es FALSO (solo en Perl 5)
+    grep ($_ eq 'a', keys %hash)     es FALSO
+
+Vea: ¡ha desaparecido toda la entrada!
+
+=head2 ¿Por qué mis hashes enlazados no hacen la distinción entre defined y exists?
+
+Esto depende de la implementación de EXISTS() de los hash enlazados.
+Por ejemplo, no existe el concepto de undef con hashes que están enlazados con archivos DBM*. También significa que exists() y defined() hacen lo mismo con un archivo DBM*, y lo que terminan haciendo no es lo que hacen con los hashes normales.
+
+=head2 ¿Cómo reinicio una operación de procesamiento de hash each()?
+
+(contribución de brian d foy)
+
+Puede usar las funciones C<keys> o C<values> para reiniciar C<each>. Para, simplemente, reiniciar el iterador utilizado por C<each> sin hacer nada más, úselos en contexto vacío:
+
+    keys %hash;   # reinicia iterador, nada más.
+    values %hash; # reinicia iterador, nada más.
+
+Consulte la documentación sobre C<each()> en L<perlfunc>.
+
+=head2 ¿Cómo puedo obtener las claves únicas de dos hashes?
+
+Primero extraiga las claves de los hashes en listas, y luego solucionar el problema "eliminar duplicados" descrito antes. Por ejemplo:
+
+    my %vistos = ();
+    for my $elemento (keys(%foo), keys(%bar)) {
+        $vistos{$elemento}++;
+    }
+    my @unicos = keys %vistos;
+
+O más sucintamente:
+
+    my @unicos = keys %{{%foo,%bar}};
+
+O si realmente quiere ahorrar espacio:
+
+    my %vistos = ();
+    while (defined ($clave = each %foo)) {
+        $vistos{$clave}++;
+    }
+    while (defined ($clave = each %bar)) {
+        $vistos{$clave}++;
+    }
+    my @unicos = keys %vistos;
+
+=head2 ¿Cómo puedo almacenar un array multidimensional en un archivo DBM?
+
+Puede convertir en cadena de caracteres la propia estructura (no divertido), u obtener el módulo MLDBM desde CPAN y usarlo como capa por encima de un DB_File o un GDBM_File. También podría probar DBM::Deep, pero puede ser un poco lento.
+
+=head2 ¿Cómo puedo hacer para que mi hash recuerde el orden de los elementos que pongo en él?
+
+Use L<Tie::IxHash> de CPAN.
+
+    use Tie::IxHash;
+
+    tie my %mihash, 'Tie::IxHash';
+
+    for (my $i=0; $i<20; $i++) {
+        $mihash{$i} = 2*$i;
+    }
+
+    my @claves = keys %mihash;
+    # @claves = (0,1,2,3,...)
+
+=head2 ¿Por qué al pasarle a una subrutina un elemento indefinido de un hash, lo crea?
+
+(contribución de brian d foy)
+
+¿Está usando una versión muy vieja de Perl?
+
+Lo normal es que al acceder al valor de una clave hash para una clave que no existe, I<no> se cree la clave.
+
+    my %hash  = ();
+    my $valor = $hash{ 'foo' };
+    print "Esto no debería imprimirse\n" if exists $hash{ 'foo' };
+
+Aunque el pasar C<$hash{ 'foo' }> a una subrutina se considera que es un caso especial.
+Ya que podría asignar directamente a C<$_[0]>, Perl tiene que prepararse para esa asignación, así que crea por adelantado la clave hash:
+
+    my_sub( $hash{ 'foo' } );
+    print "Esto se imprimirá antes de 5.004\n" if exists $hash{ 'foo' };
+
+    sub mi_sub {
+        # $_[0] = 'bar'; # crea la clave hash en caso de que haga esto
+        1;
+    }
+
+Desde Perl 5.004, sin embargo, esta situación es un caso especial y Perl crea la clave hash solo cuando se hace la asignación:
+
+    my_sub( $hash{ 'foo' } );
+    print "Esto se imprimirá incluso después de 5.004\n" if exists $hash{ 'foo' };
+
+    sub mi_sub {
+        $_[0] = 'bar';
+    }
+
+Aun así, si quiere el comportamiento anterior (y piénselo cuidadosamente ya que es un extraño efecto colateral), puede, en su lugar, pasar una parte del hash.
+Perl 5.004 no lo toma como caso especial:
+
+    my_sub( @hash{ qw/foo/ } );
+
+=head2 ¿Cómo puedo hacer el equivalente Perl de una estructura C/clase C++/hash o array de hashes o arrays?
+
+Normalmente con una referencia hash, quizás algo como esto:
+
+    $record = {
+        NAME   => "Jason",
+        EMPNO  => 132,
+        TITLE  => "deputy peon",
+        AGE    => 23,
+        SALARY => 37_000,
+        PALS   => [ "Norbert", "Rhys", "Phineas"],
+    };
+
+Las referencias se documentan en L<perlref> y L<perlreftut>.
+Ejemplos de estructuras de datos complejos se dan en L<perldsc> y L<perllol>. Ejemplos de estructuras y clases orientadas a objetos están en L<perlootut>.
+
+=head2 ¿Cómo puedo usar una referencia como clave hash?
+
+(contribución de brian d foy y Ben Morrow)
+
+Las claves hash son cadenas, así que realmente no está usando una referencia como clave.
+Cuando intenta hacerlo, perl convierte la referencia es su versión de cadena de caracteres (por ejemplo, C<HASH(0xDEADBEEF)>). Por eso no puede obtener la referencia desde la versión texto, al menos sin hacer un trabajo extra por su parte.
+
+Recuerde que la entrada en el hash seguirá estando incluso si la variable referenciada sale fuera de ámbito, y que es completamente posible para perl reservar espacio para una variable diferente en la misma dirección. Esto significará que una nueva variable podría, accidentalmente asociarse con el valor de una anterior.
+
+Si tiene Perl 5.10 o superior, y solo quiere almacenar un valor a cambio de una referencia para recuperarlo más tarde, puede usar el módulo principal Hash::Util::Fieldhash. Esto también manejará el renombrado de claves si usa múltiples hilos (que provoca que todas las variables se almacenen en nuevas direcciones, cambiando su conversión a texto), y recolección de basura de las entradas cuando la variable referenciada sale fuera del ámbito.
+
+Si de hecho necesita obtener una referencia real de cada entrada hash, puede usar el módulo Tie::RefHash, que hace el trabajo requerido por usted.
+
+=head2 ¿Cómo puedo comprobar si una clave existe en un hash multinivel?
+
+(contribución de brian d foy)
+
+El truco para este problema es evitar la autovivificación accidental. Si quiere comprobar una profundidad de tres claves, podría intentar hacer esto sin pensarlo demasiado:
+
+    my %hash;
+    if( exists $hash{clave1}{clave2}{clave3} ) {
+        ...;
+    }
+
+Incluso aunque empiece con un hash completamente vacío, después de esa llamada a C<exists> ha creado la estructura que necesita para comprobar C<key3>:
+
+    %hash = (
+              'clave1' => {
+                          'clave2' => {}
+                        }
+            );
+
+Esto es autovivificación. Puede solventarlo de varias formas. La más sencilla es desactivarla. El pragma C<autovivification> está disponible en CPAN. Ahora ya no puede crecer el hash:
+
+    {
+        no autovivification;
+        my %hash;
+        if( exists $hash{clave1}{clave2}{clave3} ) {
+            ...;
+        }
+    }
+
+El módulo L<Data::Diver> en CPAN también puede hacerlo. Su subrutina C<Dive> puede decirle no solo si las claves existen sino que también obtiene los valores:
+
+    use Data::Diver qw(Dive);
+
+    my @existen = Dive( \%hash, qw(clave1 clave2 clave3) );
+    if(  ! @existen  ) {
+        ...; # claves no existen
+    }
+    elsif(  ! defined $existen[0]  ) {
+        ...; # las claves existen pero el valor es undef
+    }
+
+Puede hacer esto de forma sencilla también comprobando cada nivel del hash antes de mirar el próximo nivel. Es, esencialmente, lo que hace L<Data::Diver>:
+
+    if( check_hash( \%hash, qw(clave1 clave2 clave3) ) ) {
+        ...;
+    }
+
+    sub check_hash {
+       my( $hash, @claves ) = @_;
+
+       return unless @claves;
+
+       foreach my $clave ( @claves ) {
+           return unless eval { exists $hash->{$clave} };
+           $hash = $hash->{$clave};
+        }
+
+       return 1;
+    }
+
+=head2 ¿Cómo puedo impedir la adición de claves no deseadas en el hash?
+
+Desde la versión 5.8.0, los hashes se pueden I<restringir> a un número fijo de claves. Los métodos para crear y tratar con hashes restringidos se exportan desde el módulo L<Hash::Util>.
+
+=head1 Datos: Miscelánea
+
+=head2 ¿Cómo puedo gestionar datos binarios de forma correcta?
+
+Perl es agnóstico a nivel binario, así que gestiona bien los datos binarios.
+En Windows o DOS, sin embargo, tiene que usar C<binmode> para archivos binarios para evitar conversiones en los finales de línea. En general, debería usar C<binmode> siempre que quiera trabajar con datos binarios.
+
+Vea también L<perlfunc/"binmode"> o L<perlopentut>.
+
+Si está preocupado sobre los datos textuales en 8 bit entonces vea L<perllocale>.
+Si quiere tratar con caracteres multibyte, sin embargo, hay algunos problemas. Vea la sección sobre Expresiones regulares.
+
+=head2 ¿Cómo determino si un escalar es un número/entero/flotante?
+
+Asumiendo que no le preocupa las notaciones de la IEEE como "NaN" o "Infinity", probablemente querrá usar una expresión regular:
+
+    use 5.010;
+
+    given( $numero ) {
+        when( /\D/ )
+            { say "\thay algo que no es un dígito"; continue }
+        when( /^\d+\z/ )
+            { say "\tes un numeral"; continue }
+        when( /^-?\d+\z/ )
+            { say "\tes un entero"; continue }
+        when( /^[+-]?\d+\z/ )
+            { say "\tes un entero con signo"; continue }
+        when( /^-?(?:\d+\.?|\.\d)\d*\z/ )
+            { say "\tes un número real"; continue }
+        when( /^[+-]?(?=\.?\d)\d*\.?\d*(?:e[+-]?\d+)?\z/i)
+            { say "\tes un flotante de C" }
+    }
+
+Hay también algunos módulos utilizados normalmente para esta tarea.
+L<Scalar::Util> (distribuido con 5.8) proporciona acceso a la función interna de perl C<looks_like_number> para determinar cuándo una variable se parece a un numeral. L<Data::Types> exporta funciones que validan tipos de datos usando tanto lo anterior como otras expresiones regulares. En tercer lugar, existe L<Regexp::Common> que tiene expresiones regulares para coincidir con diversos tipos de números. Estos tres módulos están disponibles en CPAN.
+
+Si está en un sistema POSIX, Perl soporta la función C<POSIX::strtod> para convertir cadenas a dobles (y también C<POSIX::strtol> para largos). Su semántica es un poco pesada, así que por eso existe la función C<getnum> para hacerlo más fácil. Esta función toma una cadena y devuelve el número que encuentre, o C<undef> para una entrada que no sea un flotante en C. La función C<is_numeric> es un frontal a C<getnum> si solo quiere preguntarse "¿esto es un flotante?".
+
+    sub getnum {
+        use POSIX qw(strtod);
+        my $str = shift;
+        $str =~ s/^\s+//;
+        $str =~ s/\s+$//;
+        $! = 0;
+        my($num, $unparsed) = strtod($str);
+        if (($str eq '') || ($unparsed != 0) || $!) {
+                return undef;
+        }
+        else {
+            return $num;
+        }
+    }
+
+    sub is_numeric { defined getnum($_[0]) }
+
+O en su lugar podría probar el módulo L<String::Scanf> de CPAN.
+
+=head2 ¿Cómo mantengo datos persistentes entre invocaciones del programa?
+
+Para algunas aplicaciones específicas, puede usar uno de los módulos DBM.
+Vea L<AnyDBM_File>. De forma más general, debería consultar los módulos L<FreezeThaw> y L<Storable> de CPAN. A partir de Perl 5.8, L<Storable> es parte de la distribución estándar. Aquí hay un ejemplo que utiliza las funciones C<store> y C<retrieve> de L<Storable>:
+
+    use Storable;
+    store(\%hash, "archivo");
+
+    # y más tarde...
+    $href = retrieve("archivo");         # por referencia
+    %hash = %{ retrieve("archivo") };    # directo a hash
+
+=head2 ¿Cómo imprimo o copio una estructura recursiva de datos?
+
+El módulo L<Data::Dumper> de CPAN (o en la distribución 5.005 de Perl) es genial para imprimir estructuras de datos. El módulo L<Storable> en CPAN (o la distribución 5.8 de Perl), proporciona una función llamada C<dclone> que copia recursivamente su argumento.
+
+    use Storable qw(dclone);
+    $r2 = dclone($r1);
+
+donde C<$r1> puede ser una referencia a cualquier clase de estructura de datos.
+Será copia en profundidad. Ya que C<dclone> toma y devuelve referencias, tiene que añadir puntuación extra si tiene que copiar hash de arrays.
+
+    %newhash = %{ dclone(\%oldhash) };
+
+=head2 ¿Cómo defino métodos para cada clase/objeto?
+
+(contribución de Ben Morrow)
+
+Puede usar la clase C<UNIVERSAL> (vea L<UNIVERSAL>). Aun así, por favor, tenga cuidado al considerar las consecuencias de hacer esto: añadir métodos a cada objeto es muy probable que tenga consecuencias no intencionadas. Si es posible, sería mejor tener todos sus objetos heredados de alguna clase base común, o usar un sistema de objetos como Moose que soporta roles.
+
+=head2 ¿Cómo verifico la suma de control de una tarjeta de crédito?
+
+Consiga el módulo L<Business::CreditCard> desde CPAN.
+
+=head2 ¿Cómo empaqueto arrays de dobles o flotantes para código XS?
+
+El código arrays.h/arrays.c en el módulo L<PGPLOT> de CPAN hace justo esto.
+Si está haciendo mucho procesado de flotantes o dobles, considere el usar el módulo L<PDL> de CPAN; hace sencillo el cálculo numérico.
+
+Vea el código en L<http://search.cpan.org/dist/PGPLOT>.
+
+
+=head1 AUTOR Y COPYRIGHT
+
+Copyright (c) 1997-2010 Tom Christiansen, Nathan Torkington y otros autores indicados. Todos los derechos reservados.
+
+Esta documentación es libre; puede redistribuirla o modificarla en los mismos términos que Perl.
+
+Independientemente de su distribución, todos los ejemplos de código de estos archivos se quedan por la presente en el dominio público. Se le permite y anima a utilizar este código en sus propios programas por simple diversión o con fines de lucro, como mejor le parezca. Un simple comentario en el código dándonos crédito sería cortés, pero no es necesario.
