@@ -873,7 +873,7 @@ Pongo una expresión regular en $/ pero no funciona. ¿A qué se debe?
 
 =item *
 
-¿Qué significa que las <regex> son avariciosas? ¿Cómo puedo evitarlo?
+¿Qué significa que las I<regex> son codiciosas? ¿Cómo puedo evitarlo?
 
 =item *
 

@@ -1,0 +1,872 @@
+=head1 NAME
+
+perlfaq6 - Expresiones regulares
+
+=head1 VERSIÓN
+
+versión 5.021010
+
+=head1 DESCRIPCIÓN
+
+Esta sección es sorprendentemente pequeña porque el resto del documento está inundado con respuestas que incluyen a las expresiones regulares. Por ejemplo, decodificar una URL y comprobar si algo es un número se puede gestionar con expresiones regulares, pero estas respuestas se encuentran por todo el documento (en L<perlfaq9>: "Cómo decodifico o creo las codificaciones '%' en la web" y L<perlfaq4>: "Cómo determino si un escalar es un número/entero/flotante", para ser preciso).
+
+=head2 ¿Qué puedo hacer para utilizar expresiones regulares sin crear código ilegible e imposible de mantener?
+X<regex, legibility> X<regexp, legibility> X<regular expression, legibility> X</x>
+
+Tres técnicas pueden hacer que las expresiones regulares sean mantenibles y comprensibles.
+
+=over 4
+
+=item Comentarios fuera de la expresión regular
+
+Explique lo que está haciendo y cómo lo hace, utilizando los comentarios
+normales de Perl.
+
+    # convertir en la primera palabra, un signo de dos puntos y el
+    # número de caracteres del resto de la línea
+    s/^(\w+)(.*)/ lc($1) . ":" . length($2) /meg;
+
+=item Comentarios dentro de la expresión regular
+
+El modificador C</x> hace que se ignore el espacio en blanco en un patrón de expresión regular (salvo en una clase de caracteres y en unos pocos sitios más), y también le permite utilizar comentarios normales dentro de la expresión regular Como puede imaginar, el espacio en blanco y los comentarios ayudan bastante.
+
+C</x> permite convertir esto:
+
+    s{<(?:[^>'"]*|".*?"|'.*?')+>}{}gs;
+
+en esto:
+
+    s{ <                    # apertura de ángulo
+        (?:                 # Paréntesis de agrupación sin captura
+            [^>'"] *        # 0 o más cosas que no son > ni ' ni "
+                |           #    o sino
+            ".*?"           # una sección entre comillas dobles (coincidencia tacaña)
+                |           #    o sino
+            '.*?'           # una sección entre comillas simples (coincidencia tacaña)
+        ) +                 #   ocurriendo una o más veces
+        >                   # ángulo de cierre
+    }{}gsx;                 # reemplazar por nada, es decir, borrar
+
+En prosa sigue sin estar claro, pero es muy útil para describir el significado de cada parte del patrón.
+
+=item Delimitadores diferentes
+
+Aunque normalmente pensamos que los patrones están delimitados por caracteres C</>, se pueden delimitar prácticamente con cualquier carácter. Esto se describe en L<perlre>. Por ejemplo, el C<s///> anterior usa llaves como delimitadores. Seleccionar otro delimitador puede evitar tener que escapar el delimitador que esté dentro del patrón:
+
+    s/\/usr\/local/\/usr\/share/g;    # mala elección del delimitador
+    s#/usr/local#/usr/share#g;        # mejor
+
+Usar delimitadores emparejados lógicamente incluso puede hacerlo más leíble:
+
+    s{/usr/local/}{/usr/share}g;      # aún mejor
+
+=back
+
+=head2 No consigo detectar coincidencias en más de una línea. ¿A qué se debe?
+X<regex, multiline> X<regexp, multiline> X<regular expression, multiline>
+
+Puede ser tanto por que no haya más de una línea en la cadena en la que está mirando (probablemente), o no está usando los modificadores correctos en su patrón (posiblemente).
+
+Hay muchas maneras de tener datos multilínea en una cadena. Si quiere que suceda automáticamente mientras lee la entrada, querrá establecer $/
+(probablemente a '' para párrafos o C<undef> para todo el archivo) para permitirle leer de una vez más de una línea.
+
+Lea L<perlre> para que le ayude a decidir cuál de C</s> y C</m> (o ambos) podría querer usar: C</s> permite que el punto incluya los caracteres de nueva línea, y C</m> permite al circunflejo y al dólar coincidir al lado de cada nueva línea, no solo al final de la cadena. Necesita asegurarse de que realmente tiene una cadena multilínea.
+
+Por ejemplo, este programa detecta palabras duplicadas, incluso cuando abarcan líneas diferentes (pero no párrafos diferentes). Para este ejemplo, no necesitamos C</s> porque no estamos usando el punto en una expresión regular que cruzara márgenes de línea. Tampoco necesitamos C</m> porque no queremos que el circunflejo o el dólar coincidan en ningún punto dentro del registro siguiente a los caracteres de nueva línea. Pero es imperativo que $/ se establezca a algo distinto al valor por defecto, o nunca conseguirá un registro multilínea.
+
+    $/ = '';          # leer un párrafo entero, no solo una línea
+    while ( <> ) {
+        while ( /\b([\w'-]+)(\s+\g1)+\b/gi ) {     # una palabra que comience con alfanumérico
+            print "Duplicada $1 en párrafo $.\n";
+        }
+    }
+
+Aquí hay un código que encuentra sentencias que comienzan con "From " (que podría estar modificado por los programas de correo):
+
+    $/ = '';          # leer un párrafo entero, no solo una línea
+    while ( <> ) {
+        while ( /^From /gm ) { # /m hace que ^ coincida al lado de \n
+        print "From inicial en párrafo $.\n";
+        }
+    }
+
+Aquí hay un código que encuentra todo lo que hay entre START y END, en un párrafo:
+
+    undef $/;          # leer todo el archivo, no solo una línea o párrafo
+    while ( <> ) {
+        while ( /START(.*?)END/sgm ) { # /s hace que . cruce límites de línea
+            print "$1\n";
+        }
+    }
+
+=head2 ¿Cómo puedo extraer líneas entre dos patrones que están en líneas diferentes?
+X<..>
+
+Puede usar el, un poco exótico operador C<..> de Perl (documentado en L<perlop>):
+
+    perl -ne 'print if /START/ .. /END/' archivo1 archivo2 ...
+
+Si busca texto y no líneas, podría usar
+
+    perl -0777 -ne 'print "$1\n" while /START(.*?)END/gs' archivo1 archivo2 ...
+
+Pero si quiere ocurrencias anidadas de C<START> hasta C<END>, acabará teniendo el mismo problema descrito en la cuestión de esta sección sobre la coincidencia con texto balanceado.
+
+Veamos otro ejemplo del uso de C<..>:
+
+    while (<>) {
+        my $en_cabecera =   1  .. /^$/;
+        my $en_cuerpo  = /^$/ .. eof;
+    # ahora elija entre ellos
+    } continue {
+        $. = 0 if eof;    # ajustar $.
+    }
+
+=head2 ¿Cómo busco XML, HTML u otras cosas sucias, feas, con una I<regex>?
+X<regex, XML> X<regex, HTML> X<XML> X<HTML> X<pain> X<frustration>
+X<sucking out, will to live>
+
+No use expresiones regulares. Use un módulo y olvídese de las expresiones regulares. Los módulos L<XML::LibXML>, L<HTML::TokeParser> y L<HTML::TreeBuilder> son buenos para empezar, aunque cada espacio de nombres tiene otros módulos de interpretación especializados para ciertas tareas y diferentes maneras de hacerlo. Comience con CPAN Search ( L<http://metacpan.org/> ) y ¡maravíllese de todo el trabajo ya hecho por otras personas! :)
+
+=head2 Pongo una expresión regular en $/ pero no funciona. ¿A qué se debe?
+X<$/, regexes in> X<$INPUT_RECORD_SEPARATOR, regexes in>
+X<$RS, regexes in>
+
+$/ tiene que ser una cadena. Puede usar estos ejemplos si realmente necesita hacerlo así.
+
+Si tiene L<File::Stream>, es más fácil.
+
+    use File::Stream;
+
+    my $stream = File::Stream->new(
+        $filehandle,
+        separator => qr/\s*,\s*/,
+        );
+
+    print "$_\n" while <$stream>;
+
+Si no tiene File::Stream, tiene que hacer un poco de más de trabajo.
+
+Puede usar la forma de cuatro argumentos de sysread para añadir continuamente a un búfer. Después de añadir al búfer, compruebe si tiene una línea completa (usando su expresión regular).
+
+    local $_ = "";
+    while( sysread FH, $_, 8192, length ) {
+        while( s/^((?s).*?)su_patrón// ) {
+            my $registro = $1;
+            # hacer el procesado aquí.
+        }
+    }
+
+Puede hacer lo mismo con foreach y una coincidencia que usa el indicador c y el ancla \G, si no le importa mantener al final todo el archivo en memoria.
+
+    local $_ = "";
+    while( sysread FH, $_, 8192, length ) {
+        foreach my $registro ( m/\G((?s).*?)su_patrón/gc ) {
+            # hacer el procesado aquí.
+        }
+        substr( $_, 0, pos ) = "" if pos;
+    }
+
+
+=head2 ¿Cómo sustituyo, sin tener en cuenta el tamaño de caja, en la parte izquierda, mientras preservo el tamaño de caja de la parte derecha?
+X<replace, case preserving> X<substitute, case preserving>
+X<substitution, case preserving> X<s, case preserving>
+
+Aquí tiene una preciosa solución perlera de Larry Rosler. Explota las propiedades de xor a nivel de bit en las cadenas ASCII.
+
+    $_= "esto es una VIeJa caja";
+
+    $viejo = 'prueba';
+    $nuevo = 'exito';
+
+    s{(\Q$viejo\E)}
+    { uc $nuevo | (uc $1 ^ $1) .
+        (uc(substr $1, -1) ^ substr $1, -1) x
+        (length($nuevo) - length $1)
+    }egi;
+
+    print;
+
+Y aquí hay una subrutina, modelada igual que el anterior:
+
+    sub preserva_caja {
+        my ($viejo, $nuevo) = @_;
+        my $mascara = uc $viejo ^ $viejo;
+
+        uc $nuevo | $mascara .
+            substr($mascara, -1) x (length($nuevo) - length($viejo))
+    }
+
+    $cadena = "esto es una VIeJa caja";
+    $cadena =~ s/(vieja)/preserva_caja($1, "nueva")/egi;
+    print "$cadena\n";
+
+Esto imprime:
+
+    esto es una NUeVA caja
+
+Como alternativa, para mantener la caja de la palabra de reemplazo si es más larga que el original, puede usar este código, de Jeff Pinyan:
+
+    sub preserva_caja {
+        my ($desde, $a) = @_;
+        my ($lf, $lt) = map length, @_;
+
+        if ($lt < $lf) { $from = substr $desde, 0, $lt }
+        else { $desde .= substr $a, $lf }
+
+        return uc $a | ($desde ^ uc $desde);
+    }
+
+Esto cambia la sentencia a "esto es una NUeVa caja".
+
+Solo para mostrar que los programadores de C pueden escribir C en cualquier otro lenguaje, si prefiere una solución más al estilo de C, el siguiente script hace que la sustitución tenga la misma caja, letra a letra, como el original.
+(También ocurre que se ejecuta un 240 % más lento que la solución perlera).
+Si la sustitución tiene más caracteres que la cadena a sustituir, la caja del último carácter se usa para el resto de la sustitución.
+
+    # Original de Nathan Torkington, masajeado por Jeffrey Friedl
+    #
+    sub preserva_caja
+    {
+        my ($viejo, $nuevo) = @_;
+        my $estado = 0; # 0 = no cambia; 1 = lc; 2 = uc
+        my ($i, $oldlen, $newlen, $c) = (0, length($viejo), length($nuevo));
+        my $len = $oldlen < $newlen ? $oldlen : $newlen;
+
+        for ($i = 0; $i < $len; $i++) {
+            if ($c = substr($viejo, $i, 1), $c =~ /[\W\d_]/) {
+                $estado = 0;
+            } elsif (lc $c eq $c) {
+                substr($nuevo, $i, 1) = lc(substr($nuevo, $i, 1));
+                $estado = 1;
+            } else {
+                substr($nuevo, $i, 1) = uc(substr($nuevo, $i, 1));
+                $estado = 2;
+            }
+        }
+        # termina con el resto de lo nuevo (para cuando nuevo es más largo que lo viejo)
+        if ($newlen > $oldlen) {
+            if ($estado == 1) {
+                substr($nuevo, $oldlen) = lc(substr($nuevo, $oldlen));
+            } elsif ($estado == 2) {
+                substr($nuevo, $oldlen) = uc(substr($nuevo, $oldlen));
+            }
+        }
+        return $nuevo;
+    }
+
+=head2 ¿Cómo puedo hacer que C<\w> coincida con los conjuntos de caracteres nacionales?
+X<\w>
+
+Añada C<use locale;> a su script. La clase de caracteres \w se toma de la configuración regional actual.
+
+Encontrará más información en L<perllocale>.
+
+=head2 ¿Cómo puedo hacer coincidir con una versión más inteligente y localizada de C</[a-zA-Z]/>?
+X<alpha>
+
+Puede utilizar la sintaxis de clases de caracteres POSIX C</[[:alpha:]]/>
+documentada en L<perlre>.
+
+No importa en qué configuración regional esté, los caracteres alfabéticos son los caracteres en \w sin los dígitos y el guión bajo.
+Como expresión regular, se parece a C</[^\W\d_]/>. Su complemento, los no alfabéticos, están entonces en \W junto con los dígitos y el guión bajo, o C</[\W\d_]/>.
+
+=head2 ¿Cómo puedo entrecomillar una variable para usarla en una I<regex>?
+X<regex, escaping> X<regexp, escaping> X<regular expression, escaping>
+
+El intérprete de Perl expandirá las referencias a $variable y @variable en las expresiones regulares a menos que el delimitador sea una comilla simple. Recuerde, también, que el lado derecho de una sustitución C<s///> se considera como una cadena con comillas dobles (vea L<perlop> para más detalles). Recuerde también que actuará cualquier carácter especial para las expresiones regulares a menos que preceda la sustitución con \Q. Aquí hay un ejemplo:
+
+    $cadena = "Placido P. Octopus";
+    $regex  = "P.";
+
+    $cadena =~ s/$regex/Polyp/;
+    # $cadena es ahora "Polypacido P. Octopus"
+
+Debido a que C<.> es especial en las expresiones regulares, y que puede coincidir con cualquier carácter, la exp. reg. C<P.> ha coincidido con <Pl> en la cadena original.
+
+Para escapar el significado especial de C<.>, usamos C<\Q>:
+
+    $cadena = "Placido P. Octopus";
+    $regex  = "P.";
+
+    $cadena =~ s/\Q$regex/Polyp/;
+    # $cadena es ahora "Placido Polyp Octopus"
+
+El uso de C<\Q> hace que C<.> en la exp. reg. se trate como un carácter normal, así que C<P.> coincide con C<P> seguido por un punto.
+
+=head2 ¿Para qué sirve realmente C</o>?
+X</o, regular expressions> X<compile, regular expressions>
+
+(contribución de brian d foy)
+
+La opción C</o> para expresiones regulares (documentada en L<perlop> y L<perlreref>) le dice a Perl que compile la expresión regular solo una vez.
+Esto solo es útil cuando el patrón contiene una variable. Perl 5.6 y siguiente gestionan esto automáticamente si el patrón no cambia.
+
+Ya que el operador de coincidencia C<m//>, el operador de sustitución C<s///> y el operador de entrecomillado de la exp. reg. C<qr//>, son construcciones de doble entrecomillado, con el que se puede interpolar variables en el patrón. Vea la respuesta de "¿Cómo puedo entrecomillar una variable para usarla en una I<regex>?" para más detalles.
+
+Este ejemplo toma una expresión regular de la lista de argumentos e imprime las líneas de entrada que coincidan con él:
+
+    my $patron = shift @ARGV;
+
+    while( <> ) {
+        print if m/$patron/;
+    }
+
+Versiones de Perl anteriores a 5.6 recompilaría la exp. reg. para cada iteración, incluso si C<$patron> no ha cambiado. El C</o> lo impediría indicando a Perl que compile el patrón la primera vez, y reutilizarlo para las subsiguientes iteraciones:
+
+    my $patron = shift @ARGV;
+
+    while( <> ) {
+        print if m/$patron/o; # útil para Perl < 5.6
+    }
+
+En versiones 5.6 y siguientes, Perl no recompilará la exp. reg. si la variable no ha cambiado, así que, probablemente no necesite la opción C</o>. No hace daño, pero tampoco ayuda. Si quiere que cualquier versión de Perl compile la expresión regular solo una vez incluso si la variable cambie (esto es: usando solo su valor inicial), seguirá necesitando el C</o>.
+
+Puede ver el motor de expresiones regulares de Perl para verificar por sí mismo si Perl está recompilando una expresión regular. el pragma C<use re 'debug'> (viene con Perl 5.005 y siguientes) muestra los detalles.
+Con Perl anteriores a 5.6, debería ver que C<re> informa que está recompilando la expresión regular en cada iteración. Con Perl 5.6 o siguientes, debería ver que C<re> solo informa de esto en la primera iteración.
+
+    use re 'debug';
+
+    my $regex = 'Perl';
+    foreach ( qw(Perl Java Ruby Python) ) {
+        print STDERR "-" x 73, "\n";
+        print STDERR "Intentando $_...\n";
+        print STDERR "\t¡$_ es correcto!\n" if m/$regex/;
+    }
+
+=head2 ¿Cómo usar una expresión regular para quitar de un archivo comentarios estilo C?
+
+Aunque de hecho esto se puede hacer, es más difícil de lo que cree.
+Por ejemplo, este una-línea
+
+    perl -0777 -pe 's{/\*.*?\*/}{}gs' foo.c
+
+funcionará en muchos pero no en todos los casos. Como ve, es demasiado sencillo para ciertas clases de programas C, en particular, para aquellos que tienen comentarios en cadenas entrecomilladas. Para eso, necesita algo como esto, creado por Jeffrey Friedl y modificado más tarde por Fred Curtis.
+
+    $/ = undef;
+    $_ = <>;
+    s#/\*[^*]*\*+([^/*][^*]*\*+)*/|("(\\.|[^"\\])*"|'(\\.|[^'\\])*'|.[^/"'\\]*)#defined $2 ? $2 : ""#gse;
+    print;
+
+Esto podría, naturalmente, ser más legible si se escribiera con el modificador C</x>, añadiendo espacio en blanco y comentarios. Aquí está expandido, cortesía de Fred Curtis.
+
+    s{
+       /\*         ##  Inicio de comentario /* ... */
+       [^*]*\*+    ##  No-* seguido por 1-o-más *
+       (
+         [^/*][^*]*\*+
+       )*          ##  0-o-más cosas que no empiezan por /
+                   ##    pero que terminan con '*'
+       /           ##  Fin de comentario /* ... */
+
+     |         ##     O cosas varias que no son comentarios:
+
+       (
+         "           ##  Inicio de cadena " ... "
+         (
+           \\.           ##  carácter escapado
+         |               ##    O
+           [^"\\]        ##  Sin "\
+         )*
+         "           ##  Fin de cadena " ... "
+
+       |         ##     O
+
+         '           ##  Inicio de cadena ' ... '
+         (
+           \\.           ##  carácter escapado
+         |               ##    O
+           [^'\\]        ##  Sin '\
+         )*
+         '           ##  Fin de cadena ' ... '
+
+       |         ##     O
+
+         .           ##  Cualquier otro carácter
+         [^/"'\\]*   ##  Caracteres que no comienzan un comentario, cadena o escapado
+       )
+     }{defined $2 ? $2 : ""}gxse;
+
+Una leve modificación también elimina los comentarios de C++, posiblemente abarcando múltiples líneas usando un carácter de continuación:
+
+ s#/\*[^*]*\*+([^/*][^*]*\*+)*/|//([^\\]|[^\n][\n]?)*?\n|("(\\.|[^"\\])*"|'(\\.|[^'\\])*'|.[^/"'\\]*)#defined $3 ? $3 : ""#gse;
+
+=head2 ¿Puedo usar expresiones regulares de Perl para buscar por texto balanceado?
+X<regex, matching balanced test> X<regexp, matching balanced test>
+X<regular expression, matching balanced test> X<possessive> X<PARNO>
+X<Text::Balanced> X<Regexp::Common> X<backtracking> X<recursion>
+
+(contribución de brian d foy)
+
+Su primer intento debería ser, probablemente, con el módulo L<Text::Balanced>, que está en la biblioteca estándar de Perl desde Perl 5.8. Tiene una variedad de funciones para gestionar texto delicado. El módulo L<Regexp::Common> también puede ayudar proporcionando patrones prefabricados que puede usar.
+
+A partir de Perl 5.10, puede buscar texto balanceado con expresiones regulares usando patrones recursivos. Antes de Perl 5.10, tenía que recurrir a diversos trucos como usar código Perl en secuencias C<(??{})>.
+
+Aquí hay un ejemplo que usa expresiones regulares recursivas. La meta es capturar todo el texto que esté dentro de caracteres ángulo, incluyendo el texto en ángulos anidados. Este ejemplo de texto tiene dos grupos "principales": un grupo con un nivel de anidamiento y un grupo con dos niveles de anidamiento. Hay un total de cinco grupos con ángulos:
+
+    Tengo algunos <ángulos en <ángulos anidados> > y
+    <otro grupo <anidado una vez <anidado dos veces> > >
+    y ya está.
+
+La expresión regular para coincidir con el texto balanceado usa dos nuevas características de las expresiones regulares (a partir de Perl 5.10). Se explican en L<perlre> y este ejemplo es una versión modificada de uno que hay en la documentación.
+
+Primero, agregar el nuevo posesivo C<+> a cualquier cuantificador encuentra la mayor coincidencia y no hace vuelta atrás. Esto es importante ya que quiere gestionar cualquier ángulo a través de la recursión, sin vuelta atrás.
+El grupo C<< [^<>]++ >> encuentra uno o más no-ángulos sin hacer vuelta atrás.
+
+Segundo, el nuevo C<(?PARNO)> refiere al subpatrón en el grupo de captura particular indicado por C<PARNO>. En la siguiente exp. reg., el primer grupo de captura encuentra (y recuerda) el texto balanceado, y necesita el mismo patrón dentro del primer búfer para pasar por el texto anidado. Esa es la parte recursiva. El C<(?1)> usa el patrón en el grupo de captura más externo como una parte independiente de la exp. reg.
+
+Poniendo todo junto, tenemos:
+
+    #!/usr/local/bin/perl5.10.0
+
+    my $cadena =<<"AQUI";
+    Tengo algunos <ángulos en <ángulos anidados> > y
+    <otro grupo <anidado una vez <anidado dos veces> > >
+    y ya está.
+    AQUI
+
+    my @grupos = $cadena =~ m/
+            (                   # comienzo del grupo de captura 1
+            <                   # coincide con un ángulo de apertura
+                (?:
+                    [^<>]++     # uno o más no-ángulos, sin vuelta atrás
+                      |
+                    (?1)        # se encontró un ángulo, así que recursivo del grupo 1
+                )*
+            >                   # coincide con un ángulo de cierre
+            )                   # fin del grupo de captura 1
+            /xg;
+
+    $" = "\n\t";
+    print "Encontrado:\n\t@grupos\n";
+
+La salida muestra que Perl encontró los dos grupos principales:
+
+    Encontrado:
+        <ángulos en <ángulos anidados> >
+        <otro grupo <anidado una vez <anidado dos veces> > >
+
+Con un poco de trabajo extra, puede obtener todos los grupos en ángulos incluso si también están en otros ángulos. Cada tiempo que obtiene una coincidencia balanceada, elimine el delimitador externo (con el que ha coincidido para que no lo siga encontrando) y añádolo a la cola de cadenas a procesar. Siga haciéndolo hasta que no haya más coincidencias:
+
+    #!/usr/local/bin/perl5.10.0
+
+    my @cola =<<"HERE";
+    Tengo algunos <ángulos en <ángulos anidados> > y
+    <otro grupo <anidado una vez <anidado dos veces> > >
+    y ya está.
+    AQUI
+
+    my $regex = qr/
+            (                   # inicio de ángulo 1
+            <                   # coincide con un ángulo de apertura
+                (?:
+                    [^<>]++     # uno o más no-ángulos, sin vuelta atrás
+                      |
+                    (?1)        # recursivo al ángulo 1
+                )*
+            >                   # coincide con un ángulo de cierre
+            )                   # fin del ángulo 1
+            /x;
+
+    $" = "\n\t";
+
+    while( @cola ) {
+        my $cadena = shift @cola;
+
+        my @grupos = $cadena =~ m/$regex/g;
+        print "Encontrado:\n\t@grupos\n\n" if @grupos;
+
+        unshift @cola, map { s/^<//; s/>$//; $_ } @grupos;
+    }
+
+La salida muestra todos los grupos. Las coincidencias más externas se muestran primero, y más tarde las coincidencias anidadas:
+
+    Encontrado:
+        <ángulos en <ángulos anidados> >
+        <otro grupo <anidado una vez <anidado dos veces> > >
+
+    Encontrado:
+        <ángulos anidados>
+
+    Encontrado:
+        <anidado una vez <anidado dos veces> >
+
+    Encontrado:
+        <anidado dos veces>
+
+=head2 ¿Qué significa que las I<regex> son codiciosas? ¿Cómo puedo evitarlo?
+X<greedy> X<greediness>
+
+Para la mayor parte de personas, esa I<regex> codiciosa quiere decir que coincide con todo lo que pueda.
+Técnicamente hablando, son en realidad los cuantificadores (C<?>, C<*>, C<+>,
+C<{}>) los que son codiciosos, en lugar de todo el patrón; Perl prefiere codicia local y gratificación inmediata a una codicia global. Para tener versiones no-codiciosas de los mismos cuantificadores, use (C<??>, C<*?>, C<+?>, C<{}?>).
+
+Un ejemplo:
+
+    my $s1 = my $s2 = "Soy muy muy frío";
+    $s1 =~ s/m.*y //;       # Soy frío
+    $s2 =~ s/m.*?y //;      # Soy muy frío
+
+Note cómo la segunda sustitución se paró al coincidir tan pronto como se encontró "y ". El cuantificador C<*?> le indica de forma efectiva al motor de expresiones regulares que encuentre tan pronto como sea posible y pasar el control a lo que haya en la siguiente línea, como si estuviera jugando a la patata caliente.
+
+=head2 ¿Cómo proceso cada palabra en cada línea?
+X<palabra>
+
+Use la función split:
+
+    while (<>) {
+        foreach my $palabra ( split ) {
+            # hacer algo aquí con $palabra
+        }
+    }
+
+Note que no es, realmente, una palabra en el sentido del castellano; es más como un bloque de caracteres no-blancos consecutivos.
+
+Para trabajar solo con secuencias alfanuméricas (incluyendo guiones bajos), podría considerar
+
+    while (<>) {
+        foreach $palabra (m/(\w+)/g) {
+            # hacer algo aquí con $palabra
+        }
+    }
+
+=head2 ¿Cómo puedo imprimir un resumen de frecuencias de palabras o de líneas?
+
+Para hacerlo, tiene que interpretar cada palabra en el flujo de entrada. Pretenderemos que por "palabra" queremos decir un bloque de caracteres alfabéticos, guiones o apóstrofes, en lugar de la idea de bloques de no-espacios indicada en la pregunta anterior:
+
+    my (%visto);
+    while (<>) {
+        while ( /(\b[^\W_\d][\w'-]+\b)/g ) {   # se pierde "`oveja'"
+            $visto{$1}++;
+        }
+    }
+
+    while ( my ($palabra, $cuenta) = each %visto ) {
+        print "$cuenta $palabra\n";
+    }
+
+Si quiere hacer lo mismo para líneas, no necesita una expresión regular:
+
+    my (%visto);
+
+    while (<>) {
+        $visto{$_}++;
+    }
+
+    while ( my ($linea, $cuenta) = each %visto ) {
+        print "$cuenta $linea";
+    }
+
+Si quiere esta salida de forma ordenada, vea L<perlfaq4>: "¿Cómo ordeno un hash (opcionalmente por valor en lugar de por clave)?".
+
+=head2 ¿Cómo puedo hacer coincidencias aproximadas?
+X<match, approximate> X<matching, approximate>
+
+Vea el módulo L<String::Approx> disponible desde CPAN.
+
+=head2 ¿Cómo coincido eficazmente con muchas expresiones regulares a la vez?
+X<regex, efficiency> X<regexp, efficiency>
+X<regular expression, efficiency>
+
+(contribución de brian d foy)
+
+Si tiene Perl 5.10 o siguientes, esto es casi trivial. Solo necesita hacer coincidencia inteligente contra un array de objetos de expresiones regulares:
+
+    my @patrones = ( qr/Fr.d/, qr/B.rn.y/, qr/W.lm./ );
+
+    if( $cadena ~~ @patrones ) {
+        ...
+    };
+
+La coincidencia inteligente se para cuando encuentra una coincidencia, así que no probará todas las expresiones.
+
+En versiones anteriores de Perl 5.10, tiene que hacer un poco más de trabajo. Quiere evitar el compilar cada expresión regular cada vez que quiera hacerla coincidir.
+En este ejemplo, perl debe recompilar la expresión regular por cada iteración del bucle C<foreach> ya que no hay manera de saber qué será C<$patron>:
+
+    my @patrones = qw( foo bar baz );
+
+    LINE: while( <DATA> ) {
+        foreach $patron ( @patrones ) {
+            if( /\b$patron\b/i ) {
+                print;
+                next LINEA;
+            }
+        }
+    }
+
+El operador C<qr//> se incluyó por primera vez en perl 5.005. Compila una expresión regular,
+pero no la aplica. Cuando use una versión precompilada de la I<regex>, perl hace menos trabajo. En este ejemplo, inserté un C<map> para convertir cada patrón en su forma precompilada. El resto del script es el mismo, pero más rápido:
+
+    my @patrones = map { qr/\b$_\b/i } qw( foo bar baz );
+
+    LINE: while( <> ) {
+        foreach $patron ( @patrones ) {
+            if( /$patron/ ) {
+                print;
+                next LINEA;
+            }
+        }
+    }
+
+En algunos casos, será capaz de poner varios patrones en una única expresión regular. Aún así tenga cuidado con las situaciones que requieren vuelta atrás.
+
+    my $regex = join '|', qw( foo bar baz );
+
+    LINE: while( <> ) {
+        print if /\b(?:$regex)\b/i;
+    }
+
+Para más detalles sobre la eficiencia de las expresiones regulares, vea I<Mastering Regular Expressions> by Jeffrey Friedl. Explica cómo funciona el motor de expresiones regulares y por qué algunos patrones son sorprendentemente ineficientes. Una vez que entienda cómo perl aplica las expresiones regulares, puede ajustarlas para situaciones individuales.
+
+=head2 ¿Por qué las búsquedas de límites de palabras con C<\b> no me funcionan?
+X<\b>
+
+(contribución de brian d foy)
+
+Asegúrese que sabe qué hace realmente \b: es la frontera entre un carácter de palabra, \w, y algo que no es un carácter de palabra. Esa cosa que no es un carácter de palabra podría ser \W, pero también puede ser el principio o final de la cadena.
+
+No es (¡no!) el límite entre espacio en blanco y no blanco, y no es ninguna cosa que usemos entre palabras para crear frases.
+
+En términos de una I<regex>, una frontera de palabra (\b) es una "aserción de ancho cero", significando que no representa un carácter en la cadena, sino una condición en una determinada posición.
+
+Para la expresión regular, /\bPerl\b/, debe existir una límite de palabra antes de "P" y después de la "l". Mientras haya algo distinto de un carácter de palabra que preceda "P" y que siga a la "l", el patrón coincidirá. Estas cadenas coinciden con /\bPerl\b/.
+
+    "Perl"    # no car. de palabra antes de "P" o después de "l"
+    "Perl "   # lo mismo que antes (espacio no es un car. de palabra)
+    "'Perl'"  # el car. "'" no es un car. de palabra
+    "Perl's"  # no car. de palabra antes de "P", car. no-palabra después de "l"
+
+Estas cadenas no coinciden con /\bPerl\b/.
+
+    "Perl_"   # ¡"_" es un car. de palabra!
+    "Perler"  # no car. de palabra antes de "P", pero después de "l"
+
+Aún así, no tiene por qué usar \b para coincidir con palabras. Puede buscar por caracteres no-palabra rodeados por caracteres de palabra. Estas cadenas coinciden con el patrón /\b'\b/.
+
+    "don't"   # el car. "'" está rodeado por "n" y "t"
+    "qep'a'"  # el car. "'" está rodeado por "p" y "a"
+
+Estas cadenas no coinciden con /\b'\b/.
+
+    "foo'"    # no hay ningún car. de palabra después del no-palabra "'"
+
+También puede usar el complemento de \b, \B, para especificar que no debe haber un límite de palabra.
+
+En el patrón /\Bam\B/, tiene que haber un carácter de palabra antes de "a" y después de "m". Estos patrones coinciden con /\Bam\B/:
+
+    "llama"   # "am" rodeado por caracteres de palabra
+    "Samuel"  # lo mismo
+
+Estas cadenas no coinciden con /\Bam\B/
+
+    "Sam"      # no hay límite de palabra antes de "a", pero lo hay después de "m"
+    "I am Sam" # "am" rodeado por car. no-palabra
+
+
+=head2 ¿Por qué se enlentece mi programa al usar $&, $` o $'?
+X<$MATCH> X<$&> X<$POSTMATCH> X<$'> X<$PREMATCH> X<$`>
+
+(contribución de Anno Siegel)
+
+Una vez que Perl vea que necesita una de estas variables en cualquier parte del programa, las proporciona en todos y cada uno de los patrones de búsqueda. Esto significa que en cada patrón de búsqueda, se copiará la cadena entera, parte de ella en $`, parte en $&, y parte en $'. Esta penalización es más severa con cadenas largas y patrones que coinciden con frecuencia. Si puede, evite $&, $' y $`, pero si no puede, una vez que los use, úselos en todo, porque ya habrá pagado el precio. Recuerde que algunos algoritmos realmente los apreciarán. A partir de la versión 5.005, la variable $& ya no es "expansiva" de la misma manera que las otras dos.
+
+Desde Perl 5.6.1 las variables especiales @- y @+ pueden reemplazar funcionalmente a $`, $& y $'. Estos arrays contienen punteros al comienzo y al final de cada coincidencia (vea perlvar para conocer toda la historia), así que le proporcionan esencialmente la misma información, pero sin el riesgo de un copiado excesivo de cadenas.
+
+Perl 5.10 añadió tres especiales, C<${^MATCH}>, C<${^PREMATCH}> y
+C<${^POSTMATCH}> para hacer el mismo trabajo pero sin la penalización global de rendimiento. Perl 5.10 establece estas variables solo si se compila o ejecuta la expresión regular con el modificador C</p>.
+
+=head2 ¿Qué tiene de bueno C<\G> en una expresión regular?
+X<\G>
+
+Use el ancla C<\G> para iniciar la siguiente coincidencia en la misma cadena donde quedó la última coincidencia. El motor de expresiones regulares, con este ancla, no puede saltarse ningún carácter para encontrar la siguiente coincidencia, así que C<\G> es similar al ancla de comienzo de cadena, C<^>. El ancla C<\G> se usa típicamente con el indicador C<g>. Usa el valor de C<pos()> como posición de inicio de la siguiente coincidencia. A medida que el operador de coincidencia realiza coincidencias exitosas, actualiza C<pos()> con la posición del siguiente carácter pasada la última coincidencia (o el primer carácter de la siguiente coincidencia, dependiendo de cómo quiera verlo). Cada cadena tiene su propio valor de C<pos()>.
+
+Suponga que quiera buscar todos los pares de dígitos consecutivos en una cadena como "1122a44" y parar de buscar cuando encuentre algo no-dígito. Quiere encontrar C<11> y C<22> pero no la letra C<a> que está entre C<22> y C<44>, parar justo en ella. Una coincidencia sencilla de pares de dígitos salta sobre la C<a> y sigue encontrando C<44>.
+
+    $_ = "1122a44";
+    my @pares = m/(\d\d)/g;   # qw( 11 22 44 )
+
+Si usa el ancla C<\G>, fuerza a coincidir después de C<22> para empezar con C<a>. La expresión regular no puede coincidir ahí ya que no encuentra un dígito, así que la coincidencia falla y el operador de búsqueda regresa los pares que haya encontrado.
+
+    $_ = "1122a44";
+    my @pares = m/\G(\d\d)/g; # qw( 11 22 )
+
+También puede usar el ancla C<\G> en contexto escalar. Sigue necesitando el modificador C<g>.
+
+    $_ = "1122a44";
+    while( m/\G(\d\d)/g ) {
+        print "Encontrado $1\n";
+    }
+
+Después de que la coincidencia falle en la letra C<a>, perl reinicia C<pos()> y la siguiente coincidencia en la misma cadena empieza en el comienzo.
+
+    $_ = "1122a44";
+    while( m/\G(\d\d)/g ) {
+        print "Encontrado $1\n";
+    }
+
+    print "Encontrado $1 después del while" if m/(\d\d)/g; # encuentra "11"
+
+Puede desactivar el reinicio de C<pos()> en el fallo, con el modificador C<c>, documentado en L<perlop> y L<perlreref>. Las coincidencias subsecuentes empiezan donde la última coincidencia terminó (el valor de C<pos()>) incluso si mientras tanto falla una coincidencia. En este caso, la coincidencia después del bucle C<while()> empieza en la C<a> (donde se paró la última coincidencia), y ya que no usa ningún ancla puede saltar sobre la C<a> para encontrar C<44>.
+
+    $_ = "1122a44";
+    while( m/\G(\d\d)/gc ) {
+        print "Encontrado $1\n";
+    }
+
+    print "Encontrado $1 después de while" if m/(\d\d)/g; # encuentra "44"
+
+Típicamente se usa el ancla C<\G> con el modificador C<c> cuando intenta una coincidencia diferente por si una falla, como en un toquenizador. Jeffrey Friedl ofrece este ejemplo que funciona en 5.004 o superior.
+
+    while (<>) {
+        chomp;
+        PARSER: {
+            m/ \G( \d+\b    )/gcx   && do { print "número: $1\n";  redo; };
+            m/ \G( \w+      )/gcx   && do { print "palabra:$1\n";  redo; };
+            m/ \G( \s+      )/gcx   && do { print "espacio:$1\n";  redo; };
+            m/ \G( [^\w\d]+ )/gcx   && do { print "otro :  $1\n";  redo; };
+        }
+    }
+
+Por cada línea, el bucle C<PARSER> primero intenta coincidir con una serie de dígitos seguido por un límite de palabra. Esta coincidencia debe comenzar en el lugar donde quedó (o al comienzo de la cadena en la primera coincidencia). Ya que C<m/ \G ( \d+\b )/gcx> usa el modificador C<c>, si la cadena no coincide con esa expresión regular, perl no reinicia pos() y la siguiente coincidencia empieza en la misma posición para probar con un patrón diferente.
+
+=head2 ¿Las I<regex> Perl son DFA o NFA? ¿Son compatibles POSIX?
+X<DFA> X<NFA> X<POSIX>
+
+Mientras que es verdad que las expresiones regulares de Perl se parecen a las DFA (I<deterministic finite automata>, autómata de estados determinísticos) del programa egrep(1), de hecho están implementadas como NFA (I<non-deterministic finite automata>, autómata de estados no determinísticos) para permitir la vuelta atrás y las contrarreferencias. Y tampoco son estilo POSIX, porque garantizan tener el peor comportamiento para todos los casos. (Parece que algunas personas prefieren garantías de consistencia, incluso cuando lo que se garantiza es la lentitud). Vea el libro "Mastering Regular Expressions" (de O'Reilly) por Jeffrey Friedl para todos los detalles que pudiera esperar conocer sobre estas materias (una cita completa aparece en L<perlfaq2>).
+
+=head2 ¿Qué tiene de malo usar grep en un contexto vacío?
+X<grep>
+
+El problema es que grep construye una lista de devolución, sin importar el contexto.
+Esto significa que está obligando a Perl a encontrarse con el problema de construir una lista que luego descartará. Si la lista es grande, está desperdiciando tiempo y espacio.
+Si su intención es la de iterar sobre la lista, entonces use un bucle for para este propósito.
+
+En versiones de perl anteriores a 5.8.1, map sufre del mismo problema.
+Pero desde 5.8.1, esto se ha arreglado, y map es sensible al contexto: en contexto vacío, no se construye ninguna lista.
+
+=head2 ¿Cómo puedo hacer búsquedas en cadenas de caracteres con caracteres multibyte?
+X<regex, and multibyte characters> X<regexp, and multibyte characters>
+X<regular expression, and multibyte characters> X<martian> X<encoding, Martian>
+
+A partir de Perl 5.6, Perl tiene algún nivel de soporte para caracteres multibyte. Se recomienda usar Perl 5.8 o posterior. Repertorios de caracteres multibytes soportados incluyen el Unicode, y codificaciones heredadas a través del módulo Encode. Vea L<perluniintro>, L<perlunicode> y L<Encode>.
+
+Si se encuentra enganchado con Perl más viejos, puede hacer Unicode con el módulo L<Unicode::String>, y conversiones de caracteres usando los módulos L<Unicode::Map8> y L<Unicode::Map>. Si está usando codificaciones japoneses, podría probar a usar jperl 5.005_03.
+
+Finalmente, el siguiente conjunto de soluciones es ofrecida por Jeffrey Friedl, cuyo artículo en el número 5 de The Perl Journal habla mucho sobre esto.
+
+Suponga que tiene alguna extraña codificación Marciana donde pares de letras ASCII en mayúsculas codifican letras marcianas (por ejemplo, los bytes "CV" crean una única letra marciana, así como las parejas de bytes "SG", "VS", "XX", etc.). Otros bytes representan caracteres sencillos, como en ASCII.
+
+Así, la cadena de Marte "I am CVSGXX!" usa 12 bytes para codificar los nueve caracteres 'I', ' ', 'a', 'm', ' ', 'CV', 'SG', 'XX', '!'.
+
+Ahora, digamos que quiere buscar el carácter único C</GX/>. Perl no sabe nada sobre Marte, así que encontrará dos bytes "GX" en la cadena "I am CVSGXX!", incluso aunque el carácter no esté ahí: solo lo parece porque "SG" está al lado de "XX", pero no hay un "GX" real. Esto es un grave problema.
+
+Aquí hay diversas formas, todas dolorosas, para tratar con ello:
+
+    # Se asegura que bytes "marcianos" adyacentes ya no son adyacentes.
+    $marciano =~ s/([A-Z][A-Z])/ $1 /g;
+
+    print "¡encontrado GX!\n" if $marciano =~ /GX/;
+
+O algo así:
+
+    my @chars = $marciano =~ m/([A-Z][A-Z]|[^A-Z])/g;
+    # lo anterior es conceptualmente similar a: my @chars = $texto =~ m/(.)/g;
+    #
+    foreach my $char (@chars) {
+        print "¡encontrado GX!\n", last if $char eq 'GX';
+    }
+
+O algo así:
+
+    while ($marciano =~ m/\G([A-Z][A-Z]|.)/gs) {  # \G probablemente innecesario
+        if ($1 eq 'GX') {
+            print "¡encontrado GX!\n";
+            last;
+        }
+    }
+
+Aquí hay otra forma, ligeramente menos dolorosa, de Benjamin Goldberg, quien usa una aserción negativa de anchura cero mirando hacia atrás.
+
+    print "¡encontrado GX!\n" if    $marciano =~ m/
+        (?<![A-Z])
+        (?:[A-Z][A-Z])*?
+        GX
+        /x;
+
+Esto tiene éxito si el carácter "marciano" GX está en la cadena, o sino, falla. Si no le gusta usar (?<!), una aserción negativa de anchura cero mirando hacia atrás, puede reemplazar (?<![A-Z]) con (?:^|[^A-Z]).
+
+Tiene la contrapartida de poner algo erróneo en $-[0] y $+[0], pero, usualmente podemos trabajar con ello.
+
+=head2 ¿Cómo puedo usar una expresión regular que está en una variable?
+X<regex, in variable> X<eval> X<regex> X<quotemeta> X<\Q, regex>
+X<\E, regex> X<qr//>
+
+(contribución de brian d foy)
+
+No tenemos que tener patrones de forma expresa con el operador de coincidencia (o cualquier otra cosa que funcione con expresiones regulares). Podemos meter el patrón en una variable para usarlo más tarde.
+
+El operador de coincidencia está en un contexto de entrecomillado doble, así que puede interpolar su variable, justo como una cadena entrecomillada doble. En este caso, se lee la expresión regular como entrada del usuario y lo almacena en C<$regex>.
+Una vez que tiene el patrón en C<$regex>, usa esa variable en el operador de coincidencia.
+
+    chomp( my $regex = <STDIN> );
+
+    if( $cadena =~ m/$regex/ ) { ... }
+
+Cualesquiera caracteres especiales para las expresiones regulares en C<$regex> siguen siendo especiales, y el patrón tiene que ser válido o Perl se quejará.
+Por ejemplo, en este patrç hay un paréntesis desemparejado.
+
+    my $regex = "No encontrado ( paréntesis";
+
+    "Dos paréntesis para unirles a todos" =~ m/$regex/;
+
+Cuando Perl compila la expresión regular, trata el paréntesis como el inicio de una coincidencia que hay que recordar. Cuando no encuentra el paréntesis de cierre, se queja:
+
+    No encontrado ( in regex; marked by <-- HERE in m/No encontrado ( <-- HERE  paréntesis/ at script line 3.
+
+Se puede solventar esto de diversas formas dependiendo de nuestra situación.
+Primero, si no quiere que ninguno de los caracteres en la cadena sea especial, puede escaparlos con C<quotemeta> antes de usar la cadena.
+
+    chomp( my $regex = <STDIN> );
+    $regex = quotemeta( $regex );
+
+    if( $cadena =~ m/$regex/ ) { ... }
+
+También puede hacer esto directamente en el operador de coincidencia usando las secuencias C<\Q> y C<\E>. La C<\Q> le dice a Perl dónde empezar a escapar los caracteres especiales, y la C<\E> le dice dónde parar (vea L<perlop> para más detalles).
+
+    chomp( my $regex = <STDIN> );
+
+    if( $cadena =~ m/\Q$regex\E/ ) { ... }
+
+De otra forma, puede usar C<qr//>, el operador de entrecomillado de expresiones regulares (vea L<perlop> para más detalles). Entrecomilla y quizás compila el patrón, y puede aplicar indicadores de expresiones regulares al patrón.
+
+    chomp( my $entrada = <STDIN> );
+
+    my $regex = qr/$entrada/is;
+
+    $cadena =~ m/$regex/  # igual que m/$entrada/is;
+
+Podría también querer atrapar cualquier error envolviéndolo todo con un bloque C<eval>.
+
+    chomp( my $entrada = <STDIN> );
+
+    eval {
+        if( $cadena =~ m/\Q$entrada\E/ ) { ... }
+    };
+    warn $@ if $@;
+
+O ...
+
+    my $regex = eval { qr/$entrada/is };
+    if( defined $regex ) {
+        $cadena =~ m/$regex/;
+    }
+    else {
+        warn $@;
+    }
+
+=head1 AUTOR Y COPYRIGHT
+
+Copyright (c) 1997-2010 Tom Christiansen, Nathan Torkington y otros autores indicados. Todos los derechos reservados.
+
+Esta documentación es libre; puede redistribuirla o modificarla en los mismos términos que Perl.
+
+Independientemente de su distribución, todos los ejemplos de código de estos archivos se quedan por la presente en el dominio público. Se le permite y anima a utilizar este código en sus propios programas por simple diversión o con fines de lucro, como mejor le parezca. Un simple comentario en el código dándonos crédito sería cortés, pero no es necesario.
