@@ -1123,7 +1123,7 @@ Esta sección del documento cubre cuestiones sobre la interacción con el sistem
 
 =item *
 
-¿Cómo puedo hacer un sleep() o un alarm() que dure menos de un segundo?
+¿Cómo puedo hacer que un sleep() o un alarm() dure menos de un segundo?
 
 =item *
 
