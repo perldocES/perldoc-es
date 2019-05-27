@@ -1,0 +1,818 @@
+=head1 NAME
+
+perlfaq7 - Dificultades generales del lenguaje Perl
+
+=head1 VERSIÓN
+
+versión 5.021010
+
+=head1 DESCRIPCIÓN
+
+Esta sección trata de los problemas generales del lenguaje Perl que no encajan claramente en otras secciones.
+
+=head2 ¿Puedo obtener un BNF/yacc/RE para el lenguaje Perl?
+
+No existe un BNF, pero puede probar a hacerlo por sí mismo mirando la gramática yacc en perly.y en la distribución del código fuente, si se atreve. La gramática confía en un código de toquenización muy inteligente, así que prepárese para aventurarse también por toke.c.
+
+En palabras de Chaim Frenkel: "La gramática de Perl no se puede reducir a un BNF.
+El trabajo de interpretar perl se distribuye entre yacc, el analizador léxico, humo y espejos".
+
+=head2 ¿Qué son todos esos signos de puntuación $@%&*, y cómo puedo saber cuándo usarlos?
+
+Son especificadores de tipo, como se detalla en L<perldata>:
+
+    $ para valores escalares (número, cadena o referencia)
+    @ para arrays
+    % para hashes (arrays asociativos)
+    & para subrutinas (o sea, funciones, procedimientos, métodos)
+    * para todos los tipos de ese nombre de símbolo. En la versión 4 los usaba como
+      punteros, pero en los perl modernos puede usar simplemente las referencias.
+
+Hay una par de símbolos más que probablemente pueda encontrar que no son realmente especificadores de tipo:
+
+    <> se usan para entrar un registro desde un identificador de archivo.
+    \  toma una referencia a algo.
+
+Note que <ARCHIVO> I<NO ES> el especificador de tipo para archivos ni el nombre del identificador. Es el operador C<< <> >> aplicado al identificador ARCHIVO. Lee una línea (bueno, registro; vea L<perlvar/$E<sol>>) desde el identificador de archivo ARCHIVO en contexto escalar, o I<todas> las líneas en contexto lista. Cuando hace un open, close o cualquier otra operación distinta de C<< <> >> en archivos, o incluso cuando hablamos sobre el identificador, I<no> use los ángulos. Estos son correctos: C<eof(FH)>, C<seek(FH, 0, 2)> y "copiando de STDIN a ARCHIVO".
+
+=head2 ¿Siempre/nunca debo entrecomillar mis cadenas de caracteres o usar comas y puntos y comas?
+
+Normalmente, una palabra simple no necesita entrecomillarse, pero en la mayor parte de los casos, es probable que debería estarlo (y debe estarlo bajo C<use strict>). Pero una clave hash consistente de una única palabra y el operando a la izquierda del operador C<< => >> cuentan ambos como si estuvieran entrecomillados:
+
+    Esto                    es como esto
+    ------------            ---------------
+    $foo{linea}             $foo{'linea'}
+    bar => cosas            'bar' => cosas
+
+El punto y coma al final de un bloque es opcional, así como la coma final en una lista. El buen estilo (vea L<perlstyle>) dice que hay que ponerles excepto para programas de una línea:
+
+    if ($whoops) { exit 1 }
+    my @nums = (1, 2, 3);
+
+    if ($whoops) {
+        exit 1;
+    }
+
+    my @lines = (
+        "Beren viene de las frías montañas",
+        "Y perdió lo que llevaba bajo las hojas",
+    );
+
+=head2 ¿Cómo evito algunos valores de retorno?
+
+Una forma es tratar los valores de retorno como una lista e indexar dentro de ella:
+
+    $dir = (getpwnam($usuario))[7];
+
+Otra forma es usar undef como un elemento en el lado izquierdo:
+
+    ($dev, $ino, undef, undef, $uid, $gid) = stat($archivo);
+
+Puede también puede usar una parte de lista para seleccionar solo los elementos que necesita:
+
+    ($dev, $ino, $uid, $gid) = ( stat($archivo) )[0,1,4,5];
+
+=head2 ¿Cómo bloqueo temporalmente las advertencias?
+
+Si está ejecutando Perl 5.6.0 o superior, el I<pragma> C<use warnings> permite un ajuste fino de lo que producen las advertencias.
+Vea L<perllexwarn> para más detalles.
+
+    {
+        no warnings;          # desactivar temporalmente las advertencias
+        $x = $y + $z;         # Sé que podrían estar indefinidas
+    }
+
+Además, puede activar y desactivar categorías de advertencias.
+Desactiva las categorías que quiere ignorar y aún puede seguir teniendo otras categorías de advertencias. Vea L<perllexwarn> para los detalles completos, incluyendo los nombres y jerarquía de las categorías.
+
+    {
+        no warnings 'uninitialized';
+        $x = $y + $z;
+    }
+
+Si tiene una versión anterior de Perl, la variable C<$^W> (documentada en L<perlvar>) controla las advertencias en tiempo de ejecución, para un bloque:
+
+    {
+        local $^W = 0;        # desactivar temporalmente las advertencias
+        $x = $y + $z;         # Sé que podrían estar indefinidas
+    }
+
+Note que como todas las variables de puntuación, actualmente no puede usar my() en C<$^W>, solo local().
+
+=head2 ¿Qué es una extensión?
+
+Una extensión es una forma de llamar a código compilado en C desde Perl. L<perlxstut> es un buen lugar para aprender más sobre las extensiones.
+
+=head2 ¿Por qué los operadores Perl tienen diferente precedencia que los operadores C?
+
+De hecho, no es así. Todos los operadores de C que Perl copia tienen la misma precedencia en Perl como en C. El problema es con los operadores que no tiene C, especialmente las funciones que proporcionan un contexto de lista a todo lo que hay a su derecha, por ejemplo print, chmod, exec, y así. A tales funciones se les llama "operadores de lista" y aparecen así en la tabla de precedencia en L<perlop>.
+
+Un error común es escribir
+
+    unlink $archivo || die "snafu";
+
+Esto se interpreta como
+
+    unlink ($archivo || die "snafu");
+
+Para evitar este problema, puede tanto poner paréntesis extra o usar el operador de super baja precedencia C<or>:
+
+    (unlink $archivo) || die "snafu";
+    unlink $archivo or die "snafu";
+
+Los operadores "Ingleses" (C<and>, C<or>, C<xor> y C<not>) tienen, deliberadamente una precedencia más baja que los operadores de listas para tales situaciones como al anterior.
+
+Otro operador con una precendecia sorprendente es la exponenciación. Se enlaza más estrechamente incluso que un menos unario, haciendo que C<-2**2> produzca un cuatro negativo y no uno positivo. Es también asociativo por la derecha, significando que C<2**3**2> es dos elevado a la novena potencia, no ocho elevado al cuadrado.
+
+A pesar de que tiene la misma precedencia como en C, el operador C<?:> de Perl produce un valor a la izquierda. Esto asigna $x tanto a $es_verdadera como a $es_falsa, dependiendo del valor de verdad de $quizas:
+
+    ($quizas ? $es_verdadera : $es_falsa) = $x;
+
+=head2 ¿Cómo declaro/creo una estructura?
+
+En general, no se "declara" una estructura. Simplemente use una referencia a un hash (probablemente anónimo). Vea L<perlref> y L<perldsc> para los detalles.
+Aquí hay un ejemplo:
+
+    $persona = {};                  # nuevo hash anónimo
+    $persona->{EDAD}  = 24;         # establece el campo EDAD a 24
+    $persona->{NOMBRE} = "Nat";     # establece el campo NOMBRE a "Nat"
+
+Si está buscando por algo más riguroso, pruebe L<perlootut>.
+
+=head2 ¿Cómo creo un módulo?
+
+L<perlnewmod> es un buen sitio para empezar, ignore las partes sobre cómo subirlo a CPAN si no quiere hacer su módulo disponible públicamente.
+
+L<ExtUtils::ModuleMaker> y L<Module::Starter> son también buenos lugares para empezar. Muchos autores de CPAN usan ahora L<Dist::Zilla> para automatizarlo tanto como sea posible.
+
+Documentación detallada sobre módulos se puede encontrar en: L<perlmod>, L<perlmodlib> y L<perlmodstyle>.
+
+Si necesita incluir código C o interfaces a bibliotecas C, use h2xs. h2xs creará la estructura de distribución del módulo y los archivos iniciales de la interfaz.
+L<perlxs> y L<perlxstut> explica los detallas.
+
+=head2 ¿Cómo adopto o tomo un módulo que esté en CPAN?
+
+Pida al mantenedor actual para que le haga comantenedor o para que le transfiera el módulo.
+
+Si no puede, por alguna razón, contactar con el autor, contacte con los administradores de PAUSE en modules@perl.org quienes pueden ser capaces de ayudar, pero cada caso se trata por separado.
+
+=over 4
+
+=item *
+
+Obtenga un registro de entrada para el "Perl Authors Upload Server" (PAUSE) si no lo tiene ya: L<http://pause.perl.org>
+
+=item *
+
+Escriba a modules@perl.org explicando que contactó con el mantenedor actual. Los administradores de PAUSE también intentarán contactar con él.
+
+=item *
+
+Publique un mensaje en un sitio con alto tráfico anunciando su intención de tomar control sobre el módulo.
+
+=item *
+
+Espere un poco. Los administradores de PAUSE no quieren actuar con demasiadas prisas, por si el mantenedor actual está de vacaciones. Si no hay respuesta a la comunicación privada o al mensaje público, un administrador de PAUSE puede transferírselo a usted.
+
+=back
+
+=head2 ¿Cómo creo una clase?
+X<class, creation> X<package>
+
+(contribución de brian d foy)
+
+En Perl, una clase es sólo un paquete, y los métodos son sólo subrutinas.
+Perl no es más formal que eso, y le permite establecer el paquete de la manera que quiera (es decir, no establece nada por defecto).
+
+Vea también L<perlootut>, un tutorial que cubre la creación de clases, y L<perlobj>.
+
+=head2 ¿Cómo puedo decir si una variable está manchada?
+
+Puede usar la función tainted() del módulo Scalar::Util, disponible desde CPAN (o incluido con Perl desde la publicación de 5.8.0).
+Vea también L<perlsec/"Aclarado y detección de datos contaminados">.
+
+=head2 ¿Qué es una clausura?
+
+Las clausuras se documentan en L<perlref>.
+
+Una I<Clausura> es un término de la ciencia informática con un significado preciso pero difícil de explicar. Normalmente, las clausuras se implementan en Perl como subrutinas anónimas con referencias duraderas a variables léxicas fuera de su propio ámbito. Estas léxicas refieren mágicamente a las variables presentes cuando la subrutina se definió (enlazado profundo).
+
+Las Clausuras se usan más a menudo en lenguajes de programación donde puede obtener el valor de retorno de una función por la propia función, como en Perl. Note que algunos lenguajes proporcionan funciones anónimas pero no son capaces de proporcionar unas clausuras apropiadas; el lenguaje Python, por ejemplo. Para más información sobre las clausuras, compruebe cualquier libro de texto sobre programación funcional. Scheme es un lenguaje que no solo soporta sino que también anima su uso.
+
+Aquí hay una clásica función (no clausura) que genera funciones:
+
+    sub suma_funcion_generador {
+        return sub { shift() + shift() };
+    }
+
+    my $add_sub = suma_funcion_generador();
+    my $sum = $add_sub->(4,5);                # $sum es ahora 9.
+
+La subrutina anónima devuelta por suma_funcion_generador() no es, técnicamente una clausura, porque no refiere a léxicas fuera de su propio ámbito. Usar una clausura le proporciona una I<plantilla de función> con algunos espacios propios libres preparados para rellenarse más tarde.
+
+Contraste esto con la siguiente función crear_sumador(), en que la función anónima devuelta contiene una referencia a una variable léxica fuera del ámbito de la propia función. Tal referencia requiere que ese Perl devuelva una clausura limpia, y por lo tanto, bloquear en todo momento el valor que la léxica tenía cuando se creó la función.
+
+    sub crear_sumador {
+        my $sumarpieza = shift;
+        return sub { shift() + $sumarpieza };
+    }
+
+    my $f1 = crear_sumador(20);
+    my $f2 = crear_sumador(555);
+
+Ahora C<< $f1->($n) >> es siempre 20 más lo que sea que $n contenga, mientras que C<< $f2->($n) >> es siempre 555 más lo que sea que $n contenga. La $sumarpieza en la clausura sigue activa.
+
+Las clausuras se usan a menudo para propósitos menos esotéricos. Por ejemplo, cuando quiere pasar un trozo de código a una función:
+
+    my $linea;
+    timeout( 30, sub { $linea = <STDIN> } );
+
+Si el código a ejecutar se ha pasado en una cadena, C<< '$linea = <STDIN>' >>, no existe ninguna forma de que la hipotética función timeout() pueda acceder a la variable léxica $linea desde el ámbito del llamante.
+
+Otro uso para una clausura es el de crear una variable I<privada> en una subrutina con nombre, por ejemplo un contador que se inicializa en tiempo de creación de la subrutina y solo se puede modificar desde dentro de la subrutina.
+Esto es algo que se usa algunas veces en un bloque BEGIN en los archivos del paquete para asegurarse de que una variable no sea afectada durante el tiempo de vida del paquete:
+
+    BEGIN {
+        my $id = 0;
+        sub next_id { ++$id }
+    }
+
+Esto se explica con más detalles en L<perlsub>; vea la entrada I<Variables persistentes privadas>.
+
+=head2 ¿Qué es suicidio de variable y cómo puedo impedirlo?
+
+Este problema se arregló en perl perl 5.004_05, así que prevenirlo significa actualizar su versión de perl. ;)
+
+El suicido de variable ocurre cuando (temporalmente o permanentemente) se pierde el valor de una variable. Está causado por crear un ámbito a través de my() y local() interaccionando tanto con clausuras como con variables iteradoras de foreach() y argumentos de subrutinas. Era fácil perder inadvertidamente el valor de la variable de esta manera, pero ahora es mucho más difícil. Tome este código:
+
+    my $f = 'foo';
+    sub T {
+        while ($i++ < 3) { my $f = $f; $f .= "bar"; print $f, "\n" }
+    }
+
+    T;
+    print "Finalmente $f\n";
+
+Si está experimentando suicidio de variable, ese C<my $f> en la subrutina no toma una copia fresca de C<$f> cuyo valor es C<'foo'>. La salida muestra dentro de la subrutina que el valor de C<$f> se filtra incluso cuando no debería, como en esta salida:
+
+    foobar
+    foobarbar
+    foobarbarbar
+    Finalmente foo
+
+El C<$f> que tiene "bar" añadido a él tres veces debería ser un nuevo C<$f>. C<my $f> debería crear una nueva variable léxica en cada vuelta del bucle.
+La salida esperada es:
+
+    foobar
+    foobar
+    foobar
+    Finalmente foo
+
+=head2 ¿Cómo puedo pasar/devolver una {función, identificador de archivo, array, hash, método, I<regex>}?
+
+Necesita pasar referencias a estos objetos. Vea L<perlsub/"Paso por referencia"> para esta cuestión en particular, y L<perlref> para información sobre referencias.
+
+=over 4
+
+=item Pasar variables y funciones
+
+Variables regulares y funciones son bastante fáciles de pasar: simplemente pase una referencia a una variable anónima o función actual:
+
+    func( \$algun_scalar );
+
+    func( \@algun_array  );
+    func( [ 1 .. 10 ]   );
+
+    func( \%algun_hash   );
+    func( { este => 10, ese => 20 }   );
+
+    func( \&alguna_func   );
+    func( sub { $_[0] ** $_[1] }   );
+
+=item Pasar identificadores de archivo
+
+A partir de Perl 5.6, puede representar identificadores de archivo con variables escalares que puede tratar como cualquier otro escalar.
+
+    open my $fh, $archivo or die "¡No puedo abrir $archivo! $!";
+    func( $fh );
+
+    sub func {
+        my $fh_pasado = shift;
+
+        my $linea = <$fh_pasado>;
+    }
+
+Antes de Perl 5.6, tiene que usar las notaciones C<*FH> o C<\*FH>.
+Son "typeglobs" (vea L<perldata/"Typeglobs e identificadores de archivos"> y, especialmente L<perlsub/"Paso por referencia"> para más información).
+
+=item Pasar expresiones regulares
+
+Aquí hay un ejemplo de cómo pasar una cadena y una expresión regular para compararlas. Construya el patrón con el operador C<qr//>:
+
+    sub compara {
+        my ($valor, $regex) = @_;
+        my $retorno = $valor =~ /$regex/;
+        return $retorno;
+    }
+    $coincidencia = compara("viejo McDonald", qr/o.*D/i);
+
+=item Pasar Métodos
+
+Para pasar un método de objeto en una subrutina, puede hacer esto:
+
+    muchas_llamadas(10, $algún_objeto, "nombremétodo")
+    sub muchas_llamadas {
+        my ($cuenta, $widget, $truco) = @_;
+        for (my $i = 0; $i < $cuenta; $i++) {
+            $widget->$truco();
+        }
+    }
+
+O, puede usar una clausura para empaquetar el objeto, su llamada al método, y argumentos:
+
+    my $noseentiende = sub { $algún_obj->ofuscado(@args) };
+    func($noseentiende);
+    sub func {
+        my $code = shift;
+        &$code();
+    }
+
+También puede investigar el método can() en la clase UNIVERSAL (parte de la distribución estándar de perl).
+
+=back
+
+=head2 ¿Cómo creo una variable estática?
+
+(contribución de brian d foy)
+
+En Perl 5.10, declare la variable con C<state>. La declaración C<state> crea una variable léxica que persiste entre llamadas a la subrutina:
+
+    sub contador { state $cuenta = 1; $cuenta++ }
+
+Puede crear una falsa variable estática usando una variable léxica que va fuera de ámbito. En este ejemplo, se define la subrutina C<contador>, y usa la variable léxica C<$cuenta>. Ya que lo envuelve en un bloque BEGIN, C<$cuenta> se define en tiempo de compilación, pero también va fuera de ámbito al final del bloque BEGIN. El bloque BEGIN asegura también que la subrutina y el valor que usa se definen en tiempo de compilación, para que la subrutina esté lista como cualquier otra subrutina, y pueda poner este código en el mismo lugar que otra subrutina en el texto del programa (lo normal, al final del código). La subrutina C<contador> sigue teniendo una referencia a los datos, y es la única manera de que pueda acceder al valor (y cada vez que lo hace, incrementa el valor).
+Los datos almacenados en la memoria definida por C<$cuenta> son privados en C<contador>.
+
+    BEGIN {
+        my $cuenta = 1;
+        sub contador { $cuenta++ }
+    }
+
+    my $comienzo = contador();
+
+    .... # código que llama a contador();
+
+    my $final = contador();
+
+En el ejemplo anterior, creó una función con variable privada porque solo una función recordaba su referencia. Podría definir múltiples funciones mientras la variable esté en el ámbito, y cada función puede compartir la variable "privada". No es realmente "estática" porque puede acceder a ella fuera de la función mientras la variable léxica esté en el ámbito, e incluso crear referencias a ella. En este ejemplo, C<incrementa_cuenta> y C<devuelve_cuenta> comparten la variable. Una función suma al valor y la otra simplemente devuelve el valor.
+Las dos pueden acceder a C<$cuenta>, y ya que ha salido fuera de ámbito, no hay forma de acceder a ella.
+
+    BEGIN {
+        my $cuenta = 1;
+        sub incrementa_cuenta { $cuenta++ }
+        sub devuelve_cuenta   { $cuenta }
+    }
+
+Para declarar una variable privada a nivel de archivo, siga usando una variable léxica.
+Un archivo es también un ámbito, así que una variable léxica definida en el archivo no se puede ver desde ningún otro archivo.
+
+Vea L<perlsub/"Variables privadas persistentes"> para más información.
+La explicación sobre clausuras en L<perlref> puede ayudarle incluso aunque no usemos subrutinas anónimas en esta respuesta. Vea L<perlsub/"Variables privadas persistentes"> para los detalles.
+
+=head2 ¿Cuál es la diferencia entre ámbito dinámico y léxico (estático)? ¿Entre local() y my()?
+
+C<local($x)> salva el anterior valor de la variable global C<$x> y asignar un nuevo valor para la duración de la subrutina I<que es visible en otras funciones llamadas desde la subrutina>. Esto se hace un tiempo de ejecución, por lo que se llama ámbito dinámico. local() siempre afecta a las variables globales, también llamadas variables de paquete o variables dinámicas.
+
+C<my($x)> crea una nueva variable que es solo visible en la subrutina actual. Esto se hace en tiempo de compilación, por lo que se llama ámbito léxico o estático. my() siempre afecta a variables privadas, también llamadas variables léxicas o (impropiamente) variables de ámbito estático.
+
+Por ejemplo:
+
+    sub visible {
+        print "var tiene de valor $var\n";
+    }
+
+    sub dinamico {
+        local $var = 'local';   # nuevo valor temporal para la aún variable
+        visible();              #   global llamada $var
+    }
+
+    sub lexical {
+        my $var = 'privado';    # nueva variable privada, $var
+        visible();              # (invisible fuera del ámbito de la sub)
+    }
+
+    $var = 'global';
+
+    visible();              # imprime global
+    dinamico();             # imprime local
+    lexical();              # imprime global
+
+Note cómo en ningún momento se imprime el valor "privado". Esto es porque $var solo tiene ese valor dentro del bloque de la función lexical(), y está escondido desde la subrutina llamada.
+
+En resumen, local() no crea variables locales, privadas, como podría pensar. Le da un valor temporal a una variable global. my() es lo que necesita por si quiere variables privadas.
+
+Vea L<perlsub/"Variables privadas vía my()"> y L<perlsub/"Valores temporales vía local()"> para escrutar por los detalles.
+
+=head2 ¿Cómo puedo acceder a una variable dinámica mientras hay otra léxica de nombre similar en el mismo ámbito?
+
+Si sabe el nombre de su paquete, puede simplemente mencionarlo explícitamente, como en $Paquete::var. Note que la notación $::var B<no> es la dinámica $var en el paquete actual, sino la que está en el paquete "main", como si hubiera escrito $main::var.
+
+    use vars '$var';
+    local $var = "global";
+    my    $var = "lexical";
+
+    print "léxica es $var\n";
+    print "global es $main::var\n";
+
+De otra manera, puede usar la directiva del compilador our() para traer una variable dinámica en el ámbito léxico actual.
+
+    require 5.006; # our() no existe antes de 5.6
+    use vars '$var';
+
+    local $var = "global";
+    my $var    = "lexical";
+
+    print "léxica es $var\n";
+
+    {
+        our $var;
+        print "global es $var\n";
+    }
+
+=head2 ¿Cuál es la diferencia entre enlazado profundo o ligero?
+
+En el enlazado profundo, las variables léxicas mencionadas en las subrutinas anónimas son las mismas que estaban en el ámbito donde se creó la subrutina.
+En el enlazado ligero, son cualesquiera variables con los mismos nombres que había en el ámbito cuando se llamó a la subrutina. Perl siempre usa enlazado profundo de las variables léxicas (es decir, las creadas con my()).
+Aun así, las variables dinámicas (o sea, global, local, o variables de paquete) son enlazadas de forma ligera. Considere esto como una razón más para no usarlas. Vea la respuesta a L<"¿Qué es una clausura?">.
+
+=head2 ¿Por qué "my($foo) = E<lt>$fhE<gt>;" no funciona bien?
+
+C<my()> y C<local()> dan contexto de lista a la parte derecha de C<=>. La operación de lectura C<< <$fh> >>, como muchas funciones y operaciones de Perl, puede decir en qué contexto se le llamó y comportase apropiadamente. En general, la función scalar() puede ayudar.
+Esta función no hace nada a los propios datos (contrariamente a lo que dice el mito popular) sino que le dice a sus argumentos que se comporten de una manera escalar.
+Si esa función no tiene definido un comportamiento escalar, esto, naturalmente no le ayuda (como con sort()).
+
+Para forzar contexto escalar en este caso particular, sin embargo, solo necesita omitir los paréntesis:
+
+    local($foo) = <$fh>;        # INCORRECTO
+    local($foo) = scalar(<$fh>);   # bien
+    local $foo  = <$fh>;        # correcto
+
+Probablemente debería siempre usar variables léxicas, aunque aquí el problema es el mismo:
+
+    my($foo) = <$fh>;    # INCORRECTO
+    my $foo  = <$fh>;    # correcto
+
+=head2 ¿Cómo redefino una función incorporada, operador o método?
+
+¿Por qué querría hacer eso? :-)
+
+Si quiere sobreescribir una función predefinida, como open(), entonces tendrá que importar la nueva definición desde un módulo diferente. Vea L<perlsub/"Sobreescribiendo funciones incorporadas">.
+
+Si quiere sobrecargar un operador Perl, tal como C<+> o C<**>, entonces querrá usar el I<pragma> C<use overload> pragma, documentado en L<overload>.
+
+Si está hablando sobre ocultar llamadas a métodos en clases padre, vea L<perlootut/"Sobreescribiendo métodos y resolución de métodos">.
+
+=head2 ¿Cuál es la diferencia entre llamar a una función como &foo y foo()?
+
+(contribución de brian d foy)
+
+Llamar a una subrutina como C<&foo>, sin paréntesis, ignora el prototipo de C<foo> y le pasa el valor actual de la lista de argumentos, C<@_>. Aquí hay un ejemplo; la subrutina C<bar> llama a C<&foo>, que imprime su lista de argumentos:
+
+    sub foo { print "Args. en foo: @_\n"; }
+
+    sub bar { &foo; }
+
+    bar( "a", "b", "c" );
+
+Cuando llama a C<bar> con argumentos, ve que C<foo> obtiene lo mismo C<@_>:
+
+    Args. en foo: a b c
+
+Llamar a la subrutina con paréntesis, con o sin argumentos, no usan el C<@_> actual. Cambiando el ejemplo para poner paréntesis después de la llamada a C<foo>, cambia el programa:
+
+    sub foo { print "Args. en foo: @_\n"; }
+
+    sub bar { &foo(); }
+
+    bar( "a", "b", "c" );
+
+Ahora la salida muestra que C<foo> no obtiene C<@_> de su llamador.
+
+    Args. en foo:
+
+Sin embargo, el usar C<&> en la llamada hace que seguimos ignorando el prototipo de C<foo>, si está presente:
+
+    sub foo ($$$) { print "Args. en foo: @_\n"; }
+
+    sub bar_1 { &foo; }
+    sub bar_2 { &foo(); }
+    sub bar_3 { foo( $_[0], $_[1], $_[2] ); }
+    # sub bar_4 { foo(); }
+    # bar_4 no compila: "No hay suficientes argumentos para main::foo en ..."
+
+    bar_1( "a", "b", "c" );
+    # Args. en foo: a b c
+
+    bar_2( "a", "b", "c" );
+    # Args. en foo:
+
+    bar_3( "a", "b", "c" );
+    # Args. en foo: a b c
+
+El principal uso de la característica de pasar C<@_> es el de escribir subrutinas cuyo trabajo principal es el de llamar a otras subrutinas por usted. Para más detalles, vea L<perlsub>.
+
+=head2 ¿Cómo creo una sentencia I<switch> o I<case>?
+
+En Perl v5.10, use la construcción C<given-when> descrita en L<perlsyn>:
+
+    use 5.010;
+
+    given ( $cadena ) {
+        when( 'Pedro' )       { say "¡He encontrado a Pedro!" }
+        when( 'Pablo' )       { say "¡He encontrado a Pablo!" }
+        when( /Bamm-?Bamm/ )  { say "¡He encontrado a Bamm-Bamm!" }
+        default               { say "¡No reconozco el nombre!" }
+    };
+
+Si uno quiere usar puro Perl y ser compatible con versiones de Perl anteriores a 5.10, la respuesta general es la de usar C<if-elsif-else>:
+
+    for ($variable_a_comprobar) {
+        if    (/pat1/)  { }     # hacer algo
+        elsif (/pat2/)  { }     # sino hacer otra cosa
+        elsif (/pat3/)  { }     # sino hacer otra cosa
+        else            { }     # por defecto
+    }
+
+Aquí hay un ejemplo sencillo de un I<switch> basado en coincidencia de patrones, alineado de una manera que se parezca más a lo que sería una sentencia I<switch>.
+Haremos una condición multicamino basada en el tipo de referencia almacenada en $whatchamacallit:
+
+    SWITCH: for (ref $whatchamacallit) {
+
+        /^$/           && die "no es una referencia";
+
+        /SCALAR/       && do {
+                        print_scalar($$ref);
+                        last SWITCH;
+                      };
+
+        /ARRAY/        && do {
+                        print_array(@$ref);
+                        last SWITCH;
+                      };
+
+        /HASH/        && do {
+                        print_hash(%$ref);
+                        last SWITCH;
+                      };
+
+        /CODE/        && do {
+                        warn "no puedo imprimir ref. a una función";
+                        last SWITCH;
+                      };
+
+        # DEFAULT
+
+        warn "Ignorado: tipo definido por el usuario";
+
+    }
+
+Vea L<perlsyn> para otros ejemplos de este estilo.
+
+Algunas veces deberá cambiar la posición de la constante y la variable.
+Por ejemplo, digamos que queremos analizar muchas respuestas proporcionadas, pero de una forma insensible al tamaño de caja que permita también abreviaturas.
+Puede usar la siguiente técnica si las cadenas comienzas todas con caracteres diferentes o si quiere mover las coincidencias para que una tome más precedencia que otra, como C<"SEND">, que aquí tiene precedencia sobre C<"STOP">:
+
+    chomp($respuesta = <>);
+    if    ("SEND"  =~ /^\Q$respuesta/i) { print "Acción es send\n"  }
+    elsif ("STOP"  =~ /^\Q$respuesta/i) { print "Acción es stop\n"  }
+    elsif ("ABORT" =~ /^\Q$respuesta/i) { print "Acción es abort\n" }
+    elsif ("LIST"  =~ /^\Q$respuesta/i) { print "Acción es list\n"  }
+    elsif ("EDIT"  =~ /^\Q$respuesta/i) { print "Acción es edit\n"  }
+
+Una aproximación totalmente diferente es crear un hash de referencias a funciones.
+
+    my %comandos = (
+        "alegre"   =>   \&alegria,
+        "triste",  => \&malhumor,
+        "hecho"    => sub { die "¡Nos vemos!" },
+        "enfadado" => \&enojo,
+    );
+
+    print "¿Cómo estás? ";
+    chomp($cadena = <STDIN>);
+    if ($comandos{$cadena}) {
+        $comandos{$cadena}->();
+    } else {
+        print "No existe ese comando: $cadena\n";
+    }
+
+A partir de Perl 5.8, también se puede usar un módulo de filtrado de código fuente, C<Switch>, para tener I<switch> y I<case>. Su uso está desaconsejado, porque no es totalmente compatible con el I<switch> nativo de Perl 5.10 y, porque, al estar implementado como filtro de código fuente, no siempre funciona como se espera cuando interviene sintaxis compleja.
+
+=head2 ¿Cómo puedo atrapar accesos a variables, funciones o métodos indefinidos?
+
+El método AUTOLOAD, explicado en L<perlsub/"Autocarga"> le permite capturar llamadas a funciones indefinidas y métodos.
+
+Cuando se refiere a variables indefinidas que pudieran disparar una advertencia bajo C<use warnings>, puede promover la advertencia a un error.
+
+    use warnings FATAL => qw(uninitialized);
+
+=head2 ¿Por qué un método, incluido en el mismo archivo, no se encuentra?
+
+Algunas razones posibles: su herencia se ha vuelto confusa, se ha equivocado al escribir el nombre del método, o el objeto es de un tipo erróneo. Compruebe L<perlootut> para detalles sobre cualquiera de estos casos. También puede usar C<print ref($object)> para descubrir la clase en la que C<$object> fue bendecido.
+
+Otra posible razón de estos problemas es que haya usado la sintaxis de objeto indirecto (ejemplo, C<find Guru "Samy">) con un nombre de clase antes que Perl vea que tal paquete exista. Es más sensato asegurarse de que sus paquetes están todos definidos antes de empezar a usarlos, lo cual sucederá si usa la sentencia C<use> en lugar de la C<require>. Si no, asegúrese de que usa la notación flecha (ej., C<< Guru->find("Samy") >>). La notación de objetos se explica en L<perlobj>.
+
+Asegúrese que lee sobre crear módulos en L<perlmod> y los peligros de los objetos indirectos en L<perlobj/"Invocación de métodos">.
+
+=head2 ¿Cómo puedo saber mi paquete actual o el del llamante?
+
+(contribución de brian d foy)
+
+Para encontrar el paquete en el que ahora se encuentra, use el literal especial C<__PACKAGE__>, como se documenta en L<perldata>. Solo puede usar literales especiales como I<tokens>, así que no puede interpolarlo en cadenas igual a como se hace con las variables:
+
+    my $paquete_actual = __PACKAGE__;
+    print "Estoy en el paquete $paquete_actual\n";
+
+Si quiere encontrar el paquete que llama a su código, quizás algo mejor que los diagnósticos que L<Carp> ofrece, use la función incorporada C<caller>:
+
+    sub foo {
+        my @args = ...;
+        my ($paquete, $nombre_archivo, $linea) = caller;
+
+        print "Se llamó desde el paquete $paquete\n";
+        );
+
+Por defecto, su programa se inicia en el paquete C<main>, así que siempre estará en algún paquete.
+
+Esto es diferente de encontrar el paquete en que fue bendecido un objeto, que podría no ser el paquete actual. Para eso, use C<blessed> de L<Scalar::Util>, parte de la biblioteca estándar desde Perl 5.8:
+
+    use Scalar::Util qw(blessed);
+    my $paquete_objeto = blessed( $objeto );
+
+Aún así, la mayor parte del tiempo, no debería preocuparse de qué paquete bendijo a un objeto, mientras que él diga que hereda de esa clase:
+
+    my $es_la_clase_correcta = eval { $objeto->isa( $paquete ) }; # verdadero o falso
+
+Y, con Perl 5.10 y superiores, no tiene que comprobar la herencia para ver si un objeto puede manejas un rol. Para eso, puede usar C<DOES>, que viene con C<UNIVERSAL>:
+
+    my $clase_lo_hace = eval { $objeto->DOES( $rol ) }; # verdadero o falso
+
+Puede reemplazar con seguridad C<isa> con C<DOES> (aunque lo contrario no es cierto).
+
+=head2 ¿Cómo puedo comentar un gran bloque de código Perl?
+
+(contribución de brian d foy)
+
+La manera rápida-y-sucia de comentar más de una línea de Perl es la de rodear esas líneas con directivas Pod. Tiene que poner estas directivas por delante de la línea y en un sitio donde Perl espera una nueva sentencia (no en medio de sentencias como los comentarios C<#>). Termina el comentario con C<=cut>, finalizando la sección Pod:
+
+    =pod
+
+    my $objeto = NoVaASuceder->new();
+
+    sub_ignorada();
+
+    $no_sera_asignada = 37;
+
+    =cut
+
+El método rápido-y-sucio solo funciona bien cuando no planea dejar el código comentado en el código fuente. Si un intérprete de Pod lo lee, su comentario multilínea se mostrará en la traducción Pod.
+Una forma mejor es esconderlo de los intérpretes Pod.
+
+La directiva C<=begin> puede marcar una sección para un propósito en particular.
+Si el intérprete de Pod no lo maneja, simplemente lo ignora. Etiquete los comentarios con C<comment>. Termine el comentario con C<=end> con la misma etiqueta. Sigue necesitando el C<=cut> para pasar del comentario Pod al código Perl:
+
+    =begin comment
+
+    my $objeto = NoVaASuceder->new();
+
+    sub_ignorada();
+
+    $no_sera_asignada = 37;
+
+    =end comment
+
+    =cut
+
+Para más información sobre Pod, compruebe L<perlpod> y L<perlpodspec>.
+
+=head2 ¿Cómo limpio un paquete?
+
+Use este código, proporcionado por Mark-Jason Dominus:
+
+    sub scrub_package {
+        no strict 'refs';
+        my $pack = shift;
+        die "No debería eliminar el paquete main"
+            if $pack eq "" || $pack eq "main";
+        my $stash = *{$pack . '::'}{HASH};
+        my $nombre;
+        foreach $nombre (keys %$stash) {
+            my $nombrecompleto = $pack . '::' . $nombre;
+            # Eliminar todo lo relacionado con ese nombre.
+            undef $$nombrecompleto;
+            undef @$nombrecompleto;
+            undef %$nombrecompleto;
+            undef &$nombrecompleto;
+            undef *$nombrecompleto;
+        }
+    }
+
+O, si está usando una versión reciente de Perl, puede usar en su lugar la función Symbol::delete_package().
+
+=head2 ¿Cómo puedo usar una variable como el nombre de una variable?
+
+Los principiantes a menudo piensan que quieren que una variable contenga el nombre de una variable.
+
+    $pedro   = 23;
+    $varname = "pedro";
+    ++$$varname;         # $pedro es ahora 24
+
+Esto funciona I<algunas veces>, pero es una muy mala idea por dos razones.
+
+La primera razón es que esta técnica I<solo funciona en variables globales>. Esto significa que si en el ejemplo anterior $pedro es una variable léxica creada con my(), el código no funcionará en absoluto: de forma accidental accede a la global y se salta la léxica privada. Las variables globales son malas porque puede fácilmente colisionar accidentalmente y en general crear código no escalable y confuso.
+
+Las referencias simbólicas están prohibidas bajo el I<pragma> C<use strict>.
+Ellas no son referencias de verdad y consecuentemente no son contadas como referencias ni recolectadas por el basurero.
+
+La otra razón de por qué usar una variable para guardar el nombre de otra variable es una mala idea es que esa cuestión a menudo tiene su raíz en una falta de entendimiento de las estructuras Perl, particularmente, los hashes. Usando referencias simbólicas, está simplemente usando el hash de la tabla de símbolos del paquete (como C<%main::>) en lugar de un hash definido por el usuario. La solución es usar en su lugar su propio hash o una referencia real.
+
+    $VAR_USUARIO{"pedro"} = 23;
+    my $varname = "pedro";
+    $VAR_USUARIO{$varname}++;  # no $$varname++
+
+Aquí estamos usando el hash %VAR_USUARIO en lugar de referencias simbólicas.
+Algunas veces esto viene de la lectura de cadenas por parte del usuario referenciando a variables y queriendo expandirlas a los valores de las variables de su programa Perl. Esto también es una mala idea porque hace enfrentar el espacio de nombres direccionable por el programa con el único direccionable por el usuario. En lugar de leer una cadena y expandirla a los contenidos reales de las variables de su propio programa:
+
+    $str = 'esto contiene un $pedro y $pablo';
+    $str =~ s/(\$\w+)/$1/eeg;          # necesita una doble evaluación
+
+sería mejor mantener un hash como %VAR_USUARIO y tener referencias a variables que se refieran realmente a entradas a ese hash:
+
+    $str =~ s/\$(\w+)/$VAR_USUARIO{$1}/g; # aquí no hay ningún /e
+
+Esto es más rápido, limpio y seguro que la solución anterior. Naturalmente, no necesita usar un signo de dólar. Podría usar su propio esquema para hacerlo menos confuso, como símbolos de por ciento, etc.
+
+    $str = 'esto contiene un %pedro% y %pablo%';
+    $str =~ s/%(\w+)%/$VAR_USUARIO{$1}/g; # aquí no hay ningún /e
+
+Otra razón por la cual esa gente piensa en ocasiones que quieren que una variable contenga el nombre de una variable es porque no saben cómo construir estructuras correctas de datos usando hashes. Por ejemplo, digamos que quieren dos hashes en su programa: %pedro y %pablo, y quieren usar otra variable escalar para referirse a estos por su nombre.
+
+    $nombre = "pedro";
+    $$nombre{ESPOSA} = "wilma"; # establece %pedro
+
+    $nombre = "pablo";
+    $$nombre{ESPOSA} = "betty"; # establece %pablo
+
+Sigue siendo una referencia simbólica, y sigue padeciendo los problemas enumerados antes. Se podría escribir mucho mejor así:
+
+    $gente{"pedro"}{ESPOSA} = "wilma";
+    $gente{"pablo"}{ESPOSA} = "betty";
+
+Y simplemente use un hash multinivel desde el principio.
+
+Las únicas ocasiones que en las que, absolutamente I<debe> use referencias simbólicas es cuando realmente tiene que referirse a la tabla de símbolos. Esto puede ser porque es lo único de lo que no se puede tomar una referencia real, como el nombre de un formato.
+Haciéndolo así es importante para las llamadas a métodos, ya que estas siempre son a través de la tabla de símbolos para la resolución.
+
+En estos casos, podría desactivar temporalmente C<strict 'refs'> para que pueda jugar con la tabla de símbolos. Por ejemplo:
+
+    @colores = qw(rojo azul verde amarillo naranja púrpura violeta);
+    for my $nombre (@colores) {
+        no strict 'refs';  # relegado a este bloque
+        *$nombre = sub { "<FONT COLOR='$nombre'>@_</FONT>" };
+    }
+
+Todas esas funciones (rojo(), azul(), verde (color)(), etc.) parecen aisladas, pero el código real se compiló una sola vez en la clausura.
+
+Así que, en algunas ocasiones, podría querer usar referencias simbólicas para manipular la tabla de símbolos directamente. Esto no importa para formatos, manejadores y subrutinas, porque son siempre globales: no puede usar my() con ellos.
+Para escalares, arrays y hashes, sin embargo -y normalmente para subrutinas-, probablemente solo querrá usar referencia duras.
+
+=head2 ¿Qué significa "I<bad interpreter>" (intérprete incorrecto)?
+
+(contribución de brian d foy)
+
+El mensaje de "I<bad interpreter>" viene del shell, no de perl. El mensaje actual puede variar dependiendo de su plataforma, shell, y configuraciones regionales.
+
+Si ve "I<bad interpreter - no such file or directory>", la primera línea en su I<script> perl (la línea "I<shebang>") no contiene la ruta correcta a perl (o cualquier otro programa capaz de ejecutar I<scripts>).
+Algunas veces esto sucede cuando mueve el I<script> de una máquina a otra y cada máquina tiene una ruta a perl: /usr/bin/perl contra /usr/local/bin/perl, por ejemplo. También puede indicar que la máquina fuente tiene terminadores de línea CRLF y la máquina destino tiene solo LF: el shell intenta encontrar /usr/bin/perl<CR>, pero no puede.
+
+Si ve "I<bad interpreter: Permission denied>", necesita hacer que su I<script> sea ejecutable.
+
+En cualquier caso, debería ser capaz de ejecutar los I<scripts> con perl, explícitamente:
+
+    % perl script.pl
+
+Si obtiene un mensaje como "I<perl: command not found>", perl no está en su PATH, que podría significar también que la posición de perl no es la esperada, por lo que necesita ajustar su línea I<shebang>.
+
+=head2 ¿Necesito recompilar los módulos XS cuando exista un cambio en la biblioteca C?
+
+(contribución de Alex Beamish)
+
+Si la nueva versión de la biblioteca C es compatible con ABI (que es compatible con I<Application
+Binary Interface>) con la versión que está actualizando, y si la biblioteca compartida no cambia, no es necesaria la recompilación.
+
+=head1 AUTOR Y COPYRIGHT
+
+Copyright (c) 1997-2013 Tom Christiansen, Nathan Torkington y otros autores indicados. Todos los derechos reservados.
+
+Esta documentación es libre; puede redistribuirla o modificarla en los mismos términos que Perl.
+
+Independientemente de su distribución, todos los ejemplos de código de estos archivos se quedan por la presente en el dominio público. Se le permite y anima a utilizar este código en sus propios programas por simple diversión o con fines de lucro, como mejor le parezca. Un simple comentario en el código dándonos crédito sería cortés, pero no es necesario.
