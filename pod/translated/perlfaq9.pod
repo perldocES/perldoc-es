@@ -1,0 +1,323 @@
+=head1 NAME
+
+perlfaq9 - Web, correo electrónico y conexión a la red
+
+=head1 VERSIÓN
+
+versión 5.021010
+
+=head1 DESCRIPCIÓN
+
+Esta sección trata las cuestiones relacionadas para ejecutar sitios web, enviar y recibir correo así como temas generales sobre redes.
+
+=head2 ¿Debo usar un entorno de trabajo web?
+
+Sí. Si está construyendo un sitio web con cualquier nivel de interactividad (formularios/usuarios/bases de datos), querrá usar un entorno de trabajo para hacer más sencilla la gestión de peticiones y respuestas.
+
+Si no hay interactividad entonces aún puede mirar en usar algo como L<Template Toolkit|https://metacpan.org/module/Template> o L<Plack::Middleware::TemplateToolkit> para que el mantenimiento de sus archivos HTML (y otros recursos) sea más fácil.
+
+=head2 ¿Qué entorno de trabajo web debo usar?
+X<framework> X<CGI.pm> X<CGI> X<Catalyst> X<Dancer>
+
+No hay una respuesta sencilla para esta pregunta. Los entornos de trabajo Perl pueden ejecutar todo, desde servidores de archivos básicos y redes privadas a pequeña escala, hasta sitios web masivos multinacional y multilenguaje que son el núcleo de negocios internacionales.
+
+Abajo sigue una lista de unos cuantos entornos de trabajo web con comentarios que podrían ayudarle en tomar una decisión, dependiendo de sus requerimientos específicos. Comience leyendo la documentación y luego haga preguntas en las listas de correo o canal de IRC relevantes.
+
+=over 4
+
+=item L<Catalyst>
+
+Fuertemente orientado a objetos y lleno de características con una larga historia de desarrollo y una gran comunidad y ecosistema de complementos. Es excelente para grandes y complejas aplicaciones, donde tiene control completo sobre el servidor.
+
+=item L<Dancer>
+
+Joven y libre del peso del pasado, proporcionando una API ligera y fácil de aprender.
+Tiene un creciente ecosistema de complementos. Se utiliza más en proyectos más pequeños y muy fácil de aprender para los principiantes.
+
+=item L<Mojolicious>
+
+Bastante joven enfocado en HTML5 y tecnologías web en tiempo real como los WebSockets.
+
+=item L<Web::Simple>
+
+Actualmente experimental, fuertemente orientado a objetos, construido para la velocidad y como base de un kit de herramientas para construir micro aplicaciones web, entornos de trabajo personalizados o para atar juntos aplicaciones web actuales compatibles con Plack con un despachador central.
+
+=back
+
+Todos estos interactúan o usan L<Plack>, el cual sirve para entender lo básico para construir un sitio web en Perl (hay mucho más en L<Plack::Middleware|https://metacpan.org/search?q=plack%3A%3Amiddleware>).
+
+=head2 ¿Qué es Plack y PSGI?
+
+L<PSGI> es la Especificación de Interfaz Pasarela Servidor Web (I<Perl Web Server Gateway Interface Specification>), es un estándar que usan muchos entornos de trabajo web en Perl, que no necesita entender para construir un sitio web. La parte que querrá usar es L<Plack>.
+
+L<Plack> es un conjunto de herramientas para usar una pila PSGI. Contiene componentes L<middleware|https://metacpan.org/search?q=plack%3A%3Amiddleware>, un servidor de referencia y utilidades para entornos de trabajo para aplicaciones web.
+Plack es como el Rack de Ruby o el Paste para WSGI de Python.
+
+Podría construir un sitio web usando L<Plack> y su propio código, pero para cualquier otra cosa que no sea un sitio web muy básico, usar un entorno de trabajo web (que use L<Plack>) es una mejor opción.
+
+=head2 ¿Cómo elimino HTML de una cadena de caracteres?
+
+Use L<HTML::Strip> o L<HTML::FormatText> que no solo elimina HTML sino que también intenta hacer un pequeño formateo del texto plano resultante.
+
+=head2 ¿Cómo extraigo URL?
+
+L<HTML::SimpleLinkExtor> extraerá URL del HTML; maneja anclas, imágenes, objetos, marcos y muchas otras marcas que pueden contener un URL.
+Si necesita algo más complejo, puede crear su propia subclase de L<HTML::LinkExtor> o L<HTML::Parser>. Incluso podría usar L<HTML::SimpleLinkExtor> como ejemplo para algo específicamente ajustado a sus necesidades.
+
+Puede usar L<URI::Find> para extraer URL de un documento de texto arbitrario.
+
+=head2 ¿Cómo descargo un archivo HTML?
+
+(contribución de brian d foy)
+
+Use la distribución libwww-perl. El módulo L<LWP::Simple> puede obtener recursos web y entregar su contenido en forma de cadena:
+
+    use LWP::Simple qw(get);
+
+    my $html = get( "http://www.example.com/index.html" );
+
+También puede almacenar el recurso directamente en un archivo:
+
+    use LWP::Simple qw(getstore);
+
+    getstore( "http://www.example.com/index.html", "foo.html" );
+
+Si necesita algo más complicado, puede usar el módulo L<LWP::UserAgent> para crear su propio agente de usuario (por ejemplo, el navegador) para tener el trabajo terminado. Si quiere simular un navegador web interactivo, puede usar el módulo L<WWW::Mechanize>.
+
+=head2 ¿Cómo automatizo el envío de un formulario HTML?
+
+Si está haciendo algo complejo, tal como moverse a través de muchas páginas y formularios o un sitio web, puede usar L<WWW::Mechanize>. Vea su documentación para todos los detalles.
+
+Si está enviando valores usando el método GET, cree una URL y codifique el formulario usando el método C<query_form>:
+
+    use LWP::Simple;
+    use URI::URL;
+
+    my $url = url('http://www.perl.com/cgi-bin/cpan_mod');
+    $url->query_form(module => 'DB_File', readme => 1);
+    $content = get($url);
+
+Si está usando el método POST, cree su propio agente de usuario y codifique el contenido de forma apropiada.
+
+    use HTTP::Request::Common qw(POST);
+    use LWP::UserAgent;
+
+    my $ua = LWP::UserAgent->new();
+    my $req = POST 'http://www.perl.com/cgi-bin/cpan_mod',
+                   [ module => 'DB_File', readme => 1 ];
+    my $contenido = $ua->request($req)->as_string;
+
+=head2 ¿Cómo decodifico o creo las codificaciones '%' en la web?
+X<URI> X<URI::Escape> X<RFC 2396>
+
+La mayor parte del tiempo no necesitará hacer esto, ya que su entorno de trabajo web, o si está haciendo una petición, el módulo L<LWP> u otro módulo lo hará por usted.
+
+Para codificar una cadena usted mismo, use el módulo L<URI::Escape>. La función C<uri_escape> devuelve una cadena escapada:
+
+    my $original = "Dos puntos : Hash # Por ciento %";
+
+    my $escapado = uri_escape( $original );
+
+    print "$escapado\n"; # 'Dos%20puntos%20%3A%20Hash%20%23%20Por%20ciento%20%25'
+
+Para decodificar la cadena, use la función C<uri_unescape>:
+
+    my $desescapado = uri_unescape( $escapado );
+
+    print $desescapado; # devuelve el original
+
+Recuerde no codificar un URI completo; necesita escapar cada componente de forma separada y luego unirlos.
+
+=head2 ¿Cómo redirijo a otra página?
+
+La mayor parte de los entornos de trabajo web tendrán un mecanismo para hacer esto; con el entorno L<Catalyst> sería:
+
+    $c->res->redirect($url);
+    $c->detach();
+
+Si está usando Plack (que la mayor parte de los entornos de trabajo hacen), merece la pena mirar L<Plack::Middleware::Rewrite> si está migrando desde el Apache o si tiene URL que siempre quiere redirigir.
+
+=head2 ¿Cómo pongo una contraseña en mis páginas web?
+
+Vea si el entorno de trabajo web que está usando tiene un sistema de autenticación y si cumple sus necesidades.
+
+De forma alternativa mire L<Plack::Middleware::Auth::Basic>, u otra opción de L<autenticación Plack|https://metacpan.org/search?q=plack+auth>.
+
+=head2 ¿Cómo me puedo asegurar que los usuarios no entren valores en un formulario que provoque que mi I<script> CGI haga cosas malas?
+
+(contribución de brian d foy)
+
+No puede impedir que la gente envíe datos maliciosos a su I<script>. Incluso si añade algunas comprobaciones del lado del cliente, la gente puede desactivarlos o saltárselos completamente. Por ejemplo, alguien podría usar un módulo tal como L<LWP> para enviar datos a su sitio web. Si quiere impedir datos que intenten usar inyección SQL u otros tipos de ataques (algo que querrá hacer), no debe confiar en ningún dato que entre a su programa.
+
+La documentación en L<perlsec> tiene consejos generales sobre seguridad en los datos.
+Si está usando el módulo L<DBI>, use los contenedores para recibir los datos.
+Si está ejecutando programas externos con C<system> o C<exec>, use el formato de lista. Hay muchas otras precauciones que debería tomar, demasiadas para listarse aquí, y muchas de ellas caen bajo la categoría de no usar ningún dato que no tenga intención de usar. No confíe en nadie.
+
+=head2 ¿Cómo interpreto la cabecera de un correo?
+
+Use el módulo L<Email::MIME>. Está bien probado y soporta todas las locuras que va a ver en el mundo real (plegado de espacio en blanco, codificaciones, comentarios, etc.).
+
+  use Email::MIME;
+
+  my $mensaje = Email::MIME->new($rfc2822);
+  my $tema    = $mensaje->header('Subject');
+  my $desde   = $mensaje->header('From');
+
+Si ya tiene alguna clase de objeto de correo electrónico, considere el pasarlo a L<Email::Abstract> y entonces use su método cast para obtener un objeto L<Email::MIME>:
+
+  my $objeto_mensaje_correo = leer_mensaje();
+  my $abstracto = Email::Abstract->new($objeto_mensaje_correo);
+  my $objeto_mime_correo = $abstracto->cast('Email::MIME');
+
+=head2 ¿Cómo compruebo si una dirección de correo electrónico es válida?
+
+(con contribución parcial de Aaron Sherman)
+
+Esta pregunta no es tan simple como suena. Hay dos partes:
+
+a) ¿Cómo verifico que una dirección de correo está formada correctamente?
+
+b) ¿Cómo verifico que una dirección de correo apunta a un receptor correcto?
+
+Sin enviar correo a la dirección y ver si hay un humano al otro lado que le responda, no podrá responder completamente a la parte I<b>, pero el módulo L<Email::Valid> hará la parte I<a> y parte de la I<b>, tanto como pueda hacer en tiempo real.
+
+Nuestro mejor consejo para verificar una dirección de correo de una persona es que nos la dé dos veces, igual a que cuando le pedimos que cambie una contraseña. Esto evitará los pequeños fallos. Si las dos versiones coinciden, envíe un correo a esa dirección con un mensaje personalizado. Si obtiene respuesta, y sigue sus indicaciones, puede estar razonablemente seguro de que es real.
+
+Una estrategia parecida que es menos propensa a la falsificación es la de darle un PIN (número de identificación personal). Registre la dirección y el PIN (mejor si es aleatorio) para un procesamiento posterior. En el correo que envíe, incluya un enlace a su sitio web con el PIN incluido. Si el correo rebota, ya sabe que no es válida. Si no pulsan en el enlace, tanto si se equivocaron en la dirección o (asumiendo que han recibido el mensaje) reconsideraron que ya no es importante comunicarse con usted, entonces no necesita preocuparse sobre ello.
+
+=head2 ¿Cómo decodifico una cadena de caracteres MIME/BASE64?
+
+El paquete L<MIME::Base64> gestiona esto tan bien como el codificado MIME/QP.
+Decodificar base 64 se convierte en algo tan simple como:
+
+    use MIME::Base64;
+    my $decodificado = decode_base64($codificado);
+
+El módulo L<Email::MIME> puede decodificar partes de mensajes de correo codificadas en base 64 de forma transparente, así que el desarrollador no necesita preocuparse sobre ello.
+
+=head2 ¿Cómo encuentro la dirección de correo de un usuario?
+
+Pregúnteselo. Existen demasiados proveedores de correo por lo que no es probable que el sistema local tenga una idea de cómo determinar la dirección de correo de un usuario.
+
+La excepción es el correo específico de una organización (p.e., foo@tuempresa.com) donde la política de nombres se puede codificar en su programa. En este caso, podría mirar por $ENV{USER}, $ENV{LOGNAME} y getpwuid($<) en contexto escalar, así:
+
+  my $nombre_usuario = getpwuid($<)
+
+Pero no puede seguir haciendo suposiciones sobre si esto es correcto, a menos que la política lo diga. Lo mejor que puede hacer es preguntar al usuario.
+
+=head2 ¿Cómo envío correo electrónico?
+
+Use los módulos L<Email::MIME> y L<Email::Sender::Simple>, así:
+
+  # primero, cree su mensaje
+  my $mensaje = Email::MIME->create(
+    header_str => [
+      From    => 'usted@ejemplo.com',
+      To      => 'amigo@ejemplo.com',
+      Subject => '¡Feliz cumpleaños!',
+    ],
+    attributes => {
+      encoding => 'quoted-printable',
+      charset  => 'utf-8',
+    },
+    body_str => "¡Que tengas un Feliz cumpleaños!\n",
+  );
+
+  use Email::Sender::Simple qw(sendmail);
+  sendmail($mensaje);
+
+Por defecto, L<Email::Sender::Simple> probará primero con `sendmail`, si existe en su $PATH. Esto, generalmente, no es el caso. Si existe un servidor de correo remoto que usa para enviar correo, considere el investigar uno de las clases de transporte (Transport). En el momento de escribir esto, los transportes disponibles son:
+
+=over 4
+
+=item L<Email::Sender::Transport::Sendmail>
+
+Este es el de por defecto. Si puede usar los programas L<mail(1)> o L<mailx(1)> para enviar correo desde la máquina donde corre el código, debería usarlo.
+
+=item L<Email::Sender::Transport::SMTP>
+
+Este transporte contacta con un servidor SMTP remoto sobre TCP. Opcionalmente usa SSL y puede autenticarse con el servidor vía SASL.
+
+=item L<Email::Sender::Transport::SMTP::TLS>
+
+Este es como el transporte SMTP, pero usa seguridad TLS. Puede autenticarse también con este módulo, usando cualquiera de los mecanismos que soporte su servidor después de STARTTLS.
+
+=back
+
+Decirle a L<Email::Sender::Simple> que use un determinado transporte es inmediato.
+
+  sendmail(
+    $mensaje,
+    {
+      transport => $objeto_transporte_enviador_correo,
+    }
+  );
+
+=head2 How do I use MIME to make an attachment to a mail message?
+
+L<Email::MIME> soporta de forma directa mensajes divididos en partes. Los objetos L<Email::MIME> son en sí mismos partes y se pueden adjuntar en otro objeto L<Email::MIME>. Consulte la documentación L<Email::MIME> para más información, incluyendo todos los métodos soportados y ejemplos de su uso.
+
+=head2 ¿Cómo leo un correo electrónico?
+
+Use el módulo L<Email::Folder>, así:
+
+  use Email::Folder;
+
+  my $carpeta = Email::Folder->new('/ruta/a/la/carpeta/del/correo');
+  while(my $mensaje = $carpeta->next_message) {
+    # next_message devuelve objetos Email::Simple, pero nosotros queremos
+    # objetos Email::MIME ya que son más robustos
+    my $mime = Email::MIME->new($mensaje->as_string);
+  }
+
+Existen diferentes clases en el espacio de nombres L<Email::Folder> para soportar diferentes tipos de buzones. Note que estos módulos son, generalmente bastante limitados y solo soportan B<leer> más que escribir.
+
+=head2 ¿Cómo encuentro el nombre de servidor, nombre de dominio o dirección IP?
+X<hostname, domainname, IP address, host, domain, hostfqdn, inet_ntoa,
+gethostbyname, Socket, Net::Domain, Sys::Hostname>
+
+(contribución de brian d foy)
+
+El módulo L<Net::Domain>, que es parte de la biblioteca estándar a partir de Perl 5.7.3, puede obtener el nombre de dominio cualificado de forma completa (FQDN), el nombre del servidor o el nombre de dominio.
+
+    use Net::Domain qw(hostname hostfqdn hostdomain);
+
+    my $servidor = hostfqdn();
+
+El módulo L<Sys::Hostname>, parte de la biblioteca estándar, también puede obtener el nombre del servidor:
+
+    use Sys::Hostname;
+
+    $servidor = hostname();
+
+
+El módulo L<Sys::Hostname::Long> toma un enfoque diferente y prueba un método más fuerte para devolver el nombre completo del servidor:
+
+  use Sys::Hostname::Long 'hostname_long';
+
+  my $servidor = hostname_long();
+
+Para obtener la dirección IP, puede usar la función incorporada C<gethostbyname> para convertir el nombre a un número. Para convertir el número en la forma de bytes con puntos (a.b.c.d) que la mayor parte de la gente espera, use la función C<inet_ntoa> del módulo L<Socket>, que también viene con perl.
+
+    use Socket;
+
+    my $direccion = inet_ntoa(
+        scalar gethostbyname( $servidor || 'localhost' )
+    );
+
+=head2 ¿Cómo bajo/subo un archivo por (S)FTP?
+
+L<Net::FTP> y L<Net::SFTP> le permiten interactuar con servidores FTP y SFTP (I<Secure
+FTP>).
+
+=head2 ¿Cómo puedo hacer RPC en Perl?
+
+Use uno de los módulos RPC ( L<https://metacpan.org/search?q=RPC> ).
+
+=head1 AUTOR Y COPYRIGHT
+
+Copyright (c) 1997-2010 Tom Christiansen, Nathan Torkington y otros autores indicados. Todos los derechos reservados.
+
+Esta documentación es libre; puede redistribuirla o modificarla en los mismos términos que Perl.
+
+Independientemente de su distribución, todos los ejemplos de código de estos archivos se quedan por la presente en el dominio público. Se le permite y anima a utilizar este código en sus propios programas por simple diversión o con fines de lucro, como mejor le parezca. Un simple comentario en el código dándonos crédito sería cortés, pero no es necesario.
