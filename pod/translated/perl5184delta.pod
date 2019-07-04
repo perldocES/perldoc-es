@@ -1,0 +1,114 @@
+=encoding utf8
+
+=head1 NAME
+
+perl5184delta - qué hay de nuevo para Perl 5.18.4
+
+=head1 DESCRIPCIÓN
+
+Este documento describe las diferencias entre la versión 5.18.4 y la 5.18.2.  B<Por favor, tenga en cuenta:>  Este documento ignora perl 5.18.3, una versión rota que existió solo durante unas horas.
+
+Si va a actualizar desde una versión anterior, como la 5.18.1, debe leer primero L<perl5182delta>, donde se describen las diferencias entre las versiones 5.18.1 y 5.18.2.
+
+=head1 Módulos y pragmas
+
+=head2 Módulos y pragmas actualizados
+
+=over 4
+
+=item *
+
+L<Digest::SHA> se ha actualizado de la versión 5.84_01 a la 5.84_02.
+
+=item *
+
+L<perl5db.pl> se ha actualizado de la versión 1.39_10 a la 1.39_11.
+
+Esto arregla un cuelgue en el completado con tabulador, donde esté disponible. [perl #120827]  También, la información del identificador de archivo se reinicia apropiadamente después de que se ejecute un paginador. [perl #121456]
+
+=back
+
+=head1 Compatibilidad con plataformas
+
+=head2 Notas específicas de plataformas
+
+=over 4
+
+=item Win32
+
+=over 4
+
+=item *
+
+Aparecido en L<perl #113536|https://rt.perl.org/Public/Bug/Display.html?id=113536>, se ha arreglado una fuga de memoria en cada llamada a C<system> y comillas invertidas (C< `` >), en la mayoría de Perl para Win32 comenzando por 5.18.0.  La fuga de memoria solo ocurre si activa el pseudo-fork en su compilación de Perl para Win32, y se está ejecutando en Server 2003 R2 o S.O. más modernos.  La fuga no aparece en WinXP SP3.
+[L<perl #121676|https://rt.perl.org/Public/Bug/Display.html?id=121676>]
+
+=back
+
+=back
+
+=head1 Arreglo de determinados errores
+
+=over 4
+
+=item *
+
+El depurador ahora reinicia apropiadamente los identificadores de archivo que necesita. [perl #121456]
+
+=item *
+
+Se ha arreglado un fallo de segmentación en Digest::SHA.  [perl #121421]
+
+=item *
+
+perl se puede compilar de nuevo con USE_64_BIT_INT, con Visual C 2003, 32 bit.
+[perl #120925]
+
+=item *
+
+Se vuelve a interpretar de forma correcta una llave de apertura ({). [perl #119973]
+
+=item *
+
+Copia los valores utilizados para perturbar la iteración de un hash cuando se clona un intérprete.  Esto no provocaba daños pero hacía que C<valgrind> se quejara. [perl #121336]
+
+=item *
+
+En Perl v5.18 C<undef *_; goto &sub> y C<local *_; goto &sub> empezaron a colgarse.  Esto se ha corregido. [perl #119949]
+
+=back
+
+=head1 Agradecimientos
+
+Perl 5.18.4 representa aproximadamente 9 meses de desarrollo desde Perl 5.18.2 y contiene aproximadamente 2000 líneas de cambios en 53 archivos por parte de 13 autores.
+
+Perl sigue floreciendo en su tercera década gracias a una vibrante comunidad de usuarios y desarrolladores. Las siguientes personas aportaron las mejoras que hicieron posible Perl 5.18.4:
+
+Daniel Dragan, David Mitchell, Doug Bell, Father Chrysostomos, Hiroo Hayashi, James E Keenan, Karl Williamson, Mark Shelor, Ricardo Signes, Shlomi Fish, Smylers, Steve Hay, Tony Cook.
+
+Como la lista anterior se genera automáticamente a partir del historial de control de versiones, es muy probable que sea incompleta. En particular, no incluye los nombres de los (muy apreciados) colaboradores que notificaron problemas a través del sistema de seguimiento de errores de Perl.
+
+Muchos de los cambios incluidos en esta versión tuvieron su origen en los módulos CPAN incluidos en el núcleo de Perl. Agradecemos a toda la comunidad CPAN por ayudar en el florecimiento de Perl.
+
+Si desea ver una lista más completa de todas las personas que han contribuido a lo largo de la historia de Perl, la encontrará en el archivo F<AUTHORS> de la distribución del código fuente de Perl.
+
+=head1 Notificación de errores
+
+Si encuentra algo que piensa que es un error, podría verificar los artículos publicados recientemente en el grupo de noticias comp.lang.perl.misc y la base de datos de errores de perl en http://rt.perl.org/perlbug/  También puede haber información en http://www.perl.org/, la página oficial de Perl.
+
+Si cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
+
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org  Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado.  Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+
+=head1 VEA TAMBIÉN
+
+En el archivo F<Changes> encontrará una explicación de cómo obtener información detallada de los cambios.
+
+El archivo F<INSTALL> contiene instrucciones para compilar Perl.
+
+El archivo F<README> contiene información general.
+
+En los archivos F<Artistic> y F<Copying> encontrará información de copyright.
+
+=cut
+
