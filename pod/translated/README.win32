@@ -1,0 +1,596 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos). Está escrito en formato POD (vea pod/perlpod.pod), un formato diseñado específicamente para ser legible tal cual.
+
+=head1 NAME
+
+perlwin32 - Perl en Windows
+
+=head1 SINOPSIS
+
+Estas son las instrucciones para generar Perl en Windows 2000 y siguientes.
+
+=head1 DESCRIPCIÓN
+
+Antes de empezar, debería mirar el archivo README que se encuentra en el directorio superior en el que la distribución Perl se descomprimió.  Asegúrese que lee y entiende los términos bajo los que se distribuye este software.
+
+También asegúrese de leer L<ERRORES Y ADVERTENCIAS>, más abajo, para ver las limitaciones conocidas de esta adaptación.
+
+El archivo INSTALL en el nivel más alto tiene mucha más información que solo es relevante para las personas que generan Perl en sistemas Unix.  En particular, puede ignorar de forma segura cualquier información que hable sobre "Configure".
+
+Quizás también quiera mirar otra opción de generar un perl que funcione en Windows: el archivo README.cygwin, que da un conjunto diferente de reglas para generar un perl para Windows.  Este método le permitirá, probablemente, generar un perl más compatible con Unix, pero también necesitará descargar y usar otro software de generación y ejecución descritos en ese archivo.
+
+Este conjunto de instrucciones describen una adaptación "nativa" de Perl a la plataforma Windows.  Eso incluye tanto los sistemas operativos Windows de 32 bit como de 64 bit.  El Perl resultante no requiere software adicional para ejecutarse (otro distinto que ya no venga incluido con su sistema operativo).  Actualmente, esta adaptación es capaz de usar uno de los siguientes compiladores en la arquitectura Intel x86:
+
+      Microsoft Visual C++    versión 6.0 o superior
+      Intel C++ Compiler      (experimental)
+      Gcc by mingw.org        gcc versión 3.4.5 o superior
+      Gcc by mingw-w64.org    gcc versión 4.4.3 o superior
+
+Note que las dos últimas son en realidad proyectos que compiten por entregar un entorno de desarrollo gcc completo para MS Windows:
+
+=over 4
+
+=item L<http://mingw.org>
+
+Ofrece un entorno de desarrollo gcc dirigido a la plataforma 32 bit de Windows.
+
+=item L<http://mingw-w64.org>
+
+Ofrece un entorno de desarrollo gcc dirigido hacia las plataformas Windows 64 y 32 bit (a pesar de lo que indica el nombre del proyecto "mingw-w64", no solo está orientado a los 64 bit). Ofrecen los compiladores gcc y compiladores cruzados que también se soportan en el makefile de perl.
+
+=back
+
+Los compiladores Microsoft Visual C++ también se ofrecen ahora de forma gratuita. Están disponibles como "Visual C++ Toolkit 2003" o "Visual C++ 2005-2013 Express
+Edition" (y también como parte de ".NET Framework SDK") y son los mismos compiladores que acompañan, respectivamente, a "Visual C++ .NET 2003 Professional" y "Visual C++
+2005-2013 Professional".
+
+Esta adaptación también se puede compilar en IA64/AMD64:
+
+      Microsoft Platform SDK	Nov 2001 (compilador de 64 bit y herramientas)
+      MinGW64 compiler (gcc versión 4.4.3 o superior)
+
+El SDK de Windows se puede descargar desde L<http://www.microsoft.com/>.
+El compilador MinGW64 está disponible en L<http://mingw-w64.org>.
+El último es realmente un compilador cruzado dirigido a Win64. Existe también un compilador recortado (no java, o gfortran) apropiado para compilar perl, disponible en: L<http://strawberryperl.com/package/kmx/64_gcctoolchain/>
+
+NOTA: Si está usando un compilador de 32 bit para compilar perl en un sistema operativo Windows de 64 bit, entonces debería establecer la variable de entorno WIN64 a "undef".
+También, el compilador recortado solo pasa las pruebas cuando se declara USE_ITHREADS *= define (como opuesto a undef) y cuando se descomenta la línea CFG *= Debug.
+
+Esta adaptación soporta completamente MakeMaker (el conjunto de módulos que se usan para compilar extensiones de perl).  Por tanto, debería ser capaz de generar e instalar la mayor parte de las extensiones que se encuentra en los sitios CPAN.
+Vea L<Trucos para usar Perl en Windows> más abajo, para ver algunas pistas sobre esto.
+
+=head2 Instalar Perl en Windows
+
+=over 4
+
+=item Make
+
+Necesita un programa "make" para compilar las fuentes.  Si está usando Visual C++ o las herramientas del Windows SDK, puede usar nmake, suministrado por Visual C++ o Windows SDK. También puede usar, para Visual C++ o Windows SDK, dmake o gmake en lugar de nmake.  dmake es software de código abierto, pero no se incluye con Visual C++ o Windows SDK.  Compilaciones usando gcc necesitan de dmake o de gmake.  nmake no está soportado para las compilaciones gcc.  La compilación en paralelo solo se soporta con dmake y gmake, no nmake.  Cuando se use dmake se recomienda usar dmake 4.13 o superior, para la compilación en paralelo.  dmakes más viejos, en modo paralelo, tienen un alto consumo de CPU, y cargan el sistema de disco/archivos con llamadas de E/S duplicadas, en un bucle de encuestación agresivo.
+
+Una adaptación de dmake para Windows está disponible desde:
+
+L<http://search.cpan.org/dist/dmake/>
+
+Descargue e instale dmake en algún lugar de su ruta.
+
+=item I<Shell> de comandos
+
+Use el I<shell> por defecto "cmd" que viene con Windows.  Algunas versiones del popular I<shell> 4DOS/NT tienen incompatibilidades que pueden causar problemas.
+Si la compilación falla con ese I<shell>, intente compilarlo de nuevo con el I<shell> cmd.
+
+Asegúrese que la ruta al directorio de compilación no contiene espacios.  La compilación normalmente funciona con esa circunstancia, pero algunas comprobaciones fallarán.
+
+=item Microsoft Visual C++
+
+El nmake que viene con Visual C++ será suficiente para la compilación. Visual C requiere que se establezcan ciertas cosas en la consola antes de que se ejecute Visual C de forma exitosa. Para hacer que una consola sea capaz de ejecutar el compilador de C, necesitará antes ejecutar el archivo C<vcvars32.bat> para compilar para x86-32 y para x86-64 C<vcvarsall.bat x64> o C<vcvarsamd64.bat>. En una instalación típica de un compilador Microsoft C, estos archivos batch ya estarán en su variable de entorno C<PATH> así que solo tiene que escribirlos sin la ruta absoluta en su consola. Si necesita encontrar la ruta absoluta al archivo batch, se encuentra normalmente en sitios como C:\Archivos de programa\Microsoft Visual Studio\VC98\Bin.
+Con los nuevos productos de Microsoft C (publicado después de ~2004), el instalador pondrá un atajo en el menú de inicio para lanzar una nueva ventana de consola ya ajustada para su arquitectura objetivo (x86-32, x86-64 o IA64).
+Con los nuevos compiladores, también puede usar los viejos archivos batch, si así lo prefiere.
+
+=item Microsoft Visual C++ 2008-2013 Express Edition
+
+Estas tres versiones gratuitas de Visual C++ 2008-2013 Professional contiene los mismos compiladores y enlazadores que vienen con las versiones completas, y también contienen todo lo necesario para compilar Perl, en lugar de requerir una descarga separada del Windows SDK, como ocurría en versiones anteriores.
+
+Estos paquetes pueden descargarse buscando en el Centro de descargas en L<http://www.microsoft.com/downloads/search.aspx?displaylang=en>.  (Está probado que ofrecer enlaces exactos a estos paquetes es una tarea inútil porque los enlaces cambian muy a menudo).
+
+Instale Visual C++ 2008-2013 Express, y luego establezca su entorno usando, por ejemplo
+
+ C:\Archivos de programa\Microsoft Visual Studio 12.0\Common7\Tools\vsvars32.bat
+
+(asumiendo que se escogió la posición por defecto de la instalación).
+
+Perl debería compilarse ahora usando el win32/Makefile.  Necesitará primero editar ese archivo para establecer CCTYPE a uno de MSVC90FREE-MSVC120FREE.
+
+=item Microsoft Visual C++ 2005 Express Edition
+
+Esta versión gratuita de Visual C++ 2005 Professional contiene el mismo compilador y enlazador que viene con la versión completa, pero no contiene todo lo necesario para compilar Perl.
+
+También necesitará descargar el "Windows SDK" (son necesarios los componentes "Core SDK" y "MDAC
+SDK") para tener los archivos de cabecera y bibliotecas.
+
+Ambos paquetes pueden descargarse buscando en el Centro de descargas en L<http://www.microsoft.com/downloads/search.aspx?displaylang=en>.   (Está probado que ofrecer enlaces exactos a estos paquetes es una tarea inútil porque los enlaces cambian muy a menudo).
+
+Intente obtener la última versión del SDK de Windows.  Algunas veces estos paquetes contienen en su nombre una versión particular del sistema operativo Windows, pero de hecho funciona en otras versiones del sistema operativo.  Por ejemplo, el "Windows Server 2003 R2 Platform SDK" también corre en Windows XP SP2 y Windows 2000.
+
+Instale primero Visual C++ 2005, y luego la plataforma SDK.  Establezca su entorno como se indica (asumiendo que escogió las posiciones por defecto de la instalación):
+
+ SET PlatformSDKDir=C:\Archivos de programa\Microsoft Platform SDK
+
+ SET PATH=%SystemRoot%\system32;%SystemRoot%;C:\Archivos de programa\Microsoft Visual Studio 8\Common7\IDE;C:\Archivos de programa\Microsoft Visual Studio 8\VC\BIN;C:\Archivos de programa\Microsoft Visual Studio 8\Common7\Tools;C:\Archivos de programa\Microsoft Visual Studio 8\SDK\v2.0\bin;C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727;C:\Archivos de programa\Microsoft Visual Studio 8\VC\VCPackages;%PlatformSDKDir%\Bin
+
+ SET INCLUDE=C:\Archivos de programa\Microsoft Visual Studio 8\VC\INCLUDE;%PlatformSDKDir%\include
+
+ SET LIB=C:\Archivos de programa\Microsoft Visual Studio 8\VC\LIB;C:\Archivos de programa\Microsoft Visual Studio 8\SDK\v2.0\lib;%PlatformSDKDir%\lib
+
+ SET LIBPATH=C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727
+
+(Podría necesitar personalizar PlatformSDKDir dependiendo de la versión que está usando. Versiones anteriores instaladas en "C:\Archivos de programa\Microsoft SDK", mientras que las última versión se instala en posiciones específicas de la versión, como en "C:\Archivos de programa\Microsoft Platform SDK for Windows Server 2003 R2").
+
+Perl debería compilarse ahora usando el win32/Makefile.  Necesitará editar ese archivo para poner
+
+ CCTYPE = MSVC80FREE
+
+y establecer CCHOME, CCINCDIR y CCLIBDIR así como el entorno anterior.
+
+=item Microsoft Visual C++ Toolkit 2003
+
+Este conjunto de herramientas contiene el mismo compilador y enlazador que viene con Visual C++ .NET 2003 Professional, pero no contiene todo lo necesario para compilar Perl.
+
+También necesitará descargar "Platform SDK" (se requiere los componentes "Core SDK" y "MDAC SDK") para los archivos de cabecera, bibliotecas y rc.exe, y ".NET Framework SDK" para más bibliotecas y nmake.exe.  Note que el último (que también incluye el compilador y enlazador gratuitos) requiere que se instale primero ".NET Framework Redistributable".  Se pueden descargar e instalar de forma separada, pero de todas formas está incluido en "Visual C++ Toolkit 2003".
+
+Todos estos paquetes pueden descargarse buscando en el Centro de descargas en L<http://www.microsoft.com/downloads/search.aspx?displaylang=en>.  (Está probado que ofrecer enlaces exactos a estos paquetes es una tarea inútil porque los enlaces cambian muy a menudo).
+
+Intente obtener la última versión del SDK de Windows.  Algunas veces estos paquetes contienen en su nombre una versión particular del sistema operativo Windows, pero de hecho funciona en otras versiones del sistema operativo.  Por ejemplo, el "Windows Server 2003 R2 Platform SDK" también corre en Windows XP SP2 y Windows 2000.
+
+Instale primero el Toolkit, y luego el Platform SDK, y luego el .NET Framework SDK.
+Establezca su entorno como se indica (asumiendo que escogió las posiciones por defecto de la instalación):
+
+ SET PlatformSDKDir=C:\Archivos de programa\Microsoft Platform SDK
+
+ SET PATH=%SystemRoot%\system32;%SystemRoot%;C:\Archivos de programa\Microsoft Visual C++ Toolkit 2003\bin;%PlatformSDKDir%\Bin;C:\Archivos de programa\Microsoft.NET\SDK\v1.1\Bin
+
+ SET INCLUDE=C:\Archivos de programa\Microsoft Visual C++ Toolkit 2003\include;%PlatformSDKDir%\include;C:\Archivos de programa\Microsoft Visual Studio .NET 2003\Vc7\include
+
+ SET LIB=C:\Archivos de programa\Microsoft Visual C++ Toolkit 2003\lib;%PlatformSDKDir%\lib;C:\Archivos de programa\Microsoft Visual Studio .NET 2003\Vc7\lib
+
+(Podría necesitar personalizar PlatformSDKDir dependiendo de la versión que está usando. Versiones anteriores instaladas en "C:\Archivos de programa\Microsoft SDK", mientras que las última versión se instala en posiciones específicas de la versión, como en "C:\Archivos de programa\Microsoft Platform SDK for Windows Server 2003 R2").
+
+Seguirán faltando algunos archivos:
+
+=over 4
+
+=item *
+
+link.exe requiere cvtres.exe cuando se usa un archivo .res.  Está de hecho instalado por el .NET Framework SDK, pero en una posición tal como la siguiente:
+
+ C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322
+
+Cópielo a %PlatformSDKDir%\Bin
+
+=item *
+
+lib.exe se usa normalmente para compilar bibliotecas, pero link.exe con la opción /lib también funciona, así que edite win32/config.vc para que lo use:
+
+Cambie la línea
+
+	ar='lib'
+
+a:
+
+	ar='link /lib'
+
+También puede ser útil crear un archivo batch llamado lib.bat en C:\Archivos de programa\Microsoft Visual C++ Toolkit 2003\bin que contenga:
+
+	@echo off
+	link /lib %*
+
+para ayudar a cualquier extensión traviesa en C de módulos que podría querer compilar más tarde con la referencia explícita a "lib" en lugar de tomar su valor desde $Config{ar}.
+
+=item *
+
+Se requiere setargv.obj para compilar perlglob.exe (y perl.exe si está activada la opción USE_SETARGV).  El Platform SDK proporciona este archivo en forma de fuente en %PlatformSDKDir%\src\crt.  Copie setargv.c, cruntime.h e internal.h desde aquí a alguna posición temporal y compile setargv.obj usando
+
+	cl.exe /c /I. /D_CRTBLD setargv.c
+
+Luego copie setargv.obj a %PlatformSDKDir%\lib
+
+De otra forma, si no necesita perlglob.exe y no necesita activar la opción USE_SETARGV entonces puede quitar de forma segura toda mención de $(GLOBEXE) en win32/Makefile y setargv.obj ya no lo necesitará.
+
+=back
+
+Perl debería compilarse ahora usando el win32/Makefile.  Necesitará editar ese archivo para poner
+
+	CCTYPE = MSVC70FREE
+
+y establecer CCHOME, CCINCDIR y CCLIBDIR así como el entorno anterior.
+
+=item Microsoft Platform SDK 64-bit Compiler
+
+El nmake que viene con Platform SDK será suficiente para compilar Perl.  Asegúrese de que está compilando dentro de uno de los I<shell> "Entornos de compilación" disponibles después de instalar Platform SDK desde el menú de inicio.
+
+=item MinGW release 3 con gcc
+
+Perl se puede compilar con gcc desde MinGW release 3 y siguientes (usando gcc 3.4.5 y siguientes).  Se puede descargar desde aquí:
+
+L<http://www.mingw.org/>
+
+También necesita dmake.  Ver L</"Make"> más arriba para ver cómo obtenerlo.
+
+=item Compilador Intel C++
+
+Se le ha añadido soporte para usar el compilador C++ de Intel. Edite win32/Makefile y escoja el correcto CCTYPE para el Visual C en el que el Intel C se instaló. También descomente __ICC para activar el soporte de Intel C en Visual C.
+Para establecer el entorno de compilación, ejecute desde el menú de inicio el modo IA-32 Visual Studio 20__ o el modo Intel 64 Visual Studio 20__, el que resulte más apropiada. Luego ejecute nmake de forma normal en la línea de comandos.
+
+Sólo se ha probado con Intel C++ Compiler v12.1. Otras versiones probablemente también funcionarán. Usando el compilador Intel C++ en lugar de Visual C tiene el beneficio de la compatibilidad C99, que es necesaria por algunos módulos XS de CPAN XS, mientras mantiene la compatibilidad con código objeto de Visual C e infraestructura de depuración de Visual C, a diferencia de GCC.
+
+=back
+
+=head2 Compilar
+
+=over 4
+
+=item *
+
+Asegúrese que está en el subdirectorio "win32" bajo el nivel superior de perl.
+Este directorio contiene un "Makefile" que funcionará con versiones de nmake que viene con Visual C++ o el Windows SDK, y un "makefile.mk" de dmake que funcionará para todos los compiladores soportados.  Los valores por defecto en el makefile de dmake se establecen para compilar con MinGW/gcc.
+
+=item *
+
+Edite el makefile.mk (o Makefile, si está usando nmake) y cambie los valores de INST_DRV e INST_TOP.   También puede activar varios indicadores de compilación.  Están explicados en los makefile.
+
+Note que, generalmente no es una buena idea intentar compilar perl con INST_DRV e INST_TOP establecidos a una ruta que ya existe de una compilación anterior.  En particular, esto puede provocar problemas con la prueba lib/ExtUtils/t/Embed.t, que intenta compilar un programa de prueba y puede terminar compilando en el directorio lib/CORE del perl instalado en lugar del que está siendo comprobado.
+
+Tendrá que asegurarse que CCTYPE está establecida correctamente y que CCHOME apunta a dondequiera que esté instalado el compilador.
+
+Si se compila con el compilador cruzado proporcionado por mingw-w64.org, necesitará descomentar la línea que establece GCCCROSS en el makefile.mk. Haga esto solo si es el compilador cruzado, es decir, solo si la carpeta bin no contiene un gcc.exe. (El compilador cruzado no proporciona un gcc.exe, g++.exe, ar.exe, etc. En cambio, todos estos ejecutables están prefijados con 'x86_64-w64-mingw32-').
+
+El valor por defecto para CCHOME en los archivos makefile para Visual C++ puede no ser correcto para algunas versiones.  Asegúrese que el de por defecto existe y es válido.
+
+Puede también necesitar el descomentar la línea C<DELAYLOAD = ...> en el Makefile si está usando VC++ 6.0 sin el último pack de servicio y el enlazador reporta un error interno.
+
+Si quiere compilar algunas extensiones principales estáticamente en el dll de perl, especifíquelos en la macro STATIC_EXT.
+
+NOTA: La opción de compilación USE_64_BIT_INT no está soportada en el compilador de 32 bit Visual C++ 6.0.
+
+Asegúrese de leer cuidadosamente las instrucciones cerca de la parte superior de los makefile.
+
+=item *
+
+Escriba "dmake" (o "nmake" si está usando ese make).
+
+Esto debería compilarlo todo.  Específicamente, creará perl.exe, perl524.dll en el directorio raíz de perl, y otras extensiones en dll bajo el directorio lib\auto.  Si la compilación falla por alguna razón, asegúrese de que ha hecho correctamente los pasos anteriores.
+
+Para probar dmake en modo paralelo, escriba "dmake -P2", donde 2 es el número máximo de trabajos en paralelo que quiere ejecutar. Un número de elementos en el proceso de compilación se ejecutará en paralelo, pero existen puntos de serialización donde verá como mucho a 1 CPU. Esto es normal.
+
+Si es usted lo suficientemente entendido en la compilación de código C, aquí hay una sugerencia para acelerar la compilación perl, y el último C<make test>. Intente mantener su variable de entorno PATH con el menor número de carpetas posibles (recuerde mantener allí sus carpetas del compilador C). C<C:\WINDOWS\system32> o C<C:\WINNT\system32> dependiendo de la versión de su SO deberían ser la primera carpeta en el PATH, ya que "cmd.exe" es el programa que más se ejecuta durante la compilación y la comprobación posterior.
+
+=back
+
+=head2 Comprobar Perl en Windows
+
+Escriba "dmake test" (o "nmake test").  Esto ejecutará la mayor parte de las comprobaciones del paquete de pruebas (se saltarán muchas pruebas).
+
+No debería haber fallos de pruebas.
+
+Si compila con Visual C++ 2013 entonces tres pruebas pueden fallar con problemas relacionados con el Tiempo de Ahorro de Luz (I<Daylight Saving Time>): F<t/io/fs.t>, F<cpan/HTTP-Tiny/t/110_mirror.t> y F<lib/File/Copy.t>. Los fallos están provocadas por errores en el CRT en VC++ 2013 que se corregirán en futuras publicaciones de VC++, como Microsoft explica aquí: L<https://connect.microsoft.com/VisualStudio/feedback/details/811534/utime-sometimes-fails-to-set-the-correct-file-times-in-visual-c-2013>. Mientras tanto, si necesita arreglar C<stat> y las funciones C<utime> debe mirar en la distribución de CPAN Win32::UTCFileTime.
+
+Si compila con ciertas versiones de gcc (por ejemplo 4.8.1) de www.mingw.org entonces F<ext/POSIX/t/time.t> puede fallar la prueba 17 debido a un error conocido en estas versiones de gcc: vea L<http://sourceforge.net/p/mingw/bugs/2152/>.
+
+Puede ocurrir algunos fallos si usa un I<shell> de comandos distinto del "cmd.exe" nativo, o si está compilando en una ruta que contenga espacios.  Así que no lo haga.
+
+Si está ejecutando las pruebas desde una ventana de I<shell> emacs, puede ver fallos en op/stat.t.  En ese caso ejecute "dmake test-notty".
+
+Además, debería asegurarse que durante el C<make test> no tenga ningún paquete de herramientas GNU en su ruta: algunas cajas de herramientas como Unixutils incluyen algunas herramientas (por ejemplo C<type>) que se superponen a las de Windows y hacen que las pruebas fallen. Eliminélas de su ruta mientras hace las pruebas para evitar estos errores.
+
+Por favor, informe de otros fallos cualesquiera, como se describe en L<ERRORES Y ADVERTENCIAS>.
+
+=head2 Instalación de Perl en Windows
+
+Escriba "dmake install" (o "nmake install").  Esto pondrá el nuevo perl compilado y las bibliotecas en donde C<INST_TOP> apunte, en el Makefile.  También instalará la documentación pod bajo C<$INST_TOP\$INST_VER\lib\pod> y las versiones HTML de la misma bajo C<$INST_TOP\$INST_VER\lib\pod\html>.
+
+Para usar el Perl que acaba de instalar necesitará añadir una nueva entrada en su variable de entorno PATH: C<$INST_TOP\bin>, así
+
+    set PATH=c:\perl\bin;%PATH%
+
+Si optó por descomentar C<INST_VER> y C<INST_ARCH> en el makefile entonces la estructura de la instalación es un poco más complicada y necesitará añadir en su lugar dos nuevos componentes al PATH: C<$INST_TOP\$INST_VER\bin> y C<$INST_TOP\$INST_VER\bin\$ARCHNAME>, así
+
+    set PATH=c:\perl\5.6.0\bin;c:\perl\5.6.0\bin\MSWin32-x86;%PATH%
+
+=head2 Trucos para usar Perl en Windows
+
+=over 4
+
+=item Variables de entorno
+
+Las rutas de instalación que estableció durante la compilación quedan incrustadas en perl, por lo que no tiene que hacer nada adicional para empezar a usarlo (excepto añadir su posición en la variable PATH).
+
+Si pone extensiones en lugares inusuales, puede establecer PERL5LIB a una lista de rutas separadas por puntos y comas donde quiere que perl busque por bibliotecas.  Mire por descripciones de otras variables de entorno que puede establecer en L<perlrun>.
+
+También puede controlar el I<shell> que usa ese perl para ejecutar system() y comandos en comillas invertidas por medio de PERL5SHELL.  Vea L<perlrun>.
+
+Perl no depende del registro, pero puede usarlo para buscar ciertos valores por defecto si elige ponerlos allí a menos que lo desactive en tiempo de compilación con USE_NO_REGISTRY.  En el inicio de un proceso, Perl comprueba si existen C<HKEY_CURRENT_USER\Software\Perl> y C<HKEY_LOCAL_MACHINE\Software\Perl>.  Si existen, se comprobarán durante el resto de la ejecución del proceso Perl para buscar por ciertos valores.  Las entradas en C<HKEY_CURRENT_USER\Software\Perl> superponen a las entradas en C<HKEY_LOCAL_MACHINE\Software\Perl>.  Una o más de las siguientes entradas (del tipo REG_SZ o REG_EXPAND_SZ) se pueden poner en las claves:
+
+ lib-$]        versión específica de la ruta de las bibliotecas estándares para añadirse a @INC
+ lib           ruta de las bibliotecas estándares para añadir a @INC
+ sitelib-$]    versión específica de la ruta de las bibliotecas para añadirse a @INC
+ sitelib       ruta de las bibliotecas del sitio para añadir a @INC
+ vendorlib-$]  versión específica del vendedor de la ruta de las bibliotecas para añadir a @INC
+ vendorlib     ruta de la biblioteca del vendedor para añadir a @INC
+ PERL*         último recurso para resolver todos los %ENV que comienzan con "PERL"
+
+Note que C<$]> anterior no es literal.  Sustituye a cualquiera que sea la versión de perl, por ejemplo, C<5.6.0>.  Las rutas deben separarse con puntos y comas, como es normal en Windows.
+
+=item Expansión de nombres de archivos
+
+Por defecto, perl gestiona la expansión del nombre de archivos usando la extensión File::Glob, que proporciona expansión portable.
+
+Si quiere que perl use expansión que emula las rarezas de las convenciones de nombres de DOS, podría considerar el usar File::DosGlob para sobreescribir la implementación interna de glob().  Vea L<File::DosGlob> para los detalles.
+
+=item Usar perl desde la línea de comandos
+
+Si está acostumbrado a usar perl desde varios I<shell> de líneas de comando en entornos UNIX, quedará menos complacido con lo que el de Windows ofrece.
+
+El tema crucial para entender sobre lo que el entorno de Windows es que la línea de comandos que escriba se procesa dos veces antes de que Perl la vea.
+Primero, su I<shell> de comando (normalmente CMD.EXE) preprocesa la línea de comando para gestionar la redirección, expansión de variables de entorno y la localización del ejecutable a arrancar. Entonces, el ejecutable perl divide el resto de la línea de comandos en argumentos individuales, usando la biblioteca en tiempo de ejecución de C con la que Perl se compiló.
+
+Es especialmente imponente notar que ni el I<shell> ni la biblioteca en tiempo de ejecución de C hacen ninguna expansión de comodines de los argumentos de la línea de comandos (por eso los comodines no necesitan entrecomillarse).  También, los comportamientos de las comillas del I<shell> y de la biblioteca en tiempo de ejecución de C son rudimentarios (y pueden ser, si no está usando un I<shell> estándar, inconsistentes).  La única (y útil) carácter de entrecomillado es la comilla doble (").  Se puede usar para proteger espacios y otros caracteres especiales en los argumentos.
+
+La documentación de Windows que describe las reglas de interpretación del I<shell> está aquí: L<http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/cmd.mspx?mfr=true>
+y aquí las reglas de interpretación de la biblioteca de tiempo de ejecución de C: L<http://msdn.microsoft.com/en-us/library/17w5ykft%28v=VS.100%29.aspx>.
+
+Aquí hay algunos comentarios basados en experimentos: La biblioteca de tiempo de ejecución de C rompe los argumentos por los espacios y los pasa a los programas en argc/argv.
+Las comillas dobles se pueden usar para impedir que se dividan los argumentos con espacios dentro de ellos.  Puede poner una doble comilla en un argumento escapándola con una barra invertida y encerrando todo el argumento con comillas dobles.
+La barra invertida y el par de comillas dobles rodeando el argumento lo aíslan de la biblioteca de tiempo de ejecución de C.
+
+Los caracteres de redirección de archivo "E<lt>", "E<gt>" y "|" se pueden entrecomillar con comillas dobles (aunque hay sugerencias de que esto no siempre es verdad).  Las comillas simples no se tratan como comillas por el I<shell> o la biblioteca de tiempo de ejecución de C, no se descartan por el I<shell> (haciendo de este tipo de entrecomillado completamente inútil).  Se ha observado que el circunflejo "^" también se comporta como carácter de entrecomillado, pero esto parece que se trata de una característica del I<shell>, y el circunflejo no se elimina de la línea de comando, así que Perl le sigue viendo (y en la fase de tiempo de ejecución en C no trata al circunflejo como carácter de entrecomillado).
+
+Aquí hay algunos ejemplos del uso del I<shell> "cmd":
+
+Esto imprime dos comillas dobles:
+
+    perl -e "print '\"\"' "
+
+Esto hace lo mismo:
+
+    perl -e "print \"\\\"\\\"\" "
+
+Esto imprime "bar" y escribe "foo" en el archivo "blurch":
+
+    perl -e "print 'foo'; print STDERR 'bar'" > blurch
+
+Esto imprime "foo" ("bar" desaparece en el país de I<Nuncajamás>):
+
+    perl -e "print 'foo'; print STDERR 'bar'" 2> nul
+
+Esto imprime "bar" y escribe "foo" en el archivo "blurch":
+
+    perl -e "print 'foo'; print STDERR 'bar'" 1> blurch
+
+Esto entuba "foo" al paginador "less" e imprime "bar" en la consola:
+
+    perl -e "print 'foo'; print STDERR 'bar'" | less
+
+Esto entuba "foo\nbar\n" al paginador "less":
+
+    perl -le "print 'foo'; print STDERR 'bar'" 2>&1 | less
+
+Esto entuba "foo" al paginador y escribe "bar" en el archivo "blurch":
+
+    perl -e "print 'foo'; print STDERR 'bar'" 2> blurch | less
+
+
+Descubrir la utilizad del I<shell> "command.com" en Windows 9x se deja como ejercicio para el lector :)
+
+Un problema particularmente pernicioso con el I<shell> de comandos 4NT para Windows es que (casi) siempre trata al carácter "%" como indicativo de que se necesita hacer la expansión de esa variable de entorno.  Bajo ese I<shell>, es por tanto importante siempre doblar cualquier carácter "%" que quiera que Perl vea (por ejemplo, para variables hash), incluso cuando estén entrecomillados.
+
+=item Compilar extensiones
+
+La I<Comprehensive Perl Archive Network> (CPAN) ofrece una rica colección de extensiones, algunas de las cuales requiere un compilador de C para construirlas.
+Mira en L<http://www.cpan.org/> para más información sobre CPAN.
+
+Note que no todas las extensiones disponibles en CPAN pueden funcionar en el entorno de Windows; debe comprobar la información en L<http://www.cpantesters.org/> antes de invertir demasiado esfuerzo en portar módulos que realmente no van a compilarse.
+
+La mayor parte de las extensiones (tanto si requieren un compilador de C o no) se pueden compilar, comprobar e instalar con el I<mantra> estándar:
+
+    perl Makefile.PL
+    $MAKE
+    $MAKE test
+    $MAKE install
+
+donde $MAKE es cualquier programa 'make' que perl tenga configurado para usar.  Use "perl -V:make" para descubrirlo.  Algunas extensiones pueden que no proporcionen un paquete de pruebas (así que "$MAKE test" puede, o no hacer nada o fallar), pero los más serios sí que lo hacen.
+
+Es importante que use un programa 'make' con soporte, y asegurarse que Config.pm lo conoce.  Si no tiene nmake, puede tanto obtener dmake desde la posición mencionada antes u obtener una versión anterior de nmake disponible en:
+
+L<http://download.microsoft.com/download/vc15/Patch/1.52/W95/EN-US/nmake15.exe>
+
+Otra opción es usar el make escrito en Perl, disponible desde CPAN.
+
+L<http://www.cpan.org/modules/by-module/Make/>
+
+También puede usar dmake.  Ver L</"Make"> más arriba para ver cómo obtenerlo.
+
+Note que MakeMaker emite archivos Makefile con sintaxis diferentes dependiendo del 'make' que él cree que usted está usando.  Por tanto, es importante que aparezca uno de los siguientes valores en Config.pm:
+
+    make='nmake'      # MakeMaker emite sintaxis nmake
+    make='dmake'      # MakeMaker emite sintaxis dmake
+    otro valor        # MakeMaker emite sintaxis para make genérico
+    			    (es decir, GNU make o Perl make)
+
+Si el valor no coincide con el programa 'make' que quiere usar, edite Config.pm para arreglarlo.
+
+Si un módulo implementa XSUB, necesitará uno de los compiladores de C soportados.  Debe asegurarse de que ha instalado el entorno del compilador para la compilación en la línea de comandos antes de ejecutar C<perl Makefile.PL> o cualquier invocación de make.
+
+Si un módulo no compila por alguna razón, mire cuidadosamente por qué ha fallado, y reporte los problemas al autor del módulo.  Si parece que el problema está en la compilación de la extensión, reporte todos los detalles sobre cómo falló la compilación, usando la utilidad perlbug.
+
+=item Expansión de comodines en la línea de comandos
+
+Los I<shell> de comandos por defecto en sistemas operativos descendientes de DOS (tal como son) normalmente no expande los comodines en los argumentos suministrados a los programas.  Consideran que esto es un trabajo de la aplicación que debe gestionar.
+Esto se consigue generalmente enlazando la aplicación (en nuestro caso, perl) con el código de inicio que proporcionan las bibliotecas de tiempo de ejecución en C.
+Sin embargo, hacer esto resulta en versiones perl incompatibles (ya que el comportamiento de la expansión de argv difiere del compilador, y algunos compiladores tienen errores).  Además, puede ser fuente de frustración si usa ese binario perl con un I<shell> alternativo que *hace* expansión de los comodines.
+
+En cambio, la solución siguiente funciona bastante bien. Lo bueno sobre ella es 1) puede empezar a usarlo ya; 2) es más potente, porque hará lo correcto con un patrón como */*/*.c; 3) puede decidir si quiere o no usarlo; y 4) puede extender el método para añadir personalizaciones (o incluso clases completamente diferentes de la expansión de comodines).
+
+ C:\> copy con c:\perl\lib\Wild.pm
+ # Wild.pm - emula la expansión I<shell> de @ARGV en I<shell> que no la tienen
+ use File::DosGlob;
+ @ARGV = map {
+	      my @g = File::DosGlob::glob($_) if /[*?]/;
+	      @g ? @g : $_;
+	    } @ARGV;
+ 1;
+ ^Z
+ C:\> set PERL5OPT=-MWild
+ C:\> perl -le "for (@ARGV) { print }" */*/perl*.c
+ p4view/perl/perl.c
+ p4view/perl/perlio.c
+ p4view/perl/perly.c
+ perl5.005/win32/perlglob.c
+ perl5.005/win32/perllib.c
+ perl5.005/win32/perlglob.c
+ perl5.005/win32/perllib.c
+ perl5.005/win32/perlglob.c
+ perl5.005/win32/perllib.c
+
+Note que aquí hay dos pasos distintos: 1) Tendrá que crear Wild.pm y ponerlo en su directorio lib de perl. 2) Necesitará establecer la variable de entorno PERL5OPT.  Si quiere que esté activa por defecto la expansión de argv, simplemente establezca PERL5OPT en su entorno de arranque por defecto.
+
+Si está usando el compilador Visual C, puede obtener la expansión de comodines en línea de comandos de la biblioteca en tiempo de ejecución compilado en el binario perl.  El binario resultante siempre expandirá líneas de comando no entrecomilladas, que puede no ser lo que quiere si usa un I<shell> que lo hace por usted.  La expansión hecha es también un poco menos potente que la aproximación sugerida antes.
+
+=item Notas sobre Windows 64 bit
+
+Windows .NET Server soporta el modelo de datos LLP64 en la arquitectura Intel Itanium.
+
+El modelo de datos LLP64 es diferente del modelo de datos LP64 que es la norma en las plataformas Unix 64 bit.  En el primero, C<int> y C<long> son ambos tipos de datos de 32 bit, mientras que los punteros son de 64 bit de ancho.  Además, hay un tipo entero adicional de 64 bit, C<__int64>.  En contraste, el modelo de datos LP64 que es dominante en las plataformas Unix proporciona C<int> como un tipo de 32 bit, mientras que los tipos de C<long> y punteros tienen una precisión de 64 bit.  Note que ambos modelos proporcionan un espacio de direcciones de 64 bit.
+
+Windows 64 bit ejecutándose en Itanium es capaz de ejecutar binarios x86 de 32 bit de forma transparente.  Esto significa que podría usar un Perl compilado de 32 bit en un sistema de 64 bit.  Dado esto, ¿por qué uno querría compilar un Perl de 64 bit?  Aquí hay algunas razones del porqué se molestaría en hacerlo:
+
+=over
+
+=item *
+
+Una aplicación nativa de 64 bit se ejecutará mucho más eficazmente sobre hardware Itanium.
+
+=item *
+
+No hay límite de 2 GB en el tamaño del proceso.
+
+=item *
+
+Perl proporciona automáticamente soporte para archivos grandes cuando se compila bajo Windows 64 bit.
+
+=item *
+
+Empotrar Perl dentro de una aplicación 64 bit.
+
+=back
+
+=back
+
+=head2 Ejecutar I<Scripts> Perl
+
+Los I<scripts> Perl en UNIX usan la línea "#!" (es decir, "shebang") para indicar al SO que debe ejecutar el archivo usando perl.
+Windows no tiene un medio comparable para indicar archivos arbitrarios como ejecutables.
+
+En lugar de eso, todos los métodos para ejecutar archivos de texto plano en Windows confía en la "extensión" del archivo.  Hay tres métodos que usan este método para ejecutar I<scripts> perl:
+
+=over 8
+
+=item 1
+
+Hay una facilidad llamada "asociaciones de extensiones de archivo".  Se puede manipular a través de los dos comandos "assoc" y "ftype" que vienen como estándar en Windows.  Escriba "ftype /?" para ver un ejemplo completo de cómo establecerlo para los I<scripts> perl (¿Entonces?  ¿Pensaba que Windows no está preparado para perl? :).
+
+=item 2
+
+Ya que las asociaciones de archivo no funcionan en todas partes, y hay errores documentados donde funcionan, se puede usar el viejo método de envolver el I<script> perl para hacer que aparezca al SO como un archivo batch normal.  El proceso de instalación hace disponible el I<script> "pl2bat.bat" que se puede usar para envolver los i<scripts> perl en archivos batch.  Por ejemplo:
+
+	pl2bat foo.pl
+
+creará el archivo "FOO.BAT".  Note que "pl2bat" quita cualquier sufijo .pl y añade un sufijo .bat al archivo generado.
+
+Si usa 4DOS/NT o un I<shell> de comando similar, note que "pl2bat" usa la variable "%*" en el archivo batch generado para referirse a todos los argumentos de la línea de comandos, así que tiene que asegurarse de que la construcción funciona en archivos batch.  En el momento de escribir esto, los usuarios de 4DOS/NT necesitarán una sentencia "ParameterChar = *" en su archivo 4NT.INI o necesitará ejecutar "setdos /p*" en el archivo de arranque de 4DOS/NT para hacer que funcione.
+
+=item 3
+
+Usar "pl2bat" tiene unos pequeños problemas: se cambia el nombre del archivo, así que los I<scripts> que depende de C<$0> para saber qué deben hacer no funcionarán correctamente; ejecutar "pl2bat" replica los contenidos del I<script> original, y por eso este proceso puede necesitar un mantenimiento intensivo si se actualiza a menudo el programa original.  Es posible una aproximación diferente que evite ambos problemas.
+
+Está disponible un I<script> llamado "runperl.bat" que puede copiarse con cualquier nombre (junto con el sufijo .bat).  Por ejemplo, si lo llama "foo.bat" y lo ejecuta, ejecutará a su vez el archivo "foo".  Ya que puede ejecutar archivos batch en plataformas Windows simplemente escribiendo el nombre (sin la extensión), esto lo que hace es ejecutar el archivo "foo" cuando escribe tanto "foo" o "foo.bat".
+Con este método, "foo.bat" puede incluso estar en una ubicación diferente del archivo "foo", siempre que esté indicada en el PATH.  Si sus I<scripts> están en un sistema de archivos que permite enlaces simbólicos, incluso puede evitar el "runperl.bat".
+
+Aquí hay algo divertido: copie "runperl.bat" a "runperl", y escriba "runperl".  Explique el comportamiento observado, o la carencia de él. :)
+Pista: .gnidnats llits er'uoy fi ,"lrepnur" eteled :tniH
+
+=back
+
+=head2 Temas variados
+
+Se instaló un conjunto completo de documentación HTML, así que debería ser capaz de usarla si tiene un navegador web instalado en su sistema.
+
+C<perldoc> es también una herramienta útil para navegar por la información contenida en la documentación, especialmente en conjunción con un paginador como C<less> (versiones recientes que tienen soporte para Windows).  Puede que tenga que establecer la variable de entorno PAGER para usar un paginador específico.
+"perldoc -f foo" imprimirá información sobre el operador "foo".
+
+Un error común es cuando al usar esta adaptación con una biblioteca GUI como C<Tk> es asumir que el comportamiento normal de Perl de abrir una ventana de línea de comandos desaparecerá.  No es el caso.  Si quiere arrancar una copia de C<perl> sin abrir una ventana de línea de comandos, use el ejecutable C<wperl> compilado durante el proceso de instalación.  El uso es exactamente el mismo que el de C<perl> en Windows, excepto que las opciones como C<-h> no funcionan (ya que necesitan una ventana de línea de comandos donde imprimir la salida).
+
+Si encuentra errores en perl, puede ejecutar C<perlbug> para crear un reporte de fallo (lo tendrá que mandar manualmente si C<perlbug> no puede encontrar un gestor de correo en su sistema).
+
+=head1 ERRORES Y ADVERTENCIAS
+
+El Norton AntiVirus interfiere con el proceso de compilación, particularmente si está establecido en "Autoproteger, todos los archivos, cuando se abran". A diferencia de las grandes aplicaciones el proceso de compilación de perl abre y modifica un montón de archivos. Hacer que el antivirus escanee todos y cada uno enlentece el proceso de compilación de forma significativa.
+Aún peor, con PERLIO=stdio el proceso de compilación falla con mensajes peculiares a medida que el antivirus interactúa malamente con miniperl.exe mientras escribe archivos de configuración (parece que captura parte del archivo escrito y lo trata como sospechoso, o el antivirus lo "bloquea" de una forma que impide a miniperl el actualizarlo). La compilación se completa con
+
+   set PERLIO=perlio
+
+pero puede ser por suerte. Otros software de antivirus pueden tener problemas similares.
+
+Una extensión GUI del I<shell> para Windows tales como TortoiseGit harán que la compilación y posterior C<make test> se ejecute mucho más lento ya que cada archivo se comprueba por su estado git tan pronto como se crea o modifica. TortoiseGit no causa ningún fallo en las pruebas o problemas de compilación a diferencia del software de antivirus descritos antes, pero causan enlentecimientos similares. Se sugiere usar el Gestor de Aplicaciones para buscar por procesos en segundo plano que usen grandes cantidades de CPU durante el proceso de compilación.
+
+Algunas de las funciones incrustadas no actúan exactamente como se documenta en L<perlfunc>, y unas pocas de ellas ni siquiera están implementadas.  Para evitar sorpresas, particularmente si tiene un conocimiento previo a Perl en otros sistemas operativos o si pretende escribir código que se llevará a otros entornos, consulte L<perlport> para ver una lista definitiva de estas diferencias.
+
+No todas las extensiones disponibles desde CPAN se compilarán o funcionarán apropiadamente en el entorno de Windows.  Vea L</"Compilar extensiones">.
+
+La mayor parte de las llamadas C<socket()> están soportadas, pero pueden no comportarse como en las plataformas Unix.  Vea L<perlport> para una lista completa.
+
+La gestión de señales puede no comportarse como en las plataformas Unix (donde, de todas maneras, se "comportan" :).  Por ejemplo, llamar a C<die()> o C<exit()> desde los gestores de señales provocará una excepción, ya que la mayor parte de las implementaciones de C<signal()> en Windows están severamente estropeadas.
+Así, las señales pueden funcionar en el gestor solo para cosas simples como establecer una variable indicador.  Usar señales bajo esta adaptación debe, actualmente, estar considerado como no soportado.
+
+Por favor envíe descripciones detalladas de cualquier problema y solución que pueda encontrar a E<lt>F<perlbug@perl.org>E<gt>, junto con la salida generada por C<perl -V>.
+
+=head1 AGRADECIMIENTOS
+
+El uso del dromedario con el tema de Perl es una marca registrada de O'Reilly y asociados, Inc. Utilizado con permiso.
+
+=head1 AUTORES
+
+=over 4
+
+=item Gary Ng E<lt>71564.1743@CompuServe.COME<gt>
+
+=item Gurusamy Sarathy E<lt>gsar@activestate.comE<gt>
+
+=item Nick Ing-Simmons E<lt>nick@ing-simmons.netE<gt>
+
+=item Jan Dubois E<lt>jand@activestate.comE<gt>
+
+=item Steve Hay E<lt>steve.m.hay@googlemail.comE<gt>
+
+=back
+
+Jan Dubois mantiene este documento.
+
+=head1 VEA TAMBIÉN
+
+L<perl>
+
+=head1 HISTORIA
+
+Esta adaptación fue una contribución original de Gary Ng alrededor de 5.003_24, y tomada prestada de la adaptación de Hip Communications que estaba disponible en ese momento.  Diversas personas han hecho numerosas y variadas contribuciones, desde entonces.
+
+El soporte para GCC/mingw32 se añadió en 5.005 (Nick Ing-Simmons).
+
+El soporte para PERL_OBJECT se añadió en 5.005 (ActiveState Tool Corp).
+
+El soporte para la emuación fork() se añadió en 5.6 (ActiveState Tool Corp).
+
+El soporte para Win9x se añadió en 5.6 (Benjamin Stuhl).
+
+El soporte para Windows 64 bit se añadió en 5.8 (ActiveState Corp).
+
+Última actualización: 07 October 2014
+
+=cut
