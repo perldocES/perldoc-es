@@ -1,0 +1,132 @@
+=encoding utf8
+
+=head1 NAME
+
+perl5182delta - qué hay de nuevo para Perl 5.18.2
+
+=head1 DESCRIPCIÓN
+
+Este documento describe las diferencias entre la versión 5.18.1 y la 5.18.2.
+
+Si va a actualizar desde una versión anterior, como la 5.18.0, debe leer primero L<perl5181delta>, donde se describen las diferencias entre las versiones 5.18.0 y 5.18.1.
+
+=head1 Módulos y pragmas
+
+=head2 Módulos y pragmas actualizados
+
+=over 4
+
+=item *
+
+L<B> se ha actualizado de la versión 1.42_01 a la 1.42_02.
+
+El arreglo para [perl #118525] introdujo una regresión en el comportamiento de C<B::CV::GV>, cambiando el valor de retorno de un objeto C<B::SPECIAL> sobre un C<NULL> C<CvGV> a C<undef>.  C<B::CV::GV> ya devuelve un objeto C<B::SPECIAL>, para este caso.  [perl #119413]
+
+=item *
+
+L<B::Concise> se ha actualizado de la versión 0.95 a la 0.95_01.
+
+Esto arregla un error en el volcado de SPECIAL inesperados.
+
+=item *
+
+L<English> se ha actualizado de la versión 1.06 a la 1.06_01.  Esto arregla un error sobre las prestaciones de C<$`>, C<$&> y C<$'>.
+
+=item *
+
+L<File::Glob> se ha actualizado de la versión 1.20 a la 1.20_01.
+
+=back
+
+=head1 Documentación
+
+=head2 Cambios en la documentación existente
+
+=over 4
+
+=item *
+
+L<perlrepository> se ha rehecho con un puntero a páginas más útiles.
+
+=item *
+
+L<perlhack> se ha actualizado con los últimos cambios de B<blead>.
+
+=back
+
+=head1 Arreglo de determinados errores
+
+=over 4
+
+=item *
+
+Perl 5.18.1 presentó una regresión junto con un arreglo para subrutinas léxicas.
+Algunos resultados B::SPECIAL que vienen de B::CV::GV se convierten en undefs.  Esto rompe Devel::Cover junto con otras bibliotecas.  Esto se ha corregido.  [perl #121336]
+
+=item *
+
+Perl 5.18.0 introdujo una regresión por el cual C<[:^ascii:]>, si se usa en la misma clase carácter como con otros cualificadores, podría fallar la coincidencia con caracteres en el bloque Latin-1.  Esto se ha corregido.  [perl #120799]
+
+=item *
+
+Perl 5.18.0 introdujo una regresión cuando se usa ->SUPER::método con AUTOLOAD buscando por AUTOLOAD en el propio paquete, en lugar de en el paquete de la superclase.  Esto se ha corregido. [perl #120694]
+
+=item *
+
+Perl 5.18.0 introdujo una regresión por la cual C<-palabrasimple> ya no se permite bajo los I<pragmas> permitidos bajo C<strict> e C<integer> cuando se usan juntos.  Esto se ha corregido.  [perl #120288]
+
+=item *
+
+El anterior PerlIOBase_dup no comprobaba si tuvo éxito al imponer la nueva capa antes del (opcional) establecimiento del indicador utf8. Esto podría causar fallos de segmentación por puntero nulo.  Esto se ha corregido.
+
+=item *
+
+Se ha arreglado un desbordamiento de búfer con identificadores muy largos.
+
+=item *
+
+Una regresión desde 5.16 en la gestión de rangos de relleno provocaban fallos de aserción si un complemento de palabra clave declinaba gestionar el segundo ‘my’, pero solo después de crear una operación pad.
+
+Esto afecta, al menos, a Devel::CallParser bajo compilaciones multihilo.
+
+Esto se ha corregido.
+
+=item *
+
+La construcción C<< $r=qr/.../; /$r/p >> ahora se gestiona apropiadamente, un problema que ha empeorado por los cambios en 5.18.0. [perl #118213]
+
+=back
+
+=head1 Agradecimientos
+
+Perl 5.18.2 representa aproximadamente 3 meses de desarrollo desde Perl 5.18.1 y contiene aproximadamente 980 líneas de cambios en 39 archivos por parte de 4 autores.
+
+Perl sigue floreciendo en su tercera década gracias a una vibrante comunidad de usuarios y desarrolladores. Las siguientes personas aportaron las mejoras que hicieron posible Perl 5.18.2:
+
+Craig A. Berry, David Mitchell, Ricardo Signes, Tony Cook.
+
+Como la lista anterior se genera automáticamente a partir del historial de control de versiones, es muy probable que sea incompleta. En particular, no incluye los nombres de los (muy apreciados) colaboradores que notificaron problemas a través del sistema de seguimiento de errores de Perl.
+
+Muchos de los cambios incluidos en esta versión tuvieron su origen en los módulos CPAN incluidos en el núcleo de Perl. Agradecemos a toda la comunidad CPAN por ayudar en el florecimiento de Perl.
+
+Si desea ver una lista más completa de todas las personas que han contribuido a lo largo de la historia de Perl, la encontrará en el archivo F<AUTHORS> de la distribución del código fuente de Perl.
+
+=head1 Notificación de errores
+
+Si encuentra algo que piensa que es un error, podría verificar los artículos publicados recientemente en el grupo de noticias comp.lang.perl.misc y la base de datos de errores de perl en http://rt.perl.org/perlbug/  También puede haber información en http://www.perl.org/, la página oficial de Perl.
+
+Si cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
+
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org  Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado.  Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+
+=head1 VEA TAMBIÉN
+
+En el archivo F<Changes> encontrará una explicación de cómo obtener información detallada de los cambios.
+
+El archivo F<INSTALL> contiene instrucciones para compilar Perl.
+
+El archivo F<README> contiene información general.
+
+En los archivos F<Artistic> y F<Copying> encontrará información de copyright.
+
+=cut
