@@ -21,6 +21,7 @@
 
 use v5.18.2;
 use common::sense;					# TODO: buscar una alternativa mejor para este módulo
+use autodie;
 
 use locale;
 use open ':locale';
@@ -29,6 +30,7 @@ use Storable;						# para guardar y recuperar el archivo con la sesión OAuth2
 use Net::Google::DataAPI::Auth::OAuth2;			# para acceder a Google
 use Net::Google::Spreadsheets;
 
+use Cwd;
 use File::Copy;
 use File::Slurp;
 use Digest::MD5 qw(md5_hex);
@@ -67,6 +69,15 @@ my $google_hoja    = $perl_version;
 our $l;		# Opción al programa: lista los ficheros junto con sus descripciones
 
 my @files_changed;		# archivos que han cambiado
+
+
+## Sincronizar repositorio con Github -----------------------------------------
+my $dir = getcwd;
+
+chdir $DIR_GIT;
+say qx(git pull);
+
+chdir $dir;
 
 ## Leer el fichero de descripciones -------------------------------------------
 my %pod_descripción_de;
