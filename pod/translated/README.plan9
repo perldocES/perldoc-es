@@ -11,7 +11,7 @@ Estas son unas notas que describen características peculiares de Plan 9 Perl. C
 
 =head2 Invocar Perl
 
-Perl se invoca desde la línea de comandos como se describe en L<perl>. La mayor parte de los I<scripts> perl, sin embargo, tienen una primera línea como esta: "#!/usr/local/bin/perl". Esto se conoce como una sentencia I<shebang> (shell-bang) e indica al shell del SO dónde encontrar el intérprete perl. En Plan 9 Perl, esta sentencia debería ser "#!/bin/perl" si desea invocar directamente el I<script> por su nombre.
+Perl se invoca desde la línea de comandos como se describe en L<perl>. La mayor parte de los I<scripts> perl, sin embargo, tienen una primera línea como esta: "#!/usr/local/bin/perl". Esto se conoce como una sentencia I<shebang> (shell-bang) e indica al I<shell> del SO dónde encontrar el intérprete perl. En Plan 9 Perl, esta sentencia debería ser "#!/bin/perl" si desea invocar directamente el I<script> por su nombre.
      De forma alternativa, puede invocar perl con el comando "Perl" en lugar de "perl". Esto producirá mensajes de error, compatibles con Acme, de la forma "archivo:18".
 
 Algunas I<scripts>, identificados normalmente con una extensión *.PL, se autoconfiguran y son capaces de crear correctamente su propia ruta shebang a partir de la información de configuración localizada en Plan 9 Perl. Así que no necesita preocuparse.
@@ -27,7 +27,7 @@ Como se mencionó antes, la carga dinámica no está disponible actualmente ni M
 
 =head2 Funciones Perl5 no soportadas en estos momentos en el Plan 9 Perl
 
-Algunas, como C<chown> y C<umask> no se proporcionan porque el concepto no existe en Plan 9. Otras, tales como algunas funciones relacionadas con los socket, simplemente, aún no se han escrito. Muchas en esta última categoría podrían existir en el futuro.
+Algunas, como C<chown> y C<umask> no se proporcionan porque el concepto no existe en Plan 9. Otras, tales como algunas funciones relacionadas con los I<sockets>, simplemente, aún no se han escrito. Muchas en esta última categoría podrían existir en el futuro.
 
 Las funciones que actualmente no están implementadas, son:
 
@@ -52,7 +52,7 @@ Para mantener compatibilidad con I<scripts> perl escritos para el entorno Unix, 
 
 ¡BIENVENIDO a Plan 9 Perl, alma valiente!
 
-   Esta es una versión alfa preliminar de Plan 9 Perl. Lo que falta por implementar son MakeMaker y DynaLoader. Actualmente, muchos comandos perl faltan o se comportan de manera inescrutable. Estos vacíos serán remediados con perseverancia y una pizca de suerte, en un futuro próximo. Para instalar este software:
+   Esta es una versión alfa preliminar de Plan 9 Perl. Lo que falta por implementar son MakeMaker y DynaLoader. Actualmente, muchos comandos perl faltan o se comportan de manera inescrutable. Estos vacíos se remediarán con perseverancia y una pizca de suerte, en un futuro próximo. Para instalar este software:
 
 1. Cree los directorios fuente y bibliotecas para perl ejecutando el comando plan9/setup.rc (es decir, localizado en el subdirectorio plan9).
 Nota: la rutina de inicialización asume que no ha desempaquetado estos archivos en /sys/src/cmd/perl. Después de ejecutar setup.rc puede borrar la copia del fuente originalmente destareado (tar), ya que ahora el código fuente se ha instalado en /sys/src/cmd/perl. Si planea instalar los binarios perl para todas las arquitecturas, ejecute "setup.rc -a".

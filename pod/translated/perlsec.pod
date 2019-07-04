@@ -4,7 +4,7 @@ perlsec - Seguridad en Perl
 
 =head1 DESCRIPCIÓN
 
-Perl se diseñó para que fuera fácil programar con seguridad incluso cuando se ejecuta con privilegios extra, como programas setuid o setgid.  A diferencias de otros shell de líneas de comandos, que se basan en múltiples pases de sustitución de cada línea del I<script>, Perl usa un esquema de evaluación más convencional, con menos tocones escondidos.  De forma adicional, debido a que el lenguaje tiene más funcionalidad incrustada, puede depender menos de programas externos (y posiblemente menos confiables) para cumplir con sus propósitos.
+Perl se diseñó para que fuera fácil programar con seguridad incluso cuando se ejecuta con privilegios extra, como programas setuid o setgid.  A diferencias de otros I<shell> de líneas de comandos, que se basan en múltiples pases de sustitución de cada línea del I<script>, Perl usa un esquema de evaluación más convencional, con menos tocones escondidos.  De forma adicional, debido a que el lenguaje tiene más funcionalidad incrustada, puede depender menos de programas externos (y posiblemente menos confiables) para cumplir con sus propósitos.
 
 =head1 INFORMACIÓN DE CONTACTO SOBRE VULNERABILIDAD DE SEGURIDAD
 
@@ -16,11 +16,11 @@ Cuando envíe una petición inicial a la dirección de correo sobre seguridad, p
 
 =head2 Modo de contaminación (I<Taint>)
 
-Perl, automáticamente, activa un conjunto de comprobaciones especiales de seguridad, llamado modo contaminación (I<taint mode>), cuando detecta que el programa que está ejecutando tiene un número de identificación de usuario o de grupo, distinto del usuario actual y del efectivo.  El bit setuid en los permisos Unix es el modo 04000, el bit setgid es el modo 02000; pueden estar establecidos cualquiera de los dos o los dos a la vez.  También puede activar el modo de contaminación de forma explícita usando la opción de línea de comandos B<-T>.  Se sugiere I<fuertemente> usar esta opción para los programas de servidor, y cualquier programa que se ejecute en nombre de cualquier otro, como es el caso de un script CGI.  Una vez que se active el modo de contaminación, queda así para el resto de su script.
+Perl, automáticamente, activa un conjunto de comprobaciones especiales de seguridad, llamado modo contaminación (I<taint mode>), cuando detecta que el programa que está ejecutando tiene un número de identificación de usuario o de grupo, distinto del usuario actual y del efectivo.  El bit setuid en los permisos Unix es el modo 04000, el bit setgid es el modo 02000; pueden estar establecidos cualquiera de los dos o los dos a la vez.  También puede activar el modo de contaminación de forma explícita usando la opción de línea de comandos B<-T>.  Se sugiere I<fuertemente> usar esta opción para los programas de servidor, y cualquier programa que se ejecute en nombre de cualquier otro, como es el caso de un I<script> CGI.  Una vez que se active el modo de contaminación, queda así para el resto de su I<script>.
 
 Mientras se esté en este modo, Perl toma precauciones especiales que se llaman comprobaciones contaminadas (I<taint checks>) para impedir trampas, tanto las obvias como las sutiles.  Algunas de estas comprobaciones son razonablemente simples, tales como verificar que la ruta de los directorios no son modificables por otros usuarios; los programadores cuidadosos siempre usan comprobaciones como estas.  Otras comprobaciones, sin embargo, están mejor soportadas por el propio lenguaje, y son precisamente estas comprobaciones las que contribuyen a hacer de un programa Perl, con bits de I<set-id>, un programa más seguro que el correspondiente programa escrito en C.
 
-No puede usar datos derivados del exterior de su programa que afecten a cualquier cosa que no esté en el exterior del programa -como mínimo, no por accidente-.  Se marca como "contaminados" todos los argumentos de la línea de comandos, variables de entorno, información de la configuración regional (vea L<perllocale>), resultados de ciertas llamadas del sistema (C<readdir()>, C<readlink()>, la variable de C<shmread()>, los mensajes devueltos por C<msgrcv()>, la contraseña, los campos gcos y shell devueltos por la llamada C<getpwxxx()>), y toda entrada proveniente de archivos.
+No puede usar datos derivados del exterior de su programa que afecten a cualquier cosa que no esté en el exterior del programa -como mínimo, no por accidente-.  Se marca como "contaminados" todos los argumentos de la línea de comandos, variables de entorno, información de la configuración regional (vea L<perllocale>), resultados de ciertas llamadas del sistema (C<readdir()>, C<readlink()>, la variable de C<shmread()>, los mensajes devueltos por C<msgrcv()>, la contraseña, los campos gcos y I<shell> devueltos por la llamada C<getpwxxx()>), y toda entrada proveniente de archivos.
 Los datos contaminados no se pueden usar directamente o indirectamente en ningún comando que invoque un sub-shell, ni ningún comando que modifique archivos, directorios o procesos, B<con las siguientes excepciones>:
 
 =over 4
@@ -60,7 +60,7 @@ Por ejemplo:
     $line = <>;			# Contaminado
     $line = <STDIN>;		# También contaminado
     open FOO, "/home/me/bar" or die $!;
-    $line = <FOO>;		# Sigue estando contaminado
+    $line = <FOO>;		# Sigue contaminado
     $path = $ENV{'PATH'};	# Contaminado, pero vea más abajo
     $data = 'abc';		# No contaminado
 
@@ -79,7 +79,7 @@ Por ejemplo:
     system "echo $data";	# ¡Ahora es seguro!
 
     open(FOO, "< $arg");	# Bien - archivo de solo lectura
-    open(FOO, "> $arg"); 	# Mal - intentando escribir
+    open(FOO, "> $arg"); 	# Mal - intentar escribir
 
     open(FOO,"echo $arg|");	# Mal
     open(FOO,"-|")
@@ -119,7 +119,7 @@ es, de forma efectiva
 
 no tiene sentido que C<$resultado> quede contaminado.
 
-=head2 Limpiando y detectando datos contaminados
+=head2 Limpiar y detectar datos contaminados
 
 Para comprobar cuándo una variable contiene datos contaminados, y cuyo uso podría disparar un mensaje "Dependencia insegura", puede usar la función C<tainted()> del módulo Scalar::Util, disponible en su espejo CPAN más cercano, e incluido en Perl a partir de la publicación de v5.8.0.
 O quizás quiera usar la siguiente función C<is_tainted()>.
@@ -131,7 +131,7 @@ O quizás quiera usar la siguiente función C<is_tainted()>.
 
 Esta función hace uso del hecho que la presencia de datos contaminados en cualquier parte de una expresión deja contaminada a toda la expresión.  Sería ineficiente comprobar la contaminación de todos los argumentos de todos los operadores.  En lugar de eso, se usa una aproximación ligeramente más eficiente y conservadora, que es que si se accede a un valor contaminado dentro de la misma expresión, se considera contaminada toda la expresión.
 
-Pero comprobar la contaminación es la mitad del trabajo.  Algunas veces querrá limpiar la contaminación de sus datos.  Los valores se pueden descontaminar usándolos como claves en un hash; de lo contrario, la única manera de saltarse el mecanismo de contaminación es referenciando subpatrones en una coincidencia con una expresión regular.
+Pero comprobar la contaminación es la mitad del trabajo.  Algunas veces querrá limpiar la contaminación de sus datos.  Los valores se pueden descontaminar usándolos como claves en un hash; de lo contrario, la única manera de saltarse el mecanismo de contaminación se referencia subpatrones en una coincidencia con una expresión regular.
 Perl presume que si referencia a una subcadena usando $1, $2, etc. en un patrón no contaminado, eso es que usted sabe qué es lo que está haciendo cuando escribió el patrón.  Eso significa, pensando un poco, que no estamos descontaminando ciegamente, o nos estamos cargando todo el invento.  Es mejor verificar que la variable solo tiene caracteres buenos (para ciertos valores de "bueno") en lugar de comprobar si tiene algún carácter malo.  Esto se hace así porque es mucho más fácil olvidarse de caracteres malos de los que nunca haya pensado antes.
 
 Aquí hay un test para asegurarse que los datos no contienen nada más que caracteres "de palabra" (alfabéticos, numéricos, y guiones bajos), un guión y un signo de la arroba o un punto.
@@ -142,7 +142,7 @@ Aquí hay un test para asegurarse que los datos no contienen nada más que carac
 	die "Bad data in '$datos'"; 	# registrar esto en algún lugar
     }
 
-Esto es bastante seguro porque C</\w+/> normalmente no coincide con metacaracteres del shell, ni con un punto, guión, o cualquier otra cosa con un significado especial para el shell.  El uso de C</.+/> habría sido inseguro, en teoría, porque permite pasar todo, pero Perl no lo comprueba.  La lección es que cuando estamos descontaminando, debe ser extremamente cuidadoso con sus patrones.
+Esto es bastante seguro porque C</\w+/> normalmente no coincide con metacaracteres del I<shell>, ni con un punto, guión, o cualquier otra cosa con un significado especial para el I<shell>.  El uso de C</.+/> habría sido inseguro, en teoría, porque permite pasar todo, pero Perl no lo comprueba.  La lección es que cuando estamos descontaminando, debe ser extremamente cuidadoso con sus patrones.
 Limpiar datos usando expresiones regulares es el I<único> mecanismo para descontaminar datos sucios, a menos que use la estrategia detallada antes, de crear un proceso hijo con menores privilegios.
 
 El ejemplo no descontamina C<$datos> si C<use locale> está activo, porque los caracteres que coinciden con C<\w> se determinan por la configuración regional.
@@ -150,16 +150,16 @@ Perl considera que las definiciones regionales son poco fiables porque contienen
 
 =head2 Opciones en la línea "#!"
 
-Cuando hace que un script sea ejecutable, para hacerlo utilizable como un comando, el sistema pasará las opciones a perl que estén en la #!
-línea.  Perl comprueba que cualquier opción desde la línea de comando pasados a un script setuid
+Cuando hace que un I<script> sea ejecutable, para hacerlo utilizable como un comando, el sistema pasará las opciones a perl que estén en la #!
+línea.  Perl comprueba que cualquier opción desde la línea de comando pasados a un I<script> setuid
 (o setgid) coinciden de hecho con los indicados en la #! línea.  Algunos Unix y entornos parecidos imponen un límite de una opción en la #!
-línea, así que necesitará usar algo como C<-wU> en lugar de C<-w -U> bajo tales sistemas.  (Este problema debería aparecer solamente en Unix y entornos parecidos que soporten #! y scripts setuid o setgid).
+línea, así que necesitará usar algo como C<-wU> en lugar de C<-w -U> bajo tales sistemas.  (Este problema debería aparecer solamente en Unix y entornos parecidos que soporten #! y I<scripts> setuid o setgid).
 
 =head2 Modo contaminación y @INC
 
 Cuando el modo contaminación (C<-T>) está en activo, el directorio "." se quita de C<@INC>, y Perl ignora las variables de entorno C<PERL5LIB> y C<PERLLIB>.  Puede seguir ajustando C<@INC> desde el exterior del programa usando la opción de línea de comando C<-I> tal como se explica L<perlrun>.  Se ignoran las dos variables de entorno porque están ocultas, y un usuario ejecutando el programa podría no ser consciente de que están establecidas, mientras que la opción C<-I> es claramente visible y, por lo tanto, permitida.
 
-Otra forma de modificar C<@INC> sin modificar el programa es usando el pragma C<lib>, por ejemplo:
+Otra forma de modificar C<@INC> sin modificar el programa es usando el I<pragma> C<lib>, por ejemplo:
 
   perl -Mlib=/foo programa
 
@@ -169,24 +169,24 @@ Note que si una cadena contaminada se añade a C<@INC>, se emitirá el siguiente
 
   I<Insecure dependency in require while running with -T switch> (Dependencia insegura en require mientras se ejecuta con la opción -T)
 
-=head2 Limpiando su ruta
+=head2 Limpiar su ruta
 
 Para los mensajes "C<$ENV{PATH}> inseguro", necesita estableces C<$ENV{'PATH'}> a un valor conocido, y cada directorio en la ruta debe ser absoluto y no escribible por otros usuarios distintos del propietario y del grupo.  Puede sorprenderse el recibir este mensaje incluso si la ruta de su ejecutable está totalmente cualificado.  I<No> se genera porque no haya suministrado una ruta completa al programa, sino porque no ha establecido su variables de entorno PATH, o no lo ha hecho a algo que fuera seguro.
 Debido a que Perl no puede garantizar que el ejecutable en cuestión vaya a ejecutar otro programa que sea dependiente de su PATH, antes se asegura que usted haya establecido PATH.
 
 PATH no es la única variable de entorno que puede causar problemas.
-Debido a que algunos shell pueden usar las variables IFS, CDPATH, ENV y BASH_ENV, Perl comprueba que estas están vacías o descontaminadas cuando inicia subprocesos.  Puede desear añadir algo como esto a sus scripts setid y a los que hay que comprobar su nivel de contaminación.
+Debido a que algunos I<shell> pueden usar las variables IFS, CDPATH, ENV y BASH_ENV, Perl comprueba que estas están vacías o descontaminadas cuando inicia subprocesos.  Puede desear añadir algo como esto a sus I<scripts> setid y a los que hay que comprobar su nivel de contaminación.
 
     delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};   # Hace %ENV más seguro
 
 También es posible tener problemas con otras operaciones a quienes no les preocupa si van a usar valores contaminados.  Haga un uso juicioso de las pruebas de archivo con los nombres de archivo que el usuario proporcione.  Cuando sea posible, haga un I<open> y demás operaciones B<después> de bajar correctamente cualquier privilegio especial del usuario (¡o grupo!).  Perl no le previene de leer archivos contaminados, así que tenga cuidado cuando imprima su contenido.  El mecanismo de contaminación tiene como objetivo prevenir fallos estúpidos, no eliminar la necesidad de pensar.
 
-Perl no llama al shell para expandir los comodines cuando pasa listas explícitas de parámetros a C<system> y C<exec> en lugar de cadenas que puedan contener comodines shell dentro de ellas.  Desafortunadamente, C<open>, C<glob> y las funciones con comillas invertidas no proporcionan tal convención alternativa de llamada, así que se requiere más subterfugios.
+Perl no llama al I<shell> para expandir los comodines cuando pasa listas explícitas de parámetros a C<system> y C<exec> en lugar de cadenas que puedan contener comodines I<shell> dentro de ellas.  Desafortunadamente, C<open>, C<glob> y las funciones con comillas invertidas no proporcionan tal convención alternativa de llamada, así que se requiere más subterfugios.
 
 Perl proporciona una forma razonablemente segura para abrir un archivo o tubería desde un programa setuid o setgid: simplemente cree un proceso hijo con privilegios reducidos, quien hará el trabajo sucio por usted.  Primero, haga un fork de un hijo usando la sintaxis especial C<open> que conecte el padre y el hijo por medio de una tubería.  Ahora el hijo reinicia su ID de grupo y cualesquiera otros atributos de proceso, como variables de entorno, umask, directorios de trabajo actuales, dejándolos en sus valores originales o valores seguros conocidos.  Entonces, el proceso hijo, que ya no tiene ningún permiso especial, hace el C<open> u otra llamada del sistema.
 Finalmente, el hijo pasa los datos que ha gestionado al padre.  Ya que el archivo o tubería se abrió en el hijo mientras se ejecuta con un privilegio más bajo que el padre, no se le puede burlar para que haga algo que no deba.
 
-Aquí hay una manera de ejecutar comillas inversas de una forma razonablemente segura.  Note cómo el C<exec> no se llama con una cadena que el shell podría expandir.  Esto es de lejos la mejor forma de llamar algo que estuviera sujeto a los escapes del shell: nunca llamar al shell.  
+Aquí hay una manera de ejecutar comillas inversas de una forma razonablemente segura.  Note cómo el C<exec> no se llama con una cadena que el I<shell> podría expandir.  Esto es de lejos la mejor forma de llamar algo que estuviera sujeto a los escapes del I<shell>: nunca llamar al I<shell>.  
 
         use English;
         die "No puedo hacer fork: $!" unless defined($pid = open(KID, "-|"));
@@ -222,13 +222,13 @@ Esto es muy diferente, sin embargo, de ni incluso confiar en el autor del códig
 
 =head2 Errores de seguridad
 
-Más allá de los problemas obvios que se originan de los privilegios especiales a sistemas tan flexibles como los scripts, en muchas versiones de Unix, los scripts set-id son inherentemente inseguros por principio.  El problema es una condición de carrera en el kernel.  Entre el tiempo en que el kernel abre el archivo para ver qué intérprete debe ejecutar, y cuando el intérprete (ahora con set-id) vuelve a abrir el archivo para interpretarlo, el archivo en cuestión puede haber cambiado, especialmente si en su sistema existen los enlaces simbólicos.
+Más allá de los problemas obvios que se originan de los privilegios especiales a sistemas tan flexibles como los I<scripts>, en muchas versiones de Unix, los I<scripts> set-id son inherentemente inseguros por principio.  El problema es una condición de carrera en el kernel.  Entre el tiempo en que el kernel abre el archivo para ver qué intérprete debe ejecutar, y cuando el intérprete (ahora con set-id) vuelve a abrir el archivo para interpretarlo, el archivo en cuestión puede haber cambiado, especialmente si en su sistema existen los enlaces simbólicos.
 
 Afortunadamente, algunas veces esa "característica" del kernel se puede desactivar.
-Desafortunadamente, existen dos maneras para desactivarlo.  El sistema puede, simplemente, marcar como ilegales los scripts que tengan establecido cualquier bit set-id, que no ayuda mucho.
-De forma alternativa, puede, simplemente, ignorar los bits set-id en los scripts.
+Desafortunadamente, existen dos maneras para desactivarlo.  El sistema puede, simplemente, marcar como ilegales los I<scripts> que tengan establecido cualquier bit set-id, que no ayuda mucho.
+De forma alternativa, puede, simplemente, ignorar los bits set-id en los I<scripts>.
 
-Sin embargo, si no está desactivada la característica del kernel de los script set-id, Perl se quejará sonoramente de que su script set-id es inseguro.  Necesitará, tanto desactivar la característica del kernel del script set-id, o poner un envoltorio C sobre el script.  Un envoltorio C es solo un programa compilado que no hace nada excepto llamar a su programa Perl.   Los programas compilados no están sujetos al error del kernel que apesta los scripts set-id.  Aquí hay un simple envoltorio, escrito en C:
+Sin embargo, si no está desactivada la característica del kernel del I<script> set-id, Perl se quejará sonoramente de que su I<script> set-id es inseguro.  Necesitará, tanto desactivar la característica del kernel del I<script> set-id, o poner un envoltorio C sobre el I<script>.  Un envoltorio C es solo un programa compilado que no hace nada excepto llamar a su programa Perl.   Los programas compilados no están sujetos al error del kernel que apesta los I<scripts> set-id.  Aquí hay un simple envoltorio, escrito en C:
 
     #define REAL_PATH "/ruta/al/script"
     main(ac, av)
@@ -237,15 +237,15 @@ Sin embargo, si no está desactivada la característica del kernel de los script
 	execv(REAL_PATH, av);
     }
 
-Compile este envoltorio en un binario ejecutable, y entonces póngale setuid o setgid a I<él> en lugar de a su script.
+Compile este envoltorio en un binario ejecutable, y entonces póngale setuid o setgid a I<él> en lugar de a su I<script>.
 
-En los últimos años, los vendedores han comenzado a suministrar sistemas libres de este error de seguridad.  En tales sistemas, cuando el kernel pasa el nombre de un script set-id para abrir el intérprete, en lugar de usar el nombre de una ruta, sujeto a problemas, en lugar de eso pasa I</dev/fd/3>.  Es un archivo especial que ya está abierto en el script, así que no existe una condición de carrera para que los scripts malignos la exploten.  En estos sistemas, Perl debería compilarse con C<-DSETUID_SCRIPTS_ARE_SECURE_NOW>.  El programa F<Configure> que compila Perl intenta adivinarlo por sí mismo, así que nunca tendría que especificarlo.  La mayor parte de las versiones de SysVr4 y BSD 4.4 esa esta aproximación para evitar la condición de carrera del kernel.
+En los últimos años, los vendedores han comenzado a suministrar sistemas libres de este error de seguridad.  En tales sistemas, cuando el kernel pasa el nombre de un I<script> set-id para abrir el intérprete, en lugar de usar el nombre de una ruta, sujeto a problemas, en lugar de eso pasa I</dev/fd/3>.  Es un archivo especial que ya está abierto en el I<script>, así que no existe una condición de carrera para que los I<scripts> malignos la exploten.  En estos sistemas, Perl debería compilarse con C<-DSETUID_SCRIPTS_ARE_SECURE_NOW>.  El programa F<Configure> que compila Perl intenta adivinarlo por sí mismo, así que nunca tendría que especificarlo.  La mayor parte de las versiones de SysVr4 y BSD 4.4 esa esta aproximación para evitar la condición de carrera del kernel.
 
 =head2 Proteger su programa
 
 Existe un número de formas de esconder el código fuente de sus programas Perl, con diferentes niveles de "seguridad".
 
-Antes de nada, I<no> puede quitar los permisos de lectura, porque el código fuente debe ser leíble para que se pueda compilar e interpretar.  (Sin embargo, eso no significa que el código fuente de un script CGI sea leíble por usuarios web).  Así que deje los permisos en el socialmente amistoso nivel de 0755.  Esto solo permite, a los demás, en su sistema local, ver su código.
+Antes de nada, I<no> puede quitar los permisos de lectura, porque el código fuente debe ser leíble para que se pueda compilar e interpretar.  (Sin embargo, eso no significa que el código fuente de un I<script> CGI sea leíble por usuarios web).  Así que deje los permisos en el socialmente amistoso nivel de 0755.  Esto solo permite, a los demás, en su sistema local, ver su código.
 
 Algunos personas consideran equivocadamente que eso es un problema de seguridad.  Si su programa hace cosas inseguras, y confía en personas que no saben cómo explotar esas vulnerabilidades, entonces no es seguro.  A menudo es posible para cualquiera determinar la inseguridad de las cosas y explotarlas sin ver el código fuente.  Seguridad por medio de la oscuridad, escondiendo el nombre de sus errores en lugar de arreglarlos es, de hecho, poca seguridad.
 

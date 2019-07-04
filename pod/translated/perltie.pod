@@ -33,7 +33,7 @@ Miremos cada uno por separado, usando como ejemplo una clase tie para escalares 
     tie $su_velocidad, 'Nice', getppid();
     tie $mi_velocidad, 'Nice', $$;
 
-Y ahora, siempre y cuando se acceda a estas variables, es recuperado y devuelto su actual sistema de prioridad.  Si están establecidas estas variables, entonces ¡se cambia la prioridad del proceso!
+Y ahora, siempre y cuando se acceda a estas variables, se recupera y devuelve su actual sistema de prioridad.  Si están establecidas estas variables, entonces ¡se cambia la prioridad del proceso!
 
 Usaremos la clase BSD::Resource de Jarkko Hietaniemi <F<jhi@iki.fi>> (no incluida) para acceder a las constantes PRIO_PROCESS, PRIO_MIN y PRIO_MAX de su sistema, así como las llamadas del sistema getpriority() y setpriority().  Aquí está el preámbulo de la clase.
 
@@ -923,7 +923,7 @@ Cuando se ejecuta este código, no hay salida.  He aquí el porqué:
 
 Cuando la variable se enlaza, se le asocia con el objeto que es el valor de retorno de las funciones TIESCALAR, TIEARRAY o TIEHASH.  Este objeto, normalmente, solo tiene una referencia, concretamente, la referencia implícita desde la variable enlazada.  Cuando se llama a untie(), esa referencia se destruye.  Entonces, como en el primer ejemplo de antes, se llama al destructor del objeto (DESTROY), que es lo normal para objetos que no tienen más referencias válidas; y por ello, se cierra el archivo.
 
-En el segundo ejemplo, sin embargo, hemos almacenado otra referencia al objeto enlazado, en $x.  Eso significa que cuando se le llama a untie() seguirá existiendo una referencia válida al objeto existente, así que no se llama al destructor en ese momento, y por lo tanto, el archivo no es cerrado.  La razón de que aquí no haya salida es porque no se han vaciado los búferes de archivo, a disco.
+En el segundo ejemplo, sin embargo, hemos almacenado otra referencia al objeto enlazado, en $x.  Eso significa que cuando se le llama a untie() seguirá existiendo una referencia válida al objeto existente, así que no se llama al destructor en ese momento, y por lo tanto, el archivo no se cierra.  La razón de que aquí no haya salida es porque no se han vaciado los búferes de archivo, a disco.
 
 Ahora que sabe cuál es el problema, ¿qué puede hacer para evitarlo?
 Antes de la introducción del método opcional UNTIE, la única manera era la vieja opción C<-w>. Mostrará cualquier instancia donde llame a untie() y siga existiendo referencias válidas al objeto enlazado.  Si al segundo I<script> de antes, cerca del inicio, pusiéramos C<use warnings 'untie'> o si se ejecutase con la opción C<-w>, Perl imprime este mensaje de advertencia:

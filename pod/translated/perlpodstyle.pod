@@ -4,7 +4,7 @@ perlpodstyle - Guía de estilo para POD
 
 =head1 DESCRIPCIÓN
 
-Este documento contiene directrices generales de escritura de documentación en formato POD para scripts y módulos Perl, basadas en directrices generales para escribir páginas de documentación de manual en UNIX.  Por supuesto, todas estas directrices son opcionales, pero le ayudarán a crear una documentación coherente con otros documentos del sistema.
+Este documento contiene directrices generales de escritura de documentación en formato POD para I<scripts> y módulos Perl, basadas en directrices generales para escribir páginas de documentación de manual en UNIX.  Por supuesto, todas estas directrices son opcionales, pero le ayudarán a crear una documentación coherente con otros documentos del sistema.
 
 El nombre del programa que se está documentando, se escribe por convención en negrita (mediante BE<lt>E<gt>) siempre que aparezca, así como todas las opciones del programa.
 Los argumentos deberían escribirse en itálica (IE<lt>E<gt>).  Los nombres de función se suelen escribir en cursiva; si escribe el nombre de una función como nombre(), Pod::Man se encargará de escribirlo en cursiva.  El código literal o los comandos deberían escribirse dentro de CE<lt>E<gt>.  Las referencias a otras páginas de manual tendrían que ser de la forma C<manpage(sección)> o
@@ -96,7 +96,7 @@ Ya que las variables de entorno se escriben normalmente en mayúsculas, no se ne
 =item ARCHIVOS (en inglés, I<FILES>)
 
 Todos los archivos utilizados por el programa o función, presentados normalmente como una lista, y para qué se usan.  Los nombres de archivos tendrían que estar encerrados en un FE<lt>E<gt>.
-Es particularmente importante documentar los archivos que, potencialmente, serán modificados.
+Es particularmente importante documentar los archivos que, potencialmente, se modificarán.
 
 =item PROBLEMAS (en inglés, I<CAVEATS>)
 

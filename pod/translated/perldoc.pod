@@ -34,7 +34,7 @@ A continuación se muestra una descripción más detallada de los modificadores.
 
 =head1 DESCRIPCIÓN
 
-B<perldoc> busca un elemento de documentación con formato .pod incluido en el árbol de instalación de perl o en un script perl, y ejecuta C<groff -man | $PAGER> para mostrarlo (en HP-UX se usa además C<col -x>). Este programa se usa principalmente para consultar la documentación de los módulos de biblioteca de perl.
+B<perldoc> busca un elemento de documentación con formato .pod incluido en el árbol de instalación de perl o en un I<script> perl, y ejecuta C<groff -man | $PAGER> para mostrarlo (en HP-UX se usa además C<col -x>). Este programa se usa principalmente para consultar la documentación de los módulos de biblioteca de perl.
 
 Es posible que también estén instaladas en el sistema páginas de manual para esos módulos, en cuyo caso es probable que desee usar simplemente el comando man(1).
 
@@ -139,7 +139,7 @@ Permite especificar una opción con ("w" viene de la palabra inglesa B<w>ith) la
 
 Puede usar C<-w nombre_opción> (sin un valor) como una forma abreviada de C<-w nombre_opción:I<TRUE>>.  Esto puede ser útil para características que se activan o desactivan, como por ejemplo C<-w page_numbering>.
 
-Puede usar un signo "=" en lugar del signo ":"; por ejemplo, C<-w textsize=15>.  Esto puede resultar más (o menos) cómodo según la shell que se use.
+Puede usar un signo "=" en lugar del signo ":"; por ejemplo, C<-w textsize=15>.  Esto puede resultar más (o menos) cómodo según la I<shell> que se use.
 
 =item B<-X>
 

@@ -28,7 +28,7 @@ En particular, las variables especiales C<${^_XYZ}> se considera que están siem
 
 =head1 VARIABLES ESPECIALES
 
-Los nombres siguientes tienen un significado especial en Perl.  La mayoría de los nombres de las variables con caracteres de puntuación tienen mnemónicos razonables, o análogos de los shells.
+Los nombres siguientes tienen un significado especial en Perl.  La mayoría de los nombres de las variables con caracteres de puntuación tienen mnemónicos razonables, o análogos de los I<shell>s.
 Sin embargo, si desea utilizar los nombres largos de las variable, sólo tiene que decir:
 
     use English;
@@ -133,7 +133,7 @@ Mnemónico: funciona en contexto doblemente entrecomillado.
 =item $$
 X<$$> X<$PID> X<$PROCESS_ID>
 
-El número de proceso de Perl ejecutando este script.  A pesar de que I<puede> darle un valor a esta variable, por lo general se desaconseja hacerlo, aunque puede resultar muy útil para algunas comprobaciones de pruebas.  Será restablecido automáticamente a través de las llamadas C<fork()>.
+El número de proceso de Perl ejecutando este I<script>.  A pesar de que I<puede> darle un valor a esta variable, por lo general se desaconseja hacerlo, aunque puede resultar muy útil para algunas comprobaciones de pruebas.  Será restablecido automáticamente a través de las llamadas C<fork()>.
 
 Nota para los usuarios de Linux Debian GNU/kFreeBSD: Antes de Perl v5.16.0, perl podría emular la semántica POSIX en sistemas Linux usando LinuxThreads, una implementación parcial de POSIX Threads que desde entonces ha sido reemplazada por la I<Native POSIX Thread Library> (NPTL).
 
@@ -143,7 +143,7 @@ Sistemas Debian GNU/kFreeBSD también usan LinuxThreads hasta la versión 6.0 (i
 
 Para ver si su sistema está afectado por esta discrepancia compruebe si C<getconf GNU_LIBPTHREAD_VERSION | grep -q NPTL> devuelve un valor falso.  Los hilos NTPL preservan la semántica POSIX.
 
-Mnemónico: lo mismo que en los shell.
+Mnemónico: lo mismo que en los I<shell>.
 
 =item $PROGRAM_NAME
 
@@ -161,7 +161,7 @@ En algunas plataformas el relleno puede extenderse por todo el largo de la longi
 
 Nota para los usuarios de BSD: modificar C<$0> no elimina por completo "perl" de la salida de ps(1).  Por ejemplo, la modificación de C<$0> en C<"foobar"> puede resultar C<"perl: foobar (perl)"> (el que salga el prefijo C<"perl:"> y el sufijo "(perl)" depende de la variante y de versión exacta de BSD).  Esta es una característica del sistema operativo, Perl no puede evitarlo.
 
-En los scripts multihebra Perl coordina los hilos de manera que cualquier hilo puede modificar su copia de C<$0> y el cambio se hace visible para ps(1) (suponiendo que el sistema operativo juegue limpio).  Tenga en cuenta que la visión de C<$0> desde los otros hilos no va a cambiar, ya que tienen sus propias copias de ella misma.
+En los I<scripts> multihebra Perl coordina los hilos de manera que cualquier hilo puede modificar su copia de C<$0> y el cambio se hace visible para ps(1) (suponiendo que el sistema operativo juegue limpio).  Tenga en cuenta que la visión de C<$0> desde los otros hilos no va a cambiar, ya que tienen sus propias copias de ella misma.
 
 Si el programa se ha entregado a perl a través de las opciones C<-e> o C<-E>, C<$0> contendrá la cadena C<"-e">.
 
@@ -266,7 +266,7 @@ Mnemónico: la coma (el separador sintáctico de subíndices) es un punto y coma
 X<$a> X<$b>
 
 Variables especiales del paquete cuando se usa C<sort()>; vea L<perlfunc/sort>.
-Debido a su carácter especial, C<$a> y C<$b> no tienen que declararse (usando C<use vars>, u C<our()>) incluso cuando se utiliza el pragma C<strict 'vars'>.  No las localice C<my $a> o C<my $b> si quiere utilizarlos en el bloque o función de comparación de C<sort()>.
+Debido a su carácter especial, C<$a> y C<$b> no tienen que declararse (usando C<use vars>, u C<our()>) incluso cuando se utiliza el I<pragma> C<strict 'vars'>.  No las localice C<my $a> o C<my $b> si quiere utilizarlos en el bloque o función de comparación de C<sort()>.
 
 =item %ENV
 X<%ENV>
@@ -301,7 +301,7 @@ X<$]> X<$OLD_PERL_VERSION>
 
 La revisión, versión y la subversión del intérprete de Perl, representado como un decimal de la forma 5.XXXYYY, donde XXX es la versión / 1e3, e YYY es la subversión / 1e6.  Por ejemplo, Perl v5.10.1 sería "5.010001".
 
-Esta variable se puede usar para determinar si el intérprete de Perl que ejecuta un script está en el rango correcto de versiones:
+Esta variable se puede usar para determinar si el intérprete de Perl que ejecuta un I<script> está en el rango correcto de versiones:
 
     warn "No PerlIO\n" if $] lt '5.008';
 
@@ -332,7 +332,7 @@ El array C<@F> contiene los campos de cada línea leída cuando se activa el mod
 =item @INC
 X<@INC>
 
-El array C<@INC> contiene la lista de lugares en que las construcciones C<do EXPR>, C<require>, o C<use> buscan sus archivos de biblioteca.  En un principio se compone de los argumentos de cualquier opción B<-I> en la línea de comandos, seguido de la biblioteca Perl predeterminada, probablemente F</usr/local/lib/perl>, seguido por ".", para representar el directorio actual.  (no se añadirá "." si el modo I<taint> -contaminado- está activo, tanto por C<-T> como por C<-t>).  Si necesita modificar este comportamiento en tiempo de ejecución, debe utilizar el pragma C<use lib> para conseguir que la biblioteca dependiente de la máquina se cargue correctamente:
+El array C<@INC> contiene la lista de lugares en que las construcciones C<do EXPR>, C<require>, o C<use> buscan sus archivos de biblioteca.  En un principio se compone de los argumentos de cualquier opción B<-I> en la línea de comandos, seguido de la biblioteca Perl predeterminada, probablemente F</usr/local/lib/perl>, seguido por ".", para representar el directorio actual.  (no se añadirá "." si el modo I<taint> -contaminado- está activo, tanto por C<-T> como por C<-t>).  Si necesita modificar este comportamiento en tiempo de ejecución, debe utilizar el I<pragma> C<use lib> para conseguir que la biblioteca dependiente de la máquina se cargue correctamente:
 
     use lib '/miruta/dirbiblioteca/';
     use AlgunModulo;
@@ -735,7 +735,7 @@ Por ejemplo, C<$+{foo}> es equivalente a C<$1> después de la siguiente coincide
 
 Las claves del hash C<%+> lista sólo los nombres de los búferes que han capturado (y por lo tanto que se asocia a valores definidos).
 
-El comportamiento subyacente de C<%+> es proporcionado por el módulo L<Tie::Hash::NamedCapture>.
+El comportamiento subyacente de C<%+> se proporciona por el módulo L<Tie::Hash::NamedCapture>.
 
 B<Nota:> C<%-> y C<%+> están atadas en un hash interno común asociado con la última expresión regular exitosa.  Por lo tanto mezclar un acceso iterativo en ellas a través de C<each> puede tener resultados impredecibles.
 Del mismo modo, si la última coincidencia exitosa cambia, entonces los resultados pueden ser sorprendentes.
@@ -925,7 +925,7 @@ Contiene el nombre del archivo actual, cuando se lee con C<< <> >>.
 =item @ARGV
 X<@ARGV>
 
-El array C<@ARGV> contiene los argumentos de la línea de comandos que se pasaron al script.  C<$#ARGV> es, generalmente, el número de argumentos menos uno, debido a que C<$ARGV[0]> es el primer argumento, I<no> es el nombre del propio programa.  Vea L</$0> para obtener el nombre del comando.
+El array C<@ARGV> contiene los argumentos de la línea de comandos que se pasaron al I<script>.  C<$#ARGV> es, generalmente, el número de argumentos menos uno, debido a que C<$ARGV[0]> es el primer argumento, I<no> es el nombre del propio programa.  Vea L</$0> para obtener el nombre del comando.
 
 =item ARGV
 X<ARGV>
@@ -1157,7 +1157,7 @@ Para ilustrar las diferencias entre estas variables, considere la siguiente expr
 
 Cuando perl ejecuta la expresión C<eval()>, traduce las llamadas C<open()>, C<< <PIPE> >> y C<close> en la biblioteca C en tiempo de ejecución y de allí al núcleo del sistema operativo.  perl asigna C<$!> al valor de C<errno> de la biblioteca de C si al menos una de estas llamadas falla.
 
-C<$@> recibe un valor si la cadena a ser C<eval>-uada no se compila (esto puede suceder si C<open> o C<close> fueron importados con prototipos defectuosos), o si el código ejecutado por Perl muere (C<die()>).  En estos casos, el valor de C<$@> es el error de compilación, o el argumento a C<die> (que será interpolado en C<$!> y C<$?>).  (Sin embargo, vea también L<Fatal>).
+C<$@> recibe un valor si la cadena a ser C<eval>-uada no se compila (esto puede suceder si C<open> o C<close> fueron importados con prototipos defectuosos), o si el código ejecutado por Perl muere (C<die()>).  En estos casos, el valor de C<$@> es el error de compilación, o el argumento a C<die> (que se interpolará en C<$!> y C<$?>).  (Sin embargo, vea también L<Fatal>).
 
 En unos pocos sistemas operativos, C<$^E> puede contener un indicador más detallado del error, como en este caso, "la bandeja del CDROM no está cerrada". Los sistemas que no admiten mensajes de error extendidos dejan C<$^E> al mismo valor que C<$!>.
 
@@ -1173,7 +1173,7 @@ X<$^CHILD_ERROR_NATIVE>
 
 El estado nativo devuelto por la última tubería cerrada, acento grave (C<``>) de comandos, llamada con éxito a C<wait()> o C<waitpid()>, o del operador C<system()>.  En sistemas tipo POSIX este valor puede decodificarse con las funciones WEXITSTATUS, WIFEXITED, WIFSIGNALED, WTERMSIG, WIFSTOPPED, WSTOPSIG, y WIFCONTINUED proporcionadas por el módulo L<POSIX>.
 
-Bajo VMS esto refleja el estado real de la salida VMS; es decir, es lo mismo que C<$?> cuando está en vigor el pragma C<use vmsish 'status'>.
+Bajo VMS esto refleja el estado real de la salida VMS; es decir, es lo mismo que C<$?> cuando está en vigor el I<pragma> C<use vmsish 'status'>.
 
 Esta variable se incorporó en Perl 5.10.0.
 
@@ -1205,8 +1205,8 @@ Estado actual del intérprete.
 
 	$^S         Estado
 	---------   -------------------------------------
-	undef            Interpretando un módulo, eval, o programa principal
-	verdadero (1)    Ejecutando un eval()
+	undef            Interpretar un módulo, eval, o programa principal
+	verdadero (1)    Ejecutar un eval()
 	falso (0)        Cualquier otra cosa
 
 El primer estado puede aparecer en los controladores C<$SIG{__DIE__}> y C<$SIG{__WARN__}>.
@@ -1229,8 +1229,8 @@ Mnemónico: relacionado con la opción B<-w>.
 =item ${^WARNING_BITS}
 X<${^WARNING_BITS}>
 
-El conjunto actual de los controles de advertencia activados por el pragma C<use warnings>.
-Tiene el mismo alcance léxico que las variables C<$^H> y C<%^H>.  Los valores exactos se consideran internos al pragma L<warnings> y puede cambiar entre versiones de Perl.
+El conjunto actual de los controles de advertencia activados por el I<pragma> C<use warnings>.
+Tiene el mismo alcance léxico que las variables C<$^H> y C<%^H>.  Los valores exactos se consideran internos al I<pragma> L<warnings> y puede cambiar entre versiones de Perl.
 
 Esta variable se incorporó en Perl 5.6.0.
 
@@ -1242,7 +1242,7 @@ Esta variable se incorporó en Perl 5.6.0.
 X<$!> X<$ERRNO> X<$OS_ERROR>
 
 Cuando se hace referencia a ella, C<$!> recupera el valor actual de la variable entera C<errno>.
-Si se le asigna un valor numérico, el valor es almacenado en C<errno>.
+Si se le asigna un valor numérico, el valor se almacena en C<errno>.
 Cuando se hace referencia como una cadena, C<$!> devuelve la cadena de error del sistema correspondiente a C<errno>.
 
 Muchas llamadas del sistema o de biblioteca asignan un valor a C<errno> en caso de fallo, para indicar la causa de ese fallo.  Por lo general, B<no> ponen C<errno> a cero en caso de éxito.  Esto significa que C<errno>, que es C<$!>, sólo tiene sentido I<inmediatamente> después de un B<fallo>:
@@ -1293,7 +1293,7 @@ Dentro de una subrutina C<END> C<$?> contiene el valor que se le va a dar a C<ex
 	$? = 1 if $? == 255;  # die lo tendría en 255
     }
 
-Bajo VMS, el pragma C<use vmsish 'status'> hace que C<$?> refleje el estado real de la salida VMS, en lugar de la emulación predeterminada del estado POSIX; vea L<perlvms/$?> para más detalles.
+Bajo VMS, el I<pragma> C<use vmsish 'status'> hace que C<$?> refleje el estado real de la salida VMS, en lugar de la emulación predeterminada del estado POSIX; vea L<perlvms/$?> para más detalles.
 
 Mnemónico: lo mismo que en B<sh> y B<ksh>.
 
@@ -1306,7 +1306,7 @@ El mensaje de error de Perl en el último operador C<eval>, es decir, la última
 
 Si no ocurre un error, C<eval> establece C<$@> a la cadena vacía.
 
-Los mensajes de advertencia no son almacenados en esta variable.  Puede, sin embargo, establecer una rutina para procesar las advertencias estableciendo C<$SIG{__WARN__}> tal como se describe en L</%SIG>.
+Los mensajes de advertencia no se almacenan en esta variable.  Puede, sin embargo, establecer una rutina para procesar las advertencias estableciendo C<$SIG{__WARN__}> tal como se describe en L</%SIG>.
 
 Mnemónico: ¿"En" dónde se encontraba el error?
 
@@ -1342,11 +1342,11 @@ X<${^ENCODING}>
 
 ¡¡¡OBSOLETO!!!
 
-La I<referencia de objecto> al objeto C<Encode> que se ha utilizado para convertir el código fuente a Unicode.  Gracias a este variable su script Perl no tiene por qué estar escrito en UTF-8.  El valor predeterminado C<undef>.
+La I<referencia de objecto> al objeto C<Encode> que se ha utilizado para convertir el código fuente a Unicode.  Gracias a este variable su I<script> Perl no tiene por qué estar escrito en UTF-8.  El valor predeterminado C<undef>.
 
 Poner esta variable a cualquier otro valor que C<undef> es obsoleto debido a defectos fundamentales en su diseño e implementación.  Se ha planeado eliminarlo en una futura versión de Perl.  Su propósito era permitir a sus I<scripts> Perl no-ASCII, no tener que escribirse en UTF-8; esto era útil antes de que fueran comunes los editores que trabajan con texto codificado en UTF-8, pero de esto hace ya mucho tiempo.  Causa problemas, como afectar inesperadamente a la operación de otros módulos, provocando un fallo general.  Su uso puede provocar fallos de segmentación.
 
-Si necesita algo como esta funcionalidad, debe utilizar el pragma L<encoding>, que también es obsoleto, pero con unos pocos efectos desagradables.
+Si necesita algo como esta funcionalidad, debe utilizar el I<pragma> L<encoding>, que también es obsoleto, pero con unos pocos efectos desagradables.
 
 Si ha llegado hasta aquí porque su código está siendo adversamente afectado por el uso por parte de alguien de esta variable, normalmente puede solventarlo haciendo esto:
 
@@ -1458,7 +1458,7 @@ Cuándo perl empieza a analizar cualquier construcción de bloque que proporcion
 Cuándo se ha completado la compilación del bloque, se recupera el valor salvado.
 Entre los puntos donde su valor se salva y restaura, el código que se ejecuta dentro de los bloques BEGIN es libre de cambiar el valor de C<$^H>.
 
-Este comportamiento proporciona la semántica del ámbito léxico, y se utiliza en, por ejemplo, el pragma C<use strict>.
+Este comportamiento proporciona la semántica del ámbito léxico, y se utiliza en, por ejemplo, el I<pragma> C<use strict>.
 
 Los contenidos tendrían que ser un entero; bits diferentes de él se utilizan para diferentes indicadores pragmáticos.  Aquí hay un ejemplo:
 
@@ -1475,7 +1475,7 @@ La sustitución del bloque C<BEGIN { add_100() }> por:
 
     BEGIN { require strict; strict->import('vars') }
 
-demuestra cómo está implementado C<use strict 'vars'>.  Aquí hay una versión condicional del mismo pragma léxico:
+demuestra cómo está implementado C<use strict 'vars'>.  Aquí hay una versión condicional del mismo I<pragma> léxico:
 
     BEGIN {
 	require strict; strict->import('vars') if $condicion

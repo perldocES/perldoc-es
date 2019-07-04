@@ -4,7 +4,7 @@ perlintro -- Breve introducción y descripción general de Perl
 
 =head1 DESCRIPCIÓN
 
-Este documento proporciona una introducción rápida al lenguaje de programación Perl e incluye referencias a documentación adicional.  Es una guía de iniciación para los nuevos usuarios del lenguaje que proporciona la información necesaria para poder leer el código Perl de otras personas y comprender a grandes rasgos su funcionamiento, o para escribir scripts sencillos.
+Este documento proporciona una introducción rápida al lenguaje de programación Perl e incluye referencias a documentación adicional.  Es una guía de iniciación para los nuevos usuarios del lenguaje que proporciona la información necesaria para poder leer el código Perl de otras personas y comprender a grandes rasgos su funcionamiento, o para escribir I<scripts> sencillos.
 
 Es un documento introductorio, no una guía completa.  Tampoco explica el lenguaje en detalle.  En algunos casos se ha sacrificado la precisión para transmitir la idea general.  Es I<muy> recomendable complementar esta introducción con información del manual de Perl completo, cuya tabla de contenido se encuentra en L<perltoc>.
 
@@ -31,11 +31,11 @@ Para ejecutar un programa Perl desde la línea de comandos de Unix, use el sigui
 
  perl nombre_programa.pl
 
-Como alternativa, puede colocar al principio del script la siguiente línea:
+Como alternativa, puede colocar al principio del I<script> la siguiente línea:
 
  #!/usr/bin/env perl
 
-... y ejecutar el script como F</path/to/script.pl>.  Por supuesto, antes deberá marcarlo como ejecutable con el comando C<chmod 755 script.pl> (en Unix).
+... y ejecutar el I<script> como F</path/to/script.pl>.  Por supuesto, antes deberá marcarlo como ejecutable con el comando C<chmod 755 script.pl> (en Unix).
 
 (En esta línea se supone que dispone del programa B<env>.  También puede especificar directamente la ruta de acceso a su ejecutable perl: C<#!/usr/bin/perl>).
 
@@ -54,7 +54,7 @@ Para obtener más información, consulte las páginas de manual correspondientes
 
 =head2 Descripción general de la sintaxis básica
 
-Un script o programa Perl consta de una o varias instrucciones.  Estas instrucciones se escriben directamente en el script.  Es decir, no es necesario utilizar una función C<main()> ni nada similar.
+Un I<script> o programa Perl consta de una o varias instrucciones.  Estas instrucciones se escriben directamente en el I<script>.  Es decir, no es necesario utilizar una función C<main()> ni nada similar.
 
 Las instrucciones de Perl deben terminar con un signo de punto y coma:
 
@@ -159,7 +159,7 @@ Puede hacer varias cosas útiles con las listas:
  my @ordenados     = sort @animales;
  my @orden_inverso = reverse @numeros;
 
-También hay dos arrays especiales: C<@ARGV> (los argumentos de línea de comandos pasados al script) y C<@_> (los argumentos pasados a una subrutina).  Se describen en L<perlvar>.
+También hay dos arrays especiales: C<@ARGV> (los argumentos de línea de comandos pasados al I<script>) y C<@_> (los argumentos pasados a una subrutina).  Se describen en L<perlvar>.
 
 =item Hashes
 
@@ -238,7 +238,7 @@ Sin embargo, el uso anterior creará variables globales en todo el programa, alg
  print $x;               # imprime "foo"
  print $y;               # no imprime nada; $y está fuera del ámbito
 
-Si escribe C<use strict;> al principio de los scripts de Perl y usa C<my>, el intérprete detectará determinados errores frecuentes de programación.  Así, en el ejemplo anterior, la última instrucción C<print $y> provocará un error en tiempo de compilación que impedirá la ejecución del programa.  Es muy recomendable usar C<strict>.
+Si escribe C<use strict;> al principio de los I<scripts> de Perl y usa C<my>, el intérprete detectará determinados errores frecuentes de programación.  Así, en el ejemplo anterior, la última instrucción C<print $y> provocará un error en tiempo de compilación que impedirá la ejecución del programa.  Es muy recomendable usar C<strict>.
 
 =head2 Estructuras condicionales y de bucle
 

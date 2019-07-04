@@ -12,7 +12,7 @@ No hay cambios incompatibles con 5.8.5.
 
 =head1 Mejoras en el núcleo principal
 
-El intérprete perl es ahora más tolerante con los script codificados en UTF-16.
+El intérprete perl es ahora más tolerante con los I<scripts> codificados en UTF-16.
 
 En Win32, Perl ahora puede usar no-IFS compatibles con LSP, que permite a Perl trabajar en conjunto con cortafuegos como McAfee Guardian. Para más detalles vea el archivo F<README.win32>, sobre todo si está ejecutando Win95.
 
@@ -22,7 +22,7 @@ En Win32, Perl ahora puede usar no-IFS compatibles con LSP, que permite a Perl t
 
 =item *
 
-Con el pragma C<base>, una clase intermedia sin campos se utiliza para mezclarse con los campos privados de la clase base. Esto se ha corregido.
+Con el I<pragma> C<base>, una clase intermedia sin campos se utiliza para mezclarse con los campos privados de la clase base. Esto se ha corregido.
 
 =item *
 

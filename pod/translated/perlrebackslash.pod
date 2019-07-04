@@ -165,7 +165,7 @@ Se introdujo para evitar los problemas potenciales con la otra forma, disponible
 
 En algunos contextos, una barra diagonal inversa seguida por dos o incluso un dígito octal se puede interpretar como una secuencia de escape octal, algunas veces con una advertencia, y debido a algunos errores, otras veces con resultados sorprendentes.  También, si está creando una exp. reg. a partir de pequeños códigos sueltos, concatenados, y si están usando menos de tres dígitos, el comienzo de un código se puede interpretar como que está añadiendo dígitos al final del código que le precede.  Vea L</Referencia absoluta> para una mayor discusión y ejemplos del problema de los códigos pequeños.
 
-Note que un carácter expresado como un escape octal es considerado como un carácter sin significado especial por el motor de exp. reg., y coincidirá "tal cual".
+Note que un carácter expresado como un escape octal se considera como un carácter sin significado especial por el motor de exp. reg., y coincidirá "tal cual".
 
 Para resumir, siempre es seguro usar la forma C<\o{}>, y la otra forma es segura usarla para códigos de carácter hasta \077 cuando use exactamente tres dígitos para especificarlos.
 
@@ -263,7 +263,7 @@ Las expresiones regulares Perl tienen un amplio rango de clases de caracteres. A
 C<\w> es una clase de caracteres que coincide con cualquier carácter que forme parte de una I<palabra> (letras, dígitos, marcas Unicode, caracteres de puntuación de unión (como el guión bajo)).  C<\d> es una clase de caracteres que coincide con cualquier dígito decimal, mientras que la clase de caracteres C<\s> coincide con cualquier carácter espacio en blanco.
 Nuevo en perl 5.10.0 son las clases C<\h> y C<\v> que coinciden con los caracteres de espacio en blanco horizontal y vertical.
 
-El conjunto exacto de caracteres que coinciden con C<\d>, C<\s> y C<\w> varía dependiendo de varios pragma y modificadores de expresiones regulares.  Es posible restringir la coincidencia al rango ASCII usando el modificador de expresiones regulares C</a>.  Vea L<perlrecharclass>.
+El conjunto exacto de caracteres que coinciden con C<\d>, C<\s> y C<\w> varía dependiendo de varios I<pragma> y modificadores de expresiones regulares.  Es posible restringir la coincidencia al rango ASCII usando el modificador de expresiones regulares C</a>.  Vea L<perlrecharclass>.
 
 Las variantes en mayúsculas (C<\W>, C<\D>, C<\S>, C<\H> y C<\V>) son clases de caracteres que coinciden, respectivamente, con cualquier carácter que no forme parte de una palabra, un dígito, espacio en blanco, espacio en blanco horizontal o espacio en blanco vertical.
 

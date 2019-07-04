@@ -81,7 +81,7 @@ Esto debería resolver los problemas con la inicialización y destrucción del i
 
 Los indicadores del enlazador dinámico se han modificado para Solaris y OS X, lo que debería solucionar los mismos problemas que aparecen en la construcción de algunos módulos XS.
 
-Errores corregidos en sockets en OS/2 y tmpfile.
+Errores corregidos en I<sockets> en OS/2 y tmpfile.
 
 En OS X, C<setreuid> y amigos, son molestos; perl ahora trabajará en torno a sus problemas de la mejor manera posible.
 

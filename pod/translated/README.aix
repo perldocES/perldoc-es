@@ -85,7 +85,7 @@ No debería observar ningún problema.
 
 No deberían producirse problemas con AIX 5.1 / 5.2 / 5.3 / 6.1 / 7.1.
 
-IBM usa el Perl del sistema AIX (V5.6.0 en AIX 5.1 y V5.8.2 en AIX 5.2 / 5.3 y 6.1; V5.8.8 en AIX 5.3 TL11 y AIX 6.1 TL4; V5.10.1 en AIX 7.1) para algunos scripts del sistema AIX. Si cambia los enlaces en /usr/bin del Perl del sistema AIX (/usr/opt/perl5) al nuevo Perl generado entonces obtiene las mismas características que el Perl del sistema IBM AIX si se usan las opciones de multihebra.
+IBM usa el Perl del sistema AIX (V5.6.0 en AIX 5.1 y V5.8.2 en AIX 5.2 / 5.3 y 6.1; V5.8.8 en AIX 5.3 TL11 y AIX 6.1 TL4; V5.10.1 en AIX 7.1) para algunos I<scripts> del sistema AIX. Si cambia los enlaces en /usr/bin del Perl del sistema AIX (/usr/opt/perl5) al nuevo Perl generado entonces obtiene las mismas características que el Perl del sistema IBM AIX si se usan las opciones de multihebra.
 
 El Perl multihebra generado funciona también en AIX 5.1, pero la compilación del Perl de IBM (Perl v5.6.0) no es multihebra en AIX 5.1.
 
@@ -144,7 +144,7 @@ La opción -Dprefix instalará Perl en un directorio paralelo a la instalación 
 
 Con las siguientes opciones obtendrá una versión de Perl que pasa todas las pruebas en modo de 64 bits.
 
- export OBJECT_MODE=64 / setenv OBJECT_MODE 64 (dependiendo de su shell)
+ export OBJECT_MODE=64 / setenv OBJECT_MODE 64 (dependiendo de su I<shell>)
 
  rm config.sh
  ./Configure \
@@ -159,7 +159,7 @@ Con las siguientes opciones obtendrá una versión de Perl que pasa todas las pr
 
 Con las siguientes opciones obtendrá una versión de Perl que pasa todas las pruebas en modo de 64 bits. 
 
- export OBJECT_MODE=64 / setenv OBJECT_MODE 64 (dependiendo de su shell)
+ export OBJECT_MODE=64 / setenv OBJECT_MODE 64 (dependiendo de su I<shell>)
 
  rm config.sh
  ./Configure \
@@ -371,7 +371,7 @@ Si su sistema AIX está instalado con soporte de 64 bits, puede esperarse que la
 
 =head2 AIX 4.2 y extensiones usando C++ con estáticos
 
-En AIX 4.2 las extensiones Perl que usan funciones C++ que usan estáticos pueden tener problemas, ya que los estáticos no son inicializados.
+En AIX 4.2 las extensiones Perl que usan funciones C++ que usan estáticos pueden tener problemas, ya que los estáticos no se inicializan.
 En versiones más reciente de AIX esto ha sido resuelto mediante la vinculación de Perl con la biblioteca libc_r, pero por desgracia en AIX 4.2 la mencionada biblioteca tiene un oscuro problema, donde las diversas funciones relacionadas con el tiempo (como time() y gettimeofday()) devuelven valores defectuosos, y por lo tanto en AIX 4.2, Perl no está vinculado contra libc_r.
 
 =head1 AUTORES

@@ -18,7 +18,7 @@ Para mayor comodidad, Perl incluye algunos identificadores de archivo especiales
 
     while (<ARGV>) { ... }
 
-Como se puede ver en estos ejemplos, C<STDOUT> y C<STDERR> son identificadores de salida, y C<STDIN> y C<ARGV> son identificadores de entrada.  Se escriben en letras mayúsculas porque son palabras reservadas de Perl, como lo son el array C<@ARGV> y el hash C<%ENV>.  Sus asociaciones externas se configuraron en la shell.
+Como se puede ver en estos ejemplos, C<STDOUT> y C<STDERR> son identificadores de salida, y C<STDIN> y C<ARGV> son identificadores de entrada.  Se escriben en letras mayúsculas porque son palabras reservadas de Perl, como lo son el array C<@ARGV> y el hash C<%ENV>.  Sus asociaciones externas se configuraron en la I<shell>.
 
 Salvo estos casos especiales, debe abrir un identificador de archivo antes de usarlo. Hay muchas formas de llamar a la función open() de Perl, pero la variante más común es utilizar tres argumentos y un valor de retorno:
 
@@ -63,7 +63,7 @@ Para leer un archivo de texto debe abrirlo en modo de solo lectura:
     open($identificador, "< $codificacion", $nombre_archivo)
         || die "$0: no se puede abrir $nombre_archivo para lectura: $!";
 
-Al igual que en la shell, en Perl se usa C<< "<" >> para abrir el archivo en modo de solo lectura.  Si se abre correctamente, Perl le asigna un nuevo identificador de archivo y coloca una referencia a ese identificador en el argumento C<$identificador> que estaba indefinido.
+Al igual que en la I<shell>, en Perl se usa C<< "<" >> para abrir el archivo en modo de solo lectura.  Si se abre correctamente, Perl le asigna un nuevo identificador de archivo y coloca una referencia a ese identificador en el argumento C<$identificador> que estaba indefinido.
 
 Ahora puede aplicar funciones como C<readline>, C<read>, C<getc> y C<sysread> a ese identificador.  Probablemente la función de entrada más común es la que parece un operador:
 
@@ -93,7 +93,7 @@ Sin embargo, en un contexto en el que sea normal (y esté previsto) encontrarse 
         die "error inesperado al leer $nombre_archivo: $!";
     }
 
-B<Nota sobre la codificación>: Puede resultar pesado tener que especificar la codificación del texto cada vez que se abre un archivo.  Con el pragma C<open> se puede configurar una codificación predeterminada para la función C<open> de forma que no sea necesario indicarla en cada ocasión:
+B<Nota sobre la codificación>: Puede resultar pesado tener que especificar la codificación del texto cada vez que se abre un archivo.  Con el I<pragma> C<open> se puede configurar una codificación predeterminada para la función C<open> de forma que no sea necesario indicarla en cada ocasión:
 
     use open qw< :encoding(UTF-8) >;
 
@@ -109,7 +109,7 @@ Encontrará más información sobre codificaciones en L<perlunitut>.
 
 Antes de escribir en un archivo hay que decidir qué hacer con su contenido actual.  Las dos opciones básicas son conservarlo o sobrescribirlo.
 
-Para preservar el contenido actual hay que abrir el archivo en modo anexar.  Al igual que en la shell, en Perl se usa C<<< ">>" >>> para abrir un archivo en modo anexar.  Si el archivo no existe, C<<< ">>" >>> lo crea.
+Para preservar el contenido actual hay que abrir el archivo en modo anexar.  Al igual que en la I<shell>, en Perl se usa C<<< ">>" >>> para abrir un archivo en modo anexar.  Si el archivo no existe, C<<< ">>" >>> lo crea.
 
     my $identificador  = undef;
     my $nombre_archivo = "/ruta/al/archivo/de/texto";
@@ -131,7 +131,7 @@ Sin embargo, a veces queremos sobrescribir el contenido de un archivo.  Para vac
     open($identificador, ">  $codificacion", $nombre_archivo)
         || die "$0: no se puede abrir $nombre_archivo en modo de solo escritura: $!";
 
-En este caso Perl también funciona igual que la shell: C<< ">" >> sobrescribe un archivo existente.
+En este caso Perl también funciona igual que la I<shell>: C<< ">" >> sobrescribe un archivo existente.
 
 Al igual que en el modo anexar, al abrir el archivo en modo de solo escritura puede aplicar las funciones C<print>, C<printf>, C<say>, C<write> o C<syswrite> al identificador de archivo para escribir en el archivo.
 

@@ -34,7 +34,7 @@ No obstante, debe evitar combinar cadenas de texto con cadenas binarias. Si nece
 
 =head2 ¿Cuándo debo descodificar o codificar?
 
-Siempre que haya intercambio de texto con alguna entidad externa al proceso de perl, como una base de datos, un archivo de texto, un socket u otro programa (aunque dicha entidad externa también se haya programado en Perl).
+Siempre que haya intercambio de texto con alguna entidad externa al proceso de perl, como una base de datos, un archivo de texto, un I<socket> u otro programa (aunque dicha entidad externa también se haya programado en Perl).
 
 =head2 ¿Qué pasa si no descodifico?
 
@@ -76,7 +76,7 @@ No existe una manera fiable de detectar automáticamente la codificación, por l
 
 =head2 ¿Puedo usar Unicode en mi código fuente Perl?
 
-Por supuesto. Si el código fuente está codificado como UTF-8, puede indicarlo con el pragma C<use utf8>:
+Por supuesto. Si el código fuente está codificado como UTF-8, puede indicarlo con el I<pragma> C<use utf8>:
 
     use utf8;
 
@@ -105,7 +105,7 @@ no se reconocerán como lo que serían en Unicode.
 C<use feature 'unicode_strings'> indica a Perl que debe tratar todos los caracteres como Unicode, independientemente de si la cadena está codificada como UTF-8 o no, lo que evita el problema.
 
 Sin embargo, en versiones anteriores de Perl, o si pasa cadenas a subrutinas fuera
-del ámbito del pragma C<feature>, puede forzar el uso de reglas Unicode cambiando
+del ámbito del I<pragma> C<feature>, puede forzar el uso de reglas Unicode cambiando
 la codificación a UTF-8 mediante C<utf8::upgrade($string)>. Esto se puede aplicar de manera segura a cualquier cadena, puesto que comprueba si una cadena ya se ha promovido y, en caso afirmativo, no la modifica.
 
 Encontrará una descripción más detallada en L<Unicode::Semantics> (disponible en CPAN).
@@ -166,19 +166,19 @@ La marca UTF8, conocida también como SvUTF8, es una marca interna que indica qu
 
 Resulta que uno de los formatos internos de Perl es UTF-8. Como Perl no se calla nada, esto es de dominio público. Y crea muchas confusiones. Es mejor imaginar que el formato interno es alguna codificación desconocida y acostumbrarse a codificar y descodificar explícitamente siempre.
 
-=head2 ¿Y el pragma C<use bytes>?
+=head2 ¿Y el I<pragma> C<use bytes>?
 
 No lo use. No tiene sentido trabajar con bytes en una cadena de texto o trabajar con caracteres en una cadena de bytes. Realice las conversiones apropiadas (mediante descodificación o codificación) y todo saldrá bien: contará caracteres para los datos descodificados y bytes para los datos codificados.
 
 C<use bytes> suele ser un intento fallido de hacer algo útil. Olvide que existe.
 
-=head2 ¿Y el pragma C<use encoding>?
+=head2 ¿Y el I<pragma> C<use encoding>?
 
-No lo use. Por desgracia, este pragma supone que la codificación utilizada en el entorno del programador es la misma que la utilizada en el entorno del usuario. Utilizará la misma codificación para el código fuente que para STDIN y STDOUT. Cuando se copia un programa a otro equipo, el código fuente no cambia, pero podría cambiar el entorno STDIO.
+No lo use. Por desgracia, este I<pragma> supone que la codificación utilizada en el entorno del programador es la misma que la utilizada en el entorno del usuario. Utilizará la misma codificación para el código fuente que para STDIN y STDOUT. Cuando se copia un programa a otro equipo, el código fuente no cambia, pero podría cambiar el entorno STDIO.
 
-Si necesita utilizar caracteres que no pertenezcan a ASCII en el código fuente, codifíquelos como UTF-8 y use el pragma C<use utf8>.
+Si necesita utilizar caracteres que no pertenezcan a ASCII en el código fuente, codifíquelos como UTF-8 y use el I<pragma> C<use utf8>.
 
-Si necesita establecer la codificación para STDIN, STDOUT y STDERR basándose, por ejemplo, en la configuración regional del usuario, use el pragma C<use open>.
+Si necesita establecer la codificación para STDIN, STDOUT y STDERR basándose, por ejemplo, en la configuración regional del usuario, use el I<pragma> C<use open>.
 
 =head2 ¿En qué se diferencian C<:encoding> y C<:utf8>?
 
@@ -188,7 +188,7 @@ En lugar de utilizar C<:encoding(UTF-8)>, puede usar simplemente C<:utf8>, omiti
 
 En lugar de C<decode> y C<encode>, puede usar C<_utf8_on> y C<_utf8_off>, pero esto se considera poco elegante. En particular, el uso de C<_utf8_on> puede resultar peligroso, por las mismas razones que el uso de C<:utf8>.
 
-Existen algunos métodos abreviados para scripts de una línea (I<one-liners>); vea la descripción del modificador L<-C|perlrun/-C [numberE<sol>list]> en L<perlrun>.
+Existen algunos métodos abreviados para I<scripts> de una línea (I<one-liners>); vea la descripción del modificador L<-C|perlrun/-C [numberE<sol>list]> en L<perlrun>.
 
 =head2 ¿Cuál es la diferencia entre C<UTF-8> y C<utf8>?
 

@@ -12,7 +12,7 @@ Este documento es para ellos.
 
 =head1 use strict
 
-Lo primero de todo, hay algunas cosas que puede hacer su vida un poco más sencilla cuando depure programas perl, sin ni siquiera usar el depurador.  Para demostrarlo, aquí tiene un sencillo script, de nombre "hello", con un problema:
+Lo primero de todo, hay algunas cosas que puede hacer su vida un poco más sencilla cuando depure programas perl, sin ni siquiera usar el depurador.  Para demostrarlo, aquí tiene un sencillo I<script>, de nombre "hello", con un problema:
 
 	#!/usr/bin/perl
 

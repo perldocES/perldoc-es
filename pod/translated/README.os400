@@ -10,7 +10,7 @@ Por favor, envíe sus comentarios por correo a L<perlbug@perl.org|mailto:perlbug
 
 =head1 DESCRIPCIÓN
 
-Este documentos describe varias características del sistema operativo OS/400 de IBM que afectarán a cómo Perl versión 5 (de ahora en adelante sólo Perl) es compilado y/o ejecutado.
+Este documento describe varias características del sistema operativo OS/400 de IBM que afectarán a cómo Perl versión 5 (de ahora en adelante sólo Perl) se compila y/o ejecuta.
 
 Con mucho, la forma más fácil de generar Perl para OS/400 es utilizar el PASE (I<Portable Application Solutions Environment>), para obtener más información, vea L<http://www.iseries.ibm.com/developer/factory/pase/index.html> Este entorno permite la utilización de las API de AIX en la programación, y proporciona un tiempo de ejecución que permite a los binarios AIX ejecutarse directamente en los PowerPC iSeries.
 
@@ -18,7 +18,7 @@ Con mucho, la forma más fácil de generar Perl para OS/400 es utilizar el PASE 
 
 La forma recomendada de generar Perl para PASE OS/400 es generar el código fuente de Perl 5 (versión 5.8.1 o posterior) en AIX.
 
-El truco es dar un parámetro especial al script shell Configure cuando se ejecuta en AIX:
+El truco es dar un parámetro especial al I<script> I<shell> Configure cuando se ejecuta en AIX:
 
   sh Configure -DPASE ...
 
@@ -41,7 +41,7 @@ Una vez que finalice la instalación, pase el directorio /QOpenSys/perl por un t
   > site namefmt 1
   > put perl.tar /QOpenSys
 
-Una vez que lo tenga, simplemente lance un shell PASE y extraiga el empaquetado tar.
+Una vez que lo tenga, simplemente lance un I<shell> PASE y extraiga el empaquetado tar.
 
 Si está compilando en PASE, entonces "make install" es lo único que necesitará hacer.
 
@@ -51,14 +51,14 @@ La ruta por defecto para el binario perl es /QOpenSys/perl/bin/perl.  Querrá ha
 
 Perl en PASE se puede usar de la misma manera en que usaría Perl en AIX.
 
-Scripts comenzando con #!/usr/bin/perl deberían funcionar si tiene /QOpenSys/usr/bin/perl enlazado simbólicamente a su binario perl.  Esto no funcionará si ha hecho un setuid/setgid o tiene una variable de entorno PASE_EXEC_QOPENSYS="N".  Si tiene un V5R1, necesitará conseguir el último PTFs para obtener esta característica.  Scripts comenzando con #!/QOpenSys/perl/bin/perl deberían funcionar siempre.
+I<Scripts> que comienzan con #!/usr/bin/perl deberían funcionar si tiene /QOpenSys/usr/bin/perl enlazado simbólicamente a su binario perl.  Esto no funcionará si ha hecho un setuid/setgid o tiene una variable de entorno PASE_EXEC_QOPENSYS="N".  Si tiene un V5R1, necesitará conseguir el último PTFs para obtener esta característica.  I<Scripts> que comienzan con #!/QOpenSys/perl/bin/perl deberían funcionar siempre.
 
 =head2 Problemas conocidos
 
-Cuando compile en PASE, no hay un comando "oslevel".  Por eso, puede querer crear un script llamado "oslevel" que saque el nivel de AIX que su versión del ejecutable PASE soporta.  Si no está seguro, consulte la documentación o use "4.3.3.0".
+Cuando compile en PASE, no hay un comando "oslevel".  Por eso, puede querer crear un I<script> llamado "oslevel" que saque el nivel de AIX que su versión del ejecutable PASE soporta.  Si no está seguro, consulte la documentación o use "4.3.3.0".
 
 Si tiene test de casos que fallan, compruebe la existencia de archivos de I<spool>.
-El test de caso puede estar intentando usar una syscall que no está implementada en PASE.  Para evitar el SIGILL, intente ajustar la variable de entorno PASE_SYSCALL_NOSIGILL o tener un controlador para SIGILL.  Si puede compilar programas para PASE, ejecute el script config y edite config.sh cuando le dé esa posibilidad.  Si desea eliminar fchdir(), que no está implementado en V5R1, simplemente cambie la línea que dice:
+El test de caso puede estar intentando usar una syscall que no está implementada en PASE.  Para evitar el SIGILL, intente ajustar la variable de entorno PASE_SYSCALL_NOSIGILL o tener un controlador para SIGILL.  Si puede compilar programas para PASE, ejecute el I<script> config y edite config.sh cuando le dé esa posibilidad.  Si desea eliminar fchdir(), que no está implementado en V5R1, simplemente cambie la línea que dice:
 
 d_fchdir='define'
 

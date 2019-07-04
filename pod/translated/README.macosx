@@ -131,7 +131,7 @@ Hay dos formas de usar Cocoa desde Perl. El módulo PerlObjCBridge de Apple, inc
 Una alternativa es CamelBones, un entorno de trabajo que permite accesos a clases y objetos de tanto Foundation como de AppKit, así que se pueden crear aplicaciones GUI completas en Perl. CamelBones se puede encontrar en SourceForge, en L<http://www.sourceforge.net/projects/camelbones/>.
 
 
-=head1 Empezando desde cero
+=head1 Empezar desde cero
 
 Desafortunadamente, no es difícil para alguien romper de forma severa alguno de los Perl de Mac OS X.  Si todo esto falla y quiere, realmente, B<REALMENTE>, empezar desde cero e incluso quitar su Perl instalado por Apple (que se haya podido corromper), debe seguir las siguientes instrucciones.  B<Por favor, piénselo dos veces antes de seguir estas instrucciones: es muy parecido a realizar cirugía cerebral a si mismo.  Sin anestesia.> Nosotros B<no> iremos a arreglar su sistema si lo hace.
 

@@ -57,7 +57,7 @@ X<identifiers> X<identificadores>
 Hasta Perl 5.18, las reglas actuales de lo que es un identificador válido, no estaban claras.  Aun así, y de forma general, cualquier cosa definida aquí tendría que trabajar en versiones anteriores de Perl, mientras que lo opuesto -casos límite que funcionan en versiones anteriores, pero no definidos aquí- probablemente no funcionarán en las nuevas versiones.
 Como detalle importante, por favor, note que lo siguiente sólo se aplica a identificadores de palabras simples encontrados en código fuente Perl, no en identificadores creados a partir de referencias simbólicas, los cuales tienen muchas menos
 restricciones.
-Si se está trabajando bajo el efecto del pragma C<use utf8;>, se aplican las siguientes reglas:
+Si se está trabajando bajo el efecto del I<pragma> C<use utf8;>, se aplican las siguientes reglas:
 
     / (?[ ( \p{Word} & \p{XID_Start} ) + [_] ])
       (?[ ( \p{Word} & \p{XID_Continue} ) ]) *    /x
@@ -161,7 +161,7 @@ entonces la operación sort establece un contexto de lista para <>, el cual proc
 
 La asignación es un poco especial en el sentido de que utiliza el argumento de la izquierda para determinar el contexto del argumento de la derecha.  La asignación a un escalar evalúa lo que hay en el lado derecho en contexto de escalar, mientras que la asignación a un array o a un hash evalúa el lado derecho en contexto de lista.  La asignación a una lista (o a una porción, que también es una lista después de todo) también evalúa el lado derecho en contexto de lista.
 
-Si se utiliza el pragma C<use warnings> o la opción de línea de comandos B<-w>, pueden aparecer advertencias sobre el uso inútil de constantes o funciones en contexto vacío ("I<void>").
+Si se utiliza el I<pragma> C<use warnings> o la opción de línea de comandos B<-w>, pueden aparecer advertencias sobre el uso inútil de constantes o funciones en contexto vacío ("I<void>").
 El contexto vacío significa simplemente que se ha descartado el valor, como por ejemplo en una instrucción que consista únicamente en una cadena (p. ej., C<"alfredo";>) o una llamada a función (p. ej., C<getpwuid(0);>).  Cuenta como contexto de escalar para las funciones a las que les interesa saber si han sido llamadas en contexto de lista o no.
 
 Para las subrutinas definidas por el usuario existe la opción de considerar si la llamada se realiza en contexto vacío, escalar o de lista.  Sin embargo, no es necesario para la mayoría de las subrutinas.  Esto se debe a que ambos tipos, escalares y listas, se interpolan automáticamente en listas.  Para saber cómo se puede averiguar dinámicamente el contexto de llamada de una función, vea la sección sobre C<wantarray> de L<perlfunc>.
@@ -245,7 +245,7 @@ Está permitido el uso de guiones bajos (caracteres de subrayado) entre dígitos
 Por ejemplo, puede agrupar los dígitos binarios en grupos de tres (como para un argumento de modo estilo Unix, p. ej., 0b110_100_100) o de cuatro (para representar nibbles, como en 0b1010_0110), o bien en grupos de otros tamaños.
 X<number, literal> X<número, literal>
 
-Los literales de cadena se suelen delimitar con comillas simples o dobles.  Estas comillas funcionan de forma muy parecida a las comillas en las shell estándar de Unix: los literales de cadena entre comillas dobles están sujetos al uso de la barra diagonal inversa y la sustitución de variables; en cambio, las cadenas entre comillas simples no lo están (a excepción de C<\'> y C<\\>).  Se aplican las reglas normales de barra diagonal inversa estilo C para crear caracteres como el salto de línea, tabulaciones, etc., y algunas formas más exóticas.  Encontrará una lista en la sección "Comillas y operadores de comillas" de L<perlop>.
+Los literales de cadena se suelen delimitar con comillas simples o dobles.  Estas comillas funcionan de forma muy parecida a las comillas en las I<shell> estándar de Unix: los literales de cadena entre comillas dobles están sujetos al uso de la barra diagonal inversa y la sustitución de variables; en cambio, las cadenas entre comillas simples no lo están (a excepción de C<\'> y C<\\>).  Se aplican las reglas normales de barra diagonal inversa estilo C para crear caracteres como el salto de línea, tabulaciones, etc., y algunas formas más exóticas.  Encontrará una lista en la sección "Comillas y operadores de comillas" de L<perlop>.
 X<string, literal> X<cadena, literal>
 
 Las representaciones hexadecimales, octales o binarias en cadenas literales (por ejemplo, '0xff') no se convierten automáticamente en su representación en enteros.  Las funciones hex() y oct() hacen estas conversiones.  Vea "hex" y "oct" en L<perlfunc> para obtener más información.
@@ -320,7 +320,7 @@ Encontrará una descripción más detallada y ejemplos de uso de __DATA__ en L<S
 =head3 Palabras sueltas
 X<palabra suelta>
 
-Una palabra que no tiene ninguna interpretación en la gramática se tratará como si fuera una cadena entrecomillada.  En Perl, estas palabras se denominan "I<barewords>" (palabras sueltas).  Al igual que con los identificadores de archivo y las etiquetas, una palabra suelta formada por un conjunto de letras minúsculas supone un riesgo de conflicto con futuras palabras reservadas, por lo que si se usa el pragma C<use warnings> o la opción B<-w>, Perl mostrará una advertencia.  Perl limita la longitud de las palabras sueltas a cerca de 250 caracteres (igual que los identificadores).  Es probable que estas limitaciones arbitrarias se eliminen en futuras versiones de Perl.
+Una palabra que no tiene ninguna interpretación en la gramática se tratará como si fuera una cadena entrecomillada.  En Perl, estas palabras se denominan "I<barewords>" (palabras sueltas).  Al igual que con los identificadores de archivo y las etiquetas, una palabra suelta formada por un conjunto de letras minúsculas supone un riesgo de conflicto con futuras palabras reservadas, por lo que si se usa el I<pragma> C<use warnings> o la opción B<-w>, Perl mostrará una advertencia.  Perl limita la longitud de las palabras sueltas a cerca de 250 caracteres (igual que los identificadores).  Es probable que estas limitaciones arbitrarias se eliminen en futuras versiones de Perl.
 
 Es posible que algunos programadores prefieran prohibir el uso de palabras sueltas.  Si escribe
 

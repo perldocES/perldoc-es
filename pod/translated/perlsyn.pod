@@ -9,14 +9,14 @@ Un programa Perl consiste en una secuencia de declaraciones y sentencias que se 
 
 Perl es un lenguaje de B<estructura libre>: puede formatearlo y sangrarlo como quiera.  El espacio en blanco sirve para separar los I<tokens>, a diferencia de lenguajes como Python donde es una parte importante de la sintaxis, o de Fortran, donde es inmaterial.
 
-Muchos de los elementos sintácticos de Perl son B<opcionales>.  En vez de obligarle a poner paréntesis en todas las llamadas de función y declarar cada variable, puede, a menudo, dejar algunos elementos de forma explícita, y Perl intentará adivinar lo que quiere decir.  Esto es conocido como B<Do What I Mean> (haz lo que te digo), abreviado como B<DWIM>.  Permite a los programadores ser B<perezosos> y codificar en el estilo en que se encuentran más cómodos.
+Muchos de los elementos sintácticos de Perl son B<opcionales>.  En vez de obligarle a poner paréntesis en todas las llamadas de función y declarar cada variable, puede, a menudo, dejar algunos elementos de forma explícita, y Perl intentará adivinar lo que quiere decir.  Esto se conoce como B<Do What I Mean> (haz lo que te digo), abreviado como B<DWIM>.  Permite a los programadores ser B<perezosos> y codificar en el estilo en que se encuentran más cómodos.
 
 Perl B<toma prestada la sintaxis> y conceptos de muchos lenguajes: awk, sed, C, Bourne Shell, Smalltalk, Lisp e incluso el Inglés.  Otros lenguajes han tomado prestada la sintaxis de Perl, particularmente sus extensiones de expresiones regulares.  Así que si ha programado en otro lenguaje verá partes en Perl que le serán familiares.  A menudo funcionan de la misma forma, pero mire L<perltrap> para ver cómo difieren.
 
 =head2 Declaraciones
 X<declaration> X<undef> X<undefined> X<uninitialized> X<declaración> X<indefinido> X<no inicializado>
 
-Los únicos elementos que necesita declarar en Perl son los informes y las subrutinas (y algunas veces ni siquiera las subrutinas).  Una variable escalar almacena el valor indefinido (C<undef>) hasta que se le asigna un valor definido, que es cualquier otra cosa distinta de C<undef>.  Cuando se usa como un número, C<undef> es tratado como si fuera C<0>; cuando se usa como una cadena de caracteres (I<string>), se trata como la cadena vacía, C<"">; y cuando se usa como una referencia que no se ha asignado, se trata como un error.  Si ha activado los avisos (warnings), será notificado de un valor no inicializado cada vez que trate a C<undef> como si fuera una cadena o número.  Bueno, normalmente.  En contextos booleanos, como en:
+Los únicos elementos que necesita declarar en Perl son los informes y las subrutinas (y algunas veces ni siquiera las subrutinas).  Una variable escalar almacena el valor indefinido (C<undef>) hasta que se le asigna un valor definido, que es cualquier otra cosa distinta de C<undef>.  Cuando se usa como un número, C<undef> se trata como si fuera C<0>; cuando se usa como una cadena de caracteres (I<string>), se trata como la cadena vacía, C<"">; y cuando se usa como una referencia que no se ha asignado, se trata como un error.  Si ha activado los avisos (warnings), se notificarán de un valor no inicializado cada vez que trate a C<undef> como si fuera una cadena o número.  Bueno, normalmente.  En contextos booleanos, como en:
 
     if ($a) {}
 
@@ -27,7 +27,7 @@ están exentos de esos avisos (porque tienen en cuenta el valor de verdad en vez
 
 están también exentos de tales avisos.
 
-Una declaración puede ponerse en cualquier sitio, como si fuera una instrucción, pero no tiene efecto en la ejecución de la secuencia de instrucciones principal: todas las declaraciones toman efecto en tiempo de compilación.  Todas las declaraciones se suelen poner al principio o al final del script.  Sin embargo, si está usando variables privadas en un contexto local creadas con C<my()>, C<state()> u C<our()>, deberá asegurarse que su definición de formato o subrutina están dentro del mismo bloque que el C<my> si quiere acceder a estas variables privadas.
+Una declaración puede ponerse en cualquier sitio, como si fuera una instrucción, pero no tiene efecto en la ejecución de la secuencia de instrucciones principal: todas las declaraciones toman efecto en tiempo de compilación.  Todas las declaraciones se suelen poner al principio o al final del I<script>.  Sin embargo, si está usando variables privadas en un contexto local creadas con C<my()>, C<state()> u C<our()>, deberá asegurarse que su definición de formato o subrutina están dentro del mismo bloque que el C<my> si quiere acceder a estas variables privadas.
 
 Declarar una subrutina permite que su nombre se use como si fuera un operador de lista, desde el punto de vista del programa.  Puede declarar una subrutina sin definirla diciendo C<sub nombre>, como: X<subrutina, declaración>
 
@@ -49,7 +49,7 @@ Una secuencia de instrucciones pueden contener declaraciones de variables en ám
 =head2 Comentarios
 X<comment> X<#> X<comentario>
 
-El texto desde un carácter C<"#"> hasta el fin de la línea es un comentario y es ignorado.  Excepciones a esto son la inclusión de C<"#"> dentro de una cadena o una expresión regular.
+El texto desde un carácter C<"#"> hasta el fin de la línea es un comentario y se ignora.  Excepciones a esto son la inclusión de C<"#"> dentro de una cadena o una expresión regular.
 
 =head2 Instrucciones simples
 X<statement> X<semicolon> X<expression> X<;> X<instrucción> X<punto y coma> X<expresión>
@@ -201,12 +201,11 @@ La instrucción C<if> es sencilla.  Como los BLOQUES están siempre rodeados de 
 La instrucción C<while> ejecuta el bloque mientras la expresión sea L<verdadera|/"Verdad y Falsedad">.
 La instrucción C<until> ejecuta el bloque mientras la expresión sea falsa.
 La ETIQUETA es opcional, y si está presente, consiste en un identificador seguido por el carácter dos puntos.  La ETIQUETA identifica el bucle para las instrucciones de control de bucle C<next>, C<last> y C<redo>.
-Si la ETIQUETA se omite, las instrucciones de control de bucle se refieren al bucle más interior en que se encuentren.  Esto puede incluir el analizar la pila de llamadas, de forma dinámica, en tiempo real, para encontrar la ETIQUETA.  Tal desesperado comportamiento lanzará un aviso si usa el pragma C<use warnings> o la opción B<-w>.
+Si la ETIQUETA se omite, las instrucciones de control de bucle se refieren al bucle más interior en que se encuentren.  Esto puede incluir el analizar la pila de llamadas, de forma dinámica, en tiempo real, para encontrar la ETIQUETA.  Tal desesperado comportamiento lanzará un aviso si usa el I<pragma> C<use warnings> o la opción B<-w>.
 
-Si existe un BLOQUE C<continue>, siempre es ejecutado justo antes de que la condición se evalúe de nuevo.  Así, puede usarse para incrementar una variable de bucle, incluso cuando el ciclo se ha parado por medio de la instrucción C<next>.
+Si existe un BLOQUE C<continue>, siempre se ejecuta justo antes de que la condición se evalúe de nuevo.  Así, puede usarse para incrementar una variable de bucle, incluso cuando el ciclo se ha parado por medio de la instrucción C<next>.
 
-Cuando un bloque es precedido por una palabra clave de fase de compilación como C<BEGIN>,
-C<END>, C<INIT>, C<CHECK>, o C<UNITCHECK>, entonces el bloque se ejecutará solo durante la correspondiente fase de ejecución.  Vea L<perlmod> para más detalles.
+Cuando un bloque se precede por una palabra clave de fase de compilación como C<BEGIN>, C<END>, C<INIT>, C<CHECK>, o C<UNITCHECK>, entonces el bloque se ejecutará solo durante la correspondiente fase de ejecución.  Vea L<perlmod> para más detalles.
 
 Hay módulos de extensiones que también pueden engancharse en el intérprete de Perl para definir nuevas clases de instrucciones compuestas.  Son presentadas por una palabra clave que la extensión reconoce, y la sintaxis que le sigue se define enteramente por la extensión.  Si es usted un implantador, mire L<perlapi/PL_keyword_plugin> para informarse sobre este mecanismo.  Si está usando un módulo así, mire la documentación del módulo para ver los detalles de la sintaxis que define.
 
@@ -398,7 +397,7 @@ Y aquí está cómo un programador de Perl, más cómodo con el lenguaje, puede 
              }
           }
 
-¿Ha visto que es mucho más fácil?  Es más limpio, seguro y rápido.  Es más limpio porque es menos ruidoso.  Es más seguro porque si se añade nuevo código entre los bucles interno y externo, ese nuevo código no será ejecutado accidentalmente.  El C<next> explícitamente itera sobre el otro bucle en vez de meramente terminar el interno.  Y es más rápido porque Perl ejecuta una instrucción C<foreach> más rápidamente que su equivalente en un bucle C<for>.
+¿Ha visto que es mucho más fácil?  Es más limpio, seguro y rápido.  Es más limpio porque es menos ruidoso.  Es más seguro porque si se añade nuevo código entre los bucles interno y externo, ese nuevo código no se ejecutarán accidentalmente.  El C<next> explícitamente itera sobre el otro bucle en vez de meramente terminar el interno.  Y es más rápido porque Perl ejecuta una instrucción C<foreach> más rápidamente que su equivalente en un bucle C<for>.
 
 Hackers Perl perspicaces pueden haber notado que un bucle C<for> tiene un valor de retorno, y ese valor puede capturarse envolviendo el bucle en un bloque C<do>.  La recompensa de este descubrimiento es una advertencia en forma de consejo: El valor de retorno de un bucle C<for> no está especificado y puede cambiar sin previo aviso.
 No confíe en él.
@@ -593,7 +592,7 @@ Esto le permite entremezclar código fuente y texto de la documentación libreme
         .........
     }
 
-Note que los traductores pod suelen mirar sólo en los párrafos que comiencen por una directiva pod (hace el parseo más fácil), mientras que el compilador realmente sabe mirar por las secuencias pod incluso en el medio de un párrafo.  Esto significa que el siguiente material secreto será ignorado tanto por el compilador como por los traductores.
+Note que los traductores pod suelen mirar sólo en los párrafos que comiencen por una directiva pod (hace el parseo más fácil), mientras que el compilador realmente sabe mirar por las secuencias pod incluso en el medio de un párrafo.  Esto significa que el siguiente material secreto se ignorará tanto por el compilador como por los traductores.
 
     $a=3;
     =material secreto
@@ -621,7 +620,7 @@ con C<$1> siendo el número de línea para la línea siguiente y C<$3> siendo el
 
 Existe obviamente un problema con esta directiva: los I<debuggers> y perfiladores sólo mostrarán la última línea del código fuente que aparece en un número de línea en particular de un determinado archivo.  Hay que tener cuidado para no causar colisiones de números de línea en el código que pretenda depurar más tarde.
 
-Aquí hay algunos ejemplos que será capaz de escribir en la línea de comandos del shell:
+Aquí hay algunos ejemplos que será capaz de escribir en la línea de comandos del I<shell>:
 
     % perl
     # line 200 "bzzzt"
@@ -746,7 +745,7 @@ Estas reglas son complicadas, pero el objetivo es que hagan lo que usted desea (
 
     when (/^\d+$/ && $_ < 75) { ... }
 
-será tratado como una coincidencia booleana porque las reglas dicen que tanto una expresión regular de una coincidencia y una prueba explícita sobre C<$_> serán tratados como booleanos.
+se tratará como una coincidencia booleana porque las reglas dicen que tanto una expresión regular de una coincidencia y una prueba explícita sobre C<$_> se tratarán como booleanos.
 
 También:
 
@@ -758,7 +757,7 @@ Además:
 
     when ([qw(foo bar)] || /^baz/) { ... }
 
-usará coincidencia inteligente (sólo el primer operando es considerado), mientras que
+usará coincidencia inteligente (sólo se considera el primer operando), mientras que
 
     when (/^baz/ || [qw(foo bar)]) { ... }
 
@@ -768,7 +767,7 @@ Los operadores booleanos tautológicos siguen teniendo que optimizarse.  No caig
 
     when ("foo" or "bar") { ... }
 
-Esto quedará optimizado en C<"foo">, así que C<"bar"> nunca será considerado (incluso aunque las reglas digan que hay que usar coincidencia inteligente en C<"foo">).  Para una alternativa como ésta, una referencia a un array funcionará, porque esto lanzará la coincidencia inteligente:
+Esto quedará optimizado en C<"foo">, así que C<"bar"> nunca se considerará (incluso aunque las reglas digan que hay que usar coincidencia inteligente en C<"foo">).  Para una alternativa como ésta, una referencia a un array funcionará, porque esto lanzará la coincidencia inteligente:
 
     when ([qw(foo bar)] { ... }
 

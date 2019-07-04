@@ -1257,7 +1257,7 @@ languages, and a host of symbols.  Las cadenas de texto de Perl son cadenas Unic
 
     /\x{263a}/;  # coincide con una carita sonriente Unicode :)
 
-B<NOTA>: En Perl 5.6.0 se necesitaba decir C<use utf8> para usar cualquier característica Unicode.  Ya no es el caso: el pragma explícito C<utf8> ya no se necesita para la casi mayor parte del procesamiento de Unicode.  (El único caso donde importa es si su guion Perl está en Unicode y codificado en UTF-8, por lo que se necesita un C<use utf8> explícito).
+B<NOTA>: En Perl 5.6.0 se necesitaba decir C<use utf8> para usar cualquier característica Unicode.  Ya no es el caso: el I<pragma> explícito C<utf8> ya no se necesita para la casi mayor parte del procesamiento de Unicode.  (El único caso donde importa es si su guion Perl está en Unicode y codificado en UTF-8, por lo que se necesita un C<use utf8> explícito).
 
 Adivinar la secuencia hexadecimal del carácter Unicode que está buscando o descifrar la I<regex> hexadecimal Unicode de otra persona, es casi tan divertido como programar en código máquina.  Así que otra forma de especificar caracteres Unicode es usar la secuencia de escape de I<carácter nombrado> C<\N{I<nombre>}>.  I<nombre> es un nombre para el carácter Unicode, tal como lo especifica el estándar Unicode.  Por ejemplo, si queremos representar o buscar por el signo astrológico del planeta Mercurio, podríamos usar
 
@@ -1269,7 +1269,7 @@ También puede usar nombres "cortos":
     print "Se llama sigma a \N{GREEK SMALL LETTER SIGMA}.\n";
     print "\N{greek:Sigma} es una sigma en mayúscula.\n";
 
-También puede restringir los nombres a un cierto alfabeto especificando el pragma L<charnames>:
+También puede restringir los nombres a un cierto alfabeto especificando el I<pragma> L<charnames>:
 
     use charnames qw(greek);
     print "\N{sigma} es la sigma griega\n";
@@ -1294,7 +1294,7 @@ Existen muchas, muchas propiedades caracteres Unicode.  Para una lista completa 
 La propiedad Unicode C<\p{Script}> se usa para categorizar cada carácter Unicode en la grafía del lenguaje en que se escribió.  Por ejemplo, el Inglés, el Francés, y una parte de otros lenguajes europeos se escriben con la grafía del Latín.  Pero también existen la grafía del Griego, el Thai, el Katakana, etc. Puede comprobar a en qué grafía está un carácter en particular con, por ejemplo, C<\p{Latin}>, C<\p{Greek}>,
 o C<\p{Katakana}>.  Para comprobar si no está en la grafía Balinesa, podría usar C<\P{Balinese}>.
 
-Lo que hemos descrito hasta ahora es lo forma simple de las clases de carácter C<\p{...}>.  Hay una forma compuesta que también puede usarse.  Tienen el aspecto de C<\p{nombre=valor}> o C<\p{nombre:valor}> (los signos igual y doble punto se pueden usar de forma indistinta).  Estas son más generales que la forma simple, y de hecho la mayor parte de las formas simples son solo abreviaturas definidas por Perl para las formas complejas más comunes.  Por ejemplo, los ejemplos de grafías del párrafo anterior podrían escribirse de forma equivalente como C<\p{Script=Latin}>, C<\p{Script:Greek}>, C<\p{script=katakana}>, y C<\P{script=balinese}> (el tamaño de caja es irrelevante entre las llaves C<{}>).  Puede que nunca tenga que usar formas complejas, pero algunas veces es necesario, y su uso puede hacer que su código sea más fácil de entender.
+Lo que hemos descrito hasta ahora es lo forma simple de las clases de carácter C<\p{...}>.  Hay una forma compuesta que también puede usarse.  Tienen el aspecto de C<\p{nombre=valor}> o C<\p{nombre:valor}> (los signos igual y doble punto se pueden usar de forma indistinta).  Estas son más generales que la forma simple, y de hecho la mayor parte de las formas simples son solo abreviaturas definidas por Perl para las formas complejas más comunes.  Por ejemplo, los ejemplos de grafías del párrafo anterior podrían escribirse de forma equivalente como C<\p{Script=Latin}>, C<\p{Script:Greek}>, C<\p{script=katakana}>, y C<\P{Script=balinese}> (el tamaño de caja es irrelevante entre las llaves C<{}>).  Puede que nunca tenga que usar formas complejas, pero algunas veces es necesario, y su uso puede hacer que su código sea más fácil de entender.
 
 C<\X> es una abreviatura para una clase de carácter que comprende una I<agrupación extendida de grafemas> Unicode.  Esto representa un "carácter lógico": parece un único carácter, pero puede representar internamente a más de uno.  Como ejemplo, usando los nombres completos Unicode, como S<C<A + COMBINING
 RING>> es una agrupación de grafemas con el carácter de base C<A> y la combinación de carácter S<C<COMBINING RING>>, que se convierte a la A danesa con un círculo en la parte superior, como en la palabra E<Aring>ngstrom.
@@ -1761,18 +1761,18 @@ es considerablemente más lenta).
 
 =head2 Pragmas y depuración
 
-Hablando de depuración, existen varios pragmas disponibles para controlar y depurar I<regex> en Perl.  Ya nos hemos encontrado con un pragma en la sección anterior, S<C<use re 'eval';>>, que permite coexistir interpolación de variables y expresiones de código en una I<regex>.  Los otros pragmas son
+Hablando de depuración, existen varios pragmas disponibles para controlar y depurar I<regex> en Perl.  Ya nos hemos encontrado con un I<pragma> en la sección anterior, S<C<use re 'eval';>>, que permite coexistir interpolación de variables y expresiones de código en una I<regex>.  Los otros pragmas son
 
     use re 'taint';
     $contaminado = <>;
     @partes = ($contaminado =~ /(\w+)\s+(\w+)/; # @partes está ahora contaminado
 
-El pragma C<taint> causa que cualquier subcadena de una coincidencia con una variable contaminada quede también contaminada.  Esto no es lo que normalmente sucede, ya que las I<regex> se usan a menudo para extraer partes seguras de variables contaminadas.  Use C<taint> cuando no esté extrayendo partes seguras, sino realizar algún otro procesamiento.  Tanto los pragmas C<taint> como C<eval> se aplican a ámbitos léxicos, que significa que están en efecto solo hasta el final del bloque que envuelve a esos pragmas.
+El I<pragma> C<taint> causa que cualquier subcadena de una coincidencia con una variable contaminada quede también contaminada.  Esto no es lo que normalmente sucede, ya que las I<regex> se usan a menudo para extraer partes seguras de variables contaminadas.  Use C<taint> cuando no esté extrayendo partes seguras, sino realizar algún otro procesamiento.  Tanto los pragmas C<taint> como C<eval> se aplican a ámbitos léxicos, que significa que están en efecto solo hasta el final del bloque que envuelve a esos pragmas.
 
     use re '/m';  # o cualquier otros indicadores
     $cadena_multilinea =~ /^foo/; # /m es implícito
 
-El pragma C<re '/flags'> (presentado en Perl 5.14) activa esos indicadores en las expresiones regulares hasta el final del ámbito léxico.  Vea L<re/"modo 'E<sol>indicadores'"> para más detalles.
+El I<pragma> C<re '/flags'> (presentado en Perl 5.14) activa esos indicadores en las expresiones regulares hasta el final del ámbito léxico.  Vea L<re/"modo 'E<sol>indicadores'"> para más detalles.
 
     use re 'debug';
     /^(.*)$/s;       # saca información de depuración

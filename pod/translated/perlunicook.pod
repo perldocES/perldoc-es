@@ -63,7 +63,7 @@ Sin poner la -siempre- criticada declaración C<use utf8>, poner UTF-8 en sus li
  my @鯉        = qw( koi8-f koi8-u koi8-r );
  my $motto     = "👪 💗 🐪"; # FAMILY, GROWING HEART, DROMEDARY CAMEL
 
-Si olvida C<use utf8>, los bytes superiores serán malinterpretados como caracteres individuales, y nada funcionará bien.
+Si olvida C<use utf8>, los bytes superiores se malinterpretarán como caracteres individuales, y nada funcionará bien.
 
 =head2 ℞ 4: Caracteres y sus números
 
@@ -334,7 +334,7 @@ Desactive el funcionamiento Unicode en C<\w>, C<\b>, C<\s>, C<\d>, y en las clas
 
  my($num) = $str =~ /(\d+)/a;
 
-O use propiedades específicas para desactivar Unicode, como C<\p{ahex}> y C<\p{POSIX_Digit>}.  Las propiedades siguen trabajando normalmente sin importar qué conjunto de modificadores (C</d /u /l /a /aa>) estén en activo.
+O use propiedades específicas para desactivar Unicode, como C<\p{ahex}> y C<\p{POSIX_Digit>}.  Las propiedades siguen trabajando de forma normal sin importar qué conjunto de modificadores (C</d /u /l /a /aa>) estén en activo.
 
 =head2 ℞ 25: Usar propiedades Unicode en expr. reg. con \p, \P
 
@@ -358,7 +358,7 @@ Para definir en tiempo de compilación sus propias propiedades de caracteres per
 
  if (/\p{In_Tengwar}/) { ... }
 
- # mezclando con las propiedades existentes
+ # mezclar propiedades existentes
  sub Is_GraecoRoman_Title {<<'END_OF_SET'}
  +utf8::IsLatin
  +utf8::IsGreek

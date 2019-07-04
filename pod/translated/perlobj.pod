@@ -126,8 +126,8 @@ Esto es solo un convenio, por lo que una clase puede contener en realidad tanto 
 
 Cada paquete contiene un array especial llamado C<@ISA>. El array C<@ISA> contiene la lista de clases primarias (si las hubiera). Perl examina este array cuando realiza la resolución de métodos, como se verá a continuación.
 
-Es posible establecer C<@ISA> manualmente; puede ver esto en código Perl antiguo. En el código realmente antiguo también se usaba el pragma L<base>. Pero en el código nuevo recomendamos usar el pragma L<parent> para declarar las clases primarias.
-Este pragma se ocupará de establecer C<@ISA>. También cargará las clases primarias y se asegurará de que el paquete no herede de sí mismo.
+Es posible establecer C<@ISA> manualmente; puede ver esto en código Perl antiguo. En el código realmente antiguo también se usaba el I<pragma> L<base>. Pero en el código nuevo recomendamos usar el I<pragma> L<parent> para declarar las clases primarias.
+Este I<pragma> se ocupará de establecer C<@ISA>. También cargará las clases primarias y se asegurará de que el paquete no herede de sí mismo.
 
 Independientemente de cómo se establezcan las clases primarias, la variable C<@ISA> del paquete contendrá la lista de dichas clases primarias. Se trata de una simple lista de escalares, cada uno de los cuales es una cadena que se corresponde con un nombre de paquete.
 
@@ -180,7 +180,7 @@ Si no hay ni un nombre de paquete ni un objeto, entonces la llamada al método p
 =head2 Herencia
 X<inheritance> X<herencia>
 
-Ya hemos hablado sobre el array especial C<@ISA> y el pragma L<parent>.
+Ya hemos hablado sobre el array especial C<@ISA> y el I<pragma> L<parent>.
 
 Cuando una clase hereda de otra, cualquier método definido en la clase primaria también estará disponible en la clase derivada. Si intenta llamar a un método no definido en la clase del objeto que hace la llamada, Perl lo buscará también en las clases primarias del objeto.
 
@@ -264,7 +264,7 @@ En este ejemplo se obtiene el siguiente resultado:
   B
   C
 
-Este ejemplo ilustra la forma de resolución de C<SUPER>. Incluso si el objeto es bendecido en la clase C<C>, el método C<decir()> de la clase C<B> puede llamar a C<SUPER::decir()> y esperar que se busque correctamente en la clase primaria de C<B> (es decir, la clase dónde se produce la llamada al método) y no en la clase primaria de C<C> (es decir, la clase a la que pertenece el objeto).
+Este ejemplo ilustra la forma de resolución de C<SUPER>. Incluso si el objeto se bendice en la clase C<C>, el método C<decir()> de la clase C<B> puede llamar a C<SUPER::decir()> y esperar que se busque correctamente en la clase primaria de C<B> (es decir, la clase dónde se produce la llamada al método) y no en la clase primaria de C<C> (es decir, la clase a la que pertenece el objeto).
 
 Hay casos especiales en los que la resolución basada en paquetes puede ser problemática. Si se copia una subrutina de un paquete en otro, la resolución de C<SUPER> se basará en el paquete original.
 
@@ -309,14 +309,14 @@ Esto significa que se comienza buscando en la primera clase primaria del array C
 
 Así, dado el diagrama anterior, Perl buscará siguiendo el orden C<Hijo>, C<Padre>, C<AbueloPaterno>, C<BisabueloComún>, C<Madre> y, por último, C<AbueloMaterno>. Esto puede ser problemático porque ahora se busca en C<BisabueloComún> I<antes> de buscar en todas sus clases derivadas (es decir, antes de intentar la búsqueda en C<Madre> y C<AbueloMaterno>).
 
-Se puede usar el pragma L<mro> para solicitar un orden de resolución de métodos distinto.
+Se puede usar el I<pragma> L<mro> para solicitar un orden de resolución de métodos distinto.
 
   package Hijo;
 
   use mro 'c3';
   use parent 'Padre', 'Madre';
 
-Este pragma permite cambiar al orden de resolución "C3". A grandes rasgos, el orden "C3" garantiza que no se exploren las clases primarias comunes antes de buscar en las clases derivadas, de forma que el orden de búsqueda será ahora: C<Hijo>, C<Padre>, C<AbueloPaterno>, C<Madre>, C<AbueloMaterno> y, por último, C<BisabueloComún>. Observe que no se trata ya del orden de búsqueda en anchura: todos los antecesores de C<Padre> (excepto los antecesores comunes) se usan en la búsqueda antes de buscar en cualquiera de los antecesores de C<Madre>.
+Este I<pragma> permite cambiar al orden de resolución "C3". A grandes rasgos, el orden "C3" garantiza que no se exploren las clases primarias comunes antes de buscar en las clases derivadas, de forma que el orden de búsqueda será ahora: C<Hijo>, C<Padre>, C<AbueloPaterno>, C<Madre>, C<AbueloMaterno> y, por último, C<BisabueloComún>. Observe que no se trata ya del orden de búsqueda en anchura: todos los antecesores de C<Padre> (excepto los antecesores comunes) se usan en la búsqueda antes de buscar en cualquiera de los antecesores de C<Madre>.
 
 El orden C3 también permite llamar a métodos en clases del mismo nivel mediante la seudoclase C<next>. Consulte la documentación de L<mro> para conocer más detalles sobre esta característica.
 
@@ -324,7 +324,7 @@ El orden C3 también permite llamar a métodos en clases del mismo nivel mediant
 
 Cuando Perl busca un método, almacena en caché la búsqueda, a fin de que llamadas posteriores a ese método no tengan que repetir la búsqueda. Cambiar la clase primaria de una clase o agregar una subrutina a una clase invalidará el contenido de la caché para dicha clase.
 
-El pragma L<mro> proporciona algunas funciones para manipular directamente la memoria caché de métodos.
+El I<pragma> L<mro> proporciona algunas funciones para manipular directamente la memoria caché de métodos.
 
 =head2 Implementación de constructores
 X<constructor>
@@ -628,7 +628,7 @@ El nombre completo del método llamado está disponible para su clase en la vari
 
   sub DESTROY { } # ver a continuación
 
-Si se usa el pragma L<strict> sin la declaración C<our $AUTOLOAD>, este código no se compilará.
+Si se usa el I<pragma> L<strict> sin la declaración C<our $AUTOLOAD>, este código no se compilará.
 
 Como se indica en el comentario, esta no es una forma adecuada de implementar los métodos de acceso.
 Es lenta y hace demasiadas suposiciones. Sin embargo, puede encontrar esta forma de proporcionar métodos de acceso en código Perl antiguo. L<perlootut> incluye recomendaciones para la programación orientada a objetos en Perl.
@@ -743,7 +743,7 @@ Veamos un ejemplo simple de esta técnica, basado en el módulo L<Hash::Util::Fi
 
 =head2 Seudohashes
 
-Los seudohashes se incluyeron de forma experimental en las primeras versiones de Perl y se eliminaron en la versión 5.10.0. Un seudohash es una referencia a un array al que se puede acceder mediante claves con nombre, como si fuera un hash. Podría ver código de otros programadores con esta característica. Vea la documentación del pragma L<fields> para obtener más información.
+Los seudohashes se incluyeron de forma experimental en las primeras versiones de Perl y se eliminaron en la versión 5.10.0. Un seudohash es una referencia a un array al que se puede acceder mediante claves con nombre, como si fuera un hash. Podría ver código de otros programadores con esta característica. Vea la documentación del I<pragma> L<fields> para obtener más información.
 
 =head1 VEA TAMBIÉN
 

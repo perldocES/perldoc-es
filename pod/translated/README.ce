@@ -38,7 +38,7 @@ C<miniperl -MCross -MConfig -we 1> debería funcionar, y proporcionará un corre
 
 =item *
 
-Durante la fase de compilación de las extensiones, se invoca el script F<./win32/buildext.pl> que, en turnos, visita los subdirectorios de F<./ext> y realiza una compilación de cada extensión.
+Durante la fase de compilación de las extensiones, se invoca el I<script> F<./win32/buildext.pl> que, en turnos, visita los subdirectorios de F<./ext> y realiza una compilación de cada extensión.
 
 Todas las invocaciones de F<Makefile.PL> se proporcionan con C<-MCross> para habilitar la compilación cruzada.
 
@@ -46,7 +46,7 @@ Todas las invocaciones de F<Makefile.PL> se proporcionan con C<-MCross> para hab
 
 =head2 INSTRUCCIONES DE COMPILACIÓN ACTUALES
 
-(Estas instrucciones asumen que el equipo es un Windows de 32 bit. Si está en un Windows de 64 bit entonces cambie "C:\Program Files" a "C:\Program Files (x86)" en todos los archivos).
+(Estas instrucciones asumen que el equipo es un Windows de 32 bit. Si está en un Windows de 64 bit entonces cambie "C:\Archivos de programa" a "C:\Archivos de programa (x86)" en todos los archivos).
 
 1. Instale EVC4 desde
 
@@ -56,7 +56,7 @@ Use la clave mencionada en
 
  http://download.cnet.com/Microsoft-eMbedded-Visual-C/3000-2212_4-10108490.html?tag=bc
 
-El instalador es antiguo y tiene unos pocos errores en las rutas que usa. Tendrá que arreglarlo más tarde. Básicamente, algunas cosas van en "C:/Program Files/Windows CE Tools", otras van en "C:/Windows CE Tools" sin importar la ruta que le des al instalador (por defecto será "C:/Windows  CE Tools"). El instalador requerirá reinicios para poder seguir. También se podrían sobreescribir las asociaciones .c y .h con Visual Studio cuando se instale EVC4. Queda advertido.
+El instalador es antiguo y tiene unos pocos errores en las rutas que usa. Tendrá que arreglarlo más tarde. Básicamente, algunas cosas van en "C:/Archivos de programa/Windows CE Tools", otras van en "C:/Windows CE Tools" sin importar la ruta que le des al instalador (por defecto será "C:/Windows  CE Tools"). El instalador requerirá reinicios para poder seguir. También se podrían sobreescribir las asociaciones .c y .h con Visual Studio cuando se instale EVC4. Queda advertido.
 
 2. Descargue celib desde GitHub (usando "Download ZIP") en
 
@@ -123,12 +123,12 @@ a
 
 así que wince-arm-pocket-wce400 es el tipo de MACHINE.
 
-6. Use un editor de texto para abrir "C:\Program Files\Microsoft eMbedded C++ 4.0\EVC\WCE400\BIN\WCEARMV4.BAT". Busque por
+6. Use un editor de texto para abrir "C:\Archivos de programa\Microsoft eMbedded C++ 4.0\EVC\WCE400\BIN\WCEARMV4.BAT". Busque por
 
     if "%SDKROOT%"=="" set SDKROOT=...
 
 En una nueva instalación es "C:\Windows CE Tools". Vaya a "C:\Windows CE Tools" en un gestor de archivos y vea si "C:\Windows CE 
-Tools\wce400\STANDARDSDK\Include\Armv4" existe en su disco. Si no es así, necesita cambiar SDKROOT a "C:\Program Files\Windows CE Tools".
+Tools\wce400\STANDARDSDK\Include\Armv4" existe en su disco. Si no es así, necesita cambiar SDKROOT a "C:\Archivos de programa\Windows CE Tools".
 
 Vaya a celib-palm-3.0\inc\cewin32.h, busque por
 
@@ -136,7 +136,7 @@ Vaya a celib-palm-3.0\inc\cewin32.h, busque por
 
 y descomente la estructura.
 
-7. Abra otro símbolo del sistema de comandos, asegúrese que no se ha establecido PLATFORM a nada a menos que sepa lo que está haciendo (para que los valores por defecto correctos se establezcan por el siguiente comando), y ejecute "C:\Program Files\Microsoft eMbedded C++ 4.0\EVC\WCE400\BIN\WCEARMV4.BAT"
+7. Abra otro símbolo del sistema de comandos, asegúrese que no se ha establecido PLATFORM a nada a menos que sepa lo que está haciendo (para que los valores por defecto correctos se establezcan por el siguiente comando), y ejecute "C:\Archivos de programa\Microsoft eMbedded C++ 4.0\EVC\WCE400\BIN\WCEARMV4.BAT"
 
 8. En el símbolo del sistema de comandos de WinCE que arrancó con WCEARMV4.BAT, vaya al directorio de código fuente de perl, entre en win32/ y ejecute "nmake -f Makefile.ce".
 

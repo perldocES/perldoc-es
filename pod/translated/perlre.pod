@@ -289,7 +289,7 @@ X</aa>
 El modificador que está en vigor en un punto determinado de una expresión regular depende de un conjunto de interacciones muy complejo.  Estas interacciones se han diseñado de forma que, en general, no tenga que preocuparse por ello, pero en esta sección se explican los detalles más complejos.  Como se explica más abajo en L</Patrones extendidos>, es posible especificar explícitamente los modificadores que se aplican solo a unas partes de una expresión regular.
 La parte más interior siempre tiene prioridad sobre cualquier otra externa, y la que se aplica a toda la expresión tiene prioridad sobre cualquiera de los valores por defecto que se describen en el resto de esta sección.
 
-El pragma C<L<use re 'E<sol>foo'|re/"modo '/flags'">> se puede utilizar para establecer los modificadores predeterminados (estos también) para las expresiones regulares compiladas dentro de su ámbito.  Este pragma tiene precedencia sobre otros pragmas que se muestran a continuación, que también cambian los valores predeterminados.
+El I<pragma> C<L<use re 'E<sol>foo'|re/"modo '/flags'">> se puede utilizar para establecer los modificadores predeterminados (estos también) para las expresiones regulares compiladas dentro de su ámbito.  Este I<pragma> tiene precedencia sobre otros pragmas que se muestran a continuación, que también cambian los valores predeterminados.
 
 De lo contrario, C<L<use locale|perllocale>> establece el modificador predeterminado en C</l>; y C<L<use feature 'unicode_strings|feature>> o C<L<use 5.012|perlfunc/use VERSION>> (o superior) establece el valor predeterminado en C</u> cuando no estén en el mismo ámbito tanto si está en efecto C<L<use locale|perllocale>> como C<L<use bytes|bytes>>.
 (C<L<use locale ':not_characters'|perllocale/Unicode and UTF-8>> también establece C</u> como predeterminado, anulando cualquier otro C<use locale>).
@@ -933,7 +933,7 @@ Estas localizaciones acumuladas se deshacen al final de una coincidencia exitosa
                                    # una ubicación no localizada.
    >x;
 
-incrementará, inicialmente, C<$cnt> hasta 8; luego, durante la vuelta atrás, su valor será desenrollado a 4; que es el valor que se asigna a C<$res>.
+incrementará, inicialmente, C<$cnt> hasta 8; luego, durante la vuelta atrás, su valor se desenrollará a 4; que es el valor que se asigna a C<$res>.
 Al final de la ejecución de la exp. reg., C<$cnt> regresará a su valor inicial de 0.
 
 Esta aserción se puede usar como la condición en
@@ -1127,7 +1127,7 @@ Por ejemplo:
 
 detecta un fragmento de caracteres que no son paréntesis, posiblemente entre paréntesis.
 
-El predicado C<(DEFINE)> es una forma especial que nunca ejecuta directamente su patrón-sí, y no admite un patrón-no. Esto permite definir subpatrones que solo serán ejecutados por el mecanismo de recursión.
+El predicado C<(DEFINE)> es una forma especial que nunca ejecuta directamente su patrón-sí, y no admite un patrón-no. Esto permite definir subpatrones que solo se ejecutarán por el mecanismo de recursión.
 De esta manera, puede definir un conjunto de reglas de expresiones regulares y agruparlas en cualquier patrón que elija.
 
 Para este uso, se recomienda colocar el bloque DEFINE al final del patrón, y asignar nombres a los subpatrones definidos en su interior.
@@ -1189,7 +1189,7 @@ Detectará de manera eficiente un grupo no vacío de parejas de paréntesis anid
        \)
      }x
 
-que usa C<< (?>...) >> coincidirá exactamente cuando la cadena anterior lo haga (comprobar esto por usted mismo es un ejercicio muy interesante), pero termina en la cuarta parte de tiempo cuando se usa en una cadena similar con 1 000 000 de letras C<a>.  Sin embargo, debe tener en cuenta que, cuando esta construcción va seguida de un cuantificador y el pragma C<use warnings> o la opción B<-w> están activos, actualmente muestra el mensaje de advertencia C<"matches null string many times in regex"> (se detecta la cadena nula muchas veces en la expresión regular).
+que usa C<< (?>...) >> coincidirá exactamente cuando la cadena anterior lo haga (comprobar esto por usted mismo es un ejercicio muy interesante), pero termina en la cuarta parte de tiempo cuando se usa en una cadena similar con 1 000 000 de letras C<a>.  Sin embargo, debe tener en cuenta que, cuando esta construcción va seguida de un cuantificador y el I<pragma> C<use warnings> o la opción B<-w> están activos, actualmente muestra el mensaje de advertencia C<"matches null string many times in regex"> (se detecta la cadena nula muchas veces en la expresión regular).
 
 En grupos sencillos, como en el patrón C<< (?> [^()]+ ) >>, se puede conseguir un efecto comparable por medio de una aserción de inspección hacia adelante, como en C<[^()]+ (?! [^()] )>.
 Esto solo tarda 4 veces más en una cadena con un 1 000 000 de letras C<a>.

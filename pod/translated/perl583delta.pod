@@ -124,7 +124,7 @@ Los usuarios de RedHat deberían ver la página https://rhn.redhat.com/errata/RH
 
 Hilos independientes todavía no son compatibles con Windows, ya que pueden provocar problemas de violación de acceso a memoria.
 
-Hay una conocida condición de carrera al abrir scripts con C<suidperl>. C<suidperl> no es construido ni instalado por defecto, y es obsoleto desde perl 5.8.0. Se recomienda reemplazar el uso de suidperl con herramientas como sudo (http://www.courtesan.com/sudo/)
+Hay una conocida condición de carrera al abrir I<scripts> con C<suidperl>. C<suidperl> no se construye ni instala por defecto, y es obsoleto desde perl 5.8.0. Se recomienda reemplazar el uso de suidperl con herramientas como sudo (http://www.courtesan.com/sudo/)
 
 Tenemos un retraso de errores sin resolver. Tratar con errores e informes de errores es un trabajo poco atractivo; no es algo ideal para un trabajo voluntario, pero eso es todo lo que tenemos.
 

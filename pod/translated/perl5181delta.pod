@@ -73,7 +73,7 @@ El comando C<man> del depurador se ha corregido. Se rompió en el lanzamiento v5
 
 =item *
 
-Ahora, C<@_> es visible de forma correcta, en el depuraor, arreglando una regresión introducida en el depurador de v5.18.0. [RT #118169]
+Ahora, C<@_> es visible de forma correcta, en el depurador, arreglando una regresión introducida en el depurador de v5.18.0. [RT #118169]
 
 =item *
 

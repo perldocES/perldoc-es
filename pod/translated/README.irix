@@ -6,7 +6,7 @@ perlirix - Perl versión 5 en sistemas Irix
 
 =head1 DESCRIPCIÓN
 
-Este documentos describe varias características de Irix que afectarán a cómo Perl versión 5 (de ahora en adelante sólo Perl) es compilado y/o ejecutado.
+Este documento describe varias características de Irix que afectarán a cómo Perl versión 5 (de ahora en adelante sólo Perl) se compila y/o ejecuta.
 
 =head2 Compilar Perl de 32 bit en Irix
 

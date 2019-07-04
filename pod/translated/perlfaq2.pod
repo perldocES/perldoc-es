@@ -30,7 +30,7 @@ L<ActivePerl|http://www.activestate.com/activeperl> incluyen un compilador de C.
 
 Si prefiere compilar Perl, lo primero que debe hacer es obtener una versión binaria de C<gcc> para su sistema. Use un motor de búsqueda para averiguar la manera de hacer esto para su sistema operativo.
 
-=head2 He copiado el binario perl de una máquina a otra, pero los scripts no funcionan.
+=head2 He copiado el binario perl de una máquina a otra, pero los I<scripts> no funcionan.
 
 Probablemente se deba a que olvidó copiar las bibliotecas, o a que las rutas de acceso de las bibliotecas difieren.
 Es muy recomendable compilar toda la distribución en el equipo en el que se va a instalar y después ejecutar el comando C<make install>. La probabilidad de éxito de las demás opciones es baja.
@@ -48,7 +48,7 @@ Es posible que también le interese consultar "¿Qué tengo que hacer para mante
 =head2 He descargado el código fuente y he intentado compilarlo, pero se produjo un error en el proceso de gdbm/carga dinámica/asignación de memoria/vinculación/... ¿Cómo puedo hacer que funcione?
 
 Lea el archivo F<INSTALL> incluido en la distribución de código fuente.
-En este documento se describe en detalle cómo tener en cuenta la mayor parte de las idiosincrasias que el script C<Configure> no puede prever para una arquitectura o un sistema específicos.
+En este documento se describe en detalle cómo tener en cuenta la mayor parte de las idiosincrasias que el I<script> C<Configure> no puede prever para una arquitectura o un sistema específicos.
 
 =head2 ¿Qué módulos y extensiones están disponibles para Perl? ¿Qué es CPAN?
 

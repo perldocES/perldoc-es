@@ -36,7 +36,7 @@ Perl no se puede compilar con soporte multihilo ATM.
 
 =item *
 
-El test F<cpan/Socket/t/socketpair.t> falla. Precisando más: las subpruebas usando sockets de datagramas fallan. Los datagramas sockect Unix aún no están implementados en Haiku.
+El test F<cpan/Socket/t/socketpair.t> falla. De forma más precisa: las subpruebas usando I<sockets> de datagramas fallan. Los datagramas sockect Unix aún no están implementados en Haiku.
 
 =item *
 

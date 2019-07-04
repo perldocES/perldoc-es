@@ -46,7 +46,7 @@ Para desactivar la asignación al azar de un hash en tiempo de ejecución, ponga
 
 Vea L<perlsec/"Ataques de complejidad algorítmica"> para la justificación original de este cambio.
 
-=head2 UTF-8 en identificadores de archivo ya no son activados por locale
+=head2 UTF-8 en identificadores de archivo ya no se activan con locale
 
 En Perl 5.8.0 todos los identificadores de archivo, incluidos los identificadores de archivo estándar, se establecían implícitamente en Unicode UTF-8 si la configuración regional indicaba el uso de UTF-8.  Esta característica causaba muchos problemas, por lo que la función se ha desactivado y rediseñado: vea L</"Mejoras en el núcleo principal">.
 
@@ -74,7 +74,7 @@ Para la nueva vida de esta opción, vea L<"UTF-8 ya no está por defecto bajo la
 
 =head2 (Win32) La opción /d de cmd.exe
 
-Perl 5.8.1 usa el modificador /d cuando se ejecuta el shell cmd.exe, internamente, para system(), comillas invertidas, y al abrir tuberías hacia programas externos.  Esta opción adicional deshabilita la ejecución de los comandos AutoRun del registro, que generalmente se considera indeseable cuando se ejecutan programas externos.  Si desea mantener la compatibilidad con el antiguo comportamiento, establezca PERL5SHELL en su entorno a C<cmd /x/c>.
+Perl 5.8.1 usa el modificador /d cuando se ejecuta el I<shell> cmd.exe, internamente, para system(), comillas invertidas, y al abrir tuberías hacia programas externos.  Esta opción adicional deshabilita la ejecución de los comandos AutoRun del registro, que generalmente se considera indeseable cuando se ejecutan programas externos.  Si desea mantener la compatibilidad con el antiguo comportamiento, establezca PERL5SHELL en su entorno a C<cmd /x/c>.
 
 =head1 Mejoras en el núcleo principal
 
@@ -100,7 +100,7 @@ En noticias aparte, ahora puede usar señales de forma segura con POSIX::sigacti
 
 =head2 Arrays atados con índices de array negativos
 
-Anteriormente, los índices que se pasaban a los métodos C<FETCH>, C<STORE>, C<EXISTS>, y C<DELETE> de la clase array atada eran siempre no negativos.  Si el argumento era negativo, Perl llamaría a FETCHSIZE de forma implícita y sumaría el resultado al índice antes de pasar el resultado al método de array atado.  Este comportamiento es ahora opcional.  Si la clase de array atado contiene una variable de paquete denominada C<$NEGATIVE_INDICES> que se establece a un valor real, los valores negativos serán pasados directamente a C<FETCH>, C<STORE>, C<EXISTS>, y C<DELETE>.
+Anteriormente, los índices que se pasaban a los métodos C<FETCH>, C<STORE>, C<EXISTS>, y C<DELETE> de la clase array atada eran siempre no negativos.  Si el argumento era negativo, Perl llamaría a FETCHSIZE de forma implícita y sumaría el resultado al índice antes de pasar el resultado al método de array atado.  Este comportamiento es ahora opcional.  Si la clase de array atado contiene una variable de paquete denominada C<$NEGATIVE_INDICES> que se establece a un valor real, los valores negativos se pasarán directamente a C<FETCH>, C<STORE>, C<EXISTS>, y C<DELETE>.
 
 =head2 local ${$x}
 
@@ -128,11 +128,11 @@ Si de verdad quiere seguir usando pseudo-hash, pero no quiere ver la advertencia
 
     no warnings 'deprecated';
 
-O bien, puede seguir utilizando el pragma L<fields> pero, por favor, no permita que las estructuras de datos sigan siendo pseudo-hashes.
+O bien, puede seguir utilizando el I<pragma> L<fields> pero, por favor, no permita que las estructuras de datos sigan siendo pseudo-hashes.
 
 =head3 (Recordatorio) los I<threads> estilo 5.005 son obsoletos (de verdad)
 
-Los I<threads> estilo 5.005 (activados con C<use Thread;>) fueron desaprobados en Perl 5.8.0 y serán eliminados después de Perl 5.8, vea L<perl58delta> para más detalles.  Cada creación de un I<thread> estilo 5.005 disparará la advertencia C<5.005 threads are deprecated>.  Si realmente desea seguir utilizando los I<threads> 5.005 pero no quiere ver la advertencia de obsolescencia, utilice:
+Los I<threads> estilo 5.005 (activados con C<use Thread;>) fueron desaprobados en Perl 5.8.0 y se eliminarán después de Perl 5.8, vea L<perl58delta> para más detalles.  Cada creación de un I<thread> estilo 5.005 disparará la advertencia C<5.005 threads are deprecated>.  Si realmente desea seguir utilizando los I<threads> 5.005 pero no quiere ver la advertencia de obsolescencia, utilice:
 
     no warnings 'deprecated';
 
@@ -147,7 +147,7 @@ Si realmente desea seguir utilizando la variable C<$*> pero no quiere ver la adv
 
 C<map> en contexto vacío ya no es oneroso. C<map> ahora depende del contexto, y no construirá una lista si se llama en contexto vacío.
 
-Si un I<socket> es cerrado por el servidor mientras se está imprimiendo en él, el cliente recibe ahora una SIGPIPE.  Aunque esta nueva característica no fue planeada, apareció de forma natural de los cambios que se hicieron a PerlIO, y se considera una característica accidental.
+Si un I<socket> se cierra por el servidor mientras se está imprimiendo en él, el cliente recibe ahora una SIGPIPE.  Aunque esta nueva característica no fue planeada, apareció de forma natural de los cambios que se hicieron a PerlIO, y se considera una característica accidental.
 
 PerlIO::get_layers(FH) devuelve los nombres de las capas PerlIO activas en un identificador de archivo.
 
@@ -207,7 +207,7 @@ Una nueva opción, Pair, permite elegir el separador entre las claves y valores 
 
 =item Encode
 
-Actualizaciones significativas en la funcionalidad del pragma de codificación (formatos tr/// y del identificador de archivo de datos DATA).
+Actualizaciones significativas en la funcionalidad del I<pragma> de codificación (formatos tr/// y del identificador de archivo de datos DATA).
 
 Si un identificador de archivo se ha marcado para tener una cierta codificación, los caracteres no traducibles se detectan en la entrada, no después (cuando los datos dañados se estén utilizando).
 
@@ -257,7 +257,7 @@ Ahora puede almacenar referencias a código (a través de B::Deparse, no es tan 
 
 =item strict
 
-Las versiones anteriores del pragma strict no comprobaban de forma implícita los parámetros pasados a sus rutinas "import" (use) y "unimport" (no).
+Las versiones anteriores del I<pragma> strict no comprobaban de forma implícita los parámetros pasados a sus rutinas "import" (use) y "unimport" (no).
 Esto permitía hacer el falso modismo:
 
         use strict qw(@ISA);
@@ -284,7 +284,7 @@ El remedio para este problema es reemplazar este código con la expresión corre
 
 =item Test::Harness
 
-Ahora es mucho más exigente con la salida extra o con la que falta de los scripts de test.
+Ahora es mucho más exigente con la salida extra o con la que falta de los I<scripts> de test.
 
 =item Test::More
 
@@ -349,7 +349,7 @@ perlreref ha sido añadido: es una referencia rápida para expresiones regulares
 
 La ubicación estándar de Perl en Unix, F</usr/bin/perl>, ya no es, por defecto, sobreescrita, si existe.  Este cambio fue muy prudente, porque muchos de los instaladores de Unix ya ofrecen un F</usr/bin/perl>, pero al mismo tiempo muchas utilidades del sistema puede depender de la versión exacta de Perl, así que es mejor no sobrescribirlo.
 
-Ahora se pueden especificar directorios de instalación para las páginas man y HTML, y scripts para el propio equipo y para el instalador del sistema.  Vea F<INSTALL>.
+Ahora se pueden especificar directorios de instalación para las páginas man y HTML, y I<scripts> para el propio equipo y para el instalador del sistema.  Vea F<INSTALL>.
 
 Ahora se puede especificar un directorio destino para la instalación de Perl mediante la especificación de la variable DESTDIR para C<make install>.  (Esta característica es ligeramente diferente de la anterior C<Configure -Dinstallprefix=...>).
 Vea F<INSTALL>.
@@ -411,7 +411,7 @@ Métodos atados como FETCH, etc ahora pueden acceder de forma segura a los valor
 En el arranque, Perl bloquea la señal SIGFPE, ya que no hay mucho que Perl pueda hacer al respecto.  Anteriormente, este bloqueo se encontraba en vigor también para los programas ejecutados desde dentro de Perl.  Ahora Perl restaura la rutina de manejo de SIGFPE original, fuera cual fuera, antes de ejecutar programas externos.
 
 Los números de línea en Perl ahora pueden ser mayores de 65536, o 2**16.
-(Los programas Perl siempre han sido capaces de tener más que eso, es sólo que los números de línea de los informes de errores y advertencias son "reiniciados").  Mientras que scripts tan grandes como estos, por lo general, indican la necesidad de repensar un poco el código, scripts de Perl como estos existen, por ejemplo, de resultas de un código generado.  Ahora, los números de línea puede ir hasta 4294967296, o 2**32.
+(Los programas Perl siempre han sido capaces de tener más que eso, es sólo que los números de línea de los informes de errores y advertencias son "reiniciados").  Mientras que I<scripts> tan grandes como estos, por lo general, indican la necesidad de repensar un poco el código, I<scripts> de Perl como estos existen, por ejemplo, de resultas de un código generado.  Ahora, los números de línea puede ir hasta 4294967296, o 2**32.
 
 =head2 Arreglos específicos por plataforma
 
@@ -571,7 +571,7 @@ Una remodelación extensa del código de control (el código responsable de las 
 
 Una amplia labor en la v-strings por parte de John Peacock.
 
-Longitud y posición de la caché UTF-8: para acelerar la tramitación de escalares Unicode (UTF-8), se introdujo una memoria caché.  Existen problemas potenciales si una extensión no pasa por la API oficial y modifica directamente el PV de un SV: el caché UTF-8 no es borrado como debiera.
+Longitud y posición de la caché UTF-8: para acelerar la tramitación de escalares Unicode (UTF-8), se introdujo una memoria caché.  Existen problemas potenciales si una extensión no pasa por la API oficial y modifica directamente el PV de un SV: el caché UTF-8 no se borra como debiera.
 
 API obsoleta en Perl 5.8.0, como sv_2pv, sv_catpvn, sv_catsv, sv_setsv, están de nuevo disponibles.
 
@@ -725,7 +725,7 @@ Los v-strings, tal como existen en la actualidad, está previsto que se descarte
 
 =item *
 
-5.005 I<Threads> serán eliminados
+5.005 I<Threads> se eliminarán
 
 =item *
 
@@ -734,7 +734,7 @@ La variable C<$*> será eliminada
 
 =item *
 
-Pseudo-hashes serán eliminados
+Pseudo-hashes se eliminarán
 
 =back
 

@@ -141,7 +141,7 @@ El directorio F<Porting> contiene un conjunto de fragmentos de código y documen
 
 =item * F<check*>
 
-Scripts que detectarán en el código fuente cosas como infracciones de ANSI C, problemas de codificación de POD, etc.
+Son I<scripts> que detectarán en el código fuente cosas como infracciones de ANSI C, problemas de codificación de POD, etc.
 
 =item * F<Maintainers>, F<Maintainers.pl> y F<Maintainers.pm>
 
@@ -155,11 +155,11 @@ Ordena un archivo pod. Tras aplicar un parche a un archivo pod, es recomendable 
 
 =head2 Sistema de compilación
 
-El sistema de compilación de Perl empieza por el script F<Configure> del directorio raíz.
+El sistema de compilación de Perl empieza por el I<script> F<Configure> del directorio raíz.
 
 Las partes del sistema de compilación que son específicas de la plataforma se encuentran en directorios específicos de plataforma, como F<win32/>, F<vms/>, etc.
 
-El script F<Configure> se encarga de generar un archivo F<Makefile>.
+El I<script> F<Configure> se encarga de generar un archivo F<Makefile>.
 
 Perl usa un sistema de compilación denominado metaconfig. El mantenimiento de este sistema se realiza por separado del mantenimiento del núcleo de Perl.
 

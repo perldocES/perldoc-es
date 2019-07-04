@@ -124,7 +124,7 @@ También se distribuyen con perl algunas herramientas de propósito general, bá
 
 =item L<piconv>
 
-B<piconv> es una versión Perl de B<iconv>, un conversor de codificaciones de caracteres de uso muy extendido en el mundo Unix.  Este script era principalmente una demostración
+B<piconv> es una versión Perl de B<iconv>, un conversor de codificaciones de caracteres de uso muy extendido en el mundo Unix.  Este I<script> era principalmente una demostración
 de tecnología en Perl v5.8.0, pero puede usar piconv en lugar
 de iconv prácticamente en todos los casos.
 

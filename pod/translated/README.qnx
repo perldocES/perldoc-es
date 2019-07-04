@@ -63,7 +63,7 @@ dist/Cwd/Cwd.t se quejará si `pwd` y cwd no proporcionan los mismos resultados.
 
 lib/File/Find/taint.t se quejará si '.' está en su PATH. La prueba PATH se dispara porque cwd llama a `fullpath -t`.
 
-ext/IO/lib/IO/t/io_sock.t: las subpruebas 14 y 22 se obvian debido al hecho de que la funcionalidad para devolver el estado no bloqueante de un socket no está implementada en el TCP/IP de QNX. Se ha informado a QNX y puede que funcione en las últimas versiones de TCP/IP.
+ext/IO/lib/IO/t/io_sock.t: las subpruebas 14 y 22 se obvian debido al hecho de que la funcionalidad para devolver el estado no bloqueante de un I<socket> no está implementada en el TCP/IP de QNX. Se ha informado a QNX y puede que funcione en las últimas versiones de TCP/IP.
 
 t/io/tell.t: La subprueba 27 falla. Seguimos investigando.
 
@@ -90,7 +90,7 @@ Las siguientes pruebas siguen fallando para Perl 5.8.1 bajo QNX 6.2.0:
   op/sprintf.........................FAILED at test 91
   lib/Benchmark......................FAILED at test 26
 
-Es debido a un error en la rutina printf de la biblioteca C.
+Se debe a un error en la rutina printf de la biblioteca C.
 printf("'%e'", 0. ) produce '0.000000e+0', pero ANSI requiere '0.000000e+00'. QNX ha reconocido el error.
 
 =head2 Compilación cruzada
@@ -113,7 +113,7 @@ Así que en cambio querrá hacer algo como esto:
 
 Además de poner el compilador cruzado y el resto de la cadena de herramientas en su PATH, también proporcionará la variable QNX_TARGET, que pasará a Configure por medio de -Dsysroot.
 
-=head3 Preparando el sistema objetivo
+=head3 Preparar el sistema objetivo
 
 Es muy posible que el sistema objetivo no tenga disponible un /tmp legible, así que es, generalmente, más seguro hacer algo como esto:
 

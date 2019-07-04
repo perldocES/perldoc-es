@@ -10,7 +10,7 @@ En el principio era el ASCII, el "Código Estándar Americano para Intercambio d
 
 Para hacer frente a estas deficiencias, fue inventado el concepto de configuraciones regionales (formalmente la ISO C, XPG4, POSIX 1.c "sistema de configuración regional").  Y aplicaciones que han sido y están siendo escritas que utilizan el mecanismo de configuración regional.  El proceso de hacer que una aplicación tenga en cuenta las preferencias de los usuarios en estos temas se llama B<internacionalización> (a menudo abreviado como B<i18n>); solicitarle a una aplicación un conjunto particular de preferencias se conoce como B<localización> (B<l10n>).
 
-Perl se extendió para soportar el sistema de configuración regional.  Este se controla por la aplicación utilizando un pragma, una llamada a una función, y distintas variables de entorno.
+Perl se extendió para soportar el sistema de configuración regional.  Este se controla por la aplicación utilizando un I<pragma>, una llamada a una función, y distintas variables de entorno.
 
 Desafortunadamente, hay bastantes deficiencias con el diseño (y a menudo, las implementaciones) de las configuraciones regionales.  Unicode se inventó (vea L<perlunitut> para una introducción del mismo) en parte para arreglar esas deficiencias de diseño y, hoy en día, existen una serie de "configuraciones UTF-8", basado en Unicode.  Son configuraciones cuyo conjunto de caracteres es Unicode, codificado en UTF-8.  A partir de v5.20, Perl soporta completamente las configuraciones regionales UTF-8, excepto para la ordenación y comparación de cadenas de caracteres como C<lt> y C<ge>.  (Use L<Unicode::Collate> para esos casos).  Perl también continúa soportando las viejas configuraciones regionales que no son UTF-8.  Actualmente no existen configuraciones regionales UTF-8 para las plataformas EBCDIC.
 
@@ -84,7 +84,7 @@ B<Perl debe creer que el sistema de configuración regional está soportado>.  S
 
 =back
 
-Si quiere que una aplicación Perl procese y presente sus datos de acuerdo con una configuración regional en particular, el código de la aplicación debe incluir el pragma S<C<use locale>> (vea L<El pragma "use locale">) en el lugar apropiado, y B<al menos uno> de los siguientes debe ser cierto:
+Si quiere que una aplicación Perl procese y presente sus datos de acuerdo con una configuración regional en particular, el código de la aplicación debe incluir el I<pragma> S<C<use locale>> (vea L<El I<pragma> "use locale">) en el lugar apropiado, y B<al menos uno> de los siguientes debe ser cierto:
 
 =over 4
 
@@ -100,13 +100,13 @@ B<La aplicación debe ajustar su propia configuración regional> usando el méto
 
 =head1 USAR CONFIGURACIONES REGIONALES
 
-=head2 El pragma C<"use locale">
+=head2 El I<pragma> C<"use locale">
 
 ¡ATENCIÓN!  NO use este I<pragma> en I<scripts> que tengan activadas múltiples L<threads|hebras>.  La configuración regional no es local a una única hebra.
 Otra hebra puede cambiar la configuración regional en cualquier momento, que podría causar como mínimo que una determinada hebra esté operando en una configuración regional inesperada.  En algunas plataformas, puede ocurrir fallos de segmentación.  El cambio de configuración regional no necesita ser explícito; algunas operaciones hacen que perl cambie la configuración regional por sí mismo.  Queda expuesto teniendo simplemente un C<"use locale">.
 
-Por defecto, el propio Perl (excepto el módulo L<POSIX>) ignora la configuración regional en vigor.  El pragma S<C<use locale>> le pide a Perl que utilice la configuración regional actual para algunas operaciones.
-A partir de v5.16, existe unos parámetros opcionales para este pragma, descritos más abajo, que restringe qué operaciones quedan afectadas por él.
+Por defecto, el propio Perl (excepto el módulo L<POSIX>) ignora la configuración regional en vigor.  El I<pragma> S<C<use locale>> le pide a Perl que utilice la configuración regional actual para algunas operaciones.
+A partir de v5.16, existe unos parámetros opcionales para este I<pragma>, descritos más abajo, que restringe qué operaciones quedan afectadas por él.
 
 La configuración regional actual se establece en tiempo de ejecución por L<setlocale()|/La función setlocale> tal como se describe a continuación.  Si esa función aún no se ha llamado en el curso de la ejecución del programa, la configuración regional actual es la que se determina a partir del L</"ENTORNO"> que esté configurado al comienzo del programa.
 Si no hay un entorno válido, la configuración regional actual es la que el sistema haya ajustado por defecto.   En sistemas POSIX, probablemente, pero no necesariamente, será la configuración regional "C".  En Windows, el valor por defecto se ajusta a través del <C<Panel de control-E<gt>Configuración regional y de idioma>> del ordenador (o su equivalente actual).
@@ -200,12 +200,12 @@ B<Las variables L<$!|perlvar/$ERRNO>> (y sus sinónimas C<$ERRNO> y C<$OS_ERROR>
 
 =back
 
-El comportamiento por defecto se restaura con el pragma S<C<no locale>>, o al llegar al final del bloque que encierra a C<use locale>.
+El comportamiento por defecto se restaura con el I<pragma> S<C<no locale>>, o al llegar al final del bloque que encierra a C<use locale>.
 Nótese que las llamadas C<use locale> se pueden anidar, y que lo que está en vigor dentro de un ámbito interno volverá a las reglas del ámbito externo al final del ámbito interno.
 
 La cadena resultado de cualquier operación que utilice la configuración regional está contaminada, ya que es posible que una configuración regional no sea digna de confianza.  Vea L<"SEGURIDAD">.
 
-A partir de Perl v5.16 de una forma muy limitada, y más generalmente en v5.22, puede restringir en qué categoría o categorías están activadas para esta instancia particular del pragma añadiéndole parámetros.  Por ejemplo,
+A partir de Perl v5.16 de una forma muy limitada, y más generalmente en v5.22, puede restringir en qué categoría o categorías están activadas para esta instancia particular del I<pragma> añadiéndole parámetros.  Por ejemplo,
 
  use locale qw(:ctype :numeric);
 
@@ -219,7 +219,7 @@ Por ello puede decir
 
 y solo L<$!|perlvar/$ERRNO> y L<$^E|perlvar/$EXTENDED_OS_ERROR> quedan afectadas por la configuración regional.  Todo lo demás no queda afectado.
 
-Ya que Perl, actualmente, no hace nada con la categoría C<LC_MONETARY>, especificar C<:monetary> no hace nada de forma efectiva.  Algunos sistemas tiene otras categorías, como C<LC_PAPER_SIZE>, pero Perl tampoco sabe nada sobre ellas, y no hay forma de especificarlas en los argumentos de este pragma.
+Ya que Perl, actualmente, no hace nada con la categoría C<LC_MONETARY>, especificar C<:monetary> no hace nada de forma efectiva.  Algunos sistemas tiene otras categorías, como C<LC_PAPER_SIZE>, pero Perl tampoco sabe nada sobre ellas, y no hay forma de especificarlas en los argumentos de este I<pragma>.
 
 También puede decir, fácilmente, el usar todas las categorías excepto una, cualquiera, por ejemplo, 
 
@@ -228,7 +228,7 @@ También puede decir, fácilmente, el usar todas las categorías excepto una, cu
 
 las dos significan activar la configuración regional de todas las categorías excepto C<LC_CTYPE>.  Solo se puede especificar un argumento de categoría en un S<C<use locale>> si es de la forma negada.
 
-Antes de v5.22 solo estaba disponible una forma de pragma con argumentos:
+Antes de v5.22 solo estaba disponible una forma de I<pragma> con argumentos:
 
  use locale ':not_characters';
 
@@ -351,12 +351,12 @@ Este método, en realidad, barre el problema bajo la alfombra: le dice a Perl qu
 
 Perl puede ejecutarse bajo la configuración regional "C" al establecer la variable de entorno C<LC_ALL> a "C".  Este método es tal vez un poco más civilizado que el enfoque C<PERL_BADLANG>, pero ajustando C<LC_ALL> (u otras variables de configuración regional) puede afectar también a otros programas, no sólo a Perl.  En particular, los programas externos que se ejecuten desde Perl verán estos cambios.  Si hace la nueva configuración permanente (siga leyendo), todos los programas que ejecute verán esos cambios.  Vea L<"ENTORNO"> para la lista completa de variables de entorno relevantes y L<USAR CONFIGURACIONES REGIONALES> para sus efectos en Perl.  Los efectos en otros programas son fácilmente deducibles.  Por ejemplo, la variable C<LC_COLLATE> también puede afectar a su programa B<sort> (o como se llame cualquier otro programa que organice "registros" alfabéticamente en su sistema).
 
-Puede probar a cambiar las variables temporalmente, y si los nuevos valores parecen ayudar, poner esos valores en los archivos de inicio del I<shell>.  Consulte la documentación de la configuración regional para los detalles exactos.  Para los I<shells> de la familia Bourne (B<sh>, B<ksh>, B<bash>, B<zsh>):
+Puede probar a cambiar las variables temporalmente, y si los nuevos valores parecen ayudar, poner esos valores en los archivos de inicio del I<shell>.  Consulte la documentación de la configuración regional para los detalles exactos.  Para los I<shell> de la familia Bourne (B<sh>, B<ksh>, B<bash>, B<zsh>):
 
 	LC_ALL=en_US.ISO8859-1
 	export LC_ALL
 
-Esto asume que hemos visto la configuración regional "en_US.ISO8859-1" usando los comandos mencionados anteriormente.  Decidimos probarlo en lugar de la anterior fallida configuración regional "En_US". Y en los I<shells> estilo Cshell (B<csh>, B<tcsh>)
+Esto asume que hemos visto la configuración regional "en_US.ISO8859-1" usando los comandos mencionados anteriormente.  Decidimos probarlo en lugar de la anterior fallida configuración regional "En_US". Y en los I<shell> estilo Cshell (B<csh>, B<tcsh>)
 
 	setenv LC_ALL en_US.ISO8859-1
 
@@ -639,7 +639,7 @@ B<Operador de coincidencia> (C<m//>):
 
 El resultado escalar verdadero/falso nunca queda contaminado.
 
-Todos los subpatrones, tanto si son entregados como resultado en un contexto de lista, o como C<$1>, I<etc.>, quedan contaminados si un C<use locale> que incluya C<LC_CTYPE> está en vigor, y el subpatrón de expresión regular contiene una construcción dependiente de la configuración regional.  Estas construcciones incluyen C<\w> (para coincidir con un carácter alfanumérico), C<\W> (carácter no-alfanumérico), C<\b> y C<\B> (márgenes y no-márgenes de palabra, que dependen de lo que coinciden con C<\w> y C<\W>), C<\s> (carácter espacio en blanco), C<\S> (no carácter espacio en blanco), C<\d> y C<\D> (dígitos y no-dígitos), y las clases de caracteres POSIX, tales como C<[:alpha:]> (vea L<perlrecharclass/POSIX Character Classes>).
+Todos los subpatrones, tanto si se entregan como resultado en un contexto de lista, o como C<$1>, I<etc.>, quedan contaminados si un C<use locale> que incluya C<LC_CTYPE> está en vigor, y el subpatrón de expresión regular contiene una construcción dependiente de la configuración regional.  Estas construcciones incluyen C<\w> (para coincidir con un carácter alfanumérico), C<\W> (carácter no-alfanumérico), C<\b> y C<\B> (márgenes y no-márgenes de palabra, que dependen de lo que coinciden con C<\w> y C<\W>), C<\s> (carácter espacio en blanco), C<\S> (no carácter espacio en blanco), C<\d> y C<\D> (dígitos y no-dígitos), y las clases de caracteres POSIX, tales como C<[:alpha:]> (vea L<perlrecharclass/POSIX Character Classes>).
 
 La contaminación también es posible si el patrón para la coincidencia es independiente del tamaño de caja (vía C</i>).  La excepción es si todos los códigos de carácter que buscamos de esta manera están por encima del 255 y no se pliegan bajo las reglas Unicode por debajo de 256.  La contaminación no se realiza para ellos, porque Perl sólo usa reglas Unicode para tales códigos de carácter, y esas reglas son las mismas sin importar qué configuración regional esté en activo.
 
@@ -814,7 +814,7 @@ Podría también exluir C<LC_NUMERIC>, si no lo va a necesitar.
 
 =head2 Compatibilidad con versiones anteriores
 
-Versiones de Perl anteriores a 5.004 B<mayormente> ignoraban la información de la configuración regional, comportándose de forma general como si algo similar a la configuración regional C<"C"> estuviera siempre en vigor, aun cuando el entorno del programa sugería lo contrario (vea L<La función setlocale>).  De forma predeterminada, Perl todavía se comporta de esta manera para mantener la compatibilidad hacia atrás.  Si quiere que una aplicación Perl preste atención a la información de la configuración regional, usted B<debe> utilizar el pragma S<C<use locale>> (vea L<El pragma "use locale">) o, en el improbable caso de que desee hacerlo solo para coincidencia de patrones, el modificador de expresión regular C</l> (vea L<perlre/modificadores del conjunto de caracteres>) para indicar a Perl que lo haga de esa manera.
+Versiones de Perl anteriores a 5.004 B<mayormente> ignoraban la información de la configuración regional, comportándose de forma general como si algo similar a la configuración regional C<"C"> estuviera siempre en vigor, aun cuando el entorno del programa sugería lo contrario (vea L<La función setlocale>).  De forma predeterminada, Perl todavía se comporta de esta manera para mantener la compatibilidad hacia atrás.  Si quiere que una aplicación Perl preste atención a la información de la configuración regional, usted B<debe> utilizar el I<pragma> S<C<use locale>> (vea L<El I<pragma> "use locale">) o, en el improbable caso de que desee hacerlo solo para coincidencia de patrones, el modificador de expresión regular C</l> (vea L<perlre/modificadores del conjunto de caracteres>) para indicar a Perl que lo haga de esa manera.
 
 Versiones de Perl desde la 5.002 a la 5.003 utilizaban la información de C<LC_CTYPE> si estaba disponible, es decir, C <\w> entendía cuáles eran las letras de acuerdo a las variables de entorno de la configuración regional.
 El problema era que el usuario no tenía control sobre la funcionalidad: si la biblioteca C soportaba configuraciones regionales, Perl las usaba.
@@ -859,20 +859,20 @@ Comenzando en Perl v5.20, las configuraciones regionales UTF-8 se soportan en Pe
 
     use locale ':not_characters';
 
-Cuando se utilice esta forma de pragma, Perl utilizará sólo las partes de las configuraciones regionales que no tengan que ver con caracteres. Por ejemplo, C<LC_NUMERIC>.  Perl supone que ha traducido todos los caracteres con los que va a operar, a Unicode (en realidad al conjunto de caracteres nativo de la plataforma (ASCII o EBCDIC) más Unicode).  Para la información que hay dentro de los archivos, esto puede especificarse convenientemente también con
+Cuando se utilice esta forma de I<pragma>, Perl utilizará sólo las partes de las configuraciones regionales que no tengan que ver con caracteres. Por ejemplo, C<LC_NUMERIC>.  Perl supone que ha traducido todos los caracteres con los que va a operar, a Unicode (en realidad al conjunto de caracteres nativo de la plataforma (ASCII o EBCDIC) más Unicode).  Para la información que hay dentro de los archivos, esto puede especificarse convenientemente también con
 
     use open ':locale';
 
-Este pragma se encarga de que todas las entradas desde los archivos se traduzcan a Unicode desde la configuración regional actual, como se especifica en el entorno (vea L</ENTORNO>), y todas las salidas hacia los archivos sean traducidos de nuevo en la configuración regional.  (Vea L<open>).  En un proceso que use identificadores de archivo puede, en lugar de eso, utilizar el módulo L<PerlIO::locale>, o el módulo L<Encode::Locale>, ambos disponibles en CPAN.  El último módulo también cuenta con métodos para facilitar el manejo de C<ARGV> y las variables de entorno, y se puede utilizar en cadenas individuales.  Si sabe que todas sus configuraciones regionales serán UTF-8, como muchas ya lo son en estos días, puede utilizar la opción de línea de comandos L<B<-C>|perlrun/-C>.
+Este I<pragma> se encarga de que todas las entradas desde los archivos se traduzcan a Unicode desde la configuración regional actual, como se especifica en el entorno (vea L</ENTORNO>), y todas las salidas hacia los archivos sean traducidos de nuevo en la configuración regional.  (Vea L<open>).  En un proceso que use identificadores de archivo puede, en lugar de eso, utilizar el módulo L<PerlIO::locale>, o el módulo L<Encode::Locale>, ambos disponibles en CPAN.  El último módulo también cuenta con métodos para facilitar el manejo de C<ARGV> y las variables de entorno, y se puede utilizar en cadenas individuales.  Si sabe que todas sus configuraciones regionales serán UTF-8, como muchas ya lo son en estos días, puede utilizar la opción de línea de comandos L<B<-C>|perlrun/-C>.
 
-Esta forma de pragma permite un manejo esencialmente sin fisuras de las configuraciones regionales con Unicode.  El orden indicado para el cotejo será el del orden de punto de código Unicode.
+Esta forma de I<pragma> permite un manejo esencialmente sin fisuras de las configuraciones regionales con Unicode.  El orden indicado para el cotejo será el del orden de punto de código Unicode.
 Se recomienda que cuando necesite ordenar cadenas de caracteres, utilice el módulo estándar L<Unicode::Collate> que da resultados mucho mejores en muchos casos de lo que podría obtener con el antiguo estilo de la configuración regional.
 
-Todos los módulos y opciones descritos antes pueden usarse en v5.20 con un simple C<use locale>, y si las configuraciones regionales de la entrada no deberían ser UTF-8, obtendrá algo menos que el comportamiento ideal, descrita abajo, que obtiene con Perl anteriores a v5.16, o cuando usa el pragma locale sin el parámetro C<:not_characters> en v5.16 y v5.18.  Si está usando exclusivamente configuraciones regionales UTF-8 en v5.20 y superior, el resto de esta sección ya no se aplica a usted.
+Todos los módulos y opciones descritos antes pueden usarse en v5.20 con un simple C<use locale>, y si las configuraciones regionales de la entrada no deberían ser UTF-8, obtendrá algo menos que el comportamiento ideal, descrita abajo, que obtiene con Perl anteriores a v5.16, o cuando usa el I<pragma> locale sin el parámetro C<:not_characters> en v5.16 y v5.18.  Si está usando exclusivamente configuraciones regionales UTF-8 en v5.20 y superior, el resto de esta sección ya no se aplica a usted.
 
 Hay dos casos, configuraciones regionales multi-byte y de un solo byte.  Primero, multi-byte:
 
-La única configuración regional multi-byte (o carácter ancho) que Perl probablemente siempre soporte sea UTF-8.  Esto es debido a la dificultad de la implementación; el hecho es que se publican configuraciones regionales UTF-8 de alta calidad por cada área del mundo (L<http://unicode.org/Public/cldr/2.0.1/> para aquellas que ya están implantadas, pero de una versión anterior; L<http://unicode.org/Public/cldr/latest/> para la más actual, pero deberá extraer la información POSIX por sí mismo), y si esto no funciona puede usar el módulo L<Encode> para traducir a/desde su configuración regional.  Así que, tendrá que hacer una de estas cosas, si está usando una de estas configuraciones regionales, como la Big5 o Shift JIS.  Para configuraciones regionales UTF-8, en los Perl (pre v5.20) que no tienen un soporte completo de la configuración regional UTF-8, puede funcionar razonablemente bien (dependiendo de la implementación de la biblioteca C) simplemente porque ellas y Perl almacenan caracteres que toman múltiples bytes de la misma manera.
+La única configuración regional multi-byte (o carácter ancho) que Perl probablemente siempre soporte sea UTF-8.  Esto se debe a la dificultad de la implementación; el hecho es que se publican configuraciones regionales UTF-8 de alta calidad por cada área del mundo (L<http://unicode.org/Public/cldr/2.0.1/> para aquellas que ya están implantadas, pero de una versión anterior; L<http://unicode.org/Public/cldr/latest/> para la más actual, pero deberá extraer la información POSIX por sí mismo), y si esto no funciona puede usar el módulo L<Encode> para traducir a/desde su configuración regional.  Así que, tendrá que hacer una de estas cosas, si está usando una de estas configuraciones regionales, como la Big5 o Shift JIS.  Para configuraciones regionales UTF-8, en los Perl (pre v5.20) que no tienen un soporte completo de la configuración regional UTF-8, puede funcionar razonablemente bien (dependiendo de la implementación de la biblioteca C) simplemente porque ellas y Perl almacenan caracteres que toman múltiples bytes de la misma manera.
 Sin embargo, algunos, si no la mayoría, de las implementaciones de la biblioteca C no pueden procesar los caracteres de la mitad superior del rango Latin-1 (128 - 255) de forma correcta bajo C<LC_CTYPE>.  Para ver si un carácter es de un tipo particular en una configuración regional, Perl utiliza funciones como C<isalnum()>.  Su biblioteca C quizás no funcione para las configuraciones regionales UTF-8 con esas funciones, sino que sólo trabaje con las funciones de biblioteca para el nuevo ancho, como C<iswalnum()>, que Perl no usa.
 Las configuraciones regionales multi-byte se tratan como configuraciones regionales de un solo byte, y tendrán las restricciones descritas más abajo.  A partir de Perl v5.22 se levantará un mensaje de advertencia cuando Perl detecte una configuración regional multibyte que no esté completamente soportada.
 
@@ -884,7 +884,7 @@ Otro problema con este enfoque es que las operaciones que cruzan el límite que 
 Por ejemplo, la minúscula de LATIN CAPITAL LETTER Y WITH DIAERESIS (U+0178) debe devolver LATIN SMALL LETTER Y WITH DIAERESIS (U+00FF).  Sin embargo, en la configuración regional griega, por ejemplo, no hay ningún carácter en 0xFF, y Perl no tiene manera de saber lo que el carácter en 0xFF se supone que debe representar.  Por lo tanto, no permite hacer esa operación.  De este modo, la minúscula de U+0178 es ella misma.
 
 Los mismos problemas se reproducirán si se habilita la conversión automática a UTF8 de los identificadores de archivo estándar, en la capa predeterminada C<open()>, y en C<@ARGV> en configuraciones regionales que no sean ISO8859-1, ni UTF-8 (mediante el uso de la opción en la línea de comandos B<-C> o la variable de entorno C<PERL_UNICODE>; vea L<perlrun>).
-Las cosas se leen como UTF-8, que normalmente implica una interpretación Unicode, pero la presencia de una configuración regional hace que se interpreten, en su lugar, con esa configuración regional.  Por ejemplo, un código de carácter 0xD7 en la entrada Unicode, lo que debería significar el signo de multiplicación, no será interpretado por Perl de esa manera en la configuración regional griega.  Esto no es un problema si tiene la seguridad que todas las configuraciones regionales siempre sean y sólo sean ISO8859-1, o, si no tiene una deficiente biblioteca C, una configuración regional UTF-8.
+Las cosas se leen como UTF-8, que normalmente implica una interpretación Unicode, pero la presencia de una configuración regional hace que se interpreten, en su lugar, con esa configuración regional.  Por ejemplo, un código de carácter 0xD7 en la entrada Unicode, lo que debería significar el signo de multiplicación, no se interpretará por Perl de esa manera en la configuración regional griega.  Esto no es un problema si tiene la seguridad que todas las configuraciones regionales siempre sean y sólo sean ISO8859-1, o, si no tiene una deficiente biblioteca C, una configuración regional UTF-8.
 
 Aún así, otro problema es que esta aproximación puede llevar a que dos códigos de carácter signifiquen el mismo carácter.  Así, en la configuración regional griega, tanto U+03A7 como U+00D7 son GREEK CAPITAL LETTER CHI.
 
@@ -892,7 +892,7 @@ Debido a todos estos problemas, a partir de v5.22, Perl levantará una advertenc
 
 Las configuraciones regionales ofrecidas por los fabricantes están notablemente llenas de errores, y es difícil para Perl probar su código de gestión de configuración regional porque éste interactúa con código sobre el que Perl no tiene control; por lo tanto el código de gestión de configuración regional en Perl también puede tener errores.  (Sin embargo, las configuracionres regionales proporcionadas por Unicode deberían ser mejores, y existe un mecanismo de retroalimentación para corregir cualquier problema.  Vea L</Definiciones de configuraciones regionales disponibles de forma libre>).
 
-Si tiene Perl v5.16, los problemas mencionados anteriormente desaparecen si utiliza el parámetro C<:not_characters> en el pragma locale (a excepción de los errores de los proveedores en las partes que no tienen que ver con caracteres).  Si no tiene v5.16, y I<tiene> configuraciones regionales que funcionan, su uso puede ser útil para ciertos fines específicos, siempre y cuando se tenga en cuenta los aspectos críticos ya mencionados.  Por ejemplo, si el cotejo de sus configuraciones regionales funciona, funcionará más rápido bajo configuraciones regionales que bajo L<Unicode::Collate>; y tendrá acceso a cosas tales como el símbolo de moneda de la configuración regional y los nombres de los meses y los días de la semana.  (Sin embargo, para recalcar el punto, en v5.16 usted obtiene este acceso sin las desventajas de las configuraciones regionales mediante el uso de la forma C<:not_characters> del pragma).
+Si tiene Perl v5.16, los problemas mencionados anteriormente desaparecen si utiliza el parámetro C<:not_characters> en el I<pragma> locale (a excepción de los errores de los proveedores en las partes que no tienen que ver con caracteres).  Si no tiene v5.16, y I<tiene> configuraciones regionales que funcionan, su uso puede ser útil para ciertos fines específicos, siempre y cuando se tenga en cuenta los aspectos críticos ya mencionados.  Por ejemplo, si el cotejo de sus configuraciones regionales funciona, funcionará más rápido bajo configuraciones regionales que bajo L<Unicode::Collate>; y tendrá acceso a cosas tales como el símbolo de moneda de la configuración regional y los nombres de los meses y los días de la semana.  (Sin embargo, para recalcar el punto, en v5.16 usted obtiene este acceso sin las desventajas de las configuraciones regionales mediante el uso de la forma C<:not_characters> del I<pragma>).
 
 Nota: No se aplica una política uniforme para el uso de las reglas de configuración regional de los códigos de carácter que pueden caber en un byte, y las reglas de Unicode a los que no caben.
 Pre-v5.12, era algo irregular; en v5.12 se ha aplicado de manera consistente con las expresiones regulares, excepto para las clases de caracteres entre corchetes; en v5.14 se extendió a todos las expresiones regulares; y en v5.16 a las operaciones de cambio de tamaño de caja, tales como C<\L> y C<uc()>.  Para el cotejo, en todas las versiones siguientes, se llama a la función del sistema C<strxfrm()>, y obtendrá solo lo que esta función haga.

@@ -14,7 +14,7 @@ Antes de empezar, debería mirar el archivo README que se encuentra en el direct
 
 Esta adaptación soporta actualmente MakeMaker (el conjunto de módulos que se usan para compilar extensiones de perl).  Por tanto, debería ser capaz de generar e instalar la mayor parte de las extensiones que se encuentra en los sitios CPAN.
 
-Se incluyen instrucciones de cómo compilar e instalar módulos perl, incluyendo módulos del tipo XS.  Vea 'COMPILANDO E INSTALANDO MÓDULOS'.
+Se incluyen instrucciones de cómo compilar e instalar módulos perl, incluyendo módulos del tipo XS.  Vea 'COMPILAR E INSTALAR MÓDULOS'.
 
 =head2 Prerrequisitos para compilar Perl en DOS
 
@@ -82,7 +82,7 @@ sockets
 
 =back
 
-=head2 Compilando Perl en DOS
+=head2 Compilar Perl en DOS
 
 =over 4
 
@@ -117,7 +117,7 @@ Si tiene a F<split.exe> y F<gsplit.exe> en su ruta, entonces renombre F<split.ex
 Copie o enlace F<gecho.exe> a F<echo.exe> si no tiene F<echo.exe>.
 Copie o enlace F<gawk.exe> a F<awk.exe> si no tiene F<awk.exe>.
 
-(Si tiene las versiones recomendadas de djdev, utilidades de shell y gawk, esto ya se ha hecho y no necesitará hacer nada).
+(Si tiene las versiones recomendadas de djdev, utilidades de I<shell> y gawk, esto ya se ha hecho y no necesitará hacer nada).
 
 =item *
 
@@ -126,29 +126,29 @@ Chdir al subdirectorio superior de perl de djgpp y escriba los siguientes comand
         set FNCASE=y
         configure.bat
 
-Esto hará por usted algún preprocesado y ejecución del script Configure.
-El script Configure es interactivo, pero en la mayor parte de los casos solo necesita pulsar ENTER.  El comando "set" asegura que DJGPP preserva el tamaño de caja de los nombres de archivo cuando se lee directorios.  Si ya lanzó este comando set cuando desempaquetó el archivo, y está en la misma sesión DOS que cuando desempaquetó el archivo, no necesita lanzar de nuevo el comando set.  Este comando es necesario *antes* de empezar a (re)configurar o (re)compilar perl, para asegurarse tanto que perl se compila correctamente y que se compilan bien los módulos de tipo XS.  Para más información, vea la entrada de info de "_preserve_fncase" en DJGPP:
+Esto hará por usted algún preprocesado y ejecución del I<script> Configure.
+El I<script> Configure es interactivo, pero en la mayor parte de los casos solo necesita pulsar ENTER.  El comando "set" asegura que DJGPP preserva el tamaño de caja de los nombres de archivo cuando se lee directorios.  Si ya lanzó este comando set cuando desempaquetó el archivo, y está en la misma sesión DOS que cuando desempaquetó el archivo, no necesita lanzar de nuevo el comando set.  Este comando es necesario *antes* de empezar a (re)configurar o (re)compilar perl, para asegurarse tanto que perl se compila correctamente y que se compilan bien los módulos de tipo XS.  Para más información, vea la entrada de info de "_preserve_fncase" en DJGPP:
 
         info libc alphabetical _preserve_fncase
 
-Si el script dice que su paquete está incompleto, y le pregunta si continuar, simplemente responda con Y (esto solo puede pasar si no usa nombres de archivo largos u olvidó ejecutar antes "set FNCASE=y").
+Si el I<script> dice que su paquete está incompleto, y le pregunta si continuar, simplemente responda con Y (esto solo puede pasar si no usa nombres de archivo largos u olvidó ejecutar antes "set FNCASE=y").
 
 Cuando Configure le pregunte sobre las extensiones, le sugiero IO y Fcntl, y si quiere manejar una base de datos, SDBM_File o GDBM_File (necesita instalar gdbm para este último). Si quiere usar la extensión POSIX (está por defecto), asegúrese que el tamaño de pila de su F<cc1.exe> sea al menos de 512 kbyte (puede comprobarlo con: C<stubedit cc1.exe>).
 
-También puede usar el script Configure en modo no interactivo.
+También puede usar el I<script> Configure en modo no interactivo.
 Cuando compilo mi F<perl.exe>, usa algo como esto:
 
         configure.bat -des
 
 Puede encontrar más información sobre las opciones de línea de comando de Configure en el archivo F<INSTALL>.
 
-Cuando termina el script, y quiere cambiar algunos de los valores en el archivo generado F<config.sh>, entonces ejecute
+Cuando termina el I<script>, y quiere cambiar algunos de los valores en el archivo generado F<config.sh>, entonces ejecute
 
         sh Configure -S
 
 después de hacer sus modificaciones.
 
-IMPORTANTE: si usa la opción C<-S>, asegúrese de borrar la variable de entorno CONFIG antes de ejecutar el script:
+IMPORTANTE: si usa la opción C<-S>, asegúrese de borrar la variable de entorno CONFIG antes de ejecutar el I<script>:
 
         set CONFIG=
 

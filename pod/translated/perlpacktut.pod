@@ -838,7 +838,7 @@ Para hacer un volcado simple de memoria, desempaquetamos algunos bytes como pare
 
 =head1 Sección para la diversión
 
-    # Sacando dígitos de la nada...
+    # Sacar dígitos de la nada...
     print unpack( 'C', pack( 'x' ) ),
           unpack( '%B*', pack( 'A' ) ),
           unpack( 'H', pack( 'A' ) ),

@@ -131,19 +131,19 @@ La copia de la base de datos de caracteres Unicode incluidos en Perl 5.10.1 se h
 En Perl 5.10.1 se incluyó una nueva interfaz para conectar y usar órdenes de resolución de métodos distintos del predeterminado (búsqueda lineal en profundidad).
 El orden de resolución de métodos C3 agregado en 5.10.0 se ha reimplementado como un complemento sin cambiar su interfaz del espacio Perl. Vea L<perlmroapi> para obtener más información.
 
-=head2 El pragma C<overloading>
+=head2 El I<pragma> C<overloading>
 
-Este pragma le permite desactivar o activar localmente la sobrecarga de algunas o todas las operaciones. (Yuval Kogman)
+Este I<pragma> le permite desactivar o activar localmente la sobrecarga de algunas o todas las operaciones. (Yuval Kogman)
 
 =head2 Tests paralelos
 
-La distribución principal ahora puede ejecutar sus pruebas de regresión en paralelo en las plataformas de tipo Unix. En lugar de ejecutar C<make test>, ponga en su entorno la variable C<TEST_JOBS> al número de pruebas que se deben ejecutar en paralelo, y ejecute C<make test_harness>. En un shell de la familia Bourne, esto se puede hacer así
+La distribución principal ahora puede ejecutar sus pruebas de regresión en paralelo en las plataformas de tipo Unix. En lugar de ejecutar C<make test>, ponga en su entorno la variable C<TEST_JOBS> al número de pruebas que se deben ejecutar en paralelo, y ejecute C<make test_harness>. En un I<shell> de la familia Bourne, esto se puede hacer así
 
     TEST_JOBS=3 make test_harness  # Ejecuta 3 test en paralelo
 
-Se utiliza una variable de entorno, en lugar de ejecutarse por sí mismo en paralelo, porque L<TAP::Harness> tiene que ser capaz, por sí mismo, de programar scripts de test individuales sin que haya conflictos entre ellos, y no hay un interfaz estándar de C<make> para interactuar con las programaciones de sus trabajos.
+Se utiliza una variable de entorno, en lugar de ejecutarse por sí mismo en paralelo, porque L<TAP::Harness> tiene que ser capaz, por sí mismo, de programar I<scripts> de test individuales sin que haya conflictos entre ellos, y no hay un interfaz estándar de C<make> para interactuar con las programaciones de sus trabajos.
 
-Tenga en cuenta que en la actualidad algunos scripts de prueba pueden fallar cuando se ejecuta en paralelo (sobre todo C<ext/IO/t/io_dir.t>). Si es necesario ejecute los scripts una vez más de forma secuencial y mire a ver si los errores desaparecen.
+Tenga en cuenta que en la actualidad algunos I<scripts> de prueba pueden fallar cuando se ejecuta en paralelo (sobre todo C<ext/IO/t/io_dir.t>). Si es necesario ejecute los I<scripts> una vez más de forma secuencial y mire a ver si los errores desaparecen.
 
 =head2 Soporte DTrace
 
@@ -173,7 +173,7 @@ Fue añadido al núcleo principal (versión 2.020).
 
 =item C<parent>
 
-Este pragma establece una relación ISA con clases base en tiempo de compilación. Proporciona la característica clave de C<base> sin la función de fluencia.
+Este I<pragma> establece una relación ISA con clases base en tiempo de compilación. Proporciona la característica clave de C<base> sin la función de fluencia.
 
 =item C<Parse::CPAN::Meta>
 
@@ -242,7 +242,7 @@ Actualizado desde la versión 1.06 a la 1.07.
 
 =item C<overloading>
 
-Vea más arriba L</"El pragma C<overloading>">.
+Vea más arriba L</"El I<pragma> C<overloading>">.
 
 =item C<version>
 
@@ -411,7 +411,7 @@ Actualizado desde la versión 2.18_02 a la 2.2002.
 
 =item C<Fatal>
 
-Actualizado desde la versión 1.05 a la 2.06_01. Vea también el nuevo pragma C<autodie>.
+Actualizado desde la versión 1.05 a la 2.06_01. Vea también el nuevo I<pragma> C<autodie>.
 
 =item C<File::Basename>
 
@@ -872,7 +872,7 @@ Por 5.10.2, se prevé que muchos módulos con una doble vida se muevan desde F<l
 
 Si C<vendorlib> y C<vendorarch> son iguales, entonces sólo se agregan a C<@INC> una vez.
 
-C<$Config{usedevel}> y el C<PERL_USE_DEVEL> de nivel C se definen ahora si perl es compilado con C<-Dusedevel>.
+C<$Config{usedevel}> y el C<PERL_USE_DEVEL> de nivel C se definen ahora si perl se compila con C<-Dusedevel>.
 
 F<Configure> permitirá el uso de C<-fstack-protector>, para proporcionar protección contra los ataques de destrozo de la pila, si el compilador lo soporta.
 
@@ -892,7 +892,7 @@ Como parte de la simplificación de la F<ext>, todas las extensiones en todas la
 
 Eliminado F<libbsd> de AIX 5L y 6.1. De F<libbsd>, sólo se utilizaba flock().
 
-Eliminado F<libgdbm> de AIX 5L y 6.1. El F<libgdbm> es entregado como un paquete opcional con la caja de herramientas AIX. Por desgracia, la versión de 64 bits está rota.
+Eliminado F<libgdbm> de AIX 5L y 6.1. El F<libgdbm> se entrega como un paquete opcional con la caja de herramientas AIX. Por desgracia, la versión de 64 bits está rota.
 
 Cambios adecuados significa que AIX 4.2 debería funcionar de nuevo.
 
@@ -930,7 +930,7 @@ Ahora hay soporte para Symbian S60 3.2 SDK y S60 5.0 SDK.
 
 =item Win32
 
-Un mejor manejo de ventana de mensajes significa que los mensajes C<alarm> y C<kill> ya no serán desechados cuando ocurran condiciones de carrera.
+Un mejor manejo de ventana de mensajes significa que los mensajes C<alarm> y C<kill> ya no se desecharán cuando ocurran condiciones de carrera.
 
 =item VMS
 
@@ -941,7 +941,7 @@ VMS ahora soporta C<getgrgid>.
 
 Muchas mejoras y limpiezas se han hecho para el manejo y conversión de código de nombres de archivos en VMS.
 
-Habilitando el nombre lógico C<PERL_VMS_POSIX_EXIT> se codifica un estado de salida POSIX en un valor de condición VMS para una mejor interacción con el shell bash de GNV y otras utilerías que dependen de los valores de salida de POSIX.  Vea L<perlvms/"$?"> para los detalles.
+Habilitando el nombre lógico C<PERL_VMS_POSIX_EXIT> se codifica un estado de salida POSIX en un valor de condición VMS para una mejor interacción con el I<shell> bash de GNV y otras utilerías que dependen de los valores de salida de POSIX.  Vea L<perlvms/"$?"> para los detalles.
 
 =back
 
@@ -1015,7 +1015,7 @@ Patrones que incluyan alternancia pueden ser sensibles a la representación UTF-
 
 =item *
 
-Dentro de archivos de código fuente Perl codificados en UTF8 (es decir, cuando C<use utf8> está en vigor), las cadenas literales entrecomilladas dobles podrían resultar dañadas cuando un C<\xNN>, C<\0NNN> o C<\N{}> es seguido por un carácter literal con un valor ordinal superior a 255 [RT # 59908].
+Dentro de archivos de código fuente Perl codificados en UTF8 (es decir, cuando C<use utf8> está en vigor), las cadenas literales entrecomilladas dobles podrían resultar dañadas cuando un C<\xNN>, C<\0NNN> o C<\N{}> se sigue por un carácter literal con un valor ordinal superior a 255 [RT # 59908].
 
 =item *
 
@@ -1405,7 +1405,7 @@ Un problema similar puede ocurrir en otros módulos que proporcionan las funcion
 
 =item *
 
-El pragma C<charnames> puede generar un error en tiempo de ejecución cuando una expresión regular es interpolada [RT #56444]:
+El I<pragma> C<charnames> puede generar un error en tiempo de ejecución cuando una expresión regular es interpolada [RT #56444]:
 
     use charnames ':full';
     my $r1 = qr/\N{THAI CHARACTER SARA I}/;
@@ -1436,7 +1436,7 @@ C<Switch> es defectuoso y debe evitarse. De Perl 5.11.0 en adelante, se pretende
 
 =item *
 
-C<suidperl> será eliminado en 5.12.0. Esto proporciona un mecanismo para emular los bits de permiso setuid en sistemas que no lo soportan correctamente.
+C<suidperl> se eliminará en 5.12.0. Esto proporciona un mecanismo para emular los bits de permiso setuid en sistemas que no lo soportan correctamente.
 
 =back
 

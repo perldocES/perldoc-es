@@ -53,7 +53,7 @@ Escribir "buildtype r" en el símbolo del sistema de comandos establece el tipo 
 
 =head2 Make
 
-El proceso make solo se ejecuta bajo la shell WinNT.  El makefile NetWare se localiza bajo la carpeta NetWare.  Hace uso de miniperl.exe para ejecutar algunos I<scripts> Perl. Para crear miniperl.exe, primero establezca las rutas requerida para el compilador Visual c++ (especifique la posición de vcvars32) en el símbolo del sistema de comandos.  Y luego ejecutar nmake desde la carpeta win32 desde símbolo del sistema de comandos de WinNT.  El proceso de compilación se puede parar después de que se termine de compilar miniperl.exe. Y luego ejecutar nmake desde la carpeta NetWare desde el símbolo del sistema de comandos de WinNT.
+El proceso make solo se ejecuta bajo la I<shell> WinNT.  El makefile NetWare se localiza bajo la carpeta NetWare.  Hace uso de miniperl.exe para ejecutar algunos I<scripts> Perl. Para crear miniperl.exe, primero establezca las rutas requerida para el compilador Visual c++ (especifique la posición de vcvars32) en el símbolo del sistema de comandos.  Y luego ejecutar nmake desde la carpeta win32 desde símbolo del sistema de comandos de WinNT.  El proceso de compilación se puede parar después de que se termine de compilar miniperl.exe. Y luego ejecutar nmake desde la carpeta NetWare desde el símbolo del sistema de comandos de WinNT.
 
 Actualmente, se han comprobado los siguientes dos tipos de compilación en NetWare:
 

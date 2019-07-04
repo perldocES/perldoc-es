@@ -481,7 +481,7 @@ Los formateadores Pod deben hacer esfuerzos razonables para evitar que el texto 
 
 =item *
 
-Los intérpretes de Pod deberían, por defecto, expandir los tabuladores dentro de los párrafos literales a medida de que son procesados, antes de pasarlos al formateador o a otro procesador.  Los intérpretes también pueden permitir una opción que obvie esto.
+Los intérpretes de Pod deberían, por defecto, expandir los tabuladores dentro de los párrafos literales a medida de que se procesan, antes de pasarlos al formateador o a otro procesador.  Los intérpretes también pueden permitir una opción que obvie esto.
 
 =item *
 

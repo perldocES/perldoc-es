@@ -25,7 +25,7 @@ Usamos la versión 1.2.4, que podría instalarse desde el empaquetado original, 
 
 El yacc que viene con BS2000 POSIX no nos funciona.  Así que usamos bison.  Tuvimos que hacer unos pocos cambios en perl para poder usar el intérprete puro (reentrante) de bison.  Usamos la versión 1.25, pero tuvimos que añadir unos pocos cambios debidos al EBCDIC.  Siga leyendo para obtener más detalles al respecto de yacc.
 
-=head2 Desempaquetando la distribución Perl en BS2000
+=head2 Desempaquetar la distribución Perl en BS2000
 
 Para extraer un archivo tar ASCII en POSIX BS2000 necesita un sistema de archivos ASCII (usamos para esto el punto de montaje /usr/local/ascii).  Ahora extraiga el archivo en el sistema de archivos sin conversión de E/S:
 
@@ -45,7 +45,7 @@ cp -r /usr/local/ascii/perl5.005_02 ./
 
 Hay un archivo de "pistas" para BS2000 llamado hints.posix-bc (porque posix-bc es el nombre del SO que `uname` devuelve) que especifica los valores correctos para la mayor parte de las configuraciones.  El problema principal es (naturalmente) el conjunto de caracteres EBCDIC.  Nosotros tenemos la versión alemana de EBCDIC.
 
-Debido a que nuestros problemas con el yacc nativo usamos GNU bison para generar un intérprete puro (=reentrante) para perly.y.  Así que nuestro yacc es, realmente, el siguiente script:
+Debido a que nuestros problemas con el yacc nativo usamos GNU bison para generar un intérprete puro (=reentrante) para perly.y.  Así que nuestro yacc es, realmente, el siguiente I<script>:
 
 -----8<-----/usr/local/bin/yacc-----8<-----
 #! /usr/bin/sh
@@ -101,7 +101,7 @@ Failed 11/231 test scripts, 95.24% okay. 57/10595 subtests failed, 99.46% okay.
 Aún no tenemos nroff en POSIX BS2000, así que ignoramos todos los errores mientras instalamos la documentación.
 
 
-=head2 Usar Perl el en shell Posix de BS2000
+=head2 Usar Perl el en I<shell> Posix de BS2000
 
 POSIX BS2000 no soporta la notación shebang (C<#!/usr/local/bin/perl>), así que en su lugar tiene que usar las siguientes líneas:
 
@@ -121,7 +121,7 @@ Ahora puede iniciarlo con el siguiente comando (SDF):
 
 C</START-PROG FROM-FILE=*MODULE(PERL,PERL),PROG-MODE=*ANY,RUN-MODE=*ADV>
 
-Primero obtiene el símbolo del sistema de la línea de comandos BS2000 ('*').  Aquí puede entrar sus parámetros, por ejemplo, C<-e 'print "¡Hola, Mundo!\\n";'> (¡fíjese en la doble barra inclinada inversa!) o C<-w> y el nombre de su script Perl.
+Primero obtiene el símbolo del sistema de la línea de comandos BS2000 ('*').  Aquí puede entrar sus parámetros, por ejemplo, C<-e 'print "¡Hola, Mundo!\\n";'> (¡fíjese en la doble barra inclinada inversa!) o C<-w> y el nombre de su I<script> Perl.
 Los nombres de archivo que comienzan por C</> se buscan en el sistema de archivos Posix, los demás se buscan en el sistema de archivos BS2000.  Incluso puede usar comodines si pone un C<%> delante de su nombre de archivo (por ejemplo, C<-w checkfiles.pl %*.c>).  Lea su manual de C/C++ para posibilidades adicionales del símbolo del sistema de la línea de comandos (mire por PARAMETER-PROMPTING).
 
 =head2 Anomalías de punto flotante en BS2000

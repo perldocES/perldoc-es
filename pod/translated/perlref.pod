@@ -14,8 +14,8 @@ Antes de la publicación de Perl 5, era difícil representar estructuras complej
 Perl ahora no sólo hace que sea más fácil usar referencias simbólicas a variables, sino que también le permite tener referencias "duras" a cualquier trozo de datos o código.
 Cualquier escalar puede contener una referencia dura.  Dado que los arrays y los hashes contienen escalares, ahora puede fácilmente generar arrays de arrays, arrays de hashes, arrays de hashes de funciones, y así sucesivamente.
 
-Las referencias duras son inteligentes: hacen por usted un seguimiento de los recuentos de referencias, liberando automáticamente lo que es referido en cuanto su recuento de referencias llega a cero.  (Los recuentos de referencia para valores en estructuras de datos auto referenciadas o cíclicas quizás no puedan llegar a cero sin un poco de ayuda. Vea L<perlobj/"Recolección de basura en dos fases"> para una explicación detallada).
-Si eso le pasa a un objeto, el objeto es destruido.  Vea L<perlobj> para más información sobre los objetos.  (En cierto sentido, todo en Perl es un objeto, pero por lo general se reserva la palabra para las referencias a objetos que han sido oficialmente "bendecidos" en una clase I<package>).
+Las referencias duras son inteligentes: hacen por usted un seguimiento de los recuentos de referencias, liberando automáticamente lo que se refiere en cuanto su recuento de referencias llega a cero.  (Los recuentos de referencia para valores en estructuras de datos auto referenciadas o cíclicas quizás no puedan llegar a cero sin un poco de ayuda. Vea L<perlobj/"Recolección de basura en dos fases"> para una explicación detallada).
+Si eso le pasa a un objeto, el objeto se destruye.  Vea L<perlobj> para más información sobre los objetos.  (En cierto sentido, todo en Perl es un objeto, pero por lo general se reserva la palabra para las referencias a objetos que han sido oficialmente "bendecidos" en una clase I<package>).
 
 Las referencias simbólicas son nombres de variables u otros objetos, igual que un enlace simbólico en un sistema de archivos Unix contiene sólo el nombre de un archivo.
 La notación C<*glob> es algo así como una referencia simbólica.  (Las referencias simbólicas a veces se llaman "referencias blandas", pero, por favor, no las llame así; las referencias son ya lo suficientemente confusas sin tener que usar sinónimos inútiles).
@@ -186,7 +186,7 @@ Una referencia se puede crear mediante el uso de una sintaxis especial, cariños
     $globname  = *foo{NAME};    # "foo"
     $pkgname   = *foo{PACKAGE}; # "main"
 
-Todos ellos se explican por sí mismos, excepto para C<*foo{IO}>, que requiere una atención especial.  Devuelve el identificador de E/S, utilizado para los identificadores de archivo (L<perlfunc/open>), sockets (L<perlfunc/socket> and L<perlfunc/socketpair>), e identificadores de directorio (L<perlfunc/opendir>).  Por razones de compatibilidad con versiones anteriores de Perl, C<*foo{IDENTIFICADOR_ARCHIVO}> es un sinónimo de C<*foo{IO}>, a pesar de que no se recomienda, para usar en su lugar un uso consistente de un único nombre: IO.  En versiones de perl entre v5.8 y v5.22, emitirá una advertencia de obsolescencia, pero esta obsolescencia se rescindió.
+Todos ellos se explican por sí mismos, excepto para C<*foo{IO}>, que requiere una atención especial.  Devuelve el identificador de E/S, utilizado para los identificadores de archivo (L<perlfunc/open>), I<sockets> (L<perlfunc/socket> and L<perlfunc/socketpair>), e identificadores de directorio (L<perlfunc/opendir>).  Por razones de compatibilidad con versiones anteriores de Perl, C<*foo{IDENTIFICADOR_ARCHIVO}> es un sinónimo de C<*foo{IO}>, a pesar de que no se recomienda, para usar en su lugar un uso consistente de un único nombre: IO.  En versiones de perl entre v5.8 y v5.22, emitirá una advertencia de obsolescencia, pero esta obsolescencia se rescindió.
 
 C<*foo{COSA}> devuelve undef si esta COSA particular todavía no se ha usado, excepto en el caso de los escalares.  C<*foo{SCALAR}> devuelve una referencia a un escalar anónimo si $foo todavía no se ha usado.  Esto podría cambiar en una futura versión.
 
@@ -314,7 +314,7 @@ Aquí hay un truco para la interpolación de una llamada a subrutina en una cade
 
     print "Mi sub retornó esta vez @{[misub(1,2,3)]}.\n";
 
-Esto funciona así: cuando se ve un C<@{...}> en la cadena entre comillas dobles, se evalúa como un bloque.  El bloque crea una referencia a un array anónimo que contiene el resultado de la llamada a C<mysub(1,2,3)>.  Así que todo el bloque devuelve una referencia a un array, que luego es desreferenciado por C<@{...}> y pegado en la cadena de comillas dobles. Esta argucia también es útil para expresiones arbitrarias:
+Esto funciona así: cuando se ve un C<@{...}> en la cadena entre comillas dobles, se evalúa como un bloque.  El bloque crea una referencia a un array anónimo que contiene el resultado de la llamada a C<mysub(1,2,3)>.  Así que todo el bloque devuelve una referencia a un array, que luego se desreferencia por C<@{...}> y se pega en la cadena de comillas dobles. Esta argucia también es útil para expresiones arbitrarias:
 
     print "Esto produce @{[$n + 5]} widgets\n";
 
@@ -436,13 +436,13 @@ puede forzar la interpretación como palabra reservada mediante la adición de c
     $array{ +shift }
     $array{ shift @_ }
 
-El pragma C<use warnings> o la opción B<-w> le avisarán si se interpreta una palabra reservada como una cadena.
+El I<pragma> C<use warnings> o la opción B<-w> le avisarán si se interpreta una palabra reservada como una cadena.
 Pero ya no se le advertirá sobre el uso de palabras en minúsculas, porque la cadena estará, de forma efectiva, entrecomillada.
 
 =head2 Pseudo-hashes: Usar un array como un hash
 X<pseudo-hash> X<pseudo hash> X<pseudohash>
 
-Los pseudo-hashes se han eliminado de Perl.  El pragma 'fields' sigue estando disponible.
+Los pseudo-hashes se han eliminado de Perl.  El I<pragma> 'fields' sigue estando disponible.
 
 =head2 Plantillas de funciones
 X<scope, lexical> X<closure> X<lexical> X<lexical scope>
@@ -494,7 +494,7 @@ Una mejor solución consiste en lo siguiente:
         return $x + interior();
     }
 
-Ahora interior() sólo se puede llamar desde dentro de exterior(), debido a las asignaciones temporales de la subrutina anónima. Pero cuando lo hace, tiene acceso normal a la variable léxica $x del ámbito exterior() en el momento en que exterior() es invocado.
+Ahora interior() sólo se puede llamar desde dentro de exterior(), debido a las asignaciones temporales de la subrutina anónima. Pero cuando lo hace, tiene acceso normal a la variable léxica $x del ámbito exterior() en el momento en que exterior() se invoca.
 
 Esto tiene el interesante efecto de crear una función local a otra función, algo que normalmente no se soporta en Perl.
 

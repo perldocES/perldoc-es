@@ -202,7 +202,7 @@ Se ha corregido la documentación que indica los paquetes de Solaris necesarios 
 
 =item * 
 
-El script de prueba F<lib/locale.t> se ha actualizado para trabajar en la publicación del próximo Lion.
+El I<script> de prueba F<lib/locale.t> se ha actualizado para trabajar en la publicación del próximo Lion.
 
 =item * 
 
@@ -237,7 +237,7 @@ El primero es siempre 0, los otros dos ahora son no-ops.
 
 =item *
 
-Se ha corregido un error que podría causar un error "uso del valor liberado en la iteración" si los próximos dos elementos hash en los que se puede iterar, son borrados. [perl #85026]
+Se ha corregido un error que podría causar un error "uso del valor liberado en la iteración" si los próximos dos elementos hash en los que se puede iterar, se borran. [perl #85026]
 
 =item *
 

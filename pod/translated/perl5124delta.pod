@@ -28,7 +28,7 @@ L<Module::CoreList> se ha actualizado de la versión 2.43 a la 2.50.
 
 =head1 Pruebas
 
-El script de prueba F<cpan/CGI/t/http.t> se arregló para trabajar cuando el entorno tiene variables de entorno HTTPS_*, como HTTPS_PROXY.
+El I<script> de prueba F<cpan/CGI/t/http.t> se arregló para trabajar cuando el entorno tiene variables de entorno HTTPS_*, como HTTPS_PROXY.
 
 =head1 Documentación
 

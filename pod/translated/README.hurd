@@ -14,7 +14,7 @@ Si desea usar Perl en Hurd, la distribución recomendada es Debian GNU/Hurd (vis
 El conjunto de pruebas de Perl podría detectar errores en Hurd.  Es muy probable que no se superen las pruebas "lib/anydbm" y "pragma/warnings".
 En realidad, estos errores no son específicos de Hurd (como parece indicar el resultado del conjunto de pruebas).
 
-Si la red no está configurada, las pruebas de sockets pueden generar errores.  Debe establecer "/hurd/pfinet" como traductor de "/servers/socket/2", suministrándole los argumentos correctos.  Pruebe "/hurd/pfinet --help" para obtener más información.
+Si la red no está configurada, las pruebas de I<sockets> pueden generar errores.  Debe establecer "/hurd/pfinet" como traductor de "/servers/socket/2", suministrándole los argumentos correctos.  Pruebe "/hurd/pfinet --help" para obtener más información.
 
 Estas son las estadísticas correspondientes a Perl 5.005_62 en mi sistema:
 

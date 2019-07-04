@@ -394,7 +394,7 @@ Por supuesto, C<Moose> no es perfecto.
 
 Puede hacer que su código tarde más tiempo en cargar. C<Moose> no es pequeño y genera una I<gran> cantidad de código cuando el usuario define sus propias clases. Esto hace que el código en tiempo de ejecución sea lo más eficiente posible, pero tendrá un coste cuando todo este código se cargue por primera vez.
 
-Este incremento en el tiempo de carga puede ser problemático cuando la velocidad de inicio es importante, como en scripts de línea de comandos o en el típico script CGI que debe cargarse cada vez que se ejecuta.
+Este incremento en el tiempo de carga puede ser problemático cuando la velocidad de inicio es importante, como en I<scripts> de línea de comandos o en el típico I<script> CGI que debe cargarse cada vez que se ejecuta.
 
 Antes de asustarse debe saber que mucha gente usa C<Moose> para construir herramientas de línea de comandos y código con necesidades específicas de tiempo de inicio. Le animamos a probar C<Moose> antes de preocuparse por la velocidad de inicio.
 
@@ -494,8 +494,7 @@ A continuación se ofrece un breve resumen de las opciones consideradas:
 =item * L<Moose>
 
 C<Moose> es la opción máxima (la más completa). Dispone de muchas características, un gran ecosistema y una importante base de usuarios. También hemos descrito L<Moo>.
-C<Moo> es una versión ligera de C<Moose> que ofrece una alternativa razonable cuando Moose
-no es adecuado para la aplicación.
+C<Moo> es una versión ligera de C<Moose> que ofrece una alternativa razonable cuando Moose no es adecuado para la aplicación.
 
 =item * L<Class::Accessor>
 
@@ -528,7 +527,6 @@ sistemas de objetos minimalistas que se encargan de las tareas repetitivas y sim
 Para proyectos más complejos, L<Moose> proporciona un variado conjunto de características que le permitirán centrarse en la implementación de la lógica del sistema.
 
 Le recomendamos que pruebe L<Moose>,
-L<Class::Accessor>, y L<Class::Tiny> para decidir qué sistema de objetos es adecuado
-para usted.
+L<Class::Accessor>, y L<Class::Tiny> para decidir qué sistema de objetos es adecuado para usted.
 
 =cut

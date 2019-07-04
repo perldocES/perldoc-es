@@ -93,7 +93,7 @@ Declara constantes
 
 =item deprecate
 
-Pragma Perl para la obsolescencia de la versión principal de un módulo
+I<Pragma> Perl para la obsolescencia de la versión principal de un módulo
 
 =item diagnostics
 
@@ -320,7 +320,7 @@ Ejecuta pruebas de rendimiento de código Perl
 
 =item C<IO::Socket::IP>
 
-IP socket, de familia neutral, que soporta tanto IPv4 e IPv6
+I<socket> IP, de familia neutral, que soporta tanto IPv4 e IPv6
 
 =item C<Socket>
 
@@ -424,7 +424,7 @@ Envoltorio alrededor de CPAN.pm que no usa ningún módulo XS
 
 =item CPAN::Plugin
 
-Clase base para todas las extensiones de shell de CPAN
+Clase base para todas las extensiones de I<shell> de CPAN
 
 =item CPAN::Plugin::Specfile
 
@@ -988,7 +988,7 @@ Módulo extra para el filtrado de código fuente Perl
 
 =item FindBin
 
-Localiza el directorio original del script perl
+Localiza el directorio original del I<script> perl
 
 =item GDBM_File
 
@@ -1096,15 +1096,15 @@ Interfaz orientado a objetos para la llamada del sistema select
 
 =item IO::Socket
 
-Interfaz objeto para las comunicaciones con socket
+Interfaz objeto para las comunicaciones con I<socket>
 
 =item IO::Socket::INET
 
-Interfaz de objeto para los sockets del dominio AF_INET
+Interfaz de objeto para los I<sockets> del dominio AF_INET
 
 =item IO::Socket::UNIX
 
-Interfaz de objeto para los sockets del dominio AF_UNIX
+Interfaz de objeto para los I<sockets> del dominio AF_UNIX
 
 =item IO::Uncompress::AnyInflate
 
@@ -1224,7 +1224,7 @@ Códigos estándares para la identificación del idioma
 
 =item Locale::Codes::Script
 
-Códigos estándar para la identificación de script
+Códigos estándar para la identificación de I<script>
 
 =item Locale::Country
 
@@ -1264,7 +1264,7 @@ Artículo sobre localización de software
 
 =item Locale::Script
 
-Códigos estándar para la identificación de script
+Códigos estándar para la identificación de I<script>
 
 =item MIME::Base64
 
@@ -1836,7 +1836,7 @@ Token plan del resultado.
 
 =item TAP::Parser::Result::Pragma
 
-Token pragma para TAP.
+Token I<pragma> para TAP.
 
 =item TAP::Parser::Result::Test
 
@@ -3108,7 +3108,7 @@ El estilo de codificación es una cuestión de gusto personal. Muchas personas e
 
 Utilice guiones bajos para separar palabras.  Generalmente resulta más fácil leer $nombres_de_variable_como_este, especialmente para los no castellanohablantes. Es una regla sencilla que también se aplica a NOMBRES_DE_VARIABLE_COMO_ESTE.
 
-Nombres de paquetes/módulos son una excepción a esta regla. De manera informal, Perl reserva los nombres de módulo en minúsculas para los módulos de tipo "pragma", como C<integer> y C<strict>. Otros módulos normalmente comienzan con una letra en mayúscula y seguir una mezcla de minúsculas y mayúsculas sin guiones bajos (se necesita que sea corto y portable).
+Nombres de paquetes/módulos son una excepción a esta regla. De manera informal, Perl reserva los nombres de módulo en minúsculas para los módulos de tipo I<pragma>, como C<integer> y C<strict>. Otros módulos normalmente comienzan con una letra en mayúscula y seguir una mezcla de minúsculas y mayúsculas sin guiones bajos (se necesita que sea corto y portable).
 
 Puede encontrar útil usar el tamaño de caja de las letras para indicar el ámbito o la naturaleza de una variable. Por ejemplo:
 
@@ -3253,7 +3253,7 @@ Es una buena idea mandar un anuncio de la disponibilidad de su módulo (o el pro
 
 Si es posible, registre el módulo en CPAN.  Debería incluir detalles de su ubicación, en su anuncio.
 
-Algunas notas sobre archivos ftp: Por favor, usar un nombre de archivo largo y descriptivo, que incluya el número de versión. La mayor parte de los directorios no serán leíbles/listables, es decir, no será capaz de ver su archivo después de subirlo. Recuerde enviar su mensaje de notificación por correo electrónico tan pronto como sea posible después de subirlo, o su archivo será borrado automáticamente. Permita un tiempo para que el archivo se procese y/o compruebe antes de anunciar su ubicación.
+Algunas notas sobre archivos ftp: Por favor, usar un nombre de archivo largo y descriptivo, que incluya el número de versión. La mayor parte de los directorios no serán leíbles/listables, es decir, no será capaz de ver su archivo después de subirlo. Recuerde enviar su mensaje de notificación por correo electrónico tan pronto como sea posible después de subirlo, o su archivo se borrará automáticamente. Permita un tiempo para que el archivo se procese y/o compruebe antes de anunciar su ubicación.
 
 Archivos FTP para módulos Perl:
 
@@ -3284,7 +3284,7 @@ O intente añadir un mecanismo para revertir al comportamiento anterior si la ge
 
 =back
 
-=head2 Directrices para convertir bibliotecas de scripts en Perl 4, a módulos
+=head2 Directrices para convertir bibliotecas de I<scripts> en Perl 4, a módulos
 
 =over 4
 
@@ -3292,19 +3292,19 @@ O intente añadir un mecanismo para revertir al comportamiento anterior si la ge
 
 No hay ningún requisito para convertir nada.
 
-¡Si no está roto, no lo arregle! La biblioteca de scripts de Perl 4 deben continuar funcionando sin problemas. Puede necesitar hacer algunos cambios menores (como escapar las '@' que no sean array dentro de las cadenas entrecomilladas dobles) pero no es necesario convertir un archivo .pl en un módulo solo por eso.
+¡Si no está roto, no lo arregle! La biblioteca de I<scripts> de Perl 4 deben continuar funcionando sin problemas. Puede necesitar hacer algunos cambios menores (como escapar las '@' que no sean array dentro de las cadenas entrecomilladas dobles) pero no es necesario convertir un archivo .pl en un módulo solo por eso.
 
 =item  *
 
 Considere las implicaciones.
 
-Todas las aplicaciones Perl que hacen uso del script necesitarán cambiarse (ligeramente) si el script se convierte en un módulo.  ¿No merece la pena tener un plan para hacer otros cambios, al mismo tiempo?
+Todas las aplicaciones Perl que hacen uso del I<script> necesitarán cambiarse (ligeramente) si el I<script> se convierte en un módulo.  ¿No merece la pena tener un plan para hacer otros cambios, al mismo tiempo?
 
 =item  *
 
 Aproveche la oportunidad al máximo.
 
-Si va a convertir el script a un módulo puede aprovechar la oportunidad para rediseñar la interfaz.  Las anteriores guías para la creación de módulos incluyen muchos de los problemas que debe considerar.
+Si va a convertir el I<script> a un módulo puede aprovechar la oportunidad para rediseñar la interfaz.  Las anteriores guías para la creación de módulos incluyen muchos de los problemas que debe considerar.
 
 =item  *
 

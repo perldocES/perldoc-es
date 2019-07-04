@@ -27,7 +27,7 @@ Lea L<Unicode Security Considerations|http://www.unicode.org/reports/tr36>.
 
 En orden de preservar la retrocompatibilidad, Perl no da un soporte Unicode interno completo a menos que se especifique el I<pragma> L<S<C<use feature 'unicode_strings'>>|feature/La característica 'unicode_strings'>.  (Esto es lo que se selecciona automáticamente si usa S<C<use 5.012>> o superior).  Fallar en esto puede provocar sorpresas inesperadas.  Vea L</El "Error de Unicode">, más abajo.
 
-Este pragma no afecta a la E/S.  No cambia la representación interna de las cadenas, solo su interpretación.  Existen todavía diversos lugares dodne Unicode no se soporta completamente, como el caso de los nombres de los archivos.
+Este I<pragma> no afecta a la E/S.  No cambia la representación interna de las cadenas, solo su interpretación.  Existen todavía diversos lugares dodne Unicode no se soporta completamente, como el caso de los nombres de los archivos.
 
 =item Capas de Entrada y Salida
 
@@ -222,7 +222,7 @@ C<\w> se puede usar para coincidir con ideogramas japoneses, por ejemplo; y C<[[
 
 =item *
 
-Las propiedades Unicode con nombre, scripts, y rangos de bloques se pueden usar (como las clases de carácter entre corchetes) usando la construcción C<\p{}> ("coincide con la propiedad") y la negación C<\P{}>, ("no coincide con la propiedad").
+Las propiedades Unicode con nombre, I<scripts>, y rangos de bloques se pueden usar (como las clases de carácter entre corchetes) usando la construcción C<\p{}> ("coincide con la propiedad") y la negación C<\P{}>, ("no coincide con la propiedad").
 
 Vea L</"Propiedades de carácter Unicode"> para más detalles.
 
@@ -341,7 +341,7 @@ C<LC> y C<L&> son especiales: las dos son alias para el conjunto consistente de 
 
 =head3 B<Tipos de caracteres bidireccionales>
 
-Debido a que los scripts difieren en su direccionalidad (Hebrew y Arábigo se escriben de derecha a izquierda, por ejemplo) Unicode ofrece una propiedad C<Bidi_Class>.
+Debido a que los I<scripts> difieren en su direccionalidad (Hebrew y Arábigo se escriben de derecha a izquierda, por ejemplo) Unicode ofrece una propiedad C<Bidi_Class>.
 Algunos de los valores que esta propiedad puede tener son:
 
     Valor       Significado
@@ -371,13 +371,13 @@ Por ejemplo, C<\p{Bidi_Class:R}> coincide con caracteres que se escriben normalm
 
 =head3 B<Scripts>
 
-Las lenguas del mundo se escriben en muchos scripts diferentes.  Esta sentencia (a menos que la esté leyendo traducida) está escrita en Latin, mientras que el Ruso se escribe en Cirílico, y el Griego se escribe en, bueno, Griego; el Japones, principalmente, en Hiragana o Katakana.  Hay muchos más.
+Las lenguas del mundo se escriben en muchos I<scripts> diferentes.  Esta sentencia (a menos que la esté leyendo traducida) está escrita en Latín, mientras que el Ruso se escribe en Cirílico, y el Griego se escribe en, bueno, Griego; el Japones, principalmente, en Hiragana o Katakana.  Hay muchos más.
 
-El C<Script> Unicode y las propiedades C<Script_Extensions> indican en qué script está un carácter dado.  Cualquier propiedad se puede especificar con la forma compuesta, como C<\p{Script=Hebrew}> (corta: C<\p{sc=hebr}>), o C<\p{Script_Extensions=Javanese}> (corta: C<\p{scx=java}>).
+El C<Script> Unicode y las propiedades C<Script_Extensions> indican en qué I<script> está un carácter dado.  Cualquier propiedad se puede especificar con la forma compuesta, como C<\p{Script=Hebrew}> (corta: C<\p{sc=hebr}>), o C<\p{Script_Extensions=Javanese}> (corta: C<\p{scx=java}>).
 Además, Perl amuebla atajos para todos los nombres de propiedad C<Script>.  Puede omitir todo a partir del igual (o del dos puntos), y escribir simplemente C<\p{Latin}> o C<\P{Cyrillic}>.
 (Esto no es verdad para las C<Script_Extensions>, que se requiere que se escriban en forma compuesta).
 
-La diferencia entre estas dos propiedades implica caracteres que se usan en múltiples scripts.  Por ejemplo, los dígitos '0' a '9' se usan en muchas partes del mundo.  Se colocan en un script que se llama C<Common>.  Otros caracteres se usan en unos pocos scripts.  Por ejemplo, el C<"KATAKANA-HIRAGANA DOUBLE HYPHEN"> se usa tanto en scripts Japoneses, Katakana e Hiragana, pero en ninguno más.  La propiedad C<Script> coloca todos los caracteres que se usan en múltiples scripts en el script C<Common>, mientras que la propiedad C<Script_Extensions> coloca los que se usan en unos pocos scripts en cada uno de aquellos; mientras, se sigue usando C<Common> para los que se usan en muchos scripts.  Así, estos dos coinciden:
+La diferencia entre estas dos propiedades implica caracteres que se usan en múltiples I<scripts>.  Por ejemplo, los dígitos '0' a '9' se usan en muchas partes del mundo.  Se colocan en un I<script> que se llama C<Common>.  Otros caracteres se usan en unos pocos I<scripts>.  Por ejemplo, el C<"KATAKANA-HIRAGANA DOUBLE HYPHEN"> se usa tanto en I<scripts> Japoneses, Katakana e Hiragana, pero en ninguno más.  La propiedad C<Script> coloca todos los caracteres que se usan en múltiples I<scripts> en el I<script> C<Common>, mientras que la propiedad C<Script_Extensions> coloca los que se usan en unos pocos I<scripts> en cada uno de aquellos; mientras, se sigue usando C<Common> para los que se usan en muchos I<scripts>.  Así, estos dos coinciden:
 
  "0" =~ /\p{sc=Common}/     # Coincide
  "0" =~ /\p{scx=Common}/    # Coincide
@@ -394,16 +394,16 @@ Y solo los dos últimos coinciden:
  "\N{KATAKANA-HIRAGANA DOUBLE HYPHEN}" =~ /\p{scx=Hiragana} # Coincide
  "\N{KATAKANA-HIRAGANA DOUBLE HYPHEN}" =~ /\p{scx=Katakana} # Coincide
 
-C<Script_Extensions>, entonces, es un C<Script> mejorado, en que contiene menos caracteres en el script C<Common> y, correspondientemente, más en otros scripts.  Es nuevo en Unicode versión 6.0, y sus datos es probable que cambien significativamente en las siguientes ediciones, cuando las cosas se pongan en orden.
+C<Script_Extensions>, entonces, es un C<Script> mejorado, en que contiene menos caracteres en el I<script> C<Common> y, correspondientemente, más en otros I<scripts>.  Es nuevo en Unicode versión 6.0, y sus datos es probable que cambien significativamente en las siguientes ediciones, cuando las cosas se pongan en orden.
 El nuevo código debería, probablemente, usar C<Script_Extensions>, y no un simple C<Script>.
 
-(De hecho, además de C<Common>, el script C<Inherited>, contiene caracteres que se usan en múltiples scripts.  Existen caracteres modificadores que heredan el valor de script del carácter controlador.  Algunos de estos se usan en muchos scripts, y así, van en C<Inherited> tanto los que están en C<Script> como en C<Script_Extensions>.
-Otros se usan en solo unos pocos scripts, así que están C<Inherited> en
+(De hecho, además de C<Common>, el I<script> C<Inherited>, contiene caracteres que se usan en múltiples I<scripts>.  Existen caracteres modificadores que heredan el valor de I<script> del carácter controlador.  Algunos de estos se usan en muchos I<scripts>, y así, van en C<Inherited> tanto los que están en C<Script> como en C<Script_Extensions>.
+Otros se usan en solo unos pocos I<scripts>, así que están C<Inherited> en
 C<Script>, pero no en C<Script_Extensions>).
 
-Vale acentuar que existen muchos conjuntos diferentes de dígitos en Unicode que son equivalentes a 0-9 y que coinciden con C<\d> en una expresión regular.  Si se usan en una única lengua, existen en el C<Script> y en el C<Script_Extension> de esa lengua.  Si se usan en más de un script, estarán en C<sc=Common>, pero solo si se usan en muchos scripts, deberían estar en C<scx=Common>.
+Vale acentuar que existen muchos conjuntos diferentes de dígitos en Unicode que son equivalentes a 0-9 y que coinciden con C<\d> en una expresión regular.  Si se usan en una única lengua, existen en el C<Script> y en el C<Script_Extension> de esa lengua.  Si se usan en más de un I<script>, estarán en C<sc=Common>, pero solo si se usan en muchos I<scripts>, deberían estar en C<scx=Common>.
 
-La lista completa de scripts y sus atajos está en L<perluniprops>.
+La lista completa de I<scripts> y sus atajos está en L<perluniprops>.
 
 =head3 B<Uso del prefijo C<"Is">>
 
@@ -411,9 +411,9 @@ Por retrocompatibilidad (con Perl 5.6), todas las propiedades que se pueden escr
 
 =head3 B<Blocks>
 
-Además de los B<scripts>, Unicode también define B<blocks> (bloques) de caracteres.  La diferencia entre scripts y bloques es que el concepto de script está más cercano al lenguaje natural, mientras que el concepto de bloques es más una agrupación artificial basada en grupos de caracteres Unicode con valores ordinales consecutivos. Por ejemplo, el bloque C<"Basic Latin"> tiene todos los caracteres cuyos ordinales están entre el 0 y el 127, inclusive; en otras palabras, los caracteres ASCII.  El script C<"Latin"> contiene algunas de estas letras así como de otros muchos otros bloques, como C<"Latin-1 Supplement">, C<"Latin Extended-A">, etc., pero no contiene todos los caracteres de estos bloques. No contiene por ejemplo, los dígitos 0-9, porque los dígitos se comparten entre muchos scripts, y por eso están en el script C<Common>.
+Además de los B<scripts>, Unicode también define B<blocks> (bloques) de caracteres.  La diferencia entre I<scripts> y bloques es que el concepto de I<script> está más cercano al lenguaje natural, mientras que el concepto de bloques es más una agrupación artificial basada en grupos de caracteres Unicode con valores ordinales consecutivos. Por ejemplo, el bloque C<"Basic Latin"> tiene todos los caracteres cuyos ordinales están entre el 0 y el 127, inclusive; en otras palabras, los caracteres ASCII.  El I<script> C<"Latin"> contiene algunas de estas letras así como de otros muchos otros bloques, como C<"Latin-1 Supplement">, C<"Latin Extended-A">, etc., pero no contiene todos los caracteres de estos bloques. No contiene por ejemplo, los dígitos 0-9, porque los dígitos se comparten entre muchos I<scripts>, y por eso están en el I<script> C<Common>.
 
-Para más información de scripts contra bloques, vea UAX#24 "Unicode Script Property": L<http://www.unicode.org/reports/tr24>
+Para más información de I<scripts> contra bloques, vea UAX#24 "Unicode Script Property": L<http://www.unicode.org/reports/tr24>
 
 Las propiedades C<Script> o C<Script_Extensions> probablemente puedan ser las únicas que quiera utilizar cuando procese lenguaje natural; la propiedad C<Block> puede, ocasionalmente, ser útil trabajando con las tripas de Unicode.
 
@@ -749,7 +749,7 @@ Son los siguientes:
  PS   U+2029
 
 Se supone que C<^> y C<$> coincidirían en los patrones de expresiones regulares con todos estos caracteres, pero no es así.
-Estos caracteres también deberían, pero no es así, afectar a C<< <> >> C<$.>, y números de líneas del script.
+Estos caracteres también deberían, pero no es así, afectar a C<< <> >> C<$.>, y números de líneas del I<script>.
 
 También, las líneas no deberían dividirse por el interior de C<CRLF> (es decir, no existe una línea vacía entre C<\r> y C<\n>).  Para C<CRLF>, pruebe la capa C<:crlf> (vea L<PerlIO>).
 
@@ -1012,7 +1012,7 @@ Unicode se soporta en plataformas EBCDIC.  Vea L<perlebcdic>.
 A menos que se indiquen específicamente los problemas entre ASCII y EBCDIC, las referencias a la codificación UTF-8 en este documento y el resto se debería leer como que nos referimos a UTF-EBCDIC en plataformas EBCDIC.
 Vea L<perlebcdic/Unicode y UTF>.
 
-Debido a que UTF-EBCDIC es tan similar a UTF-8, las diferencias están, en su mayor parte, escondidas; S<C<use utf8>> (y NO algo como S<C<use utfebcdic>>) declara que el script está en la codificación Unicode de 8 bit "nativa" de la plataforma.  (De modo parecido para la capa C<":utf8">).
+Debido a que UTF-EBCDIC es tan similar a UTF-8, las diferencias están, en su mayor parte, escondidas; S<C<use utf8>> (y NO algo como S<C<use utfebcdic>>) declara que el I<script> está en la codificación Unicode de 8 bit "nativa" de la plataforma.  (De modo parecido para la capa C<":utf8">).
 
 =head2 Locales
 
@@ -1088,7 +1088,7 @@ Se añadió L<S<C<use feature 'unicode_strings'>>|feature/La característica 'un
 
 =item *
 
-Cambiando el tamaño de caja de un escalar, esto es, usar C<uc()>, C<ucfirst()>, C<lc()> y C<lcfirst()>, o C<\L>, C<\U>, C<\u> y C<\l> en contextos de doble entrecomillado, como las sustituciones en expresiones regulares.
+Cambiar el tamaño de caja de un escalar, esto es, usar C<uc()>, C<ucfirst()>, C<lc()> y C<lcfirst()>, o C<\L>, C<\U>, C<\u> y C<\l> en contextos de doble entrecomillado, como las sustituciones en expresiones regulares.
 
 Bajo C<unicode_strings>, a partir de Perl 5.12.0, se usan de forma general las reglas Unicode.  Vea L<perlfunc/lc> para detalles de cómo funciona esto en combinación con otros I<pragmas>.
 

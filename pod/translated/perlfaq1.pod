@@ -16,7 +16,7 @@ Perl es un lenguaje de programación de alto nivel con una herencia ecléctica, 
 
 Las características de manipulación de texto, archivos y procesos que ofrece Perl lo convierten en un lenguaje especialmente adecuado para tareas que requieren crear rápidamente prototipos, utilidades del sistema, herramientas de software, tareas de administración de sistemas, acceso a bases de datos, programación gráfica, conexión a redes y programación web.
 
-Perl desciende del extendido lenguaje de programación C y, en menor medida, de sed, awk, la shell de Unix, y de muchos otros lenguajes y herramientas.
+Perl desciende del extendido lenguaje de programación C y, en menor medida, de sed, awk, la I<shell> de Unix, y de muchos otros lenguajes y herramientas.
 
 Por estas cualidades es muy popular entre los desarrolladores de sitios web y los administradores de sistemas. Pero también lo usan matemáticos, expertos en ingeniería genética, periodistas, directivos, y otros profesionales de muchos campos.
 
@@ -86,7 +86,7 @@ Se puede resumir de la siguiente manera: Perl 4 es el antecesor de Perl 5 y Perl
 
 El número que va detrás de Perl (el 5 de Perl 5) es la versión principal del intérprete de Perl (es decir, perl), así como la versión del lenguaje. Cada versión principal incorpora diferencias importantes que no son compatibles con las versiones anteriores.
 
-Actualmente, la versión principal de Perl es Perl 5, que se lanzó en 1994. Permite ejecutar scripts de la versión principal anterior, Perl 4 (lanzada en marzo de 1991), pero incluye diferencias importantes.
+Actualmente, la versión principal de Perl es Perl 5, que se lanzó en 1994. Permite ejecutar I<scripts> de la versión principal anterior, Perl 4 (lanzada en marzo de 1991), pero incluye diferencias importantes.
 
 Perl 6 es una reinvención de Perl. Es un lenguaje del mismo linaje, pero incompatible. Estos dos lenguajes no son mutuamente excluyentes, sino que se complementan. Perl 6 no sustituye a Perl 5, y viceversa. Vea L</"¿Qué es Perl 6?"> a continuación para obtener más información.
 
@@ -122,7 +122,7 @@ Sus normas de organización se resumen en una: Larry siempre tiene la razón, in
 
 =head2 ¿Es difícil aprender a programar en Perl?
 
-No. Es fácil L<adquirir los conocimientos básicos|http://learn.perl.org/>; y también lo es seguir aprendiendo. Perl se parece a la mayoría de los lenguajes de programación con los que es probable que tenga experiencia, por lo que si ya ha escrito programas en C, scripts en awk o de shell, o incluso un programa en BASIC, no le costará adaptarse.
+No. Es fácil L<adquirir los conocimientos básicos|http://learn.perl.org/>; y también lo es seguir aprendiendo. Perl se parece a la mayoría de los lenguajes de programación con los que es probable que tenga experiencia, por lo que si ya ha escrito programas en C, I<scripts> en awk o de I<shell>, o incluso un programa en BASIC, no le costará adaptarse.
 
 La mayoría de las tareas solo requieren conocer un pequeño subconjunto del lenguaje Perl. Uno de los lemas que guían el desarrollo de Perl es "se puede hacer de varias maneras", que es la traducción de "there's more than one way to do it" (o TMTOWTDI, que en inglés se pronuncia como "tim toady"). Así, la curva de aprendizaje de Perl tiene una pendiente suave (es fácil de aprender) y larga (si desea seguir profundizando, puede aprender a hacer muchas cosas).
 
@@ -144,7 +144,7 @@ Para realizar comparaciones con otro lenguaje específico, lo mejor suele ser cr
 
 Por su flexibilidad y capacidad de ampliación, Perl se puede usar prácticamente para cualquier tarea, desde el procesamiento de archivos en una línea hasta el desarrollo de sistemas grandes y complejos.
 
-Para muchas personas, Perl es un buen sustituto de los scripts de shell.
+Para muchas personas, Perl es un buen sustituto de los I<scripts> de I<shell>.
 Para otros, es un cómodo sustituto de alto nivel para realizar la mayor parte de los programas que desarrollarían en lenguajes de bajo nivel como C o C++. En última instancia, el usuario (y posiblemente sus jefes) deberán decidir para qué tareas pueden usar Perl, y para cuáles no.
 
 Si tiene una biblioteca que proporciona una API, puede hacer que cualquier componente de la misma esté disponible como cualquier otra función o variable de Perl mediante una extensión programada en C o C++, y vinculada dinámicamente al intérprete perl principal. También puede optar por trabajar en sentido contrario: desarrollar el programa principal en C o C++, y después vincular código Perl sobre la marcha para crear una aplicación eficaz. Vea L<perlembed>.
@@ -160,7 +160,7 @@ Si necesita acelerar una parte específica de una aplicación Perl (algo que nor
 =head2 ¿Cuál es la diferencia entre "perl" y "Perl"?
 
 "Perl" es el nombre del lenguaje. Solo se escribe la "P" inicial en mayúsculas.
-El nombre del intérprete (el programa que ejecuta el script Perl)
+El nombre del intérprete (el programa que ejecuta el I<script> Perl)
 es "perl" (se escribe con "p" minúscula).
 
 Puede elegir seguir esta convención o no, pero no debe escribir "PERL", ya que perl no es un acrónimo.

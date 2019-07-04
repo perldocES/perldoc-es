@@ -39,11 +39,11 @@ Estas instrucciones, casi con certeza, no funcionarán con versiones anteriores 
 
     cd c:\Symbian\perl-5.x.x
 
-(3) Ejecute el siguiente script perl que viene con el SDK
+(3) Ejecute el siguiente I<script> perl que viene con el SDK
 
     perl symbian\config.pl
 
-Debe usar el cmd.exe; el shell de Cygwin no funcionará.
+Debe usar el cmd.exe; el I<shell> de Cygwin no funcionará.
 El PATH debe incluir las herramientas SDK, incluyendo un Perl, que tendría que ser así bajo cmd.exe.  Si no lo tiene así, vea el final de symbian\sdk.pl para ver las notas sobre cómo debe establecer su entorno para la compilación en Symbian.
 
 (4) Compile el proyecto, bien sea con
@@ -166,7 +166,7 @@ por favor, ignórelo ya que no es nada serio (el proceso de compilación renombr
 
 =head2 PerlApp
 
-La aplicación PerlApp demuestra cómo incrustar los intérpretes Perl en una aplicación Symbian.  El elemento "Time" del menú ejecuta el siguiente código Perl: C<print "Ejecutando en ", $^O, "\n", scalar localtime>, el "Oneliner" le permite escribir un código Perl, y el "Run" abre un selector de archivos para seleccionar un archivo Perl para ejecutarlo.
+La aplicación PerlApp demuestra cómo incrustar los intérpretes Perl en una aplicación Symbian.  El elemento "Time" del menú ejecuta el siguiente código Perl: C<print "Ejecutar en ", $^O, "\n", scalar localtime>, el "Oneliner" le permite escribir un código Perl, y el "Run" abre un selector de archivos para seleccionar un archivo Perl para ejecutarlo.
 
 PerlApp también se inicia cuando el "reconocedor Perl" (también incluido e instalado) detecta un archivo Perl activado desde el GUI, y ofrece la posibilidad de instalarlo bajo \Perl (si el archivo Perl está en la bandeja de entrada de la aplicación de mensajería) o ejecutarlo (si el archivo Perl está bajo \Perl).
 
@@ -178,7 +178,7 @@ En el subdirectorio symbian existe una utilidad F<sisify.pl> que se puede usar p
 
 Lo primero es notar que tiene acceso completo al dispositivo Symbian cuando usa Perl: puede hacerle un montón de daño a su dispositivo (como quitar archivos del sistema) a menos que sea cuidadoso.  Por favor, haga copias de seguridad antes de hacer cualquier cosa.
 
-La adaptación Perl se ha hecho, en su mayor parte, utilizando la biblioteca estándar STDLIB estilo POSIX de Symbian. Es una biblioteca razonablemente completa, pero algunas partes, como la emulación de bibliotecas que tienden a quedarse sin implementar en plataformas no UNIX, se han quedado sin implementar también esta vez: fork(), signals(), id de usuarios y grupos, select() trabajando con sockets, sockets no bloqueantes, y así.
+La adaptación Perl se ha hecho, en su mayor parte, utilizando la biblioteca estándar STDLIB estilo POSIX de Symbian. Es una biblioteca razonablemente completa, pero algunas partes, como la emulación de bibliotecas que tienden a quedarse sin implementar en plataformas no UNIX, se han quedado sin implementar también esta vez: fork(), signals(), id de usuarios y grupos, select() trabajando con I<sockets>, I<sockets> no bloqueantes, y así.
 Vea el archivo F<symbian/config.sh> y busque por 'undef' para encontrar las API no soportadas (o desde Perl, use Config).
 
 El sistema de archivos de los dispositivos Symbian usa una sintaxis DOS: "dispositivos" separados de las rutas por un carácter de dos puntos, y barras diagonales inversas por la ruta.  La asignación exacta de los dispositivos es probable que varíe entre plataformas pero, por ejemplo, en las Series 60 podrá ver C: como la memoria (flash) principal, D: como el dispositivo RAM, E: como la tarjeta de memoria (MMC), Z: como la ROM. En las Series 80, D: es la tarjeta de memoria.  Al final, los dispositivos llegan hasta el NUL: es la papelera; los COMx: son las líneas serie; IRCOMx: son los puertos de infrarrojos; TMP: podría ser C:\System\Temp.  Recuerde doblar las barras diagonales inversas en las cadenas entrecomilladas dobles.
@@ -201,7 +201,7 @@ En la adaptación Symbian de Perl versión 0.4.1, cualquier parte de la batería
 
 =head1 NOTA
 
-Cuando esté creando o extendiendo las interfaces de programación de aplicaciones (API) para Symbian o Series 60 o Series 80 o Series 90, se sugiere que las marcas registradas o nombres registrados, no se usen como nombres de las API.  En cambio, los desarrolladores deberían considerar basar los nombres de la API en los actuales nombres de los componentes públicos (de C++, o quizás Java) y de la API, modificados según las reglas del lenguaje de programación en que se crea la nueva API.
+Cuando cree o extienda las interfaces de programación de aplicaciones (API) para Symbian o Series 60 o Series 80 o Series 90, se sugiere que las marcas registradas o nombres registrados, no se usen como nombres de las API.  En cambio, los desarrolladores deberían considerar basar los nombres de la API en los actuales nombres de los componentes públicos (de C++, o quizás Java) y de la API, modificados según las reglas del lenguaje de programación en que se crea la nueva API.
 
 Nokia es una marca registrada de Nokia Corporation. Los nombres de producto de Nokia son marcas registradas de Nokia.  Otros productos y nombres de compañías mencionadas aquí pueden ser marcas registradas de sus respectivos propietarios.
 

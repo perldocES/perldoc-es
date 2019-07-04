@@ -56,7 +56,7 @@ X<subrutina, parámetro> X<parámetro>
 Cualquier argumento pasado como parámetro de entrada se muestra en el array C<@_>.
 (Pueden también aparecer en variables léxicas introducidas por una firma;
 véase L</Firmas> más abajo).  Entonces, si invocó una función con dos argumentos, estos podrían almacenarse en
-C<$_[0]> y C<$_[1]>.  El array C<@_> es un array local, pero sus elementos son alias de los parámetros escalares reales.  En particular, si se actualiza el elemento C<$_[0]>, el argumento correspondiente es actualizado (o puede ocurrir un error si no es actualizable).  Si un argumento es un array o un elemento de un hash, que no existía cuando la función se invocó, ese elemento se crea solo cuando se le modifica o se toma una referencia a él.  (Algunas versiones anteriores de Perl crean el elemento así tenga o no valor asignado).
+C<$_[0]> y C<$_[1]>.  El array C<@_> es un array local, pero sus elementos son alias de los parámetros escalares reales.  En particular, si se actualiza el elemento C<$_[0]>, el argumento correspondiente se actualiza (o puede ocurrir un error si no es actualizable).  Si un argumento es un array o un elemento de un hash, que no existía cuando la función se invocó, ese elemento se crea solo cuando se le modifica o se toma una referencia a él.  (Algunas versiones anteriores de Perl crean el elemento así tenga o no valor asignado).
 Asignando por completo al array C<@_>, se eliminan estos alias, y no actualizará ningún argumento.
 X<subrutina, argumento> X<argumento> X<@_>
 
@@ -234,7 +234,7 @@ cuales puede tener más de uno en un paquete, y B<no> los puede invocar explíci
 
 B<ADVERTENCIA>: Las firmas de subrutinas son experimentales.  Esta característica se puede modificar o eliminar en futuras versiones de Perl.
 
-Perl tiene una característica experimental que permite que los parámetros formales de una subrutina se introduzcan con una sintaxis especial, separada del código procedural del cuerpo de la subrutina.  La lista de parámetros formales se denomina I<firma>.  Esta característica se debe activar primero por la declaración de un pragma, C<use feature 'signatures'>, y producirá una advertencia a menos que esté desactivada la categoría de advertencias "experimental::signatures".
+Perl tiene una característica experimental que permite que los parámetros formales de una subrutina se introduzcan con una sintaxis especial, separada del código procedural del cuerpo de la subrutina.  La lista de parámetros formales se denomina I<firma>.  Esta característica se debe activar primero por la declaración de un I<pragma>, C<use feature 'signatures'>, y producirá una advertencia a menos que esté desactivada la categoría de advertencias "experimental::signatures".
 
 La firma es parte del cuerpo de una subrutina.  Normalmente el cuerpo de una subrutina es simplemente un bloque de código puesto entre llaves.  Cuando se use una firma, esta se crea como una lista entre paréntesis que va justo detrás del nombre de la subrutina (o, para subrutinas anónimas, inmediatamente después de la palabra clave C<sub>).  La firma declara variables léxicas cuyo ámbito es el bloque.  Cuando se llama la subrutina, la firma es la primera que toma el control.  Puebla las variables en la firma desde la lista de argumentos que se le pasaron.  Si la lista de argumentos no cumple los requisitos de la firma, lanzará una excepción.
 Cuando el proceso de la firma se ha completado, el control pasa al bloque.
@@ -494,7 +494,7 @@ Primero, puede simplemente usar la característica C<state>.  O, puede usar clau
 
 =head3 Variables persistentes con state()
 
-Comenzando con Perl 5.10.0, puede declarar variables con la palabra clave C<state> en lugar de C<my>.  Para que esto funcione, sin embargo, debe activar de antemano la característica, bien usando el pragma C<feature>, o usando C<-E> en los programas de una línea (vea L<feature>).  A partir de Perl 5.16, la forma C<CORE::state> ya no requiere el pragma C<feature>.
+Comenzando con Perl 5.10.0, puede declarar variables con la palabra clave C<state> en lugar de C<my>.  Para que esto funcione, sin embargo, debe activar de antemano la característica, bien usando el I<pragma> C<feature>, o usando C<-E> en los programas de una línea (vea L<feature>).  A partir de Perl 5.16, la forma C<CORE::state> ya no requiere el I<pragma> C<feature>.
 
 La palabra clave C<state> crea una variable léxica (siguiendo las mismas reglas de ámbito que C<my>) que persiste de una llamada a la subrutina a la siguiente.  Si una variable state reside en el interior de una subrutina anónima, entonces cada copia de la subrutina tiene su propia copia de la variable state.  Sin embargo, el valor de la variable state persistirá entre las llamadas a la misma copia de la subrutina anónima.  (No olvide que C<sub { ... }> crea una nueva subrutina cada vez que se ejecuta).
 
@@ -744,7 +744,7 @@ X<my sub> X<state sub> X<our sub> X<subrutina, léxica>
 
 B<ADVERTENCIA>: las subrutinas léxicas siguen siendo experimentales.  Esta característica se puede modificar o eliminar en futuras versiones de Perl.
 
-Las subrutinas léxicas solo están disponibles bajo el pragma C<use feature 'lexical_subs'>, que produce una advertencia a menos que la categoría de advertencias "experimental::lexical_subs" esté desactivada.
+Las subrutinas léxicas solo están disponibles bajo el I<pragma> C<use feature 'lexical_subs'>, que produce una advertencia a menos que la categoría de advertencias "experimental::lexical_subs" esté desactivada.
 
 A partir de Perl 5.18, puede declarar una subrutina privada con C<my> o C<state>.  Igual que con las variables state, la palabra clave C<state> solo está disponible bajo C<use feature 'state'> o C<use 5.010> o superior.
 
@@ -1276,7 +1276,7 @@ X<incorporado> X<sobrecarga> X<CORE> X<CORE::GLOBAL>
 
 Se pueden reescribir muchas funciones incorporadas, aunque esto solo debería intentarse de forma ocasional y por una muy buena razón.  Típicamente, esto se podría usar por un paquete que intente la emulación de funcionalidad incorporada que falte en un sistema diferente a Unix.
 
-La reescritura se puede hacer solo importando el nombre desde un módulo en tiempo de compilación -la predeclaración ordinaria no es suficiente-.  Sin embargo, el pragma C<use subs> le permite, en efecto, predeclarar subrutinas a través de la sintaxis de importación, y estos nombres pueden entonces reescribir las incorporadas:
+La reescritura se puede hacer solo importando el nombre desde un módulo en tiempo de compilación -la predeclaración ordinaria no es suficiente-.  Sin embargo, el I<pragma> C<use subs> le permite, en efecto, predeclarar subrutinas a través de la sintaxis de importación, y estos nombres pueden entonces reescribir las incorporadas:
 
     use subs 'chdir', 'chroot', 'chmod', 'chown';
     chdir $algunsitio;

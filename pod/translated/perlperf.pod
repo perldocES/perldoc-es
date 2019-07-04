@@ -340,7 +340,7 @@ C<Devel::Profiler> genera un archivo tmon.out que es compatible con el programa 
   0.00   0.000  0.000      1   0.0000 0.0000  Symbol::gensym
   0.00   0.000  0.000      1   0.0000 0.0000  IO::File::open
 
-Esto es interesante: obtenemos resultados ligeramente diferentes, que es debido, en su mayor parte, a que el algoritmo que genera el informe es diferente, incluso aunque el formato del archivo de salida es, presuntamente, idéntico.  Los tiempos totales, de usuario y de sistema muestran claramente el tiempo que le lleva a C<Devel::Profiler> ejecutarse, pero las columnas listadas parecen más precisas que las que tuvimos antes con C<Devel::DProf>.  La cifra de 102 % ha desaparecido, por ejemplo.  Así es cómo usamos las herramientas que tenemos a nuestra disposición, y reconocemos los pros y las contras, antes de usarlas.  Curiosamente, los números de llamadas por cada subrutina son idénticas en los dos informes, es en los porcentajes en que difieren.
+Esto es interesante: obtenemos resultados ligeramente diferentes, que se debe, en su mayor parte, a que el algoritmo que genera el informe es diferente, incluso aunque el formato del archivo de salida es, presuntamente, idéntico.  Los tiempos totales, de usuario y de sistema muestran claramente el tiempo que le lleva a C<Devel::Profiler> ejecutarse, pero las columnas listadas parecen más precisas que las que tuvimos antes con C<Devel::DProf>.  La cifra de 102 % ha desaparecido, por ejemplo.  Así es cómo usamos las herramientas que tenemos a nuestra disposición, y reconocemos los pros y las contras, antes de usarlas.  Curiosamente, los números de llamadas por cada subrutina son idénticas en los dos informes, es en los porcentajes en que difieren.
 Como escribe el autor de C<Devel::Proviler>:
 
  ... ejecutar el juego de test de HTML::Template bajo Devel::DProf muestra
@@ -781,7 +781,7 @@ Algo muy común es el código que se parece a algo como esto:
  logger->debug( "Un mensaje de registro del proceso con id: $$ INC: "
                                                        . Dumper(\%INC) )
 
-El problema es que este código siempre se interpretará y ejecutará, incluso cuando el nivel de depuración indicado en el archivo de configuración sea cero.  Una vez que se ha entrado en la subrutina debug(), y que se confirme que la variable interna C<$debug> sea un cero, por ejemplo, el mensaje que se le envió será descartado y el programa continuará.  En el ejemplo indicado, el hash C<\%INC> se volcará, y se construirá el mensaje con la cadena de texto. Todo esto podría evitarse con una variable de depuración a nivel de sentencia, como esta:
+El problema es que este código siempre se interpretará y ejecutará, incluso cuando el nivel de depuración indicado en el archivo de configuración sea cero.  Una vez que se ha entrado en la subrutina debug(), y que se confirme que la variable interna C<$debug> sea un cero, por ejemplo, el mensaje que se le envió se descartará y el programa continuará.  En el ejemplo indicado, el hash C<\%INC> se volcará, y se construirá el mensaje con la cadena de texto. Todo esto podría evitarse con una variable de depuración a nivel de sentencia, como esta:
 
  logger->debug( "Un mensaje de registro del proceso con id: $$ INC: "
                                             . Dumper(\%INC) ) if $DEBUG;

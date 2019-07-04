@@ -57,13 +57,13 @@ Asegúrese que su instalación de yacc es correcta incluyendo cualquier archivo 
   cp /samples/yyparse.c /etc
 
 Este puede ser un buen momento para asegurarse que sus archivos /etc/resolv.conf o /etc/hosts están en su sitio.
-El documento de IBM que describe esos problemas de puesta en marcha del USS era el SC28-1890-07 "OS/390 UNIX System Services Planning", en particular, el capítulo 6 sobre la personalización del shell OE.
+El documento de IBM que describe esos problemas de puesta en marcha del USS era el SC28-1890-07 "OS/390 UNIX System Services Planning", en particular, el capítulo 6 sobre la personalización del I<shell> OE.
 
 GNU make para OS/390, que se recomienda para la compilación de perl (así como la compilación de módulos de CPAN y extensiones), está disponible en L</Tools>.
 
 Algunas personas han reportado errores de I<"Out of memory!"> (agotamiento de memoria) mientras intentan compilar Perl usando los binarios make de GNU.  Si se encuentra con tal problema entonces intente descargar el kit del código fuente y compile GNU make para eliminar tal problema.  También podría encontrar GNU make (así como Perl y Apache) en el libro rojo "Open Source Software for OS/390 UNIX", SG24-5944-00 de IBM.
 
-Si en lugar del recomendado GNU make quiere usar el programa make suministrado por el sistema, entonces asegúrese de instalar el archivo apropiado de reglas por defecto por medio del comando de shell:
+Si en lugar del recomendado GNU make quiere usar el programa make suministrado por el sistema, entonces asegúrese de instalar el archivo apropiado de reglas por defecto por medio del comando de I<shell>:
 
     cp /samples/startup.mk /etc
 
@@ -214,18 +214,18 @@ es necesario para que se ejecute el juego de comprobaciones.
 
 =head2 Anomalías en la instalación de Perl en OS/390
 
-El script installman intentará ejecutarse en OS/390.  Habrá unos pocos errores si la utilidad roff está instalada.  Puede obtener GNU groff desde el sitio ftp Redbook SG24-5944-00.
+El I<script> installman intentará ejecutarse en OS/390.  Habrá unos pocos errores si la utilidad roff está instalada.  Puede obtener GNU groff desde el sitio ftp Redbook SG24-5944-00.
 
 =head2 Pistas para el uso de Perl en OS/390
 
 Cuando se utiliza perl en OS/390 por favor, tenga en cuenta que los juegos de caracteres EBCDIC y ASCII son diferentes.  Vea perlebcdic.pod para más información sobre las cuestiones sobre tal conjunto de caracteres.  Las funciones predefinidas de Perl que pueden comportarse de manera diferente en EBCDIC también se mencionan en el documento perlport.pod.
 
-La Open Edition (UNIX System Services) de V2R8 en adelante soporta la invocación de script con la forma #!/path/to/perl.  Hay un PTF disponible desde IBM para V2R7 que permitirá soporte del shell/kernel para #!.  Versiones de USS anteriores a V2R7 no soporta la invocación de un script por medio de #!.
+La Open Edition (UNIX System Services) de V2R8 en adelante soporta la invocación de I<script> con la forma #!/path/to/perl.  Hay un PTF disponible desde IBM para V2R7 que permitirá soporte del shell/kernel para #!.  Versiones de USS anteriores a V2R7 no soporta la invocación de un I<script> por medio de #!.
 Si está ejecutando V2R6 o anteriores, vea entonces
 
     head `whence perldoc`
 
-por un ejemplo de cómo usar el truco del "eval exec" para pedir al shell que Perl ejecute sus scripts en las versiones más viejas de Unix System Services.
+por un ejemplo de cómo usar el truco del "eval exec" para pedir al I<shell> que Perl ejecute sus I<scripts> en las versiones más viejas de Unix System Services.
 
 Si está teniendo problemas con los corchetes entonces considere cambiar su rlogin o cliente de telnet.  Intente evitar los emuladores más viejos de 3270 e ISHELL para trabajar con Perl en USS.
 
@@ -278,11 +278,11 @@ Si compila perl con la capacidad de carga dinámica entonces esa sería también
 
 En la mayor parte de los casos, la gente ha reportado de mejores resultados con GNU make en lugar del programa /bin/make del sistema, si es para módulos sencillos o extensiones basadas en xs.
 
-Si el proceso make encuentra un problema con la compilación o el enlazado entonces intente establecer _C89_CCMODE a 1.  Asumiendo que sh es su shell al entrar, entonces ejecute:
+Si el proceso make encuentra un problema con la compilación o el enlazado entonces intente establecer _C89_CCMODE a 1.  Asumiendo que sh es su I<shell> al entrar, entonces ejecute:
 
     export _C89_CCMODE=1
 
-Si tcsh es su shell de entrada entonces use el comando setenv.
+Si tcsh es su I<shell> de entrada entonces use el comando setenv.
 
 =head1 AUTORES
 

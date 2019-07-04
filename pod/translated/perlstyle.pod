@@ -6,7 +6,7 @@ perlstyle - Guía de estilo de Perl
 
 Cada programador tendrá, naturalmente, sus propias preferencias con respecto al estilo, pero hay algunas directrices que harán que sus programas resulten más fáciles de leer, entender y mantener.
 
-Lo más importante es ejecutar siempre los programas con la opción B<-w>.  Puede desactivarla explícitamente en partes del código con el pragma C<no warnings> o con la variable C<$^W>, si así lo desea.  También debe ejecutar siempre los programas con C<use strict>; si no lo hace, debe saber por qué no necesita hacerlo.  El pragma C<use sigtrap> y C<use diagnostics> pueden ser también muy útiles.
+Lo más importante es ejecutar siempre los programas con la opción B<-w>.  Puede desactivarla explícitamente en partes del código con el I<pragma> C<no warnings> o con la variable C<$^W>, si así lo desea.  También debe ejecutar siempre los programas con C<use strict>; si no lo hace, debe saber por qué no necesita hacerlo.  El I<pragma> C<use sigtrap> y C<use diagnostics> pueden ser también muy útiles.
 
 Con respecto a la estética del código, lo único que le importa a Larry es que la llave de cierre de un BLOQUE multilínea esté alineada con la palabra reservada con la que se inició esa estructura.
 Aparte de eso, Larry tiene otras preferencias menos estrictas:
@@ -148,7 +148,7 @@ Elija identificadores mnemotécnicos.  Si no puede recordar el significado de "m
 
 Aunque es aceptable usar identificadores cortos como por ejemplo C<$sinargs> ("sin argumentos"), en los identificadores más largos debe usar guiones bajos para separar palabras.  Generalmente resulta más fácil leer C<$nombres_de_variable_como_este> que C<$NombresDeVariableComoEste> (especialmente para los no castellanohablantes). Es una regla sencilla que también se aplica C<NOMBRES_DE_VARIABLE_COMO_ESTE>.
 
-A veces los nombres de los módulos son una excepción a esta regla.  De manera informal, Perl reserva los nombres de módulo en minúsculas para los módulos de tipo "pragma", como C<integer> y C<strict>.  Los nombres de los demás módulos deben empezar por una letra mayúscula y usar luego una mezcla de mayúsculas y minúsculas, pero preferiblemente sin guiones bajos (por limitaciones en sistemas de archivos primitivos para la representación de nombres de módulos como archivos que deben ajustarse a unos pocos bytes dispersos).
+A veces los nombres de los módulos son una excepción a esta regla.  De manera informal, Perl reserva los nombres de módulo en minúsculas para los módulos de tipo I<pragma>, como C<integer> y C<strict>.  Los nombres de los demás módulos deben empezar por una letra mayúscula y usar luego una mezcla de mayúsculas y minúsculas, pero preferiblemente sin guiones bajos (por limitaciones en sistemas de archivos primitivos para la representación de nombres de módulos como archivos que deben ajustarse a unos pocos bytes dispersos).
 
 =item *
 

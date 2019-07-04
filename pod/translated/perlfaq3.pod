@@ -149,7 +149,7 @@ El método típico usa el depurador Perl, descrito en la página de manual L<per
 
 Ahora escriba código Perl válido y se evaluará inmediatamente. Puede examinar la tabla de símbolos, trazas de pila, comprobar valores de variables, estableces puntos de ruptura y otras operaciones que se suelen encontrar en los depuradores simbólicos.
 
-También puede usar L<Devel::REPL> que es un shell interactivo para Perl, conocido comúnmente como un REPL: I<Read, Evaluate, Print, Loop> (leer, evaluar, imprimir, repetir). Proporciona diversas características útiles.
+También puede usar L<Devel::REPL> que es un I<shell> interactivo para Perl, conocido comúnmente como un REPL: I<Read, Evaluate, Print, Loop> (leer, evaluar, imprimir, repetir). Proporciona diversas características útiles.
 
 =head2 ¿Cómo puedo averiguar qué módulos están instalados en mi sistema?
 
@@ -425,7 +425,7 @@ L<http://www.contexteditor.org/>
 
 Existe también un editor de texto en un pequeño widget que está escrito en Perl y que se distribuye con el módulo Tk en CPAN. El ptkdb ( L<http://ptkdb.sourceforge.net/> ) es un depurador basado en Perl/Tk que actúa como un entorno de desarrollo de esta clase. Perl Composer ( L<http://perlcomposer.sourceforge.net/> ) es un IDE para la creación de entornos gráficos de usuario, en Perl/Tk.
 
-Además de un editor/IDE, podría interesarle tener un entorno shell más potente para Win32. Sus opciones incluyen
+Además de un editor/IDE, podría interesarle tener un entorno I<shell> más potente para Win32. Sus opciones incluyen
 
 =over 4
 
@@ -439,7 +439,7 @@ L<http://www.zsh.org/>
 
 =back
 
-Cygwin está cubierto por la I<GNU General Public License> (Licencia general pública GNU) (pero eso no debería preocupar para usar Perl). Cygwin contiene (además de la shell) un completo conjunto de utilerías estándares Unix.
+Cygwin está cubierto por la I<GNU General Public License> (Licencia general pública GNU) (pero eso no debería preocupar para usar Perl). Cygwin contiene (además de la I<shell>) un completo conjunto de utilerías estándares Unix.
 
 =over 4
 
@@ -698,7 +698,7 @@ I<¡IMPORTANTE!>: Haga lo que haga, POR FAVOR no se frustre y tire el intérpret
 =head2 ¿Puedo escribir programas Perl útiles en la línea de comandos?
 
 Sí. Lea L<perlrun> para más información. Siguen algunos ejemplos.
-(Se asumen las reglas de escapado con comillas del shell estándar de Unix).
+(Se asumen las reglas de escapado con comillas del I<shell> estándar de Unix).
 
     # sumar los campos primero y último
     perl -lane 'print $F[0] + $F[-1]' *
@@ -723,7 +723,7 @@ Vale, el último era, realmente, una entrada en un concurso de Perl ofuscado. :-
 
 =head2 ¿Por qué no funcionan los Perl de una línea en mi sistema DOS/Mac/VMS?
 
-El problema es normalmente que los intérpretes de comando en estos sistemas tienen ideas diferentes sobre el escapado de comillas de las que los shell Unix usan, y en donde se crearon los I<scripts> de una línea. En algunos sistemas, quizás tenga que cambiar las comillas simples por las dobles, algo que I<NO> debe hacer en sistemas Unix o Plan9. Quizás también tenga que cambiar un simple % a un %%.
+El problema es normalmente que los intérpretes de comando en estos sistemas tienen ideas diferentes sobre el escapado de comillas de las que los I<shell> Unix usan, y en donde se crearon los I<scripts> de una línea. En algunos sistemas, quizás tenga que cambiar las comillas simples por las dobles, algo que I<NO> debe hacer en sistemas Unix o Plan9. Quizás también tenga que cambiar un simple % a un %%.
 
 Por ejemplo:
 
@@ -743,11 +743,11 @@ Por ejemplo:
     # VMS
     perl -e "print ""Hola a todos\n"""
 
-El problema es que ninguno de estos ejemplos son fiables: dependen del intérprete de comandos. Bajo Unix, los dos primeros funcionarán (casi siempre). Bajo DOS, es muy posible que ninguno funcione. Si 4DOS era el shell de comandos, es probable que tenga más suerte con esto:
+El problema es que ninguno de estos ejemplos son fiables: dependen del intérprete de comandos. Bajo Unix, los dos primeros funcionarán (casi siempre). Bajo DOS, es muy posible que ninguno funcione. Si 4DOS era el I<shell> de comandos, es probable que tenga más suerte con esto:
 
   perl -e "print <Ctrl-x>"Hola a todos\n<Ctrl-x>""
 
-En Mac, depende del entorno que se use. El shell MacPerl, o MPW, se parece mucho a los shell de Unix en su soporte de las distintas variantes de escapado, excepto que hace un uso libre de los caracteres no ASCII de Mac como caracteres de control.
+En Mac, depende del entorno que se use. El I<shell> MacPerl, o MPW, se parece mucho a los I<shell> de Unix en su soporte de las distintas variantes de escapado, excepto que hace un uso libre de los caracteres no ASCII de Mac como caracteres de control.
 
 Usar qq(), q() y qx() en lugar de "comillas dobles", 'comillas simples' y `comillas inversas`, puede hacer más sencilla escribir I<scripts> de una línea.
 
@@ -780,7 +780,7 @@ Podría no necesitar toda la potencia de XS. El módulo Inline::C le permite pon
 
 Descargue el kit ExtUtils::Embed desde CPAN y ejecute `make test'. Si la prueba pasa, lea de nuevo los pod. Y de nuevo, otra vez. Si falla, vea L<perlbug> y envíe un informe de fallo con la salida de C<make test TEST_VERBOSE=1> junto con C<perl -V>.
 
-=head2 Cuando he intentado ejecutar mi script, obtengo este mensaje. ¿Qué significa?
+=head2 Cuando he intentado ejecutar mi I<script>, obtengo este mensaje. ¿Qué significa?
 
 En L<perldiag> se encuentra una lista completa de mensajes de error y mensajes de advertencia con texto explicativo. También puede usar el programa splain (distribuido con Perl) para explicar los mensajes de error:
 

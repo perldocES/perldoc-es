@@ -267,7 +267,7 @@ Movido de Perl 5.10.1 a CPAN
 
 =item C<legacy>
 
-El pragma C<legacy> experimental fue absorbido por el pragma C<feature>.
+El I<pragma> C<legacy> experimental fue absorbido por el I<pragma> C<feature>.
 
 Se incluyó en Perl 5.11.2
 

@@ -596,7 +596,7 @@ Es más sencillo verlo con comentarios:
 X<tilde> X<tilde expansion>
 
 Use el operador E<lt>E<gt> (C<glob()>), documentado en L<perlfunc>.
-Versiones anteriores a 5.6 requiere que tenga un shell instalado que entienda las virgulillas. Versiones más tardías de Perl tienen esa característica ya incorporada. El módulo L<File::KGlob> (disponible de CPAN) proporciona una funcionalidad más portátil de glob.
+Versiones anteriores a 5.6 requiere que tenga un I<shell> instalado que entienda las virgulillas. Versiones más tardías de Perl tienen esa característica ya incorporada. El módulo L<File::KGlob> (disponible de CPAN) proporciona una funcionalidad más portátil de glob.
 
 Con el propio Perl, puede usar esto directamente:
 
@@ -685,7 +685,7 @@ X<argument list too long>
 El operador C<< <> >> realiza la operación de expansión (vea más arriba).
 En versiones de Perl anteriores a v5.6.0, el operador interno glob() lanza un csh(1) para hacer realmente la expansión de los comodines, pero csh no puede gestionar más de 127 elementos y así devuelve el mensaje de error "I<Argument list too long>" (Lista de argumentos demasiado larga). Las personas que instalaron tcsh como csh no tendrán este problema, pero puede sorprender a sus usuarios.
 
-Para solventarlo, puede tanto actualizarse a Perl v5.6.0 o superior, hacer usted mismo la expansión con readdir() y patrones, o usar un módulo como L<File::Glob>, uno que no use el shell para hacer la expansión.
+Para solventarlo, puede tanto actualizarse a Perl v5.6.0 o superior, hacer usted mismo la expansión con readdir() y patrones, o usar un módulo como L<File::Glob>, uno que no use el I<shell> para hacer la expansión.
 
 =head2 ¿Cómo puedo abrir un archivo con un "E<gt>" al comienzo, o con espacio en blanco al final?
 X<filename, special characters>
@@ -1110,7 +1110,7 @@ X<filename, DOS issues>
 Recuerde que dentro de cadenas doblemente entrecomilladas ("like\this"), la barra diagonal inversa es un carácter de escape. La lista completa está en L<perlop/Comillas y operadores de comillas>. Como es normal, no tiene un archivo llamado "c:(tab)emp(formfeed)oo" o "c:(tab)emp(formfeed)oo.exe" en su viejo sistema de archivos DOS.
 
 Use, o bien cadenas con comillas simples, o (preferiblemente) con barras diagonales.
-Ya que todas las versiones de DOS y Windows desde el MS-DOS 2.0 o así, se trata igual a los C</> y C<\> en la ruta, podría usar aquel que no choque con Perl o el shell POSIX, ANSI C y C++, awk, Tcl, Java o Python, por mencionar unos pocos. Las rutas POSIX son más portátiles, también.
+Ya que todas las versiones de DOS y Windows desde el MS-DOS 2.0 o así, se trata igual a los C</> y C<\> en la ruta, podría usar aquel que no choque con Perl o el I<shell> POSIX, ANSI C y C++, awk, Tcl, Java o Python, por mencionar unos pocos. Las rutas POSIX son más portátiles, también.
 
 =head2 ¿Por qué glob("*.*") no obtiene todos los archivos?
 X<glob>

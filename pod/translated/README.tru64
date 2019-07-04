@@ -14,7 +14,7 @@ Este documento describe varias características del sistema operativo UNIX Tru64
 El compilador recomendado para usar en Tru64 es el compilador nativo de C.
 El compilador nativo produce código mucho más rápido (la diferencia de velocidad es notable: varias docenas de puntos de porcentaje) y también código más correcto: si está considerando usar el compilador GNU C debería usar al menos la versión de la distribución 2.95.3 ya que se sabe que todas las versiones anteriores de gcc producen código roto al compilar Perl.  Una manifestación de esta rotura es el volcado del núcleo de la comprobación lib/sdbm; otras son los volcados de núcleo de muchas de las comprobaciones de op/regexp y op/pat, o comprobaciones ext/Storable (el patrón exacto de fallos depende de la versión del GCC y de los indicadores de optimización).
 
-Tanto el cc nativo como el gcc parecen consumir grandes cantidades de memoria cuando se compila Perl.  Se sabe que toke.c tiene problemas cuando se optimiza; con 256 megabytes en la sección de datos parece que es suficiente.  Otro problema conocido es el script mktables, que compila las tablas de soporte para Unicode.  La configuración por defecto de la sección de datos del proceso en Tru64 debería ser un gigabyte, pero algunos sitios/sistemas podrían bajarlo.
+Tanto el cc nativo como el gcc parecen consumir grandes cantidades de memoria cuando se compila Perl.  Se sabe que toke.c tiene problemas cuando se optimiza; con 256 megabytes en la sección de datos parece que es suficiente.  Otro problema conocido es el I<script> mktables, que compila las tablas de soporte para Unicode.  La configuración por defecto de la sección de datos del proceso en Tru64 debería ser un gigabyte, pero algunos sitios/sistemas podrían bajarlo.
 El proceso de configuración de Perl comprueba si hay límites de proceso demasiado bajos, y si es necesario baja la optimización para toke.c, y también da consejo en cómo elevar los límites del proceso (por ejemplo: C<ulimit -d 262144>)
 
 También, Configure podría abortar con
@@ -22,7 +22,7 @@ También, Configure podría abortar con
  I<Build a threading Perl?> (¿Compilar Perl con soporte de hilos?) [n]
  Configure[2437]: Syntax error at line 1 : 'config.sh' is not expected.
 
-Esto indica que Configure se ejecuta con un shell Korn roto (incluso aunque piense que esté usando un shell Bourne al usar "sh Configure" o "./Configure").  Se ha reportado el error del shell Korn a Compaq en febrero de 1999, pero mientras tanto, la razón por la que se usa ksh es que tiene la variable de entorno BIN_SH establecida a 'xpg4'.  Esto provoca que /bin/sh delegue sus deberes a /bin/posix/sh (a ksh).  Limpie la variable de entorno y vuelva a ejecutar Configure.
+Esto indica que Configure se ejecuta con un I<shell> Korn roto (incluso aunque piense que esté usando un I<shell> Bourne al usar "sh Configure" o "./Configure").  Se ha reportado el error del I<shell> Korn a Compaq en febrero de 1999, pero mientras tanto, la razón por la que se usa ksh es que tiene la variable de entorno BIN_SH establecida a 'xpg4'.  Esto provoca que /bin/sh delegue sus deberes a /bin/posix/sh (a ksh).  Limpie la variable de entorno y vuelva a ejecutar Configure.
 
 =head2 Usar archivos grandes con Perl en Tru64
 
@@ -76,7 +76,7 @@ y al compilar la extensión POSIX
 
 Los números de línea exactos puede variar entre las distintas versiones de Perl.  Las advertencias son benignas y se puede ignorar: en las últimas versiones del compilador de C las advertencias no deberían aparecer.
 
-Cuando se compila el archivo F<pp_sys.c>  puede (dependiendo de la versión del sistema operativo) ver que se usa un indicador de compilación adicional: C<-DNO_EFF_ONLY_OK>.  Esto es normal y se refiere a una característica que es relevante solo si usa el pragma C<filetest>.  En versiones anteriores del sistema operativo la característica estaba rota y NO_EFF_ONLY_OK instruye a Perl para que no la use.
+Cuando se compila el archivo F<pp_sys.c>  puede (dependiendo de la versión del sistema operativo) ver que se usa un indicador de compilación adicional: C<-DNO_EFF_ONLY_OK>.  Esto es normal y se refiere a una característica que es relevante solo si usa el I<pragma> C<filetest>.  En versiones anteriores del sistema operativo la característica estaba rota y NO_EFF_ONLY_OK instruye a Perl para que no la use.
 
 =head2 Comprobar Perl en Tru64
 

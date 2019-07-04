@@ -413,7 +413,7 @@ Lista todas los comandos Perl de acciones, posteriores a la presentación del s�
 =item > comando
 X<< debugger command, > >> X<< comando del depurador, > >>
 
-Establece una acción (comando Perl) para que se ejecute después de que salga el símbolo del sistema del depurador que sale justo después de regresar de ejecutar el script.  Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea (apostamos  que no la habría adivinado).
+Establece una acción (comando Perl) para que se ejecute después de que salga el símbolo del sistema del depurador que sale justo después de regresar de ejecutar el I<script>.  Se puede entrar un comando de varias líneas escapando los caracteres de nueva línea (apostamos  que no la habría adivinado).
 
 =item > *
 X<< debugger command, > >> X<< comando del depurador, > >>
@@ -467,7 +467,7 @@ Vea también C<o recallCommand>.
 =item !! cmd
 X<debugger command, !!> X<comando del depurador, !!>
 
-Ejecuta cmd en un subproceso (lee desde DB::IN, escriba hacia DB::OUT). Vea también C<o shellBang>.  Note que se utilizará el shell actual del usuario (bueno, su variable C<$ENV{SHELL}>), que puede interferir con una interpretación correcta del estado de salida o de la información de la señal o volcado del núcleo.
+Ejecuta cmd en un subproceso (lee desde DB::IN, escriba hacia DB::OUT). Vea también C<o shellBang>.  Note que se utilizará el I<shell> actual del usuario (bueno, su variable C<$ENV{SHELL}>), que puede interferir con una interpretación correcta del estado de salida o de la información de la señal o volcado del núcleo.
 
 =item source código
 X<debugger command, source> X<comando del depurador, source>
@@ -551,7 +551,7 @@ El depurador tiene numerosas opciones que se pueden establecer usando el comando
 X<debugger option, recallCommand> X<opción del depurador, recallCommand>
 X<debugger option, ShellBang> X<opción del depurador, ShellBang>
 
-Los caracteres utilizados para recordar un comando o lanzar una shell.  Por defecto, los dos se establecen a C<!>, que es algo desafortunado.
+Los caracteres utilizados para recordar un comando o lanzar una I<shell>.  Por defecto, los dos se establecen a C<!>, que es algo desafortunado.
 
 =item C<pager>
 X<debugger option, pager> X<opción del depurador, pager>
@@ -734,12 +734,12 @@ Otros ejemplos son
 que ejecuta el I<script> de forma no interactiva, imprimiendo información sobre cada entrada en una subrutina y cada línea ejecutada en el archivo de nombre F<listing>.
 (¡Si lo interrumpe, sería mejor que reiniciara C<LineInfo> a algo "interactivo"!).
 
-Otros ejemplos incluyen (usando la sintaxis de shell estándar para mostrar los valores de las variables de entorno):
+Otros ejemplos incluyen (usando la sintaxis de I<shell> estándar para mostrar los valores de las variables de entorno):
 
   $ ( PERLDB_OPTS="NonStop frame=1 AutoTrace LineInfo=tperl.out"
       perl -d miprograma )
 
-que puede ser útil para la depuración de un programa que use por sí mismo C<Term::ReadLine>.  No olvide desenganchar su shell de la TTY en la ventana que corresponda a F</dev/ttyXX>, digamos, por medio de un comando como
+que puede ser útil para la depuración de un programa que use por sí mismo C<Term::ReadLine>.  No olvide desenganchar su I<shell> de la TTY en la ventana que corresponda a F</dev/ttyXX>, digamos, por medio de un comando como
 
   $ sleep 1000000
 
@@ -926,4 +926,4 @@ Si altera sus argumentos @_ en una subrutina (como con C<shift> o C<pop>), el tr
 
 El depurador no funciona, actualmente, en conjunción con la opción de línea de comandos B<-W>, porque, en sí mismo, no está libre de advertencias.
 
-Si se encuentra en una llamada del sistema lenta (como C<wait>, C<accept>, o C<read> desde su teclado o un socket) y no ha establecido su propio gestor C<$SIG{INT}>, entonces no será capaz de hacer un CTRL-C para regresar al depurador, porque el propio gestor C<$SIG{INT}> del depurador no entiende que necesita levantar una excepción a longjmp(3) fuera de las llamadas de sistema lentas.
+Si se encuentra en una llamada del sistema lenta (como C<wait>, C<accept>, o C<read> desde su teclado o un I<socket>) y no ha establecido su propio gestor C<$SIG{INT}>, entonces no será capaz de hacer un CTRL-C para regresar al depurador, porque el propio gestor C<$SIG{INT}> del depurador no entiende que necesita levantar una excepción a longjmp(3) fuera de las lentas llamadas del sistema.

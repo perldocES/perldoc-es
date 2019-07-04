@@ -467,7 +467,7 @@ Probablemente debería siempre usar variables léxicas, aunque aquí el problema
 
 Si quiere sobreescribir una función predefinida, como open(), entonces tendrá que importar la nueva definición desde un módulo diferente. Vea L<perlsub/"Sobreescribiendo funciones incorporadas">.
 
-Si quiere sobrecargar un operador Perl, tal como C<+> o C<**>, entonces querrá usar el I<pragma> C<use overload> pragma, documentado en L<overload>.
+Si quiere sobrecargar un operador Perl, tal como C<+> o C<**>, entonces querrá usar el I<pragma> C<use overload>, documentado en L<overload>.
 
 Si está hablando sobre ocultar llamadas a métodos en clases padre, vea L<perlootut/"Sobreescribiendo métodos y resolución de métodos">.
 
@@ -487,7 +487,7 @@ Cuando llama a C<bar> con argumentos, ve que C<foo> obtiene lo mismo C<@_>:
 
     Args. en foo: a b c
 
-Llamar a la subrutina con paréntesis, con o sin argumentos, no usan el C<@_> actual. Cambiando el ejemplo para poner paréntesis después de la llamada a C<foo>, cambia el programa:
+Llamar a la subrutina con paréntesis, con o sin argumentos, no usan el C<@_> actual. Cambiar el ejemplo para poner paréntesis después de la llamada a C<foo>, cambia el programa:
 
     sub foo { print "Args. en foo: @_\n"; }
 
@@ -789,10 +789,10 @@ Para escalares, arrays y hashes, sin embargo -y normalmente para subrutinas-, pr
 
 (contribución de brian d foy)
 
-El mensaje de "I<bad interpreter>" viene del shell, no de perl. El mensaje actual puede variar dependiendo de su plataforma, shell, y configuraciones regionales.
+El mensaje de "I<bad interpreter>" viene del I<shell>, no de perl. El mensaje actual puede variar dependiendo de su plataforma, I<shell>, y configuraciones regionales.
 
 Si ve "I<bad interpreter - no such file or directory>", la primera línea en su I<script> perl (la línea "I<shebang>") no contiene la ruta correcta a perl (o cualquier otro programa capaz de ejecutar I<scripts>).
-Algunas veces esto sucede cuando mueve el I<script> de una máquina a otra y cada máquina tiene una ruta a perl: /usr/bin/perl contra /usr/local/bin/perl, por ejemplo. También puede indicar que la máquina fuente tiene terminadores de línea CRLF y la máquina destino tiene solo LF: el shell intenta encontrar /usr/bin/perl<CR>, pero no puede.
+Algunas veces esto sucede cuando mueve el I<script> de una máquina a otra y cada máquina tiene una ruta a perl: /usr/bin/perl contra /usr/local/bin/perl, por ejemplo. También puede indicar que la máquina fuente tiene terminadores de línea CRLF y la máquina destino tiene solo LF: el I<shell> intenta encontrar /usr/bin/perl<CR>, pero no puede.
 
 Si ve "I<bad interpreter: Permission denied>", necesita hacer que su I<script> sea ejecutable.
 

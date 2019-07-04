@@ -420,9 +420,9 @@ Si todo lo que le interesa es la gestión de excepción, use uno de los muchos m
 
 Si quiere la sintaxis C<atexit()> (y también de C<rmexit()>), pruebe el módulo C<AtExit> disponible desde CPAN.
 
-=head2 ¿Por qué mi programa con sockets no funciona en System V (Solaris)? ¿Qué significa el mensaje de error "I<Protocol not supported>" (Protocolo no soportado)?
+=head2 ¿Por qué mi programa con I<sockets> no funciona en System V (Solaris)? ¿Qué significa el mensaje de error "I<Protocol not supported>" (Protocolo no soportado)?
 
-Algunos sistemas basados en Sys-V, de forma notable Solaris 2.X, redefinieron algunas de las constantes estándares de los socket. Ya que eran constantes en todas las arquitecturas, se fijaban al código perl. La forma adecuada de tratar esto es con "use Socket" para obtener los valores correctos.
+Algunos sistemas basados en Sys-V, de forma notable Solaris 2.X, redefinieron algunas de las constantes estándares de los I<sockets>. Ya que eran constantes en todas las arquitecturas, se fijaban al código perl. La forma adecuada de tratar esto es con "use Socket" para obtener los valores correctos.
 
 Note que incluso aunque SunOS y Solaris son compatibles a nivel binario, estos valores son diferentes. No hay quien lo entienda...
 
@@ -539,7 +539,7 @@ Con cualquiera de estas soluciones, puede cambiar los descriptores de archivo an
     open(STDOUT, ">logfile");
     system("ls");
 
-o puede usar la redirección de descriptores de archivo del Bourne shell:
+o puede usar la redirección de descriptores de archivo del I<shell> Bourne:
 
     $salida = `$cmd 2>algun_archivo`;
     open (PIPE, "cmd 2>algun_archivo |");
@@ -549,7 +549,7 @@ También puede usar la redirección de descriptores de archivo para hacer de STD
     $salida = `$cmd 2>&1`;
     open (PIPE, "cmd 2>&1 |");
 
-Note que I<no puede>, simplemente, abrir STDERR para que sea un duplicado de STDOUT en su programa Perl y evitar el llamar al shell para hacer la redirección.
+Note que I<no puede>, simplemente, abrir STDERR para que sea un duplicado de STDOUT en su programa Perl y evitar el llamar al I<shell> para hacer la redirección.
 Esto no funciona:
 
     open(STDERR, ">&STDOUT");
@@ -557,7 +557,7 @@ Esto no funciona:
 
 Esto falla porque el C<open()> hace que STDERR vaya a donde STDOUT está yendo en el momento del C<open()>. Las comillas inversas hacen que STDOUT vaya a una cadena, pero no cambia STDERR (que sigue yendo al anterior STDOUT).
 
-Note que I<debe> usar la sintaxis de redirección con comillas inversas del Bourne shell (C<sh(1)>), ¡no de la C<csh(1)>!  Detalles sobre por qué C<system()> de Perl y las comillas inversas y las aperturas de tuberías usan el shell Bourne están en el artículo F<versus/csh.whynot> en la colección "I<Far More Than You Ever Wanted To Know>" en L<http://www.cpan.org/misc/olddoc/FMTEYEWTK.tgz> . Para capturar el STDOUT y STDERR del comando, juntos:
+Note que I<debe> usar la sintaxis de redirección con comillas inversas del I<shell> Bourne (C<sh(1)>), ¡no de la C<csh(1)>!  Detalles sobre por qué C<system()> de Perl y las comillas inversas y las aperturas de tuberías usan el I<shell> Bourne están en el artículo F<versus/csh.whynot> en la colección "I<Far More Than You Ever Wanted To Know>" en L<http://www.cpan.org/misc/olddoc/FMTEYEWTK.tgz> . Para capturar el STDOUT y STDERR del comando, juntos:
 
     $salida = `cmd 2>&1`;                       # tanto con comillas inversas
     $pid = open(PH, "cmd 2>&1 |");              # como con una apertura de una tubería
@@ -585,7 +585,7 @@ Para leer tanto el STDOUT como el STDERR de un comando, pero de forma separada, 
 
     system("programa argumentos 1>programa.stdout 2>programa.stderr");
 
-El orden es importante en todos estos ejemplos. Esto es porque el shell procesa las redirecciones de descriptores de archivo en un estricto orden de izquierda a derecha.
+El orden es importante en todos estos ejemplos. Esto es porque el I<shell> procesa las redirecciones de descriptores de archivo en un estricto orden de izquierda a derecha.
 
     system("prog args 1>tmpfile 2>&1");
     system("prog args 2>&1 1>tmpfile");
@@ -594,9 +594,9 @@ El primer comando envía tanto la salida estándar como la salida estándar de e
 
 =head2 ¿Por qué open() no devuelve un error cuando falla la apertura de una tubería?
 
-Si el segundo argumento a un C<open()> entubado contiene metacaracteres shell, perl se C<fork()>ea y luego C<exec()>uta un shell para decodificar los metacaracteres, y finalmente ejecutar el programa deseado. Si el programa no se pudiera ejecutar, es el shell el que obtiene el mensaje, no Perl. A lo largo de su programa Perl se puede saber si el shell se ejecutó de forma exitosa. Puede aún seguir capturando el STDERR del shell y ver si contiene mensajes de error. Vea L<"¿Cómo puedo capturar STDERR desde un comando externo?"> en este documento, o use el módulo L<IPC::Open3>.
+Si el segundo argumento a un C<open()> entubado contiene metacaracteres I<shell>, perl se C<fork()>ea y luego C<exec()>uta un I<shell> para decodificar los metacaracteres, y finalmente ejecutar el programa deseado. Si el programa no se pudiera ejecutar, es el I<shell> el que obtiene el mensaje, no Perl. A lo largo de su programa Perl se puede saber si el I<shell> se ejecutó de forma exitosa. Puede aún seguir capturando el STDERR del I<shell> y ver si contiene mensajes de error. Vea L<"¿Cómo puedo capturar STDERR desde un comando externo?"> en este documento, o use el módulo L<IPC::Open3>.
 
-Si no existen metacaracteres shell en el argumento de C<open()>, Perl ejecuta el comando directamente, sin usar el shell, y puede informar correctamente si el comando se inició.
+Si no existen metacaracteres I<shell> en el argumento de C<open()>, Perl ejecuta el comando directamente, sin usar el I<shell>, y puede informar correctamente si el comando se inició.
 
 =head2 ¿Qué tiene de malo usar las comillas inversas en un contexto vacío?
 
@@ -620,16 +620,16 @@ este código podría y probablemente debería escribirse como
 
 que sacará la salida del comando cat a medida de que se genera, en lugar de esperar a que el programa termine de imprimir. También comprueba el valor de retorno.
 
-C<system> también proporciona control directo sobre si toma lugar el procesado de los comodines del shell, mientras que eso no ocurre con las comillas inversas.
+C<system> también proporciona control directo sobre si toma lugar el procesado de los comodines del I<shell>, mientras que eso no ocurre con las comillas inversas.
 
-=head2 ¿Cómo puedo llamar a las comillas inversas sin que lo procese el shell?
+=head2 ¿Cómo puedo llamar a las comillas inversas sin que lo procese el I<shell>?
 
 Es un poco delicado. No puede, simplemente escribir el comando así:
 
     @ok = `grep @opts '$cadena_busqueda' @nombres_archivos`;
 
 A partir de Perl 5.8.0 puede usar C<open()> con múltiples argumentos.
-Igual que las formas de lista de C<system()> y C<exec()>, no ocurre el escapado del shell.
+Igual que las formas de lista de C<system()> y C<exec()>, no ocurre el escapado del I<shell>.
 
     open( GREP, "-|", 'grep', @opts, $cadena_busqueda, @nombres_archivos );
     chomp(@ok = <GREP>);
@@ -648,7 +648,7 @@ También puede:
         exec 'grep', @opts, $cadena_busqueda, @nombres_archivos;
     }
 
-Igual que con C<system()>, no ocurre el escapado shell cuando C<exec()>uta una lista. Más ejemplos de esto se pueden encontrar en L<perlipc/"Open entubados seguros">.
+Igual que con C<system()>, no ocurre el escapado I<shell> cuando C<exec()>uta una lista. Más ejemplos de esto se pueden encontrar en L<perlipc/"Open entubados seguros">.
 
 Note que si está usando Windows, no es ni posible tener una solución para este problema. Incluso aunque Perl emule C<fork()>, seguirá bloqueado, porque Windows no tiene una API del estilo argc/argv.
 
@@ -679,10 +679,10 @@ Si eso no funciona, deje su paquete stdio y use sysread.
 
 =back
 
-=head2 ¿Cómo puedo convertir mi I<script> en shell a perl?
+=head2 ¿Cómo puedo convertir mi I<script> en I<shell> a perl?
 
 Aprenda Perl y reescríbalo. En serio, no hay un conversor sencillo.
-Cosas que son incómodas hacer en el shell son fáciles de hacer en Perl, y esta incomodidad es lo que podría hacer imposible escribir un conversor de shell a perl. Reescribiéndolo, pensará en lo que realmente está intentando hacer, y posiblemente escapará el paradigma de entubado del shell, que mientras es conveniente para algunos asuntos, puede causar muchas ineficiencias.
+Cosas que son incómodas hacer en el I<shell> son fáciles de hacer en Perl, y esta incomodidad es lo que podría hacer imposible escribir un conversor de I<shell> a perl. Reescribiéndolo, pensará en lo que realmente está intentando hacer, y posiblemente escapará el paradigma de entubado del I<shell>, que mientras es conveniente para algunos asuntos, puede causar muchas ineficiencias.
 
 =head2 ¿Puedo usar perl para correr una sesión telnet o ftp?
 
@@ -722,7 +722,7 @@ Para alterar realmente la parte visible de la línea de comando, puede asignar a
 
 =item Unix
 
-En un sentido estricto, no se puede hacer: el I<script> se ejecuta como un proceso diferente desde el shell desde donde se arrancó. Los cambios no se reflejan en su padre; solo en los hijos creados después del cambio. Existe una magia en el shell que le puede permitir falsificarlo C<eval()>uando la salida del I<script>; mire el documento P+F de comp.unix.questions por los detalles.
+En un sentido estricto, no se puede hacer: el I<script> se ejecuta como un proceso diferente desde el I<shell> desde donde se arrancó. Los cambios no se reflejan en su padre; solo en los hijos creados después del cambio. Existe una magia en el I<shell> que le puede permitir falsificarlo C<eval()>uando la salida del I<script>; mire el documento P+F de comp.unix.questions por los detalles.
 
 =back
 
@@ -804,7 +804,7 @@ Use el módulo L<BSD::Resource> desde CPAN. Con un ejemplo:
     setrlimit(RLIMIT_CPU,10,20) or die $!;
 
 Esto establece los límites suaves y duros a 10 y 20 segundos, respectivamente.
-Después de 10 segundos de tiempo consumido en la CPU (no tiempo "mural"), el proceso enviará una señal (XCPU en algunos sistemas) que, si no es capturada, causará que el proceso termine. Si la señal es capturada, entonces después de otros 10 segundos más (20 segundos en total) el proceso será matado con una señal no atrapable.
+Después de 10 segundos de tiempo consumido en la CPU (no tiempo "mural"), el proceso enviará una señal (XCPU en algunos sistemas) que, si no es capturada, causará que el proceso termine. Si la señal es capturada, entonces después de otros 10 segundos más (20 segundos en total) el proceso se matará con una señal no atrapable.
 
 Vea L<BSD::Resource> y la documentación de sus sistemas para los detalles más ocultos.
 
@@ -834,7 +834,7 @@ Si es lo bastante afortunado de estar usando un sistema que soporte lecturas no 
     sysopen(my $fh, "/ruta/archivo", O_WRONLY|O_NDELAY|O_CREAT, 0644)
         or die "no puedo abrir /ruta/archivo: $!":
 
-=head2 ¿Cómo distingo entre errores del shell y los de perl?
+=head2 ¿Cómo distingo entre errores del I<shell> y los de perl?
 
 (respuesta contribuida por brian d foy)
 
@@ -848,7 +848,7 @@ Considere este I<script> que tiene un error que notará inmediatamente.
 
     print "Hola a todos\n";
 
-Obtengo un error cuando ejecuto esto desde mi shell (que sucede que es bash). Puede parece que perl olvidó que tiene una función C<print()>, pero mi línea I<shebang> no es la ruta a perl, así que la shell ejecuta el i<script> y obtiene el error.
+Obtengo un error cuando ejecuto esto desde mi I<shell> (que sucede que es bash). Puede parece que perl olvidó que tiene una función C<print()>, pero mi línea I<shebang> no es la ruta a perl, así que la I<shell> ejecuta el I<script> y obtiene el error.
 
     $ ./test
     ./test: line 3: print: comando no encontrado
@@ -959,7 +959,7 @@ Para distribuciones basadas en C<Makefile.PL>, use la opción INSTALL_BASE cuand
 
     perl Makefile.PL INSTALL_BASE=/midir/perl
 
-Puede establecerlo en su configuración de C<CPAN.pm> para que así los módulos se instalen automáticamente en su directorio privado de bibliotecas cuando use el shell de CPAN.pm:
+Puede establecerlo en su configuración de C<CPAN.pm> para que así los módulos se instalen automáticamente en su directorio privado de bibliotecas cuando use el I<shell> de CPAN.pm:
 
     % cpan
     cpan> o conf makepl_arg INSTALL_BASE=/midir/perl

@@ -285,9 +285,9 @@ Si desea cancelar una o varias confirmaciones, puede usar C<git reset>.
 
 =head2 Bisecar
 
-C<git> proporciona una forma integrada de determinar qué confirmación es responsable de un error. C<git bisect> realiza una búsqueda binaria del historial para localizar la primera confirmación en la que se produjo el error. Es un comando rápido, eficaz y flexible, pero debe ser configurado y la automatización del proceso requiere un script de shell auxiliar.
+C<git> proporciona una forma integrada de determinar qué confirmación es responsable de un error. C<git bisect> realiza una búsqueda binaria del historial para localizar la primera confirmación en la que se produjo el error. Es un comando rápido, eficaz y flexible, pero debe ser configurado y la automatización del proceso requiere un I<script> de I<shell> auxiliar.
 
-El núcleo proporciona un programa encapsulador, F<Porting/bisect.pl>, que simplifica al máximo la bisección, convirtiéndola en algo tan sencillo como ejecutar un script de una línea. Por ejemplo, si desea saber en qué confirmación la línea siguiente pasó a ser un error:
+El núcleo proporciona un programa encapsulador, F<Porting/bisect.pl>, que simplifica al máximo la bisección, convirtiéndola en algo tan sencillo como ejecutar un I<script> de una línea. Por ejemplo, si desea saber en qué confirmación la línea siguiente pasó a ser un error:
 
     perl -e 'my $a := 2'
 
@@ -319,7 +319,7 @@ La confirmación que eliminó el último archivo coincidente con esta expresión
 
 generalmente, sin necesidad de saber qué versiones de perl hay que usar como revisiones inicial y final, ya que F<Porting/bisect.pl> buscará automáticamente la versión estable más reciente que supera el caso de prueba. Ejecute C<Porting/bisect.pl --help> para ver toda la documentación, que incluye una descripción de la configuración mediante C<Configure> y las opciones de tiempo de compilación.
 
-Si necesita más flexibilidad que la que ofrece F<Porting/bisect.pl> tendrá que usar C<git bisect> directamente. El uso de C<git bisect run> resulta muy útil para automatizar la compilación y prueba de las revisiones de perl. Para ello necesitará un script de shell que haga que C<git> llame una revisión concreta para realizar pruebas. Se proporciona un script de ejemplo, F<Porting/bisect-example.sh>, que debe copiar B<fuera> del repositorio, ya que al ejecutar el proceso de bisección restablece el estado a una copia limpia. En las instrucciones siguientes se supone que lo ha copiado como F<~/run> y ha hecho las modificaciones necesarias.
+Si necesita más flexibilidad que la que ofrece F<Porting/bisect.pl> tendrá que usar C<git bisect> directamente. El uso de C<git bisect run> resulta muy útil para automatizar la compilación y prueba de las revisiones de perl. Para ello necesitará un I<script> de I<shell> que haga que C<git> llame una revisión concreta para realizar pruebas. Se proporciona un I<script> de ejemplo, F<Porting/bisect-example.sh>, que debe copiar B<fuera> del repositorio, ya que al ejecutar el proceso de bisección restablece el estado a una copia limpia. En las instrucciones siguientes se supone que lo ha copiado como F<~/run> y ha hecho las modificaciones necesarias.
 
 Primero debe entrar en modo de bisección con:
 

@@ -93,7 +93,7 @@ Lo que hace que todo esto sea importante es que el módulo Exporter usa alias de
     @EXPORT = qw($FOO); # Forma usual; no se puede localizar
     @EXPORT = qw(*FOO); # Se puede localizar
 
-Puede evitar el primer caso usando el nombre completo (C<$Package::FOO>) donde necesite un valor local, o bien reemplazarlo mediante C<*FOO = *Package::FOO> en el script.
+Puede evitar el primer caso usando el nombre completo (C<$Package::FOO>) donde necesite un valor local, o bien reemplazarlo mediante C<*FOO = *Package::FOO> en el I<script>.
 
 El mecanismo C<*x = \$y> se puede usar para pasar y devolver referencias sencillas a (o desde) las subrutinas si no desea copiar el valor completo.  Sólo funciona al asignar valores a variables dinámicas (no léxicas).
 
@@ -115,7 +115,7 @@ X<constant> X<constante> X<scalar, constant> X<escalar, constante>
     *PI = \3.14159265358979;
 
 Ahora no puede modificar C<$PI>, lo que probablemente no sea mala idea.
-Esto no es lo mismo que una subrutina constante, que está sujeta a optimización en tiempo de compilación.  Una subrutina constante es una subrutina cuyo prototipo no consume argumentos y devuelve una expresión constante.  En L<perlsub> encontrará más información al respecto.  El pragma C<use constant> es una abreviatura adecuada para estos casos.
+Esto no es lo mismo que una subrutina constante, que está sujeta a optimización en tiempo de compilación.  Una subrutina constante es una subrutina cuyo prototipo no consume argumentos y devuelve una expresión constante.  En L<perlsub> encontrará más información al respecto.  El I<pragma> C<use constant> es una abreviatura adecuada para estos casos.
 
 Puede usar C<*foo{PACKAGE}> y C<*foo{NAME}> para averiguar de qué nombre y paquete proviene la entrada *foo de la tabla de símbolos.  Esto puede ser útil en una subrutina que recibe I<typeglobs> como argumentos:
 
@@ -354,7 +354,7 @@ Las dos instrucciones
 difieren en dos aspectos.  En el primer caso, si el nombre del módulo contiene el símbolo "::" (por ejemplo, C<Mi::Modulo>), dicho símbolo se traducirá como el separador de directorios habitual (generalmente "/").   En el segundo caso no es así, y debe especificarse de forma literal.  La otra diferencia consiste en que C<require> indica al compilador que se usa la sintaxis indirecta de objetos en relación a "MiModulo", de forma que las expresiones del estilo C<$ob = purge MiModulo> indican llamadas a métodos y no llamadas a funciones.
 (Sí, esto realmente puede suponer una diferencia).
 
-Como la instrucción C<use> implica la presencia de un bloque C<BEGIN>, la importación de semántica tiene lugar tan pronto como se haya compilado la instrucción C<use>, antes de que se compile el resto del archivo.  Esto es lo que permite a un módulo funcionar como un mecanismo pragma y declarar subrutinas que están visibles incluso como operadores de lista o unarios para el resto del archivo actual.  Pero no funcionará si usa C<require> en lugar de C<use>.  Con C<require> puede producirse el siguiente problema:
+Como la instrucción C<use> implica la presencia de un bloque C<BEGIN>, la importación de semántica tiene lugar tan pronto como se haya compilado la instrucción C<use>, antes de que se compile el resto del archivo.  Esto es lo que permite a un módulo funcionar como un mecanismo I<pragma> y declarar subrutinas que están visibles incluso como operadores de lista o unarios para el resto del archivo actual.  Pero no funcionará si usa C<require> en lugar de C<use>.  Con C<require> puede producirse el siguiente problema:
 
     require Cwd;		# hace Cwd:: accesible
     $directorio = Cwd::getcwd();

@@ -126,7 +126,7 @@ C<POST_MAX> ya no provoca que el cliente se quede colgado
 
 =item *
 
-Ahora están desactivados los índices automáticos de tabulación, y se ha añadido un nuevo pragma para volverlos a activar
+Ahora están desactivados los índices automáticos de tabulación, y se ha añadido un nuevo I<pragma> para volverlos a activar
 
 =item *
 
@@ -443,11 +443,11 @@ C<basename> ahora elimina separadores finales superfluos antes de procesar el no
 =item *
 
 C<basename> ahora devuelve C</> para el parámetro C</>, para hacer C<basename>
-consistente con la utilidad shell del mismo nombre.
+consistente con la utilidad I<shell> del mismo nombre.
 
 =item *
 
-El sufijo ya no es eliminado si es idéntico al resto de los caracteres en el nombre, una vez más para mantener la coherencia con la utilidad del shell.
+El sufijo ya se elimina si es idéntico al resto de los caracteres en el nombre, una vez más para mantener la coherencia con la utilidad del I<shell>.
 
 =item *
 
@@ -1156,7 +1156,7 @@ Solo cambios en la documentación
 
 =item *
 
-Nota: Una mejor implementación de C<threads::shared> está disponible en CPAN - esto será fusionado en 5.8.9 si se prueba que es estable.
+Nota: Una mejor implementación de C<threads::shared> está disponible en CPAN - esto se fusionará en 5.8.9 si se prueba que es estable.
 
 =back
 
@@ -1407,7 +1407,7 @@ C<FindBin> ahora funciona mejor con los directorios donde los derechos de acceso
 
 =item *
 
-Varias fugas de memoria en ithreads fueron cerradas. Una mejor implementación de C<threads::shared> está disponible en CPAN - esto será fusionado en 5.8.9 si se prueba que es estable.
+Varias fugas de memoria en ithreads fueron cerradas. Una mejor implementación de C<threads::shared> está disponible en CPAN - esto se fusionará en 5.8.9 si se prueba que es estable.
 
 =item *
 
@@ -1431,7 +1431,7 @@ El depurador, ahora, sigue la traza correctamente en la ejecución de código ev
 
 =item *
 
-El valor del pragma C<open> ya no es ignorado por el open de tres argumentos.
+El valor del I<pragma> C<open> ya no se ignora por el open de tres argumentos.
 
 =item *
 
@@ -1485,7 +1485,7 @@ Andy Lester suministró muchas mejoras para determinar qué parámetros de las f
 
 Dave Mitchell mejoró la salida de depura del analizador léxico con C<-DT>
 
-Nicholas Clark cambió la asignación del búfer de cadena de texto por lo que ahora es redondeado al siguiente múltiplo de 4 (u 8 en las plataformas con punteros de 64 bits). Esto debería reducir el número de llamadas a C<realloc> sin tener que llegar a utilizar realmente ningún otro espacio de memoria adicional.
+Nicholas Clark cambió la asignación del búfer de cadena de texto por lo que ahora se redondea al siguiente múltiplo de 4 (u 8 en las plataformas con punteros de 64 bits). Esto debería reducir el número de llamadas a C<realloc> sin tener que llegar a utilizar realmente ningún otro espacio de memoria adicional.
 
 El array de C<HV> de los C<HE*> es ahora asignado al correcto (y mínimo) tamaño, gracias a un nuevo cambio de Nicholas Clark. Compile con C<-DPERL_USE_LARGE_HV_ALLOC> para usar el viejo, descuidado, valor por defecto.
 

@@ -51,7 +51,7 @@ Se ha actualizado L<CPAN::Distribution> de la versión 1.9602 a la versión 1.96
 
 Portadas las correcciones de errores de la versión CPAN 1.9800.  Garantiza la detección adecuada de los prerequisitos C<configure_requires> desde los archivos Meta de CPAN en el caso de que C<dynamic_config> sea verdadero.  [rt.cpan.org #68835]
 
-También asegura que C<configure_requires> sólo es comprobado en los archivos META, no en los archivos MYMETA, por lo que protegen contra la generación de MYMETA que hace descartar C<configure_requires>.
+También asegura que C<configure_requires> sólo se comprueba en los archivos META, no en los archivos MYMETA, por lo que protegen contra la generación de MYMETA que hace descartar C<configure_requires>.
 
 =item *
 
@@ -127,7 +127,7 @@ Localización de una variable atada utilizada para que sea de sólo lectura si c
 
 =item *
 
-Elementos de hashes restringidos (vea el pragma L<fields>) que contengan valores de copia-en-escritura no se podían eliminar, ni estos hashes podían limpiarse (C<%hash = ()>).
+Elementos de hashes restringidos (vea el I<pragma> L<fields>) que contengan valores de copia-en-escritura no se podían eliminar, ni estos hashes podían limpiarse (C<%hash = ()>).
 
 =item *
 

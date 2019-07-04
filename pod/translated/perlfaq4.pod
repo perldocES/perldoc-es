@@ -584,7 +584,7 @@ Use L<Text::Wrap> (parte de la distribución estándar de Perl):
 
 Los párrafos que ofrezca a L<Text::Wrap> no deberían contener caracteres de nueva línea. L<Text::Wrap> no justifica las líneas (relleno por la derecha).
 
-O use el módulo de CPAN L<Text::Autoformat>. El formateo de archivos se puede hacer fácilmente creando un alias de shell, como este:
+O use el módulo de CPAN L<Text::Autoformat>. El formateo de archivos se puede hacer fácilmente creando un alias de I<shell>, como este:
 
     alias fmt="perl -i -MText::Autoformat -n0777 \
         -e 'print autoformat $_, {all=>1}' $*"
@@ -1030,7 +1030,7 @@ Sin embargo, en contexto de lista, el operador de entrada de líneas devuelve to
 
     @array[1] = <STDIN>;  # es muy probable que no sea lo que quiere hacer
 
-Tanto el pragma C<use warnings> o el indicador B<-w> le advertirán cuando use una porción de array con un único índice.
+Tanto el I<pragma> C<use warnings> o el indicador B<-w> le advertirán cuando use una porción de array con un único índice.
 
 =head2 ¿Cómo puedo eliminar elementos duplicados de una lista o array?
 
@@ -1952,7 +1952,7 @@ Incluso aunque empiece con un hash completamente vacío, después de esa llamada
                         }
             );
 
-Esto es autovivificación. Puede solventarlo de varias formas. La más sencilla es desactivarla. El pragma C<autovivification> está disponible en CPAN. Ahora ya no puede crecer el hash:
+Esto es autovivificación. Puede solventarlo de varias formas. La más sencilla es desactivarla. El I<pragma> C<autovivification> está disponible en CPAN. Ahora ya no puede crecer el hash:
 
     {
         no autovivification;

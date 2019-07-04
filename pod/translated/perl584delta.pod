@@ -1,6 +1,6 @@
 =head1 NAME
 
-perl584delta - what is new for perl v5.8.4
+perl584delta - qué hay de nuevo para v5.8.4
 
 =head1 DESCRIPCIÓN
 
@@ -8,7 +8,7 @@ Este documento describe las diferencias entre la versión 5.8.3 y la versión 5.
 
 =head1 Cambios incompatibles
 
-Muchos pequeños errores se han corregido. Scripts que puedan depender de conductas erróneas previas deberán tener en cuenta estas correcciones como cambios incompatibles :-) Se recomienda realizar pruebas de aceptación suficientes para esta versión para estar seguro de que esto no les afecta, antes de poner esa versión en producción.
+Muchos pequeños errores se han corregido. Los I<scripts> que puedan depender de conductas erróneas previas deberán tener en cuenta estas correcciones como cambios incompatibles :-) Se recomienda realizar pruebas de aceptación suficientes para esta versión para estar seguro de que esto no les afecta, antes de poner esa versión en producción.
 
 La salida de diagnóstico de Carp se ha cambiado un poco, para agregar un espacio después de la coma entre los argumentos. Esto hace que sea mucho más fácil para las herramientas como los navegadores web para ajustar la presentación, pero podría confundir a cualquier herramienta automática que llevase a cabo un análisis detallado de la salida de Carp.
 
@@ -26,7 +26,7 @@ La copia de la base de datos de caracteres Unicode incluidos en Perl 5.8 se ha a
 
 =head2 suidperl menos inseguro
 
-Paul Szabo ha analizado y parcheado C<suidperl> para eliminar los inseguridades conocidas en este momento. Actualmente no hay ningún agujero conocido en C<suidperl>, pero la experiencia anterior muestra que no podemos estar seguros de que estos fueron los últimos. Es posible que ya no invoque a perl con el uid activado, directamente, así que para mantener la compatibilidad anterior con scripts que llaman a #!/usr/bin/suidperl el único binario con uid activado es ahora C<sperl5.8.>I<n> (C<sperl5.8.4> para esta versión). C<suidperl> es instalado como un enlace duro a C<perl>; tanto C<suidperl> como C<perl> invocarán al binario C<sperl5.8.4> automáticamente, por lo que este cambio debería ser completamente transparente.
+Paul Szabo ha analizado y parcheado C<suidperl> para eliminar los inseguridades conocidas en este momento. Actualmente no hay ningún agujero conocido en C<suidperl>, pero la experiencia anterior muestra que no podemos estar seguros de que estos fueron los últimos. Es posible que ya no invoque a perl con el uid activado, directamente, así que para mantener la compatibilidad anterior con I<scripts> que llaman a C<#!/usr/bin/suidperl> el único binario con uid activado es ahora C<sperl5.8.>I<n> (C<sperl5.8.4> para esta versión). C<suidperl> se instala como un enlace duro a C<perl>; tanto C<suidperl> como C<perl> invocarán al binario C<sperl5.8.4> automáticamente, por lo que este cambio debería ser completamente transparente.
 
 Para nuevos proyectos el equipo básico de desarrollo perl recomienda, encarecidamente, que utilice herramientas específicas para el propósito de seguridad, tales como C<sudo>, en lugar de C<suidperl>.
 
@@ -81,7 +81,7 @@ Algunos módulos disponibles, tanto en el núcleo de perl e independientes de CP
 
 =item Socket
 
-Hay un soporte experimental para los sockets abstractos del dominio Unix en Linux.
+Hay un soporte experimental para los I<sockets> abstractos del dominio Unix en Linux.
 
 =item Storable
 
@@ -149,7 +149,7 @@ El depurador de Perl (F<lib/perl5db.pl>) ahora puede guardar todos los comandos 
 
 El proceso de generación, tanto en VMS como en Windows han tenido pequeñas mejoras. El compilador de Borland C en Windows ahora puede compilar perl con PerlIO y/o tener activado USE_LARGE_FILES.
 
-C<perl.exe> en Windows ahora tiene un icono de un "Camello". El uso de un camello con el motivo de Perl es una marca registrada de O'Reilly and Associates Inc., y es utilizado con su permiso (es decir, la distribución del código fuente, la compilación de un ejecutable en Windows a partir de él, y ​​el uso de ese ejecutable a nivel local). El uso del camello suministrado, para cualquier otra cosa que fuera más allá de ser el icono de un archivo ejecutable perl no está específicamente cubierto, y cualquiera que quiera redistribuir binarios perl I<con> el icono debe consultar antes, y directamente, con O'Reilly.
+C<perl.exe> en Windows ahora tiene un icono de un "Camello". El uso de un camello con el motivo de Perl es una marca registrada de O'Reilly and Associates Inc., y se utiliza con su permiso (es decir, la distribución del código fuente, la compilación de un ejecutable en Windows a partir de él, y ​​el uso de ese ejecutable a nivel local). El uso del camello suministrado, para cualquier otra cosa que fuera más allá de ser el icono de un archivo ejecutable perl no está específicamente cubierto, y cualquiera que quiera redistribuir binarios perl I<con> el icono debe consultar antes, y directamente, con O'Reilly.
 
 Perl debe generarse limpiamente en Stratus VOS, una vez más.
 
@@ -166,7 +166,7 @@ ahora fallará (correctamente) bajo el uso estricto. (Debido a que la variable i
 
 La advertencia "I<const in void context> (constante en contexto vacío)" ha sido suprimida de las expresiones booleanas optimizadas, como en C<5 || print;>
 
-C<perl -i> podría hacer C<fchmod(stdin)> por error. Esto es grave si stdin está conectado a un terminal, y perl es ejecutado como root. Ahora arreglado.
+C<perl -i> podría hacer C<fchmod(stdin)> por error. Esto es grave si stdin está conectado a un terminal, y perl se ejecuta como root. Ahora arreglado.
 
 =head1 Diagnósticos nuevos y cambiados
 

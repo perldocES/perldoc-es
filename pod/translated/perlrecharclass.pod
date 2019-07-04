@@ -312,7 +312,7 @@ Cuando a la clase se le indica que coincida independientemente del tamaño de ca
  'ss' =~ /\A\N{LATIN SMALL LETTER SHARP S}\z/i             # Coincide
  'ss' =~ /\A[aeioust\N{LATIN SMALL LETTER SHARP S}]\z/i    # Coincide
 
-Para que esto suceda, la clase no debe estar invertida (vea L</Negación>) y el carácter debe ser especificado explícitamente, y no ser parte de un rango multi-carácter (ni incluso ser uno de sus puntos finales).  (L</Rangos de carácter> serán explicados dentro de poco). Por tanto,
+Para que esto suceda, la clase no debe estar invertida (vea L</Negación>) y el carácter debe ser especificado explícitamente, y no ser parte de un rango multi-carácter (ni incluso ser uno de sus puntos finales).  (L</Rangos de carácter> se explicarán dentro de poco). Por tanto,
 
  'ss' =~ /\A[\0-\x{ff}]\z/ui       # No coincide
  'ss' =~ /\A[\0-\N{LATIN SMALL LETTER SHARP S}]\z/ui   # No coincide
@@ -611,7 +611,7 @@ La clase POSIX coincide con su homóloga del rango ASCII completo.
 
 =back
 
-Qué reglas se aplican es determinado tal como se describe en L<perlre/¿Qué modificador de conjunto de caracteres está en vigor?>.
+Qué reglas se aplican se determina tal como se describe en L<perlre/¿Qué modificador de conjunto de caracteres está en vigor?>.
 
 Se ha propuesto cambiar este comportamiento en una futura publicación de Perl de modo que tanto si las reglas Unicode están activas o no, no cambiará el comportamiento: Más allá de la configuración regional, las clases POSIX se comportarán como las homólogas del rango ASCII.  Si desea comentar esta proposición, mande un correo electrónico C<perl5-porters@perl.org>
 

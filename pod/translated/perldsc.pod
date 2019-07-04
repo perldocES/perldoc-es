@@ -68,7 +68,7 @@ Ahora, debido a que el nivel superior sólo contiene referencias, si trata de im
   ARRAY(0x83c38)ARRAY(0x8b194)ARRAY(0x8b1d0)
 
 
-Esto es debido a que Perl no (nunca), implícitamente, desreferencia sus variables.
+Esto se debe a que Perl no (nunca), implícitamente, desreferencia sus variables.
 Si lo que quiere es obtener aquello a lo que la referencia apunta, entonces debe hacerlo por sí mismo usando los prefijos indicadores de tipos, como C<${$bla}>, C<@{$bla}>, C<@{$bla[$i]}>, o usar los punteros flecha pos-fijas, como C<$a-E<gt>[3]>, C<$h-E<gt>{pedro}>, o incluso C<$ob-E<gt>metodo()-E<gt>[3]>.
 
 =head1 ERRORES COMUNES

@@ -12,13 +12,13 @@ Muchas de las correcciones de errores en 5.10.0 ya se observaban en las versione
 
 =head1 Mejoras en el núcleo principal
 
-=head2 El pragma C<feature>
+=head2 El I<pragma> C<feature>
 
-El pragma C<feature> se utiliza para activar una nueva sintaxis que rompe la compatibilidad Perl con versiones anteriores del lenguaje. Se trata de una pragma léxico, al igual que C<strict> o C<warnings>.
+El I<pragma> C<feature> se utiliza para activar una nueva sintaxis que rompe la compatibilidad Perl con versiones anteriores del lenguaje. Se trata de un I<pragma> léxico, al igual que C<strict> o C<warnings>.
 
 En la actualidad las nuevas funciones disponibles son las siguientes: C<switch> (añade una sentencia switch), C<say> (añade una función predefinida C<say>), y C<state> (añade una palabra clave C<state> para declarar variables "estáticas"). Esas características se describen en sus propias secciones de este documento.
 
-El pragma C<feature> es también implícitamente cargado cuando se requiere un mínimo de la versión de Perl (con la construcción C<use VERSION>) mayor que, o igual a 5.9.5. Vea L<feature> para más detalles.
+El I<pragma> C<feature> es también implícitamente cargado cuando se requiere un mínimo de la versión de Perl (con la construcción C<use VERSION>) mayor que, o igual a 5.9.5. Vea L<feature> para más detalles.
 
 =head2 Nueva opción en línea de comandos B<-E>
 
@@ -185,9 +185,9 @@ C<UNITCHECK>, un nuevo bloque de código especial se ha incorporado, además de 
 
 Los bloques C<CHECK> e C<INIT>, si bien son útiles para algunos propósitos específicos, siempre se ejecutan en la transición entre la compilación y la ejecución del programa principal, y por lo tanto no sirven para nada cada vez que el código se carga en tiempo de ejecución. Por otro lado, los bloques C<UNITCHECK> se ejecutan justo después de que se compile la unidad que los define. Vea L<perlmod> para más información. (Alex Gough)
 
-=head2 Nuevo pragma, C<mro>
+=head2 Nuevo I<pragma>, C<mro>
 
-Un nuevo pragma, C <mro> (Orden de método de resolución) ha sido añadido. Permite cambiar, en función de cada clase, el algoritmo que utiliza perl para encontrar los métodos heredados en caso de una jerarquía de herencia múltiple. El valor MRO por defecto no ha cambiado (DFS (I<Depth First Search>), Búsqueda Primero en Profundidad). Otro MRO está disponible: el algoritmo C3. Vea L<mro> para más información.
+Un nuevo I<pragma>, C <mro> (Orden de método de resolución) ha sido añadido. Permite cambiar, en función de cada clase, el algoritmo que utiliza perl para encontrar los métodos heredados en caso de una jerarquía de herencia múltiple. El valor MRO por defecto no ha cambiado (DFS (I<Depth First Search>), Búsqueda Primero en Profundidad). Otro MRO está disponible: el algoritmo C3. Vea L<mro> para más información.
 (Brandon Black)
 
 Tenga en cuenta que, debido a los cambios en la implementación de la búsqueda de la jerarquía de clases, el código que se utiliza para indefinir el comodín C<*ISA>, es muy probable que quede roto. De todos modos, indefinir C<*ISA> tuvo el efecto colateral de la eliminación de la magia en el array @ISA y no se debería haber hecho desde el principio. Además, el caché C<*::ISA::CACHE::> ya no existe; para forzar la reinicialización del caché @ISA, ahora necesita usar la API C<mro>, o de forma más sencilla, asignar un nuevo valor a @ISA (p.e. C<@ISA = @ISA>).
@@ -354,7 +354,7 @@ Se fuerza a que el identificador C<_> se considere como una palabra suelta despu
 
 El atributo C<:unique> se ha convertido en una no-operación, debido a que su implementación era, fundamentalmente, defectuosa y no multi-hilo.
 
-=head2 Efecto de los pragma en eval
+=head2 Efecto de los I<pragma> en eval
 
 El valor en tiempo de compilación de la variable especial C<%^H> ahora se puede propagar en un código eval("")uado. Esto hace que sea más útil para implementar pragmas léxicos.
 
@@ -392,7 +392,7 @@ Cuando perl se ejecuta bajo el modo contaminado, C<printf()> y C<sprintf()> rech
 
 =head2 Gestores de señales y su indefinición
 
-Indefiniendo o borrando un controlador de señales con C<undef $SIG{FOO}> es ahora equivalente a ponerlo a C<'DEFAULT'>. (Rafael Garcia-Suarez)
+Indefinir o borrar un controlador de señales con C<undef $SIG{FOO}> es ahora equivalente a ponerlo a C<'DEFAULT'>. (Rafael Garcia-Suarez)
 
 =head2 estado estricto y desreferencia en defined()
 
@@ -414,14 +414,14 @@ La construcción basada en la expresión regular C<(?p{})>, que fue depreciada e
 
 =head2 Los Pseudo-hashes han sido eliminados
 
-Soporte para pseudo-hashes se ha eliminado a partir de Perl 5.9. (El pragma C<fields> se mantiene, pero utiliza una implementación alternativa).
+Soporte para pseudo-hashes se ha eliminado a partir de Perl 5.9. (El I<pragma> C<fields> se mantiene, pero utiliza una implementación alternativa).
 
 =head2 Eliminación del compilador de bytecode  y de perlcc
 
 C<perlcc>, el cargador binario y los módulos que lo soportan (B::C, B::CC, B::Bytecode, etc.) ya no se distribuyen con el código fuente de perl. Estas herramientas experimentales nunca han funcionado apropiadamente, y debido a la falta de voluntarios para mantenerlos en línea con los desarrollos en el intérprete perl, se ha decidido eliminarlos en lugar de incluir una versión rota de ellos.
 La última versión de estos módulos se puede encontrar en perl 5.9.4.
 
-Sin embargo, el entorno de trabajo del compilador B sigue estando soportado en el núcleo de perl, así como con los módulos más útiles dependientes de él (entre otro, B::Deparse y B::Concise).
+Sin embargo, el entorno de trabajo del compilador B se sigue soportando en el núcleo de perl, así como con los módulos más útiles dependientes de él (entre otro, B::Deparse y B::Concise).
 
 =head2 Eliminación de JPL
 
@@ -452,7 +452,7 @@ En 5.10.0 y posteriores, el código advierte cuando principal contiene C<use war
 
 =head2 Actualizar módulos principales de forma individual
 
-Ahora hay más módulos básicos disponibles a través de CPAN.  Si desea actualizar uno de estos módulos, no es necesario esperar a una nueva versión de Perl.  Desde dentro de la shell de cpan, ejecutando el comando 'r' presentará un informe de los módulos con actualizaciones disponibles.  Vea C<perldoc CPAN> para más información.
+Ahora hay más módulos básicos disponibles a través de CPAN.  Si desea actualizar uno de estos módulos, no es necesario esperar a una nueva versión de Perl.  Desde dentro de la I<shell> de cpan, ejecutando el comando 'r' presentará un informe de los módulos con actualizaciones disponibles.  Vea C<perldoc CPAN> para más información.
 
 =head2 Cambios en la prágmata
 
@@ -460,15 +460,15 @@ Ahora hay más módulos básicos disponibles a través de CPAN.  Si desea actual
 
 =item C<feature>
 
-El nuevo pragma C<feature> se utiliza para habilitar las nuevas características que puedan romper código antiguo. Vea L</"El pragma C<feature>"> más arriba.
+El nuevo I<pragma> C<feature> se utiliza para habilitar las nuevas características que puedan romper código antiguo. Vea L</"El I<pragma> C<feature>"> más arriba.
 
 =item C<mro>
 
-Este nuevo pragma permite cambiar el algoritmo utilizado para resolver los métodos heredados. Vea L</"Nuevo pragma, C<mro>"> más arriba.
+Este nuevo I<pragma> permite cambiar el algoritmo utilizado para resolver los métodos heredados. Vea L</"Nuevo I<pragma>, C<mro>"> más arriba.
 
-=item Ámbito del pragma C<sort>
+=item Ámbito del I<pragma> C<sort>
 
-El pragma C<sort> tiene ahora un alcance léxico. Su efecto solía ser global.
+El I<pragma> C<sort> tiene ahora un alcance léxico. Su efecto solía ser global.
 
 =item Ámbito de C<bignum>, C<bigint>, C<bigrat>
 
@@ -476,7 +476,7 @@ Los tres pragmas numéricos C<bignum>, C<bigint> y C<bigrat> ahora tienen ámbit
 
 =item C<base>
 
-El pragma C<base> ahora avisa si una clase intenta heredar de sí misma.
+El I<pragma> C<base> ahora avisa si una clase intenta heredar de sí misma.
 (Curtis "Ovid" Poe)
 
 =item C<strict> y C<warnings>
@@ -489,7 +489,7 @@ El módulo C<version> proporciona soporte para los objetos de versión.
 
 =item C<warnings>
 
-El pragma C<warnings> ya no carga C<Carp>. Esto significa que el código que utilizaba las rutinas C<Carp> sin haberlo cargado en tiempo de compilación puede ser necesario ajustarle; por lo general, el siguiente (y defectuoso) código no funcionará más, y requerirá que se añadan paréntesis después del nombre de la función:
+El I<pragma> C<warnings> ya no carga C<Carp>. Esto significa que el código que utilizaba las rutinas C<Carp> sin haberlo cargado en tiempo de compilación puede ser necesario ajustarle; por lo general, el siguiente (y defectuoso) código no funcionará más, y requerirá que se añadan paréntesis después del nombre de la función:
 
     use warnings;
     require Carp;
@@ -497,7 +497,7 @@ El pragma C<warnings> ya no carga C<Carp>. Esto significa que el código que uti
 
 =item C<less>
 
-C<less> ahora hace algo útil (o al menos lo intenta). De hecho, se ha convertido en un pragma léxico. Por lo tanto, en sus módulos, ahora puede probar si los usuarios han solicitado utilizar menos CPU, o menos memoria, menos magia, o incluso menos grasa. Vea L<less> por más. (Joshua ben Jore)
+C<less> ahora hace algo útil (o al menos lo intenta). De hecho, se ha convertido en un I<pragma> léxico. Por lo tanto, en sus módulos, ahora puede probar si los usuarios han solicitado utilizar menos CPU, o menos memoria, menos magia, o incluso menos grasa. Vea L<less> por más. (Joshua ben Jore)
 
 =back
 
@@ -507,7 +507,7 @@ C<less> ahora hace algo útil (o al menos lo intenta). De hecho, se ha convertid
 
 =item *
 
-C<encoding::warnings>, de Audrey Tang, es un módulo para emitir avisos cada vez que una cadena de caracteres ASCII que, conteniendo bytes con los bits altos puestos, se convierte implícitamente en UTF-8. Se trata de un pragma léxico desde Perl 5.9.4; en los perl más antiguos, su efecto es global.
+C<encoding::warnings>, de Audrey Tang, es un módulo para emitir avisos cada vez que una cadena de caracteres ASCII que, conteniendo bytes con los bits altos puestos, se convierte implícitamente en UTF-8. Se trata de un I<pragma> léxico desde Perl 5.9.4; en los perl más antiguos, su efecto es global.
 
 =item *
 
@@ -519,7 +519,7 @@ C<Math::BigInt::FastCalc> es una versión XS, y por lo tanto más rápida, de C<
 
 =item *
 
-C<Compress::Zlib> es un interfaz a la biblioteca de compresión zlib. Viene con una versión integrada de zlib, así que tener un zlib funcional no es un requisito previo para instalarlo. Es utilizado por C<Archive::Tar> (ver más abajo).
+C<Compress::Zlib> es un interfaz a la biblioteca de compresión zlib. Viene con una versión integrada de zlib, así que tener un zlib funcional no es un requisito previo para instalarlo. Lo utiliza C<Archive::Tar> (ver más abajo).
 
 =item *
 
@@ -569,7 +569,7 @@ C<Locale::Maketext::Simple>, necesarios para CPANPLUS, es un simple contenedor a
 
 =item *
 
-C<Params::Check> implementa un mecanismo de análisis/comprobación de entrada genérica. Es utilizado por CPANPLUS.
+C<Params::Check> implementa un mecanismo de análisis/comprobación de entrada genérica. Lo utiliza CPANPLUS.
 
 =item *
 
@@ -638,7 +638,7 @@ C<B::Lint> ahora se basa en C<Module::Pluggable>, por lo que se puede ampliar co
 
 =item C<B>
 
-Ahora es posible acceder al pragma léxico I<hints> (C<%^H>) utilizando el método B::COP::hints_hash(). Devuelve un objeto C<B::RHE>, que a su vez puede utilizarse para obtener una referencia a un hash mediante el método B::RHE::HASH(). (Joshua ben Jore)
+Ahora es posible acceder al I<pragma> léxico I<hints> (C<%^H>) utilizando el método B::COP::hints_hash(). Devuelve un objeto C<B::RHE>, que a su vez puede utilizarse para obtener una referencia a un hash mediante el método B::RHE::HASH(). (Joshua ben Jore)
 
 =item C<Thread>
 
@@ -698,7 +698,7 @@ C<config_data> es una nueva utilidad que viene con C<Module::Build>. Proporciona
 
 =item cpanp
 
-C<cpanp>, el shell CPANPLUS, ha sido añadido. (C<cpanp-run-perl>, un ayudante para la operación con CPANPLUS, se ha añadido también, pero no está destinado para un uso directo).
+C<cpanp>, el I<shell> CPANPLUS, ha sido añadido. (C<cpanp-run-perl>, un ayudante para la operación con CPANPLUS, se ha añadido también, pero no está destinado para un uso directo).
 
 =item cpan2dist
 
@@ -712,7 +712,7 @@ La salida de C<pod2html> se ha mejorado para ser más personalizable a través d
 
 =head1 Nueva documentación
 
-La página de manual L<perlpragma> documenta cómo escribir su propio pragma léxico en puro Perl (algo que era posible desde 5.9.4).
+La página de manual L<perlpragma> documenta cómo escribir su propio I<pragma> léxico en puro Perl (algo que era posible desde 5.9.4).
 
 La nueva página de manual L<perlglossary> es un glosario de términos utilizados en la documentación de Perl, técnicos y otros, amablemente proporcionado por O'Reilly Media, Inc.
 
@@ -795,7 +795,7 @@ Clases con un único carácter son ahora tratados como si el carácter fuera uti
 Las alternancias, siempre que sea posible, se optimizan en estructuras de coincidencia más eficientes. Las alternancias de cadenas literales se remezclan en un árbol prefijado (Trie) y se les hace coincidir de forma simultánea.  Esto significa que en lugar de un tiempo O(N) para hacer coincidir N alternancias en un punto dado, el nuevo código lo realiza en un tiempo O(1).
 Una nueva variable, ${^RE_TRIE_MAXBUF}, ha sido añadida, para ajustar esta optimización. (Yves Orton)
 
-B<Nota:> Existe una gran cantidad de código que intenta solventar los históricos malos resultados de perl en la cuestión de las alternancias. A menudo, los trucos utilizados para esto, desactivarán las nuevas optimizaciones. Esperemos que los módulos de servicios utilizados para este propósito serán aleccionados con estas nuevas optimizaciones.
+B<Nota:> Existe una gran cantidad de código que intenta solventar los históricos malos resultados de perl en la cuestión de las alternancias. A menudo, los trucos utilizados para esto, desactivarán las nuevas optimizaciones. Esperemos que los módulos de servicios utilizados para este propósito se aleccionarán con estas nuevas optimizaciones.
 
 =item Optimización del punto de arranque con Aho-Corasick
 
@@ -811,13 +811,13 @@ Cuando un patrón comienza con una alternancia capaz de optimizarse en un árbol
 
 =item C<-Dusesitecustomize>
 
-La personalización en tiempo de ejecución de @INC ahora se puede activar pasando la opción C<-Dusesitecustomize> a Configure. Cuando está activada, hará que perl ejecute F<$sitelibexp/sitecustomize.pl> antes que cualquier otra cosa.  Este script puede, entonces, ajustarse para que añada entradas adicionales a @INC.
+La personalización en tiempo de ejecución de @INC ahora se puede activar pasando la opción C<-Dusesitecustomize> a Configure. Cuando está activada, hará que perl ejecute F<$sitelibexp/sitecustomize.pl> antes que cualquier otra cosa.  Este I<script> puede, entonces, ajustarse para que añada entradas adicionales a @INC.
 
 =item Instalaciones reubicables
 
 Ahora existe soporte para Configure para la creación de un árbol perl reubicable. Si ejecuta Configure con C<-Duserelocatableinc>, entonces las rutas en @INC (y todo lo demás en %Config) pueden ser, opcionalmente, localizadas a través de la ruta del ejecutable perl.
 
-Esto significa que, si la cadena C<".../"> se encuentra al principio de cualquier ruta, es sustituido por el directorio de $^X. Por lo tanto, el traslado se puede configurar en base a cada directorio, aunque el valor predeterminado con C<-Duserelocatableinc> es que todo sea reubicable. La instalación inicial se realiza con el prefijado original indicado en la configuración.
+Esto significa que, si la cadena C<".../"> se encuentra al principio de cualquier ruta, se sustituye por el directorio de $^X. Por lo tanto, el traslado se puede configurar en base a cada directorio, aunque el valor predeterminado con C<-Duserelocatableinc> es que todo sea reubicable. La instalación inicial se realiza con el prefijado original indicado en la configuración.
 
 =item strlcat() y strlcpy()
 
@@ -936,11 +936,11 @@ Varias fugas de memoria en ithreads fueron cerradas. Además, ithreads se ha hec
 C<threads> es ahora un módulo con doble vida, también disponible en CPAN. Ha sido expandido de muchas maneras. Un método kill() está disponible para la señalización en hilos.
 Se puede obtener el estado de un hilo, o la lista de hilos en ejecución o acoplables.
 
-Un nuevo método C<< threads->exit() >> es utilizado para salir de la aplicación (esto es lo que está puesto por defecto para el hilo principal) o sólo para el hilo actual (esto es lo que está puesto por defecto para todos los otros hilos). Por otro lado, la función predefinida exit() ahora hace que toda la aplicación termine, totalmente. (Jerry D. Hedden)
+Un nuevo método C<< threads->exit() >> se utiliza para salir de la aplicación (esto es lo que está puesto por defecto para el hilo principal) o sólo para el hilo actual (esto es lo que está puesto por defecto para todos los otros hilos). Por otro lado, la función predefinida exit() ahora hace que toda la aplicación termine, totalmente. (Jerry D. Hedden)
 
 =item chr() y valores negativos
 
-chr() de un valor negativo ahora da C<\x{FFFD}>, el carácter Unicode de reemplazo, salvo si está activo el pragma C<bytes>, en cuyo caso se utilizan los ocho bits más bajos, del valor indicado.
+chr() de un valor negativo ahora da C<\x{FFFD}>, el carácter Unicode de reemplazo, salvo si está activo el I<pragma> C<bytes>, en cuyo caso se utilizan los ocho bits más bajos, del valor indicado.
 
 =item PERL5SHELL y la contaminación
 
@@ -969,7 +969,7 @@ En versiones anteriores, perl leería el archivo F</dev/urandom>, en caso de exi
 
 =item PERLIO_DEBUG
 
-La variable de entorno C<PERLIO_DEBUG> ya no tiene ningún efecto para los scripts setuid, ni para los scripts ejecutados con B<-T>.
+La variable de entorno C<PERLIO_DEBUG> ya no tiene ningún efecto para los I<scripts> setuid, ni para los I<scripts> ejecutados con B<-T>.
 
 Además, con un perl con soporte de hilos de ejecución, usar C<PERLIO_DEBUG> podría provocar un desbordamiento de un búfer interno. Esto se ha corregido.
 
@@ -1067,7 +1067,7 @@ Perl le avisará contra posibles problemas de compatibilidad con la sintaxis C<u
 
 =item perl -V
 
-C<perl -V> tiene varias mejoras, por lo que es más utilizable desde scripts de I<shell> para obtener el valor de las variables de configuración. Vea L<perlrun> para más detalles.
+C<perl -V> tiene varias mejoras, por lo que es más utilizable desde I<scripts> de I<shell> para obtener el valor de las variables de configuración. Vea L<perlrun> para más detalles.
 
 =back
 
@@ -1135,7 +1135,7 @@ Los constructores de hash y array anónimos ahora toman 1 operación en el árbo
 
 Todavía resta un problema en la implementación léxica de C<$_>: no funciona dentro de los bloques C</(?{...})/>. (Vea la prueba de TODO en F<t/op/mydef.t>).
 
-Operadores de test de archivos apilados no funcionarán cuando el pragma C<filetest> esté en vigor, porque se basan en que esté poblado el búfer C<_> por efecto de stat(), y filetest no ejecuta stat().
+Operadores de test de archivos apilados no funcionarán cuando el I<pragma> C<filetest> esté en vigor, porque se basan en que esté poblado el búfer C<_> por efecto de stat(), y filetest no ejecuta stat().
 
 =head2 Problemas UTF-8
 

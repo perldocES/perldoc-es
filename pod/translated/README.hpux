@@ -222,7 +222,7 @@ No todas las arquitecturas (PA = PA-RISC, IPF = I<Itanium Processor Family>) sop
 Vea aquí la lista completa del soporte hardware/SO y fin de vida esperado
 L<http://www.hp.com/go/hpuxservermatrix>
 
-=head2 Compilando extensiones dinámicas en HP-UX
+=head2 Compilar extensiones dinámicas en HP-UX
 
 HP-UX soporta bibliotecas que se pueden cargar de forma dinámica (bibliotecas compartidas).
 Las bibliotecas compartidas terminan con el sufijo .sl.  En sistemas Itanium, terminan con el sufijo .so.

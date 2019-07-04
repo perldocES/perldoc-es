@@ -337,7 +337,7 @@ El uso de claves hash comenzando con un guión (C<-name>) o totalmente en mayús
 
 =head2 Rigor y advertencias
 
-Su módulo debe funcionar con éxito bajo el pragma strict y debe funcionar sin generar ninguna advertencia.  El módulo también debe gestionar comprobaciones de pringue, aunque esto puede causar dificultades en muchos casos.
+Su módulo debe funcionar con éxito bajo el I<pragma> strict y debe funcionar sin generar ninguna advertencia.  El módulo también debe gestionar comprobaciones de pringue, aunque esto puede causar dificultades en muchos casos.
 
 =head2 Compatibilidad con versiones anteriores
 

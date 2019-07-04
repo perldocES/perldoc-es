@@ -53,16 +53,15 @@ Si no tiene instalado el SDK debe, al menos tener instalado un abc-shell o algun
 
 =head2 Arrancar programas Perl bajo AmigaOS 4.1
 
-Perl puede ejecutarse desde el shell de AmigaOS pero para obtener los mejores resultados, se debería ejecutar bajo abc-shell.  (abc-shell maneja expansión de nombres de archivos, expansión de patrones, y establece variables de entorno al estilo UNIX, que es lo que espera Perl).
+Perl puede ejecutarse desde el I<shell> de AmigaOS pero para obtener los mejores resultados, se debería ejecutar bajo abc-shell.  (abc-shell maneja expansión de nombres de archivos, expansión de patrones, y establece variables de entorno al estilo UNIX, que es lo que espera Perl).
 
 Por ejemplo:
 
-	Nuevo shell, proceso número 10
+	Nuevo I<shell>, proceso número 10
 	10.AmigaOS4:> sh
 	/AmigaOS4>perl path:to/myprog arg1 arrg2 arg3
 
-Abc-shell también puede lanzar programas a través de la sintaxis #! al comienzo del archivo de programa; es mejor usar la forma #!SDK:Local/C/perl para que el shell AmigaOS puede también encontrar perl de la misma manera. AmigaOS requiere que el esté activado el bit script, para que esto funcione
-the script bit to be set for this to work
+Abc-shell también puede lanzar programas a través de la sintaxis #! al comienzo del archivo de programa; es mejor usar la forma #!SDK:Local/C/perl para que el I<shell> AmigaOS puede también encontrar perl de la misma manera. AmigaOS requiere que el esté activado el bit I<script>, para que esto funcione
 
 	10.AmigaOS4:> sh
 	/AmigaOS4>myprog arg1 arrg2 arg3
@@ -71,7 +70,7 @@ the script bit to be set for this to work
 
 =over 6
 
-=item B<Los programas entubados y anidados pueden colgarse cuando se ejecuta de abc-shells antiguos>
+=item B<Los programas entubados y anidados pueden colgarse cuando se ejecuta de antiguos abc-shells>
 
 abc-shell versión 53.2 tiene un error que puede provocar cuelgues en los subprocesos usados en la ejecución de programas entubados; si estuviese disponible una versión más moderna, debería instalarla.
 
@@ -97,7 +96,7 @@ Esta guía asume que ha obtenido un archivo precompilado bajado desde os4depot.n
 
 Desempaquete el archivo principal a un lugar temporal (RAM: está bien).
 
-Ejecute el I<script> de instalación desde e shell o a través de su icono.
+Ejecute el I<script> de instalación desde el I<shell> o a través de su icono.
 
 B<No debe> intentar instalarlo a mano.
 
@@ -173,7 +172,7 @@ Esto compilará la configuración por defecto que se instala bajo SDK:local/newl
 
 =over 2
 
-=item Configurado para usar SDK:Local/C/perl para arrancar scripts estándares
+=item Configurado para usar SDK:Local/C/perl para arrancar I<scripts> estándares
 
 =item Se añade el módulo Amiga::Exec con soporte para Wait() y números de señal AmigaOS.
 

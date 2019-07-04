@@ -124,7 +124,7 @@ La optimización de las tareas innecesarias introducida en 5.8.4 podría dar adv
 
 =item *
 
-Perl ahora detecta correctamente y lee scripts con la marca BOM y UTF-16 (sin BOM) de cualquier orden de bits.
+Perl ahora detecta correctamente y lee I<scripts> con la marca BOM y UTF-16 (sin BOM) de cualquier orden de bits.
 
 =item *
 
@@ -136,7 +136,7 @@ Varios errores extraños involucrados en la manipulación de cadenas Unicode con
 
 =item *
 
-Anteriormente, si la función de Perl expansor de archivo encontraba un directorio que no tenía permisos para abrir, regresaba de inmediato, lo que llevaba al truncamiento inesperado de la lista de resultados. Esto se ha solucionado, para ser coherente con el comportamiento del sistema de comodines del shell de Unix.
+Anteriormente, si la función de Perl expansor de archivo encontraba un directorio que no tenía permisos para abrir, regresaba de inmediato, lo que llevaba al truncamiento inesperado de la lista de resultados. Esto se ha solucionado, para ser coherente con el comportamiento del sistema de comodines del I<shell> de Unix.
 
 =item *
 
@@ -168,7 +168,7 @@ argumentos a -V que parecen expresiones regulares darán múltiples líneas en l
 
 =item *
 
-Un carácter dos puntos final suprime el salto de línea y el terminador ";", permitiendo integrar consultas en comandos shell.
+Un carácter de dos puntos final suprime el salto de línea y el terminador ";", permitiendo integrar consultas en comandos I<shell>.
 
 =item *
 
@@ -178,7 +178,7 @@ Un carácter dos puntos precedente elimina la parte "name =" de la respuesta, pe
 
 =item *
 
-Cuando Perl no puede encontrar el script especificado, ahora produce una segunda línea que sugiere al usuario utilice la opción C<-S>:
+Cuando Perl no puede encontrar el I<script> especificado, ahora produce una segunda línea que sugiere al usuario utilice la opción C<-S>:
 
     $ perl5.8.5 missing.pl
     Can't open perl script "missing.pl": No such file or directory.

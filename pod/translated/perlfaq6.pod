@@ -219,7 +219,7 @@ Como alternativa, para mantener la caja de la palabra de reemplazo si es más la
 
 Esto cambia la sentencia a "esto es una NUeVa caja".
 
-Solo para mostrar que los programadores de C pueden escribir C en cualquier otro lenguaje, si prefiere una solución más al estilo de C, el siguiente script hace que la sustitución tenga la misma caja, letra a letra, como el original.
+Solo para mostrar que los programadores de C pueden escribir C en cualquier otro lenguaje, si prefiere una solución más al estilo de C, el siguiente I<script> hace que la sustitución tenga la misma caja, letra a letra, como el original.
 (También ocurre que se ejecuta un 240 % más lento que la solución perlera).
 Si la sustitución tiene más caracteres que la cadena a sustituir, la caja del último carácter se usa para el resto de la sustitución.
 
@@ -257,7 +257,7 @@ Si la sustitución tiene más caracteres que la cadena a sustituir, la caja del 
 =head2 ¿Cómo puedo hacer que C<\w> coincida con los conjuntos de caracteres nacionales?
 X<\w>
 
-Añada C<use locale;> a su script. La clase de caracteres \w se toma de la configuración regional actual.
+Añada C<use locale;> a su I<script>. La clase de caracteres \w se toma de la configuración regional actual.
 
 Encontrará más información en L<perllocale>.
 
@@ -321,7 +321,7 @@ Versiones de Perl anteriores a 5.6 recompilaría la exp. reg. para cada iteraci�
 
 En versiones 5.6 y siguientes, Perl no recompilará la exp. reg. si la variable no ha cambiado, así que, probablemente no necesite la opción C</o>. No hace daño, pero tampoco ayuda. Si quiere que cualquier versión de Perl compile la expresión regular solo una vez incluso si la variable cambie (esto es: usando solo su valor inicial), seguirá necesitando el C</o>.
 
-Puede ver el motor de expresiones regulares de Perl para verificar por sí mismo si Perl está recompilando una expresión regular. el pragma C<use re 'debug'> (viene con Perl 5.005 y siguientes) muestra los detalles.
+Puede ver el motor de expresiones regulares de Perl para verificar por sí mismo si Perl está recompilando una expresión regular. El I<pragma> C<use re 'debug'> (viene con Perl 5.005 y siguientes) muestra los detalles.
 Con Perl anteriores a 5.6, debería ver que C<re> informa que está recompilando la expresión regular en cada iteración. Con Perl 5.6 o siguientes, debería ver que C<re> solo informa de esto en la primera iteración.
 
     use re 'debug';
@@ -594,7 +594,7 @@ En este ejemplo, perl debe recompilar la expresión regular por cada iteración 
     }
 
 El operador C<qr//> se incluyó por primera vez en perl 5.005. Compila una expresión regular,
-pero no la aplica. Cuando use una versión precompilada de la I<regex>, perl hace menos trabajo. En este ejemplo, inserté un C<map> para convertir cada patrón en su forma precompilada. El resto del script es el mismo, pero más rápido:
+pero no la aplica. Cuando use una versión precompilada de la I<regex>, perl hace menos trabajo. En este ejemplo, inserté un C<map> para convertir cada patrón en su forma precompilada. El resto del I<script> es el mismo, pero más rápido:
 
     my @patrones = map { qr/\b$_\b/i } qw( foo bar baz );
 

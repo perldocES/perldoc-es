@@ -46,7 +46,7 @@ Tiene que decidir si su array tiene índices numéricos o de cadena.
 
 =item *
 
-Los valores de Hash no hacen su aparición hasta que son referenciados.
+Los valores de Hash no hacen su aparición hasta que se referencian.
 
 =item *
 
@@ -274,9 +274,9 @@ El operador rango es C<...>, en lugar de la coma.
 
 =back
 
-=head2 Trampas Shell
+=head2 Trampas I<shell>
 
-Los agudos programadores de shell deberían tomar de lo siguiente:
+Los agudos programadores de I<shell> deberían tomar de lo siguiente:
 
 =over 4
 
@@ -290,11 +290,11 @@ El operador comilla inversa no traduce el valor de retorno, a diferencia de B<cs
 
 =item *
 
-Los shells (especialmente B<csh>) hacen diversos niveles de sustitución en cada línea de comando.  Perl hace sustitución en solo ciertas construcciones, como las comillas dobles, comillas inversas, ángulos, y patrones de búsqueda.
+Los I<shell> (especialmente B<csh>) hacen diversos niveles de sustitución en cada línea de comando.  Perl hace sustitución en solo ciertas construcciones, como las comillas dobles, comillas inversas, ángulos, y patrones de búsqueda.
 
 =item *
 
-Los shells interpretan los scripts poco a poco.  Perl compila el programa entero antes de ejecutarlo (excepto para los bloques C<BEGIN>, que se ejecutan en tiempo de compilación).
+Los I<shell> interpretan los I<script> poco a poco.  Perl compila el programa entero antes de ejecutarlo (excepto para los bloques C<BEGIN>, que se ejecutan en tiempo de compilación).
 
 =item *
 
@@ -306,7 +306,7 @@ El entorno no está disponible de forma automática como variables escalares sep
 
 =item *
 
-El C<test> del shell usa "=", "!=", "<", etc. para la comparación de cadena, y "-eq", "-ne", "-lt", etc. para comparaciones numéricas. Es lo contrario de Perl, que usa C<eq>, C<ne>, C<lt> para comparaciones de cadena, y C<==>, C<!=> C<< < >>, etc. para comparaciones numéricas.
+El C<test> del I<shell> usa "=", "!=", "<", etc. para la comparación de cadena, y "-eq", "-ne", "-lt", etc. para comparaciones numéricas. Es lo contrario de Perl, que usa C<eq>, C<ne>, C<lt> para comparaciones de cadena, y C<==>, C<!=> C<< < >>, etc. para comparaciones numéricas.
 
 =back
 
@@ -364,5 +364,5 @@ Si localiza una variable exportada en un módulo, su valor exportado no cambiar�
 
 =back
 
-Como siempre, si algunos de estos se consideran oficialmente como errores, serán arreglados y eliminados.
+Como siempre, si algunos de estos se consideran oficialmente como errores, se arreglarán y eliminarán.
 

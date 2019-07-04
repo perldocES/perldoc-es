@@ -152,7 +152,7 @@ X<=begin> X<=end> X<=for> X<begin> X<end> X<for>
 
 =item C<=for I<nombre de formato> I<texto...>>
 
-C<for>, C<begin>, y C<end> le permitirá tener regiones de texto/código/datos que no son, generalmente, interpretados como texto Pod normal, si no que son pasados directamente a los formateadores particulares, o de alguna manera, indican que son especiales.  Un formateador que pueda usar ese formato usará esa región; sino, será completamente ignorada.
+C<for>, C<begin>, y C<end> le permitirá tener regiones de texto/código/datos que no son, generalmente, interpretados como texto Pod normal, si no que se pasan directamente a los formateadores particulares, o de alguna manera, indican que son especiales.  Un formateador que pueda usar ese formato usará esa región; sino, será completamente ignorada.
 
 Un comando "=begin I<nombre de formato>", algunos párrafos, y un comando "=end I<nombre de formato>", significa que texto/datos entre los dos es para los formateadores que entienden el formato especial llamado I<nombre de formato>.  Por ejemplo,
 
@@ -366,7 +366,7 @@ C<EE<lt>verbarE<gt>> -- un literal | (I<bar>ra I<ver>tical)
 
 C<EE<lt>solE<gt>> -- un literal / (barra diagonal)
 
-Los cuatro anteriores son opcionales excepto dentro de otros códigos de formateo, notablemente con C<LE<lt>...E<gt>>, y cuándo es precedido por una letra mayúscula.
+Los cuatro anteriores son opcionales excepto dentro de otros códigos de formateo, notablemente con C<LE<lt>...E<gt>>, y cuándo se precede por una letra mayúscula.
 
 =item *
 
@@ -378,7 +378,7 @@ Algunas nombres de entidades HTML no numéricas, como C<EE<lt>eacuteE<gt>>, sign
 
 C<EE<lt>númeroE<gt>>
 
-El carácter ASCII/Latin-1/Unicode con ese número.  Si lo precede un "0x" significa que I<número> está en hexadecimal, como en C<EE<lt>0x201EE<gt>>.  Si lo precede un "0x" significa que I<número> está en hexadecimal, como en C<EE<lt>0x201EE<gt>>.  Cualquier otro I<número> es interpretado que está en decimal, como en C<EE<lt>181E<gt>>.
+El carácter ASCII/Latin-1/Unicode con ese número.  Si lo precede un "0x" significa que I<número> está en hexadecimal, como en C<EE<lt>0x201EE<gt>>.  Si lo precede un "0x" significa que I<número> está en hexadecimal, como en C<EE<lt>0x201EE<gt>>.  Cualquier otro I<número> se interpreta que está en decimal, como en C<EE<lt>181E<gt>>.
 
 Tenga en cuenta que los formateadores Pod más antiguos quizás no reconozcan las secuencias de escapado numérico octal o hexadecimal, y que muchos formateadores no pueden mostrar caracteres por encima del 255 de forma correcta.  (Algunos formateadores pueden incluso tener que usar soluciones de compromiso para mostrar caracteres Latin-1/CP-1252, como en el caso de mostrar C<EE<lt>eacuteE<gt>> con una sencilla "e").
 
@@ -399,7 +399,7 @@ Quiere decir que las palabras en I<texto> no deben quedar separadas en varias l�
 X<X> X<< XZ<><> >> X<POD, formatting code, index entry> X<index entry>
 X<entrada de índice>
 
-Esto es ignorado por la mayor parte de los formateadores, pero algunos pueden utilizarlo para generar índices.  Siempre se muestra como una cadena de caracteres vacía.
+Esto se ignora por la mayor parte de los formateadores, pero algunos pueden utilizarlo para generar índices.  Siempre se muestra como una cadena de caracteres vacía.
 Ejemplo: C<XE<lt>URL absolutamente relativosE<gt>>
 
 =item C<ZE<lt>E<gt>> -- un código de formateo nulo (cero efectos)
@@ -426,7 +426,7 @@ Se pueden usar dobles ángulos ("<<" y ">>") I<¡si y solo si hay espacio en bla
 
     C<< $a <=> $b >>
 
-De hecho, puede utilizar tantos ángulos repetidos como quiera, siempre y cuando tenga el mismo número de ellos en el delimitador de apertura y cierre, y asegurándose que hay espacio en blanco a continuación del último '<' del delimitador de apertura, e inmediatamente antes del primer '>' del delimitador de cierre.  (El espacio en blanco es ignorado).  Así que lo siguiente también funcionará: X<POD, formatting code, escaping with multiple brackets>
+De hecho, puede utilizar tantos ángulos repetidos como quiera, siempre y cuando tenga el mismo número de ellos en el delimitador de apertura y cierre, y asegurándose que hay espacio en blanco a continuación del último '<' del delimitador de apertura, e inmediatamente antes del primer '>' del delimitador de cierre.  (Se ignora el espacio en blanco).  Así que lo siguiente también funcionará: X<POD, formatting code, escaping with multiple brackets>
 
     C<<< $a <=> $b >>>
     C<<<<  $a <=> $b     >>>>

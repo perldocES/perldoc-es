@@ -155,7 +155,7 @@ donde <nombres de los archivos> son los archivos de código fuente.
 
 A continuación, mueva los archivos (probablemente sólo los archivos F<.pm>, aunque puede que tenga que mover otros archivos; revise la documentación del módulo) hasta su destino final, que probablemente sea C<$ENV{MACPERL}site_lib:> (es decir, C<HD:Carpeta MacPerl:site_lib:>).  Puede agregar nuevas rutas a los valores predeterminados de C<@INC> a través del elemento de menú Preferencias de la aplicación MacPerl (C<$ENV{MACPERL}site_lib:> se agrega automágicamente).  Cree las estructuras de directorios necesarias (es decir, para C<Mi::Modulo>, cree C<$ENV{MACPERL}site_lib:Mi:> y coloque C<Modulo.pm> en ese directorio).
 
-A continuación, ejecute el siguiente script (o algo parecido):
+A continuación, ejecute el siguiente I<script> (o algo parecido):
 
      #!perl -w
      use AutoSplit;

@@ -129,7 +129,7 @@ aux c2ph h2ph h2xs perlbug pl2pm pod2html pod2man splain xsubpp
     perlmodstyle     Cómo programar módulos Perl con estilo
     perlmodinstall   Instalación de módulos de CPAN
     perlnewmod       Preparar la distribución de un módulo Perl nuevo
-    perlpragma       Programación de un pragma de usuario
+    perlpragma       Programación de un I<pragma> de usuario
 
     perlutil         Utilidades incluidas en una distribución Perl
 
@@ -338,27 +338,27 @@ El "@INC" anterior es una referencia a una variable integrada del mismo nombre; 
 
 =head1 DIAGNÓSTICO
 
-El uso del pragma C<use strict> garantiza que se declaren todas las variables de forma adecuada
+El uso del I<pragma> C<use strict> garantiza que se declaren todas las variables de forma adecuada
 e impide que se usen incorrectamente las características heredadas de Perl.
 
-El pragma C<use warnings> produce diagnósticos muy informativos. También se puede
+El I<pragma> C<use warnings> produce diagnósticos muy informativos. También se puede
 usar la marca B<-w>, pero esto no se recomienda, ya que
 se aplica a todo el código Perl ejecutado, incluido el que no está bajo
 su control.
 
-Encontrará en L<perldiag> las descripciones de todos los diagnósticos de Perl.  El pragma C<use diagnostics> convierte automáticamente las advertencias y errores de Perl, normalmente escuetos, en estos mensajes más desarrollados.
+Encontrará en L<perldiag> las descripciones de todos los diagnósticos de Perl.  El I<pragma> C<use diagnostics> convierte automáticamente las advertencias y errores de Perl, normalmente escuetos, en estos mensajes más desarrollados.
 
 Los errores de compilación le indicarán el número de línea del error, además del siguiente símbolo o tipo de símbolo que iba a ser examinado.
-(En un script pasado a Perl a través de modificadores B<-e>, cada B<-e> cuenta como una línea).
+(En un I<script> pasado a Perl a través de modificadores B<-e>, cada B<-e> cuenta como una línea).
 
-Los scripts setuid tienen restricciones adicionales que pueden producir mensajes de error como "Insecure dependency" (dependencia insegura).  Vea L<perlsec>.
+Los I<scripts> setuid tienen restricciones adicionales que pueden producir mensajes de error como "Insecure dependency" (dependencia insegura).  Vea L<perlsec>.
 
-No olvide que es muy importante utilizar el pragma B<use warnings>
+No olvide que es muy importante utilizar el I<pragma> B<use warnings>
 .
 
 =head1 ERRORES
 
-El pragma B<use warnings> implica un comportamiento que no es obligatorio.
+El I<pragma> B<use warnings> implica un comportamiento que no es obligatorio.
 
 Perl depende de las definiciones de hardware para diversas operaciones, como la conversión de tipos, atof() o la salida de números de punto flotante con sprintf().
 
@@ -367,7 +367,7 @@ Si stdio requiere ejecutar seek o eof entre lecturas y escrituras para una secue
 Aunque ninguno de los tipos de datos predefinidos tiene un límite de tamaño (aparte del tamaño de la memoria disponible), hay algunos límites arbitrarios. Por ejemplo, un nombre de variable no puede tener más de 251 caracteres.  Por otra parte, los números de línea especificados por los diagnósticos se almacenan internamente como enteros cortos, por lo que están limitados a un máximo de 65535 (cifras más altas quedarán afectadas por el desbordamiento).
 
 Puede notificar sus informes de error a través de la dirección perlbug@perl.org (no olvide incluir toda la información de configuración emitida por el programa myconfig en el árbol de código fuente de perl, o por C<perl -V>).  Si ha logrado
-compilar perl, puede utilizar el script L<perlbug> del subdirectorio F<utils/>
+compilar perl, puede utilizar el I<script> L<perlbug> del subdirectorio F<utils/>
 para notificar informes de error.
 
 En realidad Perl significa I<Pathologically Eclectic Rubbish Lister> (Presentador de basura patológicamente ecléctico), pero nadie debe enterarse de esto :-).

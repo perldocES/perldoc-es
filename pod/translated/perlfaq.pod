@@ -306,7 +306,7 @@ He leído perlembed, perlguts, etc., pero no puedo incrustar perl en mi programa
 
 =item *
 
-Cuando he intentado ejecutar mi script, obtengo este mensaje. ¿Qué significa?
+Cuando he intentado ejecutar mi I<script>, obtengo este mensaje. ¿Qué significa?
 
 =item *
 
@@ -1135,7 +1135,7 @@ Esta sección del documento cubre cuestiones sobre la interacción con el sistem
 
 =item *
 
-¿Por qué mi programa con sockets no funciona en System V (Solaris)? ¿Qué significa el mensaje de error "I<Protocol not supported>" (Protocolo no soportado)?
+¿Por qué mi programa con I<sockets> no funciona en System V (Solaris)? ¿Qué significa el mensaje de error "I<Protocol not supported>" (Protocolo no soportado)?
 
 =item *
 
@@ -1171,7 +1171,7 @@ Esta sección del documento cubre cuestiones sobre la interacción con el sistem
 
 =item *
 
-¿Cómo puedo llamar a las comillas inversas sin que lo procese el shell?
+¿Cómo puedo llamar a las comillas inversas sin que lo procese el I<shell>?
 
 =item *
 
@@ -1179,7 +1179,7 @@ Esta sección del documento cubre cuestiones sobre la interacción con el sistem
 
 =item *
 
-¿Cómo puedo convertir mi I<script> en shell a perl?
+¿Cómo puedo convertir mi I<script> en I<shell> a perl?
 
 =item *
 
@@ -1235,7 +1235,7 @@ He {cambiado de directorio, modificado mi entorno} en un I<script> perl. ¿Cómo
 
 =item *
 
-¿Cómo distingo entre errores del shell y los de perl?
+¿Cómo distingo entre errores del I<shell> y los de perl?
 
 =item *
 
