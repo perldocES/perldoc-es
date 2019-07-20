@@ -1,2 +1,33 @@
 override	sobrepasar	Mejor usar otra cosa
 override	reescribir
+above	anterior
+appends	añade
+can	puede
+can	pueden
+case	caso
+closure	clausura
+code	código
+debugging	depuración
+does	hace
+encounter	encontrarse
+ensures	asegura
+exists	existe
+filename	nombre de archivo
+installs	instala
+just	sólo
+just	justo
+keep	mantener
+lot	montón
+means	medios
+parser	intérprete
+parses	interpreta
+returns	regresa
+solution	solución
+source	código
+source	código fuente
+source	fuente
+stream	flujo
+time	vez
+time	tiempo
+usage	uso
+way	forma
