@@ -1,33 +1,111 @@
-override	sobrepasar	Mejor usar otra cosa
-override	reescribir
+about	sobre
 above	anterior
 appends	añade
+argument	argumento
+automatically	automáticamente
+backslash	barra diagonal inversa
+because	debido
+behavior	comportamiento
+bugs	errores
+built	compilar
+byte	byte
 can	puede
 can	pueden
 case	caso
+characters	caracteres
+child	hijo
 closure	clausura
 code	código
+compiler	compilador
 debugging	depuración
+developer	desarrollador
+device	dispositivo
+directory	directorio
 does	hace
+due	debido
+efficient	eficiente
+emulation	emulación
 encounter	encontrarse
+ends	termina
 ensures	asegura
+especially	especialmente
+even	incluso
 exists	existe
+explicit	explícito
+explicitly	explícitamente
+filehandle	identificador de archivo
 filename	nombre de archivo
+filesystem	sistema de archivos
+filesystems	sistemas de archivos
+floating	flotante
+functions	funciones
+header	cabecera
+however	aun así
+inode	inodo
 installs	instala
+instead	en lugar de
+interface	interfaz
+internally	internamente
+issue	problema
+itself	propio
 just	sólo
 just	justo
 keep	mantener
+length	longitud
+letter	letra
+like	como
+link	enlace
+locale	configuración regional
 lot	montón
+lowercase	minúscula
+math	matemáticas
 means	medios
+might	podría
+most	mayor
+of course	naturalmente
+options	opciones
+override	sobrepasar	Mejor usar otra cosa
+override	reescribir
+pathname	nombre de ruta
+parent	padre
 parser	intérprete
 parses	interpreta
+pointer	puntero
+portability	portabilidad
+ports	adaptaciones
+provide	proporciona
+qualified	cualificado
+range	rango
+really	realmente
+return	devuelve
+returned	devuelto
 returns	regresa
+sections	secciones
+several	muchos
+single	única
 solution	solución
+sometimes	algunas veces
 source	código
 source	código fuente
 source	fuente
 stream	flujo
+string	cadena
+subject	sujeto
+subroutine	subrutina
+suffix	sufijo
+terminal	terminal
 time	vez
 time	tiempo
+unique	única
+uppercase	mayúscula
 usage	uso
+usually	normalmente
+utilitie	utilidad
+vary	variar
+versions	versiones
+volunteer	voluntario
 way	forma
+whereas	mientras
+work	funciona
+workaround	alternativa
+wrong	incorrecto
