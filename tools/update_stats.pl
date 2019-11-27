@@ -13,7 +13,7 @@
 # TODO: ¿Es posible automatizar los comandos git, o seguimos a mano? Mejor a mano... de momento.
 
 # Joaquín Ferrero. 20110130
-# Última versión:  20171015 17:00
+# Última versión:  20191127 18:00
 #
 # Se supone que se debe ejecutar este programa después de haber ejecutado la orden
 # de generar los ficheros finales en el OmegaT, pero no es imprescindible.
@@ -45,6 +45,7 @@ my $user           = 'explorer';			# TMX user file
 my $DIR_ROOT	   = '/home/explorer/Proyectos/perldocES/v5';
 
 my $PROJECT        = 'work.github';
+
 my $DIR_PROJECT	   = "$DIR_ROOT/$PROJECT";		# ruta al proyecto OmegaT
 my $DIR_GIT	   = "$DIR_ROOT/perldoc-es.github";	# ruta al repositorio local Github
 
@@ -395,6 +396,17 @@ $target = "$DIR_GIT/omegat_stuff/omegat/learned_words.txt";
 
 if (!-f $target  or  -M $origen < -M $target) {
     say "Palabras nuevas en diccionario personal => git";
+    copy($origen, $target) or die "ERROR: $!\n";
+    # git add ?
+    $archivos_en_git++;
+}
+
+# Llevar el fichero de palabras nuevas traducidas
+$origen = "$DIR_PROJECT/glossary/glossary.txt";
+$target = "$DIR_GIT/omegat_stuff/glossary/glossary.txt";
+
+if (!-f $target  or  -M $origen < -M $target) {
+    say "Palabras nuevas en glosario personal => git";
     copy($origen, $target) or die "ERROR: $!\n";
     # git add ?
     $archivos_en_git++;
