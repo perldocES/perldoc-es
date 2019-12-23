@@ -87,7 +87,7 @@ De modo parecido, las funciones que devuelve datos de texto -tales como una func
     $datos =~ s/\015?\012/\n/g;
     return $datos;
 
-Algunos de estos pueden confundir.  Aquí hay una referencia manejable de los caracteres ASCII CR y LF.  Puede imprimirla y pegarla en su billetera.
+Algunos de estos pueden confundir.  Aquí hay una referencia útil de los caracteres ASCII CR y LF.  Puede imprimirla y pegarla en su billetera.
 
     LF  eq  \012  eq  \x0A  eq  \cJ  eq  chr(10)  eq  ASCII 10
     CR  eq  \015  eq  \x0D  eq  \cM  eq  chr(13)  eq  ASCII 13

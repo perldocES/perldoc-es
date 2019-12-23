@@ -3,26 +3,35 @@ above	anterior
 appends	añade
 argument	argumento
 automatically	automáticamente
+avoid	evitar
 backslash	barra diagonal inversa
 because	debido
 behavior	comportamiento
+buffer	búfer
 bugs	errores
 built	compilar
 byte	byte
+cache	caché
 can	puede
 can	pueden
 case	caso
 characters	caracteres
+checks	comprueba
 child	hijo
 closure	clausura
 code	código
 compiler	compilador
+conditions	condiciones
+counter	contador
+data	datos
+database	base de datos
 debugging	depuración
 developer	desarrollador
 device	dispositivo
 directory	directorio
 does	hace
 due	debido
+easier	más fácil
 efficient	eficiente
 emulation	emulación
 encounter	encontrarse
@@ -41,6 +50,9 @@ floating	flotante
 functions	funciones
 header	cabecera
 however	aun así
+implementation	implementación
+implicitly	implícitamente
+inconsistency	inconsistencia
 inode	inodo
 installs	instala
 instead	en lugar de
@@ -51,6 +63,7 @@ itself	propio
 just	sólo
 just	justo
 keep	mantener
+kind	clase
 length	longitud
 letter	letra
 like	como
@@ -62,8 +75,12 @@ math	matemáticas
 means	medios
 might	podría
 most	mayor
+multitasking	multitarea
 of course	naturalmente
+often	a menudo
 options	opciones
+order	orden
+otherwise	lo contrario
 override	sobrepasar	Mejor usar otra cosa
 override	reescribir
 pathname	nombre de ruta
@@ -73,13 +90,19 @@ parses	interpreta
 pointer	puntero
 portability	portabilidad
 ports	adaptaciones
+preemptive	apropiativo
+processor	procesador
 provide	proporciona
 qualified	cualificado
+question	cuestión
 range	rango
+rather	en lugar de
 really	realmente
+recursive	recursivo
 return	devuelve
 returned	devuelto
 returns	regresa
+scalar	escalar
 sections	secciones
 several	muchos
 single	única
@@ -93,10 +116,13 @@ string	cadena
 subject	sujeto
 subroutine	subrutina
 suffix	sufijo
+synchronization	sincronización
 terminal	terminal
 time	vez
 time	tiempo
+thread	hebra
 unique	única
+unless	a menos
 uppercase	mayúscula
 usage	uso
 usually	normalmente
