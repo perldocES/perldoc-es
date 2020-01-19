@@ -1,5 +1,6 @@
 about	sobre
 above	anterior
+add	añadir
 appends	añade
 argument	argumento
 automatically	automáticamente
@@ -9,6 +10,7 @@ because	debido
 behavior	comportamiento
 buffer	búfer
 bugs	errores
+build	compilar
 built	compilar
 byte	byte
 cache	caché
@@ -30,6 +32,7 @@ developer	desarrollador
 device	dispositivo
 directory	directorio
 does	hace
+driver	controlador
 due	debido
 easier	más fácil
 efficient	eficiente
@@ -37,6 +40,7 @@ emulation	emulación
 encounter	encontrarse
 ends	termina
 ensures	asegura
+environment	entorno
 especially	especialmente
 even	incluso
 exists	existe
@@ -48,8 +52,10 @@ filesystem	sistema de archivos
 filesystems	sistemas de archivos
 floating	flotante
 functions	funciones
+give	proporcionar
 header	cabecera
 however	aun así
+images	imágenes
 implementation	implementación
 implicitly	implícitamente
 inconsistency	inconsistencia
@@ -83,6 +89,7 @@ order	orden
 otherwise	lo contrario
 override	sobrepasar	Mejor usar otra cosa
 override	reescribir
+path		ruta
 pathname	nombre de ruta
 parent	padre
 parser	intérprete
@@ -104,6 +111,7 @@ returned	devuelto
 returns	regresa
 scalar	escalar
 sections	secciones
+sequence	secuencia
 several	muchos
 single	única
 solution	solución
@@ -118,9 +126,10 @@ subroutine	subrutina
 suffix	sufijo
 synchronization	sincronización
 terminal	terminal
+thread	hebra
 time	vez
 time	tiempo
-thread	hebra
+tip	consejo
 unique	única
 unless	a menos
 uppercase	mayúscula
