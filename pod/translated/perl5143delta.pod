@@ -1,0 +1,233 @@
+=encoding utf8
+
+=head1 NAME
+
+perl5143delta - qué hay de nuevo para Perl 5.14.3
+
+=head1 DESCRIPCIÓN
+
+Este documento describe las diferencias entre la versión 5.14.2 y la versión 5.14.3.
+
+Si va a actualizar desde una versión anterior, como la 5.12.0, debe leer primero 
+L<perl5140delta>, donde se describen las diferencias entre las versiones 5.12.0 y 5.14.0.
+
+=head1 Mejoras en el núcleo principal
+
+Ningún cambio con respecto a la versión 5.14.0.
+
+=head1 Seguridad
+
+=head2 C<Digest> uso inseguro de eval (CVE-2011-3597)
+
+La función C<Digest-E<gt>new()> no higieniza apropiadamente la entrada antes de usarla en una llamada eval(), que podría llevar a la inyección de código Perl arbitrario.
+
+Para explotar este fallo, el atacante necesitaría ser capaz de establecer el nombre del algoritmo utilizado, o ya ser capaz de ejecutar código arbitrario de Perl.
+
+Este problema se ha arreglado.
+
+=head2 Tampón de memoria reescrita con el operador de repetición de cadenas 'x' (CVE-2012-5195)
+
+Código Perl pobremente escrito que permite a un atacante especificar la cuenta a un operador de repetición de cadenas de perl 'x' puede causar agotamiento de memoria en un ataque de denegación de servicio. Un fallo en las versiones de perl anteriores a la 5.15.5 puede escalarlo a una reescritura de la memoria tampón; acompañadas con versiones de glibc anteriores a 2.16, permita posiblemente la ejecución de código arbitrario.
+
+Este problema se ha arreglado.
+
+=head1 Cambios incompatibles
+
+No hay cambios intencionadamente incompatibles con 5.14.0. Si los hay, los errores e informes serán bienvenidos.
+
+=head1 Obsolescencias
+
+No hay obsolescencias desde 5.14.0.
+
+=head1 Módulos y pragmas
+
+=head2 Nuevos módulos y pragmas
+
+Ningún cambio
+
+=head2 Módulos y pragmas actualizados
+
+=over 4
+
+=item *
+
+L<PerlIO::scalar> se actualizó para arreglar un error en el cual al abrir un identificador de archivo a una copia de un glob causaba fallos de aserción (en el depurado) o se colgaba u otro comportamiento errático sin depuración.
+
+=item *
+
+L<ODBM_File> y L<NDBM_File> se actualizaron para permitir la compilación sobre GNU/Hurd.
+
+=item *
+
+L<IPC::Open3> se ha actualizado para arreglar una regresión introducida en perl 5.12, que rompe C<IPC::Open3::open3($in, $out, $err, '-')>.
+[perl #95748]
+
+=item *
+
+L<Digest> se ha actualizado de la versión 1.16 a la 1.16_01.
+
+Vea L</Seguridad>.
+
+=item *
+
+L<Module::CoreList> se ha actualizado a la versión 2.49_04 para añadir datos para esta distribución.
+
+=back
+
+=head2 Módulos y pragmas retirados
+
+Ningún cambio
+
+=head1 Documentación
+
+=head2 Nueva documentación
+
+Ningún cambio
+
+=head2 Cambios en la documentación existente
+
+=head3 L<perlcheat>
+
+=over 4
+
+=item *
+
+L<perlcheat> se actualizó a 5.14.
+
+=back
+
+=head1 Configuración y compilación
+
+=over 4
+
+=item *
+
+h2ph se actualizó para buscar gcc incluyendo en directorios en plataformas tales como Debian con soporte multiarquitectura.
+
+=item *
+
+En Configure, la prueba para procselfexe se refactorizó en un bucle.
+
+=back
+
+=head1 Compatibilidad con plataformas
+
+=head2 Nuevas plataformas
+
+Ningún cambio
+
+=head2 Plataformas retiradas
+
+Ningún cambio
+
+=head2 Notas específicas de plataformas
+
+=over 4
+
+=item FreeBSD
+
+El archivo de pistas FreeBSD se corrigió para ser compatible con FreeBSD 10.0.
+
+=item Solaris y NetBSD
+
+Configure se actualizó para el soporte de "procselfexe" en Solaris y NetBSD.
+
+=item HP-UX
+
+README.hpux se actualizó para anotar la existencia de una cabecera rota en HP-UX 11.00.
+
+=item Linux
+
+libutil ya no se usa cuando se compila en plataformas Linux, que evita la emisión de advertencias.
+
+El gcc del sistema (más que cualquier otro gcc que podría estar en la ruta del usuario) ahora se usa cuando se busca por bibliotecas tales como C<-lm>.
+
+=item Mac OS X
+
+Las pruebas de localización se actualizaron para reflejar el comportamiento de locales en Mountain Lion.
+
+=item GNU/Hurd
+
+Diversos arreglos en compilación y pruebas se incluyeron para GNU/Hurd.
+
+Soporte para LFS se habilitó en GNU/Hurd.
+
+=item NetBSD
+
+El archivo de pistas NetBSD se corrigió para ser compatible con NetBSD 6.*
+
+=back
+
+=head1 Corrección de errores
+
+=over 4
+
+=item *
+
+Se arregló una regresión que se introdujo en 5.14, en el emparejamiento de la expresión regular C</i>, en que un emparejamiento incorrecto falla si el patrón está en UTF-8, la cadena objetivo no lo está, y un carácter Latin-1 precede a un carácter en la cadena que debería coincidir con el patrón.  [perl #101710]
+
+=item *
+
+En un emparejamiento de un patrón de expresión regular insensible al tamaño de caja, ya no se hace el escaneo en cadenas codificadas en UTF-8 por el inicio de la coincidencia mirando sólo en la primera posible posición.  Esto causaba que fallaran coincidencias tales como C<"f\x{FB00}" =~ /ff/i>.
+
+=item *
+
+El soporte de sitecustomize se hizo compatible con relocatableinc, así que -Dusesitecustomize y -Duserelocatableinc se pueden usar juntos.
+
+=item *
+
+El operador smartmatch (C<~~>) se cambió de tal manera que la parte derecha toma precedencia durante las operaciones C<Any ~~ Object>.
+
+=item *
+
+Se arregló un error en el soporte de entintado, en que una operación C<index()> en una constante entintada podría causar que todas las demás constante se entintaran.  [perl #64804]
+
+=item *
+
+Se arregló una regresión que se introdujo en perl 5.12, por el cual los errores de entintado no se propagaban correctamente a través de C<die()>.
+[perl #111654]
+
+=item *
+
+Se arregló una regresión que se introdujo en perl 5.14, en que C</[[:lower:]]/i> y C</[[:upper:]]/i> no coincidían con el tamaño de caja opuesto.
+[perl #101970]
+
+=back
+
+=head1 Agradecimientos
+
+Perl 5.14.3 representa aproximadamente 12 meses de desarrollo desde Perl 5.14.2 y contiene aproximadamente 2300 líneas de cambios en 64 archivos por parte de 22 autores.
+
+Perl sigue floreciendo en su tercera década gracias a una vibrante comunidad de usuarios y desarrolladores. Las siguientes personas aportaron las mejoras que hicieron posible Perl 5.14.3:
+
+Abigail, Andy Dougherty, Carl Hayter, Chris 'BinGOs' Williams, Dave Rolsky,
+David Mitchell, Dominic Hargreaves, Father Chrysostomos, Florian Ragwitz,
+H.Merijn Brand, Jilles Tjoelker, Karl Williamson, Leon Timmermans, Michael G
+Schwern, Nicholas Clark, Niko Tyni, Pino Toscano, Ricardo Signes, Salvador
+Fandiño, Samuel Thibault, Steve Hay, Tony Cook.
+
+Como la lista anterior se genera automáticamente a partir del historial de control de versiones, es muy probable que sea incompleta. En particular, no incluye los nombres de los (muy apreciados) colaboradores que notificaron problemas a través del sistema de seguimiento de errores de Perl.
+
+Muchos de los cambios incluidos en esta versión tuvieron su origen en los módulos CPAN incluidos en el núcleo de Perl. Agradecemos a toda la comunidad CPAN por ayudar en el florecimiento de Perl.
+
+Si desea ver una lista más completa de todas las personas que han contribuido a lo largo de la historia de Perl, la encontrará en el archivo F<AUTHORS> de la distribución del código fuente de Perl.
+
+=head1 Notificación de errores
+
+Si usted encuentra algo que piensa que es un error, podría verificar los artículos publicados recientemente en el grupo de noticias comp.lang.perl.misc y la base de datos de errores de perl en http://rt.perl.org/perlbug/  También puede haber información en http://www.perl.org/, la página oficial de Perl.
+
+Si cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
+
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+
+=head1 VEA TAMBIÉN
+
+En el archivo F<Changes> encontrará una explicación de cómo obtener información detallada de los cambios.
+
+El archivo F<INSTALL> contiene instrucciones para compilar Perl.
+
+El archivo F<README> contiene información general.
+
+En los archivos F<Artistic> y F<Copying> encontrará información de copyright.
+
+=cut

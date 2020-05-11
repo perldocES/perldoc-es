@@ -8,7 +8,9 @@ avoid	evitar
 backslash	barra diagonal inversa
 because	debido
 behavior	comportamiento
+behaviour	comportamiento
 buffer	búfer
+bug	error
 bugs	errores
 build	compilar
 built	compilar
@@ -46,6 +48,7 @@ even	incluso
 exists	existe
 explicit	explícito
 explicitly	explícitamente
+expression	expresión
 filehandle	identificador de archivo
 filename	nombre de archivo
 filesystem	sistema de archivos
@@ -109,6 +112,7 @@ recursive	recursivo
 return	devuelve
 returned	devuelto
 returns	regresa
+routine	rutina
 scalar	escalar
 sections	secciones
 sequence	secuencia
@@ -132,6 +136,7 @@ time	tiempo
 tip	consejo
 unique	única
 unless	a menos
+updated	actualizó
 uppercase	mayúscula
 usage	uso
 usually	normalmente
@@ -144,3 +149,30 @@ whereas	mientras
 work	funciona
 workaround	alternativa
 wrong	incorrecto
+directive	directiva
+deprecated	obsoleta
+some	algún
+macro	macro
+readability	legibilidad
+found	encontrar
+keyword	palabra clave
+times	veces
+ellipsis	puntos suspensivos
+statement	sentencia
+handle	manejar
+this	esta
+unary	unario
+destructor	destructor
+instance	instancia
+all	todas
+struct	estructura
+may	puede
+expensive	costosa
+overhead	sobrecarga
+first	primer
+underscore	guión bajo
+instantiate	instanciar
+crash	cuelgue
+interfering	interferir
+Hopefully	Con suerte
+time	momento
