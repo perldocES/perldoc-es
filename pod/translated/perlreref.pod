@@ -10,7 +10,7 @@ Para una información completa, vea L<perlre> y L<perlop>, así como la sección
 =head2 OPERADORES
 
 C<=~> determina a qué variable se aplica la expresión regular.
-In its absence, $_ is used.
+En su ausencia, se usa $_.
 
     $var =~ /foo/;
 
@@ -18,13 +18,13 @@ C<!~> determina a qué variable se le aplica la I<regex>, y niega el resultado d
 
     $var !~ /foo/;
 
-C<m/patrón/msixpogcdualn> buscar en una cadena una coincidencia con un patrón, aplicando las opciones indicadas.
+C<m/patrón/msixpogcdualn> busca en una cadena una coincidencia con un patrón, aplicando las opciones indicadas.
 
-    m  Modo Multilínea - ^ y $ coinciden con líneas internas
-    s  coincide con una Sola línea - . coincide con \n
+    m  Modo Multilínea: ^ y $ coinciden con líneas internas
+    s  coincide con una Sola línea: . coincide con \n
     i  Insensible al tamaño de caja
-    x  legibilidad eXtendida - uso libre de espacio en blanco y comentarios
-    p  Preserva una copia de la cadena coincidente -
+    x  legibilidad eXtendida: uso libre de espacio en blanco y comentarios
+    p  Preserva una copia de la cadena coincidente:
        ${^PREMATCH}, ${^MATCH}, ${^POSTMATCH} quedarán definidos.
     o  compila el patrón una sOla vez
     g  Global - todas las ocurrencias

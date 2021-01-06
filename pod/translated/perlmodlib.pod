@@ -1876,7 +1876,7 @@ Una fuente TAP y metadatos sobre él
 
 =item TAP::Parser::SourceHandler
 
-Clase base para los diferentes manejadores de fuentes TAP
+Clase base para los diferentes gestores de fuentes TAP
 
 =item TAP::Parser::SourceHandler::Executable
 
@@ -2024,7 +2024,7 @@ Accede a las líneas de un archivo en disco a través de un array Perl
 
 =item Tie::Handle
 
-Definiciones de clases bases para manejadores enlazados
+Definiciones de clases bases para gestores enlazados
 
 =item Tie::Hash
 
@@ -2048,7 +2048,7 @@ Definiciones de clases bases para escalares enlazados
 
 =item Tie::StdHandle
 
-Definiciones de clases bases para manejadores enlazados
+Definiciones de clases bases para gestores enlazados
 
 =item Tie::SubstrHash
 

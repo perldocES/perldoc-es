@@ -61,7 +61,7 @@ X<truth> X<falsehood> X<true> X<false> X<!> X<not> X<negation> X<0> X<verdad> X<
 
 El número 0, las cadenas C<'0'> y C<"">, la lista vacía C<()> y C<undef> son todos falsos en contexto booleano.  Todos los demás valores son verdadero.
 La negación del valor de verdadero con C<!> o C<not> devuelve un valor falso especial.
-Cuando se evalúa como una cadena se trata como C<"">, pero como número se trata como 0.  La mayorí parte de los operadores de Perl que devuelven verdadero o falso se comportan de esta manera.
+Cuando se evalúa como una cadena se trata como C<"">, pero como número se trata como 0.  La mayoría parte de los operadores de Perl que devuelven verdadero o falso se comportan de esta manera.
 
 =head2 Modificadores de instrucciones
 X<statement modifier> X<modifier> X<if> X<unless> X<while>

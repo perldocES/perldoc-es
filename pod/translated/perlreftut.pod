@@ -4,13 +4,13 @@ perlreftut - Tutorial muy breve de Mark sobre las referencias
 
 =head1 DESCRIPCIÓN
 
-Una de las nuevas características más importantes en Perl 5 era la capacidad para gestionar complicadas estructuras de datos como arrays multidimensionales y hashes anidados.  Para habilitarlas, Perl 5 introdujo una característica llamada I<referencias>, y utilizando las referencias es la clave para gestionar complicadas estructuras de datos en Perl.  Desafortunadamente, hay que aprender mucha sintaxis graciosa, y la página del manual principal puede ser dura de seguir.  El manual es bastante completo, y a veces las personas encuentran que eso es un problema, porque puede ser difícil decir qué es lo importante y qué no.
+Una de las nuevas características más importantes en Perl 5 era la capacidad para gestionar complicadas estructuras de datos como arrays multidimensionales y hashes anidados.  Para habilitarlas, Perl 5 introdujo una característica llamada I<referencias>, y utilizar las referencias es la clave para gestionar complicadas estructuras de datos en Perl.  Desafortunadamente, hay que aprender mucha sintaxis divertida, y la página del manual principal puede ser dura de seguir.  El manual es bastante completo, y a veces las personas encuentran que eso es un problema, porque puede ser difícil decir qué es lo importante y qué no.
 
 Afortunadamente, sólo necesita saber un 10 % de lo que hay en la página principal para obtener el 90 % de los beneficios.  Este documento le mostrará ese 10 %.
 
 =head1 ¿Quién necesita complicadas estructuras de datos?
 
-Un problema que siempre aparece cuando se necesita un hash cuyos valores son listas.  Perl tiene hashes, naturalmente, pero los valores tienen que ser escalares; no pueden ser listas.
+Un problema que siempre aparece es cuando se necesita un hash cuyos valores son listas.  Perl tiene hashes, naturalmente, pero los valores tienen que ser escalares; no pueden ser listas.
 
 ¿Por qué querría un hash de listas?  Tomemos un ejemplo sencillo: usted tiene un archivo de nombres de ciudad y de países, así:
 
@@ -21,7 +21,7 @@ Un problema que siempre aparece cuando se necesita un hash cuyos valores son lis
 	Helsinki, Finland
 	New York, USA
 
-y quiere producir una salida como esta, con cada país se menciona una vez, seguido de una lista alfabética de las ciudades de ese país:
+y quiere producir una salida como esta, con cada país mencionado una vez, seguido de una lista alfabética de las ciudades de ese país:
 
 	Finland: Helsinki.
 	Germany: Berlin, Frankfurt.
@@ -29,16 +29,16 @@ y quiere producir una salida como esta, con cada país se menciona una vez, segu
 
 Para hacer esto, la forma natural es tener un hash cuyas claves son nombres de países.  Asociado con cada clave de nombre de país hay una lista de las ciudades de ese país.  Cada vez que lea una línea desde la entrada, divídala en un país y una ciudad; busque por la lista de ciudades asociadas a ese país; y añada la nueva ciudad a esa lista.  Cuando haya terminado de leer, itere sobre el hash de forma normal, ordenando cada lista de ciudades antes de imprimirla.
 
-Si los valores de los hash no fueran listas, estaría perdido.  Quizás podría combinar, de algún modo, todas las ciudades en una única cadena, y cuando llegue el momento de escribir la salida, tendría que romper la cadena en una lista, ordenar la lista, y volverla a convertir en una cadena.  Esto es un jaleo y propenso a errores.  Y frustante, porque Perl ya tiene un buena gestión de listas que podría resolver el problema con tan solo usarlas.
+Si los valores de los hash no fueran listas, estaría perdido.  Quizás podría combinar, de algún modo, todas las ciudades en una única cadena, y cuando llegue el momento de escribir la salida, tendría que romper la cadena en una lista, ordenar la lista, y volverla a convertir en una cadena.  Esto es un jaleo y propenso a errores.  Y frustrante, porque Perl ya tiene un buena gestión de listas que podría resolver el problema con tan solo usarlas.
 
 =head1 La solución
 
-Durante el momento en que Perl 5 apareció, estábamos convencidos de esta decisión de diseño: los valores Hash deben ser escalares.  La solución son las referencias.
+Cuando Perl 5 apareció, estábamos convencidos de esta decisión de diseño: los valores Hash deben ser escalares.  La solución son las referencias.
 
 Una referencia es un valor escalar que I<se refiere a> un array entero o un hash entero (o cualquier otra cosa).  Los Nombres son una clase de referencias con las que ya está familiarizado.  Piense en el Presidente de los Estados Unidos: es una inapropiada bolsa de sangre y huesos, mezclados.
 Pero cuando hablas sobre él, o para representarlo en un programa de ordenador, todo lo que necesitas es la fácil y conveniente cadena escalar "Barack Obama".
 
-Las referencias en Perl son como los nombres para los arrays y los hashes.  Son nombres internos y privados de Perl, así puede estar seguro de que son inequívocos.  A diferencia de "Barack Obama", una referencia solo refiere a una cosa, y siempre sabe a lo que refiere.  Si tiene una referencia a un array, puede recuperar el array entero, a partir de ella.  Si tiene una referencia a un hash, puede recuperar el hash entero.  Pero la referencia sigue siendo un sencillo y compacto valor escalar.
+Las referencias en Perl son como los nombres para los arrays y los hashes.  Son nombres internos y privados de Perl, así puede estar seguro de que son inequívocos.  A diferencia de "Barack Obama", una referencia solo refiere a una cosa, y usted siempre sabe a lo que refiere.  Si tiene una referencia a un array, puede recuperar el array entero, a partir de ella.  Si tiene una referencia a un hash, puede recuperar el hash entero.  Pero la referencia sigue siendo un sencillo y compacto valor escalar.
 
 No puede tener un hash cuyos valores sean arrays; los valores hash solo pueden ser escalares.  Aquí nos quedamos bloqueados.  Pero una única referencia puede referirse a un array entero, y las referencias son escalares, así que puede tener un hash de referencias a arrays, y actuará como un hash de arrays, y será tan útil como un hash de arrays.
 
@@ -80,12 +80,12 @@ C<[ ELEMENTOS ]> crea un nuevo y anónimo array, y devuelve una referencia a ese
     # $href ahora almacena una referencia a un hash
 
 
-Las referencias que obtiene de la regla 2 son de la misma clase de referencias que obtiene de la regka 1:
+Las referencias que obtiene de la regla 2 son de la misma clase de referencias que obtiene de la regla 1:
 
 	# Esto:
 	$aref = [ 1, 2, 3 ];
 
-	# hace lo mismo que esto:
+	# Hace lo mismo que esto:
 	@array = (1, 2, 3);
 	$aref = \@array;
 
@@ -124,7 +124,7 @@ Usar una referencia hash es I<exactamente> lo mismo:
 	$h{'red'}	${$href}{'red'}	      Un elemento del hash
 	$h{'red'} = 17	${$href}{'red'} = 17  Asignando un elemento
 
-Cualquier cosa que quiera hacer con una referencia, B<Regla de uso 1> le dice cómo hacerlo.  Simplemente escriba el código Perl que tendría que escribir para hacer lo mismo que con un array o hash normales, y entonces reemplazar el nombre del array o hash con C<{$reference}>.  "¿Cómo hago un bucle sobre un array cuando todo lo que tengo es una referencia?" Bueno, para hacer un bucle sobre un array, escribiría
+Cualquier cosa que quiera hacer con una referencia, B<Regla de uso 1> le dice cómo hacerlo.  Simplemente escriba el código Perl que tendría que escribir para hacer lo mismo que con un array o hash normales, y entonces reemplazar el nombre del array o hash con C<{$referencia}>.  "¿Cómo hago un bucle sobre un array cuando todo lo que tengo es una referencia?" Bueno, para hacer un bucle sobre un array, escribiría
 
         for my $elemento (@array) {
           ...
@@ -160,7 +160,7 @@ C<${$href}{red}> es difícil de leer, así que puede escribirlo de otra forma C<
 Si C<$aref> almacena una referencia a un array, entonces C<< $aref->[3] >> es el cuarto elemento de un array.  No lo confunda con C<$aref[3]>, que es el cuarto elemento de un array totalmente diferente, aparentemente llamado C<@aref>.  C<$aref> y C<@aref> no están relacionados, de la misma manera que tampoco lo están C<$item> e C<@item>.
 
 De forma similar, C<< $href->{'red'} >> es parte del hash referenciado por la variable escalar C<$href>, quizás incluso un hash que no tiene nombre.
-C<$href{'red'}> es parte de hash aparentemente llamado C<%href>.  Es fácil olvidarse el C<< -> >>, y si lo hace, obtendrá valores extraños cuando su programa obtenga elementos de array y hash de unos arrays y hashes inexperados que no son los que quiere usar.
+C<$href{'red'}> es parte de hash aparentemente llamado C<%href>.  Es fácil olvidarse el C<< -> >>, y si lo hace, obtendrá valores extraños cuando su programa obtenga elementos de array y hash de unos arrays y hashes inesperados que no son los que quiere usar.
 
 
 =head2 Un ejemplo
@@ -183,7 +183,7 @@ De modo parecido, C<< $a[0]->[1] >> es el 2.  Lo que tenemos aquí es un array b
 
 La notación sigue pareciendo un poco pesada, así que aquí hay una abreviatura más:
 
-=head2 Regla de la fecha
+=head2 Regla de la flecha
 
 Entre dos B<subíndices>, la flecha es opcional.
 
@@ -191,7 +191,7 @@ En lugar de C<< $a[1]->[2] >>, puede escribirlo así C<$a[1][2]>; significa lo m
 
 ¡Ahora ya se parece a un array bidimensional!
 
-Puede ver por qué las flechas son importantes.  Sin ellas, tendríamos que escribir C<${$a[1]}[2]> en lugar de C<$a[1][2]>.  Para arrys tridimensionales, nos permiten escribir C<$x[2][3][5]> en lugar del ilegible C<${${$x[2]}[3]}[5]>.
+Puede ver por qué las flechas son importantes.  Sin ellas, tendríamos que escribir C<${$a[1]}[2]> en lugar de C<$a[1][2]>.  Para arrays tridimensionales, nos permiten escribir C<$x[2][3][5]> en lugar del ilegible C<${${$x[2]}[3]}[5]>.
 
 =head1 Solución
 
@@ -247,7 +247,7 @@ C<%tabla> es un hash normal, y obtenemos de él una lista de claves, luego las o
 	@ciudades = @array;
 
 excepto que el nombre C<array> se reemplaza por la referencia C<{$tabla{$pais}}>.  El C<@> le indica a Perl que obtenga el array entero.
-Habiendo obtenido la lista de ciudades, la ordenamos, la unimos, y la imprimimos de la forma usual.
+Después de obtener la lista de ciudades, la ordenamos, la unimos, y la imprimimos de la forma usual.
 
 Líneas 2 a 7 son responsables para la generación de la estructura, al principio del programa.  Aquí están de nuevo:
 

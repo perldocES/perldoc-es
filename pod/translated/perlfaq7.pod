@@ -782,7 +782,7 @@ En estos casos, podría desactivar temporalmente C<strict 'refs'> para que pueda
 
 Todas esas funciones (rojo(), azul(), verde (color)(), etc.) parecen aisladas, pero el código real se compiló una sola vez en la clausura.
 
-Así que, en algunas ocasiones, podría querer usar referencias simbólicas para manipular la tabla de símbolos directamente. Esto no importa para formatos, manejadores y subrutinas, porque son siempre globales: no puede usar my() con ellos.
+Así que, en algunas ocasiones, podría querer usar referencias simbólicas para manipular la tabla de símbolos directamente. Esto no importa para formatos, gestores y subrutinas, porque son siempre globales: no puede usar my() con ellos.
 Para escalares, arrays y hashes, sin embargo -y normalmente para subrutinas-, probablemente solo querrá usar referencia duras.
 
 =head2 ¿Qué significa "I<bad interpreter>" (intérprete incorrecto)?

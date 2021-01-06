@@ -1498,7 +1498,7 @@ Archivo C<rpctest.pl>: Programa de prueba Perl para la extensión RPC.
 =head1 PROBLEMAS
 
 El código XS tiene acceso completo a las llamadas del sistema incluyendo funciones de biblioteca en C.
-Así tiene la capacidad de interferir con cosas que el núcleo de Perl u otros módulos han establecido, como los manejadores de señal o manejadores de archivo.
+Así tiene la capacidad de interferir con cosas que el núcleo de Perl u otros módulos han establecido, como los gestores de señal o gestores de archivo.
 Podría desordenar la memoria, o cualquier número de cosas nocivas.  No.
 
 Algunos módulos tienen un bucle de eventos, esperando por la entrada del usuario.  Es altamente improbable que dos de tales módulos pudieran trabajar adecuadamente en una única aplicación Perl.

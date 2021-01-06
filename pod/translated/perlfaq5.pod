@@ -1047,7 +1047,7 @@ Primero pruebe
 
     seek($gw_fh, 0, 1);
 
-La sentencia C<seek($gw_fh, 0, 1)> no cambia la posición actual, pero limpia la condición de fin-de-archivo en el manejador, por lo que el siguiente C<< <$gw_fh> >> hace que Perl intente de nuevo leer algo.
+La sentencia C<seek($gw_fh, 0, 1)> no cambia la posición actual, pero limpia la condición de fin-de-archivo en el gestor, por lo que el siguiente C<< <$gw_fh> >> hace que Perl intente de nuevo leer algo.
 
 Si eso no funciona (confía en características de la implementación de su stdio),
 entonces necesita algo más como esto:
@@ -1060,7 +1060,7 @@ entonces necesita algo más como esto:
       seek($gw_fh, $curpos, 0);  # ir a donde estábamos
     }
 
-Si sigue sin funcionar, mire en el método C<clearerr> de L<IO::Handle>, que reinicia los estados de error y de fin-de-archivo en el manejador.
+Si sigue sin funcionar, mire en el método C<clearerr> de L<IO::Handle>, que reinicia los estados de error y de fin-de-archivo en el gestor.
 
 También existe un módulo L<File::Tail> en CPAN.
 
@@ -1077,7 +1077,7 @@ O incluso con un descriptor numérico literal:
     my $fd = $ENV{MHCONTEXTFD};
     open $mhcontext, "<&=$fd";  # como fdopen(3S)
 
-Note que "<&STDIN" hace una copia, pero "<&=STDIN" crea un alias. Eso significa que si cierra un manejador con alias, todos esos alias se volverán inaccesibles. Y esto no es verdad con una copia.
+Note que "<&STDIN" hace una copia, pero "<&=STDIN" crea un alias. Eso significa que si cierra un gestor con alias, todos esos alias se volverán inaccesibles. Y esto no es verdad con una copia.
 
 La comprobación de errores, como siempre, se deja como ejercicio para el lector. 
 
