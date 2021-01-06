@@ -1,0 +1,1355 @@
+=head1 NAME
+
+perlipc - Comunicación interprocesos con Perl (señales, colas, tuberías, subprocesos seguros, I<sockets> y semáforos)
+
+=head1 DESCRIPCIÓN
+
+Las facilidades básicas para IPC de Perl se construyen a partir de lo bueno de las viejas señales Unix, tuberías con nombre, tuberías abiertas, las rutinas Berkeley para I<socket>, y llamadas a SysV IPC.  Cada una se usa situaciones ligeramente diferentes.
+
+=head1 Señales
+
+Perl usa un sencillo modelo de gestión de las señales: el hash %SIG contiene nombres o referencias de los gestores de señal instalados por el usuario.  Se llamarán a estos gestores con un argumento que es el nombre de la señal que los disparó.  Una señal puede generarse intencionadamente desde una secuencia del teclado en particular como control-C o control-Z, recibirla desde otro proceso, o disparada automáticamente por el kernel cuando sucede algún evento especial, como la terminación de un proceso hijo, su propio proceso corriendo sin espacio de pila, o llegar al límite de tamaño de archivo.
+
+Por ejemplo, para atrapar un señal de interrupción, establezca un gestor como este:
+
+    our $cascaras;
+
+    sub caza_zap {
+        my $nombresenal = shift;
+        $cascaras++;
+        die "Alguien me envió una SIG$nombresenal";
+    }
+    $SIG{INT} = __PACKAGE__ . "::caza_zap";
+    $SIG{INT} = \&caza_zap;  # mejor así
+
+Antes de Perl 5.8.0 era necesario hacer lo menos posible en el gestor; note que todo lo que hacemos es establecer una variable global y luego levanta una excepción.  Es porque en la mayor parte de los sistemas, las bibliotecas no son reentrantes; en particular, la reserva de memoria y las rutinas de E/S no lo son.  Eso significa que hacer I<cualquier cosa> en su gestor podría, en teoría, disparar un fallo de memoria y un subsecuente volcado del núcleo. Vea L</señales diferidas (Señales seguras)> más abajo.
+
+Los nombres de las señales son las listadas por C<kill -l> en su sistema, o puede recuperarlas usando el módulo de CPAN L<IPC::Signal>.
+
+También puede escoger el asignar las cadenas C<"IGNORE"> o C<"DEFAULT"> como el gestor, en cuyo caso Perl intentará descartar la señal o hacer el valor por defecto.
+
+En la mayor parte de las plataformas Unix, la señal C<CHLD> (algunas veces también conocida como C<CLD>) tiene un comportamiento especial con respecto a un valor de C<"IGNORE">.
+Establecer C<$SIG{CHLD}> a C<"IGNORE"> en tal plataforma tiene el efecto de no crear procesos zombie cuando el proceso padre cae en un C<wait()> en sus procesos hijo (p. e., los procesos hijo se retiran automáticamente).
+Llamar a C<wait()> con C<$SIG{CHLD}> puesto a C<"IGNORE"> normalmente regresa C<-1> en tales plataformas.
+
+Algunas señales no pueden atraparse o ignorarse, tales como las señales KILL y STOP (pero no la TSTP). Note que ignorar las señales hace que desaparezcan.
+Si sólo quiere bloquearlas temporalmente sin que se pierdan tendrá que usar sigprocmask POSIX.
+
+Enviar una señal a un ID de proceso negativo significa que envía la señal al grupo entero del proceso Unix.  Este código envía una señal de cuelgue a todos los procesos en el grupo de procesos actual, y también establece $SIG{HUP} a C<"IGNORE"> para que no se mate a sí mismo:
+
+    # ámbito de bloque para local
+    {
+        local $SIG{HUP} = "IGNORE";
+        kill HUP => -$$;
+        # otra forma de escribir: kill("HUP", -$$)
+    }
+
+Otra interesante señal a enviar es la señal número cero.  Esto no afecta realmente a un proceso hijo, sino que en lugar de eso comprueba si está vivo o ha cambiado sus UID.
+
+    unless (kill 0 => $kid_pid) {
+        warn "algo malvado le sucedió a $kid_pid";
+    }
+
+La señal número cero puede fallar porque no tenga permiso para enviar la señal cuando se dirija a un proceso cuyo UID real o guardado no sea idéntico al UID real o efectivo del proceso que lo envía, incluso aunque el proceso esté vivo.  Puede determinar la causa del fallo usando C<$!> o C<%!>.
+
+    unless (kill(0 => $pid) || $!{EPERM}) {
+        warn "$pid parece muerto";
+    }
+
+También podría querer emplear funciones anónimas como gestores sencillos de señal:
+
+    $SIG{INT} = sub { die "\n¡Fuera de aquí!\n" };
+
+Los gestores SIGCHLD requieren un cuidado especial.  Si un segundo hijo muere mientras se está en el gestor de señal provocado por la primera muerte, no obtendremos otra señal. Así que aquí debe hacer un bucle o sino dejaremos al hijo no atendido como un zombie. Y la próxima vez con el die de dos hijos obtenemos otro zombie.
+Y así sucesivamente.
+
+    use POSIX ":sys_wait_h";
+    $SIG{CHLD} = sub {
+        while ((my $hijo = waitpid(-1, WNOHANG)) > 0) {
+            $Estado_Hijos{$hijo} = $?;
+        }
+    };
+    # hacer algo que bifurca...
+
+Cuidado: qx(), system() y algunos módulos para llamar comandos externos hacen un fork() y luego un wait() (espera) para el resultado. Así, se llamará a su gestor de señal. Ya que wait() ya se llamó por system() o qx(), el wait() en el gestor de señal ya no verá más zombis y por lo tanto se bloqueará.
+
+La mejor forma de prevenir este problema es usar waitpid(), como en el siguiente ejemplo:
+
+    use POSIX ":sys_wait_h"; # para lectura no bloqueante
+
+    my %hijos;
+
+    $SIG{CHLD} = sub {
+        # no cambiar $! y $? fuera del gestor
+        local ($!, $?);
+        while ( (my $pid = waitpid(-1, WNOHANG)) > 0 ) {
+            delete $hijos{$pid};
+            limpiar_hijo($pid, $?);
+        }
+    };
+
+    while (1) {
+        my $pid = fork();
+        die "no puedo bifurcar" unless defined $pid;
+        if ($pid == 0) {
+            # ...
+            exit 0;
+        } else {
+            $hijos{$pid}=1;
+            # ...
+            system($command);
+            # ...
+       }
+    }
+
+La gestión de señales también se usa para agotamiento de tiempos, en Unix.  Mientras se esté protegido con seguridad dentro de un bloque C<eval{}>, establezca un gestor de señal para atrapar señales de alarma y entonces planificar la llegada de una en un cierto número de segundos.  Entonces intente bloquear la operación, limpiando la alarma cuando termine pero no antes de salir de su bloque C<eval{}>.  Si tiene que salir, usará die() para saltar fuera del bloque.
+
+Aquí hay un ejemplo:
+
+    my $ALARM_EXCEPTION = "reinicio alarma del tiempo";
+    eval {
+        local $SIG{ALRM} = sub { die $ALARM_EXCEPTION };
+        alarm 10;
+        flock(FH, 2)    # bloquear escritura del bloqueo
+                        || die "no puedo bloquear (flock): $!";
+        alarm 0;
+    };
+    if ($@ && $@ !~ quotemeta($ALARM_EXCEPTION)) { die }
+
+Si la operación a cronometrar es system() o qx(), esta técnica es propensa a generar zombis.    Si esto le preocupa, necesitará hacer su propio fork() y exec(), y matar al errante proceso hijo.
+
+Para un manejo de señales más complejo, podría ver el módulo estándar POSIX.  Lamentablemente, esto está casi todo indocumentado, pero el archivo F<ext/POSIX/t/sigaction.t> de la distribución de código fuente Perl tiene algunos ejemplos.
+
+=head2 Manejar la señal SIGHUP en demonios
+
+Un proceso que, normalmente, se inicia cuando el sistema arranca y termina cuando el sistema se para, se le llama un demonio (Disco y Ejecución MONItor). Si un proceso demonio tiene un archivo de configuración que se modifica después de que el proceso arranque, debería haber una forma de indicarle que relea su archivo de configuración sin parar el proceso. Muchos demonios proporciona este mecanismo usando un gestor de señal C<SIGHUP>. Cuando quiere indicarle al demonio que relea el archivo, simplemente mándele la señal C<SIGHUP>.
+
+El siguiente ejemplo implementa un sencillo demonio, que se reinicia a sí mismo cada vez que se reciba una señal C<SIGHUP>. El código actual está localizado en la subrutina C<code()>, que simplemente imprime algo de información de depuración para mostrar que funciona; debería reemplazarse con código real.
+
+  #!/usr/bin/perl
+
+  use strict;
+  use warnings;
+
+  use POSIX ();
+  use FindBin ();
+  use File::Basename ();
+  use File::Spec::Functions qw(catfile);
+
+  $| = 1;
+
+  # hacer el demonio multiplataforma, para que exec siempre se llame
+  # a sí mismo con la ruta correcta, sin importar cómo se invocó el script
+  my $script = File::Basename::basename($0);
+  my $SELF  = catfile($FindBin::Bin, $script);
+
+  # POSIX desenmascara la sigprocmask correctamente
+  $SIG{HUP} = sub {
+      print "SIGHUP recibida\n";
+      exec($SELF, @ARGV)        || die "$0: no puedo reiniciar: $!";
+  };
+
+  code();
+
+  sub code {
+      print "PID: $$\n";
+      print "ARGV: @ARGV\n";
+      my $cuenta = 0;
+      while (1) {
+          sleep 2;
+          print ++$cuenta, "\n";
+      }
+  }
+
+
+=head2 Señales diferidas (Señales seguras)
+
+Antes de Perl 5.8.0, el instalar código Perl para tratar señales le expone a dos peligros.  Primero, pocas de las funciones de la biblioteca del sistema son reentrantes.  Si la señal interrumpe mientras Perl está ejecutando una función (como malloc(3) o printf(3)), y su gestor de señales llama de nuevo a la misma función, podría obtener un comportamiento impredecible; a menudo, un volcado del núcleo.
+Segundo, Perl no es, en sí mismo, reentrante, en los niveles más bajos.  Si la señal interrumpe mientras Perl está cambiando sus propias estructuras internas de datos, puede resultar en un similar comportamiento impredecible.
+
+Sabiéndolo, hay dos cosas que podría hacer: ser paranoico o ser pragmático.  La solución paranoica era hacer lo menos posible en su gestor de señales.  Establecer una variable entera actual que ya tiene un valor, y un return.  Esto no le ayuda si está en una lenta llamada del sistema, que simplemente reiniciará.  Eso significa que tiene que hacer un C<die> para saltar con longjmp(3) fuera del gestor.  Incluso esto es poco caballeroso para el verdadero paranoico, que evita C<die> en un gestor porque el sistema I<está> fuera de su alcance.
+La solución pragmática era decir: "Conozco los riesgos, pero prefiero la comodidad", y hacer lo que quiera en su gestor de señal, y prepararse para limpiar los volcados de núcleo de vez en cuando.
+
+Perl 5.8.0 y siguientes evitan estos problemas "defiriendo" señales.  Esto es, cuando la señal se entrega al proceso por parte del sistema (al código C que implementa Perl) se establece un indicador, y el gestor regresa inmediatamente.
+Entonces en los puntos estratégicos "seguros" en el intérprete Perl (p.e. cuando está a punto de ejecutar un nuevo código de operación) se comprueban los indicadores y se ejecuta el gestor de %SIG a nivel de Perl. El esquema "diferido" permite mucha mayor flexibilidad en el código de los gestores de señal cuando sabemos que el intérprete Perl está en un estado seguro, y que no estamos en una función de biblioteca del sistema cuando se llama al gestor.  Sin embargo la implementación difiere de los Perl anteriores de las formas siguientes:
+
+=over 4
+
+=item Códigos de operación de larga ejecución
+
+Ya que el intérprete Perl mira por indicadores de señal cuando está a punto de ejecutar un nuevo código de operación, una señal que llegue durante un código de operación de larga ejecución (p.e. una operación de expresión regular en una cadena muy larga) no lo verá hasta que se complete el código de operación actual.
+
+Si una señal de cualquier tipo se dispara múltiples veces durante un código de operación (tales como un temporizador de gran resolución), el gestor para esa señal se llamará sólo una vez, después de que se complete el código de operación; las demás instancias se descartarán.  Además, si la cola de señales de su sistema se inunda al punto que hay señales que se han levantado pero no atendidas (y por lo tanto, no diferidas) en el momento en que un código de operación se completa, estas señales pueden ser atendidas y diferidas durante los siguientes códigos de operación, algunas veces con resultados sorprendentes.  Por ejemplo, puede ver alarmas atendidas después de llamar a C<alarm(0)> ya que ésta última detiene el levantamiento de alarmas pero no cancela la atención de alarmas levantadas pero todavía no cazadas.  No depende de los comportamientos descritos en este párrafo ya que son efectos colaterales de la implementación actual y puede cambiar en futuras versiones de Perl.
+
+=item Interrupción E/S
+
+Cuando se entrega una señal (p.e., SIGINT desde un control-C) el sistema operativo para las operaciones E/S como I<read>(2), que se usa para implementar la función readline() de Perl, el operador C<< <> >>. En Perl anteriores el gestor se llamaba inmediatamente (y como C<read> no es "inseguro", esto funciona bien). Con el esquema "diferido" el gestor I<no> se llama inmediatamente, y si Perl usa el C<stdio> de la biblioteca del sistema, esa biblioteca puede reiniciar el C<read> sin regresar a Perl para darle la oportunidad de llamar al gestor de %SIG. Si esto sucede en su sistema la solución es usar la capa C<:perlio> para hacer E/S (al menos en los gestores en los que quiere ser capaz de pararse con señales). (La capa C<:perlio> comprueba los indicadores de señal y llama a los gestores de %SIG antes de reanudar la operación de E/S).
+
+La acción por defecto en Perl 5.8.0 y siguientes es usar automáticamente la capa C<:perlio>.
+
+Note que no es aconsejable acceder al gestor de archivo dentro de un gestor de señal donde esa señal ha interrumpido una operación de E/S en el mismo gestor. Mientras que perl al menos se esforzará en no colgarse, no hay garantías en la integridad de los datos; por ejemplo, algunos datos podrían perderse o duplicarse.
+
+De algunas funciones de biblioteca de red como gethostbyname() se sabe que tienen su propia implementación de agotamiento de tiempo que puede chocar con su propio agotamiento de tiempo.  Si tiene problemas con tales funciones, intente usar la función POSIX sigaction(), que se salta las señales seguras de Perl.  Advierta que esto puede ser objeto de una posible corrupción de memoria, como se describió antes.
+
+En vez de establecer C<$SIG{ALRM}>:
+
+   local $SIG{ALRM} = sub { die "alarm" };
+
+intente algo como lo siguiente:
+
+ use POSIX qw(SIGALRM);
+ POSIX::sigaction(SIGALRM,
+                  POSIX::SigAction->new(sub { die "alarm" }))
+          || die "Error al establecer el gestor SIGALRM: $!\n";
+
+Otra forma de desactivar el comportamiento local de señales seguras es usar el módulo C<Perl::Unsafe::Signals> desde CPAN, que afecta a todas las señales.
+
+=item Llamadas del sistema reiniciables
+
+En sistemas que lo soporten, las versiones anteriores de Perl usaban el indicador SA_RESTART cuando se instalan gestores %SIG.  Esto significa que las llamadas del sistema reiniciables podrían continuar en lugar de regresar cuando llegue la señal.  Para entregar señales diferidas sin demora, Perl 5.8.0 y siguientes I<no> usan SA_RESTART.  Consiguientemente, llamadas del sistema reiniciables pueden fallar (con $! establecido a C<EINTR>) en lugares donde previamente habrían tenido éxito.
+
+La capa por defecto C<:perlio> reintenta C<read>, C<write> y C<close> como se describió antes; las llamadas C<wait> y C<waitpid> interrumpidas siempre se reintentarán.
+
+=item Señales como "faltas"
+
+Ciertas señales como SEGV, ILL y BUS se generan por errores y "faltas" similares de direccionamiento virtual. Normalmente éstas son fatales: existe un pequeño gestor a nivel de Perl que puede tratarles.  Así que Perl las gestiona inmediatamente en lugar de intentar diferirlas.
+
+=item Señales disparadas por el estado del sistema operativo
+
+En algunos sistemas operativos se supone que ciertos gestores de señales hacen "algo" antes de regresar. Un ejemplo puede ser CHLD o CLD, que indica que un proceso hijo se ha completado. En algunos sistemas operativos se espera que el gestor de señal espere (C<wait>) por la terminación del proceso hijo. En tales sistemas el esquema de señal diferida no funcionará para estas señales: no hacen espera (C<wait>). De nuevo, el fallo se parecerá a un bucle en que el sistema operativo reintentará la señal porque hay procesos hijos completados por los que aún no se les ha esperado (C<wait>).
+
+=back
+
+Si quiere el anterior comportamiento de la señal a pesar de la posible corrupción de memoria, establezca la variable de entorno C<PERL_SIGNALS> a C<"unsafe">.  Esta característica apareció por primera vez en Perl 5.8.1.
+
+=head1 Tuberías con nombre
+
+Un tubería con nombre (referenciada a menudo como FIFO) es un antiguo mecanismo IPC de Unix para la comunicación de procesos en la misma máquina.  Funciona justo como tuberías normales anónimas, excepto que el proceso se enlaza con un nombre de archivo y no necesita estar relacionada.
+
+Para crear una tubería con nombre, use la función C<POSIX::mkfifo()>.
+
+    use POSIX qw(mkfifo);
+    mkfifo($path, 0700)     ||  die "mkfifo $path falló: $!";
+
+También puede usar el comando Unix mknod(1) o, en algunos sistemas, mkfifo(1).  Podrían no estar en su ruta normal.
+
+    # valor de retorno de system es lo contrario, así && y no ||
+    #
+    $ENV{PATH} .= ":/etc:/usr/etc";
+    if  (      system("mknod",  $path, "p")
+            && system("mkfifo", $path) )
+    {
+        die "mk{nod,fifo} $path falló";
+    }
+
+
+Una fifo es conveniente cuando quiere conectar un proceso a otro no relacionado.  Cuando abre una fifo, el programa se bloqueará hasta que haya algo en el otro extremo.
+
+Por ejemplo, digamos que quiere que su archivo F<.signature> sea una tubería con nombre a un programa Perl en el otro extremo.  Ahora cada vez que cualquier programa (como un programa de correo, lector de noticias, el finger, etc.) intenta leer desde ese archivo, leerá la nueva firma desde su programa.  Usaremos el operador de comprobación de archivos como tuberías, B<-p>, para saber si algo o alguien ha eliminado su tubería accidentalmente.
+
+    chdir();    # a casa
+    my $FIFO = ".signature";
+
+    while (1) {
+        unless (-p $FIFO) {
+            unlink $FIFO;   # descarta cualquier fallo, que cazaremos más tarde
+            require POSIX;  # carga retrasada de un módulo pesado
+            POSIX::mkfifo($FIFO, 0700)
+                                || die "no puedo hacer mkfifo $FIFO: $!";
+        }
+
+        # la siguiente línea se bloquea hasta que exista un lector
+        open (FIFO, "> $FIFO")  || die "no puedo abrir $FIFO: $!";
+        print FIFO "John Smith (smith\@host.org)\n", `fortune -s`;
+        close(FIFO)             || die "no puedo cerrar $FIFO: $!";
+        sleep 2;                # para evitar señales duplicadas
+    }
+
+=head1 Usar open() para IPC
+
+La sentencia básica open() de Perl también puede usarse para la comunicación unidireccional interprocesos, o bien añadiendo o bien antecediendo un símbolo de tubería al segundo argumento de open().  Aquí se muestra cómo iniciar un proceso hijo al que quieres escribir:
+
+    open(SPOOLER, "| cat -v | lpr -h 2>/dev/null")
+                        || die "no puedo bifurcar: $!";
+    local $SIG{PIPE} = sub { die "tubería de paso rota" };
+    print SPOOLER "algo\n";
+    close SPOOLER       || die "mal cierre: $! $?";
+
+Y aquí vemos cómo iniciar un proceso hijo del que queremos leer:
+
+    open(STATUS, "netstat -an 2>&1 |")
+                        || die "no puedo bifurcar: $!";
+    while (<STATUS>) {
+        next if /^(tcp|udp)/;
+        print;
+    }
+    close STATUS        || die "error con netstat: $! $?";
+
+Si está seguro de que un programa en particular es un script Perl que espera nombres de archivo en @ARGV, el programador avispado puede escribir algo como esto:
+
+    % programa f1 "cmd1|" - f2 "cmd2|" f3 < archivotemporal
+
+y no importa con qué shell se le llame, el programa Perl leerá del archivo F<f1>, el proceso F<cmd1>, la entrada estándar (F<archivotemporal> en este caso), el archivo F<f2>, el comando F<cmd2> y, finalmente, el archivo F<f3>.  Muy ingenioso, ¿eh?
+
+Podría notar que podría usar las comillas inversas para conseguir el mismo efecto de abrir una tubería en modo lectura:
+
+    print grep { !/^(tcp|udp)/ } `netstat -an 2>&1`;
+    die "error con netstat ($?)" if $?;
+
+Mientras que es cierto en principio, es más eficiente procesar el archivo una línea o registro cada vez, porque así no tiene que leer de una vez todo el contenido en memoria.  También le proporciona un control fino de todo el proceso, permitiéndole matar antes el proceso hijo si eso es lo que quiere hacer.
+
+Sea prudente al comprobar los valores de retorno tanto de open() como close().  Si está I<escribiendo> a una tubería, también debería atrapar SIGPIPE.  De lo contrario, piense en lo que sucede cuando inicia una tubería a un comando que no existe: el open() tendrá, con toda probabilidad, éxito (solo refleja el éxito del fork()), pero luego su salida fallará -espectacularmente-.  Perl no puede saber si el comando funcionó, porque su comando está realmente corriendo en un proceso aparte cuyo exec() podría haber fallado.  Por tanto, mientras que lectores de falsos comandos devuelven un rápido EOF, los escritores de comandos falsos recibirán una señal, por lo que deberán estar preparados para manejarla.  Considere:
+
+    open(FH, "|falsos")     || die "no puedo bifurcar: $!";
+    print FH "bang\n";      #  ni necesario ni suficiente
+                            #  para comprobar el valor de retorno de print
+    close(FH)               || die "no puedo cerrar: $!";
+
+La razón de no comprobar el valor de retorno de print() es debido a la memoria intermedia de la tubería; las escrituras físicas son retrasadas.  Esto no explosionará hasta el close, y lo hará con un SIGPIPE.  Para cazarla, podría usar esto:
+
+    $SIG{PIPE} = "IGNORE";
+    open(FH, "|falsos") || die "no puedo bifurcar: $!";
+    print FH "bang\n";
+    close(FH)           || die "no puedo cerrar: estado=$?";
+
+=head2 Identificadores de archivo
+
+Tanto el proceso principal como el proceso hijo que bifurca comparten los identificadores de archivo STDIN, STDOUT y STDERR.  Si ambos procesos intentan acceder a ellos al mismo tiempo, pueden suceder cosas extrañas.  También puede querer cerrar o reabrir los identificadores de archivo para el hijo.  Puede solventar esto abriendo su tubería con open(), pero en algunos sistemas esto significa que el proceso hijo ya no puede sobrevivir al padre.
+
+=head2 Procesos en segundo plano
+
+Puede ejecutar un comando en segundo plano con:
+
+    system("cmd &");
+
+El STDOUT y el STDERR del comando (y posiblemente STDIN, dependiendo de su shell) será el mismo que los del padre.  No necesitará cazar SIGCHLD debido a que tiene lugar esa doble bifurcación; vea más abajo los detalles.
+
+=head2 Disociación completa del hijo del padre
+
+En algunos casos (iniciando los procesos del servidor, por ejemplo) querrá disociar completamente el proceso hijo de el del padre.  Esto se llama a menudo como demonización.  Un demonio bien educado también hará un chdir() al directorio raíz y así impedirá el desmontaje del sistema de archivos que contiene el directorio desde donde fue lanzado, y redirige sus descriptores de archivo estándar desde y hacia F</dev/null> para que no inunde de salida aleatoria la terminal del usuario.
+
+ use POSIX "setsid";
+
+ sub demoniza {
+     chdir("/")                  || die "no puedo chdir a /: $!";
+     open(STDIN,  "< /dev/null") || die "no puedo leer /dev/null: $!";
+     open(STDOUT, "> /dev/null") || die "no puedo escribir en /dev/null: $!";
+     defined(my $pid = fork())   || die "no puedo bifurcar: $!";
+     exit if $pid;               # no cero ahora significa que soy el padre
+     (setsid() != -1)            || die "No puedo iniciar una nueva sesión: $!";
+     open(STDERR, ">&STDOUT")    || die "no puedo dup(licar) stdout: $!";
+ }
+
+El fork() tiene que aparecer antes que setsid() para asegurar que no es el líder del grupo de procesos; el setsid() fallará si lo es.  Si su sistema no tiene la función setsid(), abra F</dev/tty> y use en su lugar el C<TIOCNOTTY> de ioctl().  Vea tty(4) para más detalles.
+
+Los usuarios no-Unix deberían comprobar su módulo C<< I<Su_OS>::Process >> para ver otras posibles soluciones.
+
+=head2 Tubería abierta de forma segura
+
+Otro interesante aproximación a IPC es hacer que un simple programa se convierta en multiproceso y se comunique entre ellos -o incluso entre nosotros mismos-.  La función open() aceptará como argumento un archivo así C<"-|"> o así C<"|-"> para hacer algo muy interesante: bifurca un hijo conectado al identificador de archivo que ha abierto.  El hijo ejecuta el mismo programa que el padre.  Esto es útil para abrir un archivo de forma segura cuando se ejecuta bajo un supuesto UID o GID, por ejemplo.  Si abre una tubería I<antes de> "menos", puede escribir al identificador de archivo que abrió y que su hijo encontrará en I<su> STDIN.  Si abre una tubería I<después de> "menos", puede leer del identificador de archivo que abrió a medida de que su hijo escriba a I<su> STDOUT.
+
+    use English;
+    my $PRECIOSO = "/ruta/a/algun/archivo/seguro";
+    my $contador_sleep;
+    my $pid;
+
+    do {
+        $pid = open(HIJO_ESCRIBIR, "|-");
+        unless (defined $pid) {
+            warn "no puedo bifurcar: $!";
+            die "tiempo agotado" if $contador_sleep++ > 6;
+            sleep 10;
+        }
+    } until defined $pid;
+
+    if ($pid) {                 # Soy el padre
+        print HIJO_ESCRIBIR @algunos_datos;
+        close(HIJO_ESCRIBIR)    || warn "hijo terminó $?";
+    } else {                    # Soy el hijo
+        # baje permisos en programas setuid o setgid:
+        ($EUID, $EGID) = ($UID, $GID);
+        open (SALIDA, "> $PRECIOSO")
+                                || die "no puedo abrir $PRECIOSO: $!";
+        while (<STDIN>) {
+            print SALIDA;       # el STDIN del hijo es el HIJO_ESCRIBIR del padre
+        }
+        close(SALIDA)           || die "no puedo cerrar $PRECIOSO: $!";
+        exit(0);                # ¡¡no olvide esto!!
+    }
+
+Otro uso común para esta construcción es cuando necesita ejecutar algo sin la interferencia del shell.  Con system(), es inmediato, pero no puede usar una tubería o comillas inversas de forma segura.
+Esto es porque no hay forma de impedir al shell que vea sus argumentos.   En lugar de eso, use control a bajo nivel para llamar a exec() directamente.
+
+Aquí hay una forma segura de abrir en lectura con comillas inversas o tubería abierta:
+
+    my $pid = open(HIJO_LEER, "-|");
+    defined($pid)           || die "no puedo bifurcar: $!";
+
+    if ($pid) {             # padre
+        while (<HIJO_LEER>) {
+                            # hacer algo interesante
+        }
+        close(HIJO_LEER)    || warn "hijo terminó $?";
+
+    } else {                # hijo
+        ($EUID, $EGID) = ($UID, $GID); # sólo suid
+        exec($programa, @opciones, @args)
+                            || die "no puedo ejecutar programa: $!";
+        # NO LLEGA AQUÍ
+    }
+
+Y aquí una tubería segura abierta para escribir:
+
+    my $pid = open(HIJO_ESCRIBIR, "|-");
+    defined($pid)           || die "no puedo bifurcar: $!";
+
+    $SIG{PIPE} = sub { die "Oops, $programa tubería abierta" };
+
+    if ($pid) {             # padre
+        print HIJO_ESCRIBIR @datos;
+        close(HIJO_ESCRIBIR)|| warn "hijo terminó $?";
+
+    } else {                # hijo
+        ($EUID, $EGID) = ($UID, $GID);
+        exec($programa, @opciones, @args)
+                            || die "no puedo ejecutar programa: $!";
+        # NO LLEGA AQUÍ
+    }
+
+Es muy sencillo bloquear un proceso usando esta forma de open() o, de hecho, con cualquier uso de pipe() con múltiples subprocesos.  El ejemplo anterior es "seguro" porque es simple y llama a exec().  Vea L</"Evitar bloqueos de tuberías"> para ver los principios generales de seguridad, pero hay problemas extra con las aperturas seguras de tuberías.
+
+En particular, si abrió la tubería usando C<open FH, "|-">, entonces no puede usar simplemente close() en el proceso padre para cerrar una escritura indeseada.  Considere este código:
+
+    my $pid = open(ESCRITOR, "|-");      # bifurca open como hijo
+    defined($pid)               || die "falló primera bifurcación: $!";
+    if ($pid) {
+        if (my $sub_pid = fork()) {
+            defined($sub_pid)   || die "falló segunda bifurcación: $!";
+            close(ESCRITOR)     || die "no puedo cerrar ESCRITOR: $!";
+            # ahora hacer otra cosa...
+        }
+        else {
+            # primera escritura a ESCRITOR
+            # ...
+            # y entonces terminamos
+            close(ESCRITOR)     || die "no puedo cerrar ESCRITOR: $!";
+            exit(0);
+        }
+    }
+    else {
+        # primero haga algo con STDIN, entonces
+        exit(0);
+    }
+
+En el ejemplo anterior, el verdadero padre no quiere escribir al identificador de archivo ESCRITOR, y por eso lo cierra.  Aún así, ya que ESCRITOR se abrió con C<open FH, "|-">, tiene un comportamiento especial: cerrarlo llama a waitpid() (vea L<perlfunc/waitpid>), que espera a que el subproceso termine.  Si el proceso hijo termina esperando por que suceda algo en la sección marcada como "ahora hacer otra cosa", tiene un bloqueo.
+
+Esto también puede ser un problema con subprocesos intermedios en código más complicado, el cual llamará a waitpid() en todos los identificadores de archivo abiertos durante la destrucción global (sin un orden predecible).
+
+Para solventar esto, debe usar manualmente pipe(), fork() y la forma de open() que establece un descriptor de archivo a otro, como se muestra a continuación:
+
+    pipe(LECTOR, ESCRITOR)      || die "la tubería falló: $!";
+    $pid = fork();
+    defined($pid)               || die "falló primera bifurcación: $!";
+    if ($pid) {
+        close LECTOR;
+        if (my $sub_pid = fork()) {
+            defined($sub_pid)   || die "falló primera bifurcación: $!";
+            close(ESCRITOR)     || die "no puedo cerrar ESCRITOR: $!";
+        }
+        else {
+            # escribir a ESCRITOR...
+            # ...
+            # y entonces terminamos
+            close(ESCRITOR)     || die "no puedo cerrar ESCRITOR: $!";
+            exit(0);
+        }
+        # escribir a ESCRITOR...
+    }
+    else {
+        open(STDIN, "<&LECTOR") || die "no puedo reabrir STDIN: $!";
+        close(ESCRITOR)         || die "no puedo cerrar ESCRITOR: $!";
+        # hacer algo...
+        exit(0);
+    }
+
+Desde Perl 5.8.0, también puede usar la forma de lista de C<open> para tuberías.
+Esto es lo preferido cuando desea evitar que el shell interprete metacaracteres que podrían estar en su línea de comando.
+
+Así, por ejemplo, en lugar de usar:
+
+    open(PS_PIPE, "ps aux|")    || die "no puedo abrir tubería a ps: $!";
+
+Podría usar cualquiera de estas:
+
+    open(PS_PIPE, "-|", "ps", "aux")
+                                || die "no puedo abrir tubería a ps: $!";
+
+    @ps_args = qw[ ps aux ];
+    open(PS_PIPE, "-|", @ps_args)
+                                || die "no puedo abrir @ps_args|: $!";
+
+Debido a que hay más de tres argumentos para open(), bifurca el comando ps(1) I<sin> lanzar un shell, y lee su salida estándar por medio del identificador de archivo C<PS_PIPE>.  La sintaxis correspondiente para I<escribir> a tuberías de comandos es usar C<"|-"> en lugar de C<"-|">.
+
+Esto era, ciertamente, un ejemplo bastante tonto, porque está usando cadenas literales cuyo contenido es perfectamente seguro.  No hay por tanto ninguna razón para evitar recurrir a la forma más difícil de leer, multiargumento de tubería open().  Sin embargo, siempre que no pueda asegurarse de que los argumentos de su programa están libres de metacaracteres shell, se debería usar la forma más elegante de open().  Por ejemplo:
+
+    @grep_args = ("egrep", "-i", $algun_patron, @muchos_archivos);
+    open(GREP_PIPE, "-|", @grep_args)
+                        || die "no puedo abrir @grep_args|: $!";
+
+Aquí, la forma multiargumento de tubería open() es la preferida porque el patrón e incluso los propios nombres de archivo podrían tener metacaracteres.
+
+Sea consciente de que estas operaciones son bifurcaciones completas en Unix, eso significa que pueden no estar correctamente implementadas en el resto de sistemas.
+
+=head2 Evitar bloqueos con tuberías
+
+Siempre que tenga más de un subproceso, tiene que cuidar de que cada uno de ellos cierre su parte de cualquier tubería creada por la comunicación interprocesos, ya no se esté usando.  Esto es porque cualquier proceso hijo leyendo desde la tubería y esperando un EOF (final de archivo) nunca lo recibirá, y por lo tanto nunca terminará. Un solo proceso, cerrando una tubería, no es suficiente para cerrarlo; el último proceso con la tubería abierta debe cerrarla para que se lea un EOF.
+
+Ciertas características Unix incorporadas ayudan a impedirlo, la mayor parte del tiempo.  Por ejemplo, los identificadores de archivo tienen un indicador "cerrar en ejecución", que se establece I<en masa> bajo el control de la variable C<$^F>.  Así, cualquier identificador de archivo que no redirija explícitamente a STDIN, STDOUT o STDERR de un I<programa> hijo se cerrará automáticamente.
+
+Siempre llame explícitamente e inmediatamente a close() en el fin escribible de cualquier tubería, a menos que el proceso esté, de hecho, escribiendo en él.  Incluso si no llama explícitamente a close(), Perl seguirá cerrando con close() todos los identificadores de archivo durante la destrucción global.  Como se ha dicho antes, si estos identificadores de archivo se han abierto con el modo de "Tubería abierta de forma segura", resultará en llamar a waitpid(), el cual otra vez puede llevar al bloqueo.
+
+=head2 Comunicación bidireccional con otro proceso
+
+Mientras que esto funciona de forma razonable para una comunicación unidireccional, ¿qué hay sobre la comunicación bidireccional?  La propuesta más obvia no funciona:
+
+    # ¡¡ESTO NO FUNCIONA!!
+    open(PROG_PARA_LECTURA_Y_ESCRITURA, "| algún programa |")
+
+Si olvida usar C<use warnings>, se perderá este útil mensaje de diagnóstico:
+
+    Can't do bidirectional pipe at -e line 1 (No puedo hacer una tubería bidireccional).
+
+Si es eso lo que realmente quiere hacer, puede usar el estándar open2() del módulo C<IPC::Open2> para capturar ambos lados.  Existe también un open3() en C<IPC::Open3> para una E/S tridireccional, y así puede capturar el STDERR de su hijo, pero al hacerlo podría requerir un incómodo bucle select() y no le permitiría usar las operaciones de entrada normal de Perl.
+
+Si mira en su código, verá que open2() usa primitivas de llamadas al sistema, de bajo nivel como pipe() y exec() para crear todas las conexiones.  A pesar de que podría ser más eficiente usar socketpair(), podría ser incluso menos portátil de lo que ya es. Las funciones open2() y open3() no es probable que funcionen en todos los sistemas excepto en un sistema Unix, o al menos en uno que sea conforme POSIX.
+
+=for TODO
+Un momento, ¿esto es cierto?  Primero dice que socketpair() se evita por portabilidad, pero luego dice que probablemente no funcionará excepto en sistemas distintos de los Unix.  ¿Cuál de ellas es verdad?
+
+Aquí hay un ejemplo de uso de open2():
+
+    use FileHandle;
+    use IPC::Open2;
+    $pid = open2(*Reader, *Writer, "cat -un");
+    print Writer "algo\n";
+    $entra = <Reader>;
+
+El problema con esto es que el almacenamiento temporal (búfer) le arruinará el día.  Incluso aunque su identificador de archivo C<Writer> se auto-vacíe para que el proceso en el otro extremo obtenga sus datos a tiempo, normalmente no puede hacer nada para forzar a ese proceso a entregarle sus datos de un modo parecido.  En este caso especial, podríamos hacerlo, porque le dimos a I<cat> un indicador B<-u> para marcar el funcionamiento sin búfer.  Pero muy pocos comando están diseñados para operar sobre tuberías, así que esto funciona raramente a menos que escriba usted mismo el programa del otro extremo de la tubería doble.
+
+Una solución es usar una biblioteca que use pseudottys para hacer que su programa se comporte más razonablemente.  Así no tiene que controlar el código fuente del programa que esté usando.  El módulo C<Expect> de CPAN también gestiona este tipo de cosas.  Este módulo requiere otros dos módulos de CPAN, C<IO::Pty> y C<IO::Stty>.  Establece una pseudo terminal para interactuar con programas que insisten en hablarle al controlador del dispositivo terminal.  Si está soportado su sistema, ésta puede ser su mejor apuesta.
+
+=head2 Comunicación bidireccional consigo mismo
+
+Si lo prefiere, puede hacer llamadas del sistema a bajo nivel de pipe() y fork() para coserlos juntos.  Este ejemplo solo habla consigo mismo, pero podría reabrir los identificadores apropiados a STDIN y STDOUT y llamar a otros procesos.
+(El siguiente ejemplo carece de las apropiadas comprobaciones de errores).
+
+ #!/usr/bin/perl -w
+ # pipe1 - comunicación bidireccional usando dos pares de tuberías
+ #         diseñada para la prueba de socketpair
+ use IO::Handle;             # miles de líneas sólo para tener autoflush :-(
+ pipe(PADRE_LEER, HIJO_ESCR);  # XXX: ¿y comprobar fallo?
+ pipe(HIJO_LEER,  PADRE_ESCR); # XXX: ¿y comprobar fallo?
+ HIJO_ESCR->autoflush(1);
+ PADRE_ESCR->autoflush(1);
+
+ if ($pid = fork()) {
+     close PADRE_LEER;
+     close PADRE_ESCR;
+     print HIJO_ESCR "Pid padre $$ envía esto\n";
+     chomp($linea = <HIJO_LEER>);
+     print "Pid padre $$ lee esto: '$linea'\n";
+     close HIJO_LEER; close HIJO_ESCR;
+     waitpid($pid, 0);
+ } else {
+     die "no puedo bifurcar: $!" unless defined $pid;
+     close HIJO_LEER;
+     close HIJO_ESCR;
+     chomp($linea = <PADRE_LEER>);
+     print "Pid hijo $$ lee esto: '$linea'\n";
+     print PADRE_ESCR "Pid hijo $$ envía esto\n";
+     close PADRE_LEER;
+     close PADRE_ESCR;
+     exit(0);
+ }
+
+Pero, de hecho, no tiene que hacer dos llamadas a tuberías.  Si tiene la llamada del sistema socketpair(), lo hará por usted.
+
+ #!/usr/bin/perl -w
+ # pipe2 - comunicación bidireccional usando socketpair
+ #   "Los mejores siempre se van antes"
+
+ use Socket;
+ use IO::Handle;  # miles de líneas sólo para tener autoflush :-(
+
+ # Decimos AF_UNIX, ya que aunque *_LOCAL es la
+ # forma POSIX 1003.1g de la constante, muchas máquinas
+ # todavía no la tienen.
+ socketpair(HIJO, PADRE, AF_UNIX, SOCK_STREAM, PF_UNSPEC)
+                             ||  die "socketpair: $!";
+
+ HIJO->autoflush(1);
+ PADRE->autoflush(1);
+
+ if ($pid = fork()) {
+     close PADRE;
+     print HIJO  "Pid padre $$ envía esto\n";
+     chomp($linea = <HIJO>);
+     print "Pid padre $$ lee esto: '$linea'\n";
+     close HIJO;
+     waitpid($pid, 0);
+ } else {
+     die "no puedo bifurcar: $!" unless defined $pid;
+     close HIJO;
+     chomp($linea = <PADRE>);
+     print "Pid hijo $$ lee esto: '$linea'\n";
+     print PADRE  "Pid hijo $$ envía esto\n";
+     close PADRE;
+     exit(0);
+ }
+
+=head1 Sockets: Comunicación cliente/servidor
+
+Mientras que no está enteramente limitado a sistemas operativos derivados de Unix (p. e., WinSock en PC proporciona soporta para I<socket>, así como algunas bibliotecas VMS), podría no tener I<sockets> en su sistema, en cuyo caso esta sección probablemente no le va a servir de mucho.  Con I<sockets>, puede hacer circuitos virtuales como flujos TCP y datagramas como paquetes UDP.  Puede que sea capaz de hacer incluso más, dependiendo de su sistema.
+
+Las funciones Perl para tratar con I<sockets> tienen los mismos nombres que sus correspondientes llamadas del sistema en C, pero sus argumentos tienden a diferir por dos razones.  Primero, los identificadores de archivo funcionan de forma diferente que los descriptores de archivo en C.  Segundo, Perl ya sabe la longitud de sus cadenas, así que no necesita pasar esa información.
+
+Uno de los mayores problemas con antiguo, antediluviano código I<socket> en Perl era que usaba valores fijos en el código para algunas de las constantes, dañando severamente la portabilidad.  Si alguna vez ha visto código que haga algo como establecer explícitamente C<$AF_INET = 2>, sabe que tiene un gran problema.
+Una solución inconmensurablemente superior es usar el módulo C<Socket>, con un mejor acceso a las diversas constantes y funciones que necesitará.
+
+Si no está escribiendo un cliente/servidor para un protocolo actual como NNTP o SMTP, debería pensar en cómo su servidor sabrá cuándo el cliente ha terminado de hablar, y viceversa.  La mayor parte de los protocolos están basados en mensajes y respuestas de una sola línea (así que una parte sabe que la otra ha terminado cuando recibe un "\n") o mensajes y respuestas multilínea que terminan con un punto en una línea vacía ("\n.\n" termina un mensaje/respuesta).
+
+=head2 Finales de línea en Internet
+
+El final de línea en Internet es "\015\012".  Bajo las variantes ASCII de Unix, esto podría escribirse normalmente como "\r\n", pero en otros sistemas, "\r\n" podría ser, en ocasiones, "\015\015\012", "\012\012\015", o algo completamente diferente.  El estándar especifica escribir "\015\012" para que sea conforme (ser estricto en lo que se proporciona), pero también recomienda aceptar un solitario "\012" a la entrada (ser indulgente en lo que se requiere).
+No siempre lo hemos respetado en el código de esta página, pero a menos que esté en un Mac de las oscuras épocas anteriores a Unix, probablemente le servirá.
+
+=head2 Clientes y servidores TCP en Internet
+
+Use I<sockets> de tipo Internet cuando quiera hacer una comunicación cliente-servidor que podría extenderse a máquinas de fuera de su propio sistema.
+
+Aquí hay un ejemplo de un cliente TCP que usa I<sockets> de tipo Internet:
+
+    #!/usr/bin/perl -w
+    use strict;
+    use Socket;
+    my ($remoto, $puerto, $iaddr, $paddr, $proto, $linea);
+
+    $remoto  = shift || "localhost";
+    $puerto  = shift || 2345;  # un puerto al azar
+    if ($puerto =~ /\D/) { $puerto = getservbyname($puerto, "tcp") }
+    die "No hay puerto" unless $puerto;
+    $iaddr   = inet_aton($remoto)       || die "no hay servidor: $remoto";
+    $paddr   = sockaddr_in($puerto, $iaddr);
+
+    $proto   = getprotobyname("tcp");
+    socket(SOCK, PF_INET, SOCK_STREAM, $proto)  || die "socket: $!";
+    connect(SOCK, $paddr)               || die "conexión: $!";
+    while ($linea = <SOCK>) {
+        print $linea;
+    }
+
+    close (SOCK)                        || die "cierre: $!";
+    exit(0);
+
+Y aquí está el correspondiente servidor con el que se pondrá de acuerdo.  Dejaremos la dirección como C<INADDR_ANY> para que el kernel pueda elegir la interfaz apropiada en servidores alojados.  Si quiere asentarse con un interfaz en particular (como la cara externa de una pasarela o cortafuegos), entonces rellene este valor con su dirección real.
+
+ #!/usr/bin/perl -Tw
+ use strict;
+ BEGIN { $ENV{PATH} = "/usr/bin:/bin" }
+ use Socket;
+ use Carp;
+ my $EOL = "\015\012";
+
+ sub logmsg { print "$0 $$: @_ at ", scalar localtime(), "\n" }
+
+ my $puerto= shift || 2345;
+ die "puerto inválido" unless $puerto =~ /^ \d+ $/x;
+
+ my $proto = getprotobyname("tcp");
+
+ socket(Server, PF_INET, SOCK_STREAM, $proto)   || die "socket: $!";
+ setsockopt(Server, SOL_SOCKET, SO_REUSEADDR, pack("l", 1))
+                                                || die "setsockopt: $!";
+ bind(Server, sockaddr_in($puerto, INADDR_ANY)) || die "bind: $!";
+ listen(Server, SOMAXCONN)                      || die "listen: $!";
+
+ logmsg "servidor arrancó en puerto $puerto";
+
+ my $paddr;
+
+ for ( ; $paddr = accept(Client, Server); close Client) {
+     my($puerto, $iaddr) = sockaddr_in($paddr);
+     my $nombre = gethostbyaddr($iaddr, AF_INET);
+
+     logmsg "conexión desde $nombre [",
+             inet_ntoa($iaddr), "]
+             por puerto $puerto";
+
+     print Client "Hola, $nombre, ahora es ",
+                     scalar localtime(), $EOL;
+ }
+
+Y aquí hay una versión multitarea.  Es multitarea en la forma de la mayor parte de los servidores típicos: bifurca (fork()) un servidor esclavo para manejar la petición del cliente y así el servidor maestro puede volver rápidamente a servir a otro cliente.
+
+ #!/usr/bin/perl -Tw
+ use strict;
+ BEGIN { $ENV{PATH} = "/usr/bin:/bin" }
+ use Socket;
+ use Carp;
+ my $EOL = "\015\012";
+
+ sub spawn;  # declaración adelantada
+ sub logmsg { print "$0 $$: @_ at ", scalar localtime(), "\n" }
+
+ my $puerto= shift || 2345;
+ die "puerto inválido" unless $puerto =~ /^ \d+ $/x;
+
+ my $proto = getprotobyname("tcp");
+
+ socket(Server, PF_INET, SOCK_STREAM, $proto)   || die "socket: $!";
+ setsockopt(Server, SOL_SOCKET, SO_REUSEADDR, pack("l", 1))
+                                                || die "setsockopt: $!";
+ bind(Server, sockaddr_in($puerto, INADDR_ANY)) || die "bind: $!";
+ listen(Server, SOMAXCONN)                      || die "listen: $!";
+
+ logmsg "servidor arrancó en puerto $puerto";
+
+ my $waitedpid = 0;
+ my $paddr;
+
+ use POSIX ":sys_wait_h";
+ use Errno;
+
+ sub REAPER {
+     local $!;   # no permitir que waitpid() sobrescriba el error actual
+     while ((my $pid = waitpid(-1, WNOHANG)) > 0 && WIFEXITED($?)) {
+         logmsg "$waitedpid secuestrado" . ($? ? " con salida $?" : "");
+     }
+     $SIG{CHLD} = \&REAPER;  # SysV renuente
+ }
+
+ $SIG{CHLD} = \&REAPER;
+
+ while (1) {
+     $paddr = accept(Client, Server) || do {
+         # intentar otra vez si accept() regresa debido a la llegada de una señal
+         next if $!{EINTR};
+         die "accept: $!";
+     };
+     my($puerto, $iaddr) = sockaddr_in($paddr);
+     my $nombre = gethostbyaddr($iaddr, AF_INET);
+
+     logmsg "conexión desde $nombre [",
+            inet_ntoa($iaddr),
+            "] por puerto $puerto";
+
+     spawn sub {
+         $| = 1;
+         print "Hola, $nombre, ahora es ",
+               scalar localtime(),
+               $EOL;
+         exec "/usr/games/fortune"       # XXX: finales de línea "erróneos"
+             or confess "no puedo ejecutar fortune: $!";
+     };
+     close Client;
+ }
+
+ sub spawn {
+     my $coderef = shift;
+
+     unless (@_ == 0 && $coderef && ref($coderef) eq "CODE") {
+         confess "uso: spawn CODEREF";
+     }
+
+     my $pid;
+     unless (defined($pid = fork())) {
+         logmsg "no puedo bifurcar: $!";
+         return;
+     }
+     elsif ($pid) {
+         logmsg "$pid comenzó";
+         return; # Soy el padre
+     }
+     # else Soy el hijo -- al spawn
+
+     open(STDIN,  "<&Client")    || die "no puedo dup(licar) cliente a stdin";
+     open(STDOUT, ">&Client")    || die "no puedo dup(licar) cliente a stdout";
+     ## open(STDERR, ">&STDOUT") || die "no puedo dup(licar) a stderr";
+     exit($coderef->());
+ }
+
+Este servidor se ocupa de clonar una versión del hijo, con fork(), por cada petición entrante.  De esta manera puede manejar muchas peticiones inmediatamente, que podría no ser lo que siempre querría.  Incluso si no puede hacer fork(), el listen() le permitirá tener muchas conexiones pendientes.  Los servidores bifurcados son particularmente cuidadosos sobre ocuparse de sus hijos muertos (llamados "zombies" en parloteo Unix), porque, de otra manera, se llenaría rápidamente su tabla de procesos.  La subrutina REAPER se usa aquí para llamar a waitpid() para cualesquiera procesos hijo que hayan terminado, asegurando así que terminan limpiamente y no se unen a las listas de muertos vivientes.
+
+Dentro del bucle while llamamos a accept() y comprobamos si devuelve un valor falso.  Eso, normalmente, indicaría que se necesita reportar un error del sistema.  Sin embargo, la introducción de señales seguras (vea L</Señales diferidas (Señales seguras)> más arriba) en Perl 5.8.0 significa que accept() podría también interrumpirse cuando el proceso recibe una señal.
+Esto sucede típicamente cuando uno de los subprocesos bifurcados sale y notifica al proceso padre con una señal CHLD.
+
+Si se interrumpe accept() con una señal, $! se establecerá a EINTR.
+Si esto sucede, podemos continuar con seguridad a la siguiente iteración del bucle y hacer otra llamada a accept().  Es importante que su código de gestión de la señal no modifique el valor de $!, o sino este test probablemente fallará.  En la subrutina REAPER creamos una versión local de $! antes de llamar a waitpid().  Cuando waitpid() establece $! a ECHILD, algo que hace cuando ya no quedan más hijos esperando, actualiza la copia local y deja al original sin tocar.
+
+Debería usar el indicador B<-T> para activar la comprobación de manchado (vea L<perlsec>)
+incluso si no estamos ejecutando con setuid o setgid.  Siempre es una buena idea para servidores o cualquier programa que se ejecute en nombre de otro (como los I<script> CGI), porque minora las probabilidades de que gente del exterior sea capaz de comprometer su sistema.
+
+Miremos otro cliente TCP.  Este conecta al servicio TCP "time" en un cierto número de máquinas y muestra cuánto difieren sus relojes con el de su sistema en que se está ejecutando:
+
+    #!/usr/bin/perl  -w
+    use strict;
+    use Socket;
+
+    my $SEGS_DE_70_ANNOS = 2208988800;
+    sub ctime { scalar localtime(shift() || time()) }
+
+    my $iaddr = gethostbyname("localhost");
+    my $proto = getprotobyname("tcp");
+    my $port = getservbyname("time", "tcp");
+    my $paddr = sockaddr_in(0, $iaddr);
+    my($host);
+
+    $| = 1;
+    printf "%-24s %8s %s\n", "localhost", 0, ctime();
+
+    foreach $host (@ARGV) {
+        printf "%-24s ", $host;
+        my $hisiaddr = inet_aton($host)     || die "host desconocido";
+        my $hispaddr = sockaddr_in($port, $hisiaddr);
+        socket(SOCKET, PF_INET, SOCK_STREAM, $proto)
+                                            || die "socket: $!";
+        connect(SOCKET, $hispaddr)          || die "conecta: $!";
+        my $rtime = pack("C4", ());
+        read(SOCKET, $rtime, 4);
+        close(SOCKET);
+        my $histime = unpack("N", $rtime) - $SEGS_DE_70_ANNOS;
+        printf "%8d %s\n", $histime - time(), ctime($histime);
+    }
+
+=head2 Clientes y servidores TCP en el dominio de Unix
+
+Esto está bien para clientes y servidores en el dominio de Internet, pero ¿qué hay sobre las comunicaciones locales?  Mientras que puede usar la misma configuración, algunas veces no lo querrá así.  I<sockets> en el dominio Unix son locales en el servidor actual, y se usan a menudo internamente para implementar tuberías.  A diferencia de los I<sockets> en el dominio de Internet, los I<sockets> en el dominio de Unix pueden aparecer en el sistema de archivos en un listado con un ls(1).
+
+    % ls -l /dev/log
+    srw-rw-rw-  1 root            0 Oct 31 07:23 /dev/log
+
+Puede probarlos con el test de archivo B<-S> de Perl:
+
+    unless (-S "/dev/log") {
+        die "Algo está mal en el registro del sistema";
+    }
+
+Aquí hay un ejemplo de un cliente en el dominio de Unix:
+
+    #!/usr/bin/perl -w
+    use Socket;
+    use strict;
+    my ($rendezvous, $line);
+
+    $rendezvous = shift || "catsock";
+    socket(SOCK, PF_UNIX, SOCK_STREAM, 0)     || die "socket: $!";
+    connect(SOCK, sockaddr_un($rendezvous))   || die "connect: $!";
+    while (defined($line = <SOCK>)) {
+        print $linea;
+    }
+    exit(0);
+
+Y aquí está el servidor correspondiente:  Aquí no tiene que preocuparse sobre terminadores extraños porque los I<sockets> en el dominio Unix tienen garantizado estar en el localhost, y por ello todo funciona correctamente.
+
+    #!/usr/bin/perl -Tw
+    use strict;
+    use Socket;
+    use Carp;
+
+    BEGIN { $ENV{PATH} = "/usr/bin:/bin" }
+    sub spawn;  # declaración adelantada
+    sub logmsg { print "$0 $$: @_ at ", scalar localtime(), "\n" }
+
+    my $NAME = "catsock";
+    my $uaddr = sockaddr_un($NAME);
+    my $proto = getprotobyname("tcp");
+
+    socket(Server, PF_UNIX, SOCK_STREAM, 0) || die "socket: $!";
+    unlink($NAME);
+    bind  (Server, $uaddr)                  || die "bind: $!";
+    listen(Server, SOMAXCONN)               || die "listen: $!";
+
+    logmsg "servidor iniciado en $NAME";
+
+    my $waitedpid;
+
+    use POSIX ":sys_wait_h";
+    sub REAPER {
+        my $child;
+        while (($waitedpid = waitpid(-1, WNOHANG)) > 0) {
+            logmsg "$waitedpid secuestrado" . ($? ? " con salida $?" : "");
+        }
+        $SIG{CHLD} = \&REAPER;  # SysV renuente
+    }
+
+    $SIG{CHLD} = \&REAPER;
+
+
+    for ( $waitedpid = 0;
+          accept(Client, Server) || $waitedpid;
+          $waitedpid = 0, close Client)
+    {
+        next if $waitedpid;
+        logmsg "conexión en $NAME";
+        spawn sub {
+            print "Hola, ahora es ", scalar localtime(), "\n";
+            exec("/usr/games/fortune")  || die "no puedo ejecutar fortune: $!";
+        };
+    }
+
+    sub spawn {
+        my $coderef = shift();
+
+        unless (@_ == 0 && $coderef && ref($coderef) eq "CODE") {
+            confess "uso: spawn CODEREF";
+        }
+
+        my $pid;
+        unless (defined($pid = fork())) {
+            logmsg "no puedo bifurcar: $!";
+            return;
+        }
+        elsif ($pid) {
+            logmsg "$pid comenzó";
+            return; # Soy el padre
+        }
+        else {
+            # Soy el hijo, bifurco
+        }
+
+        open(STDIN,  "<&Client")    || die "no puedo dup(licar) cliente a stdin";
+        open(STDOUT, ">&Client")    || die "no puedo dup(licar) cliente a stdout";
+        ## open(STDERR, ">&STDOUT") || die "no puedo dup(licar) a stderr";
+        exit($coderef->());
+    }
+
+Como puede ver, es extraordinariamente similar al servidor TCP en el dominio de Internet, tanto, de hecho, que hemos omitido varias funciones duplicadas: spawn(), logmsg(), ctime(), y REAPER(), que son las mismas que en el otro servidor.
+
+Así que, ¿por qué quiere usar un I<socket> en el dominio Unix en lugar de una simple tubería con nombre?  Pues porque una tubería con nombre no le proporciona sesiones.  No puede diferenciar los datos de un proceso de los de otro.  Con programación de I<socket>, obtiene una sesión separada para cada cliente; es por eso que accept() toma dos argumentos.
+
+Por ejemplo, digamos que tiene un demonio servidor de base de datos de larga ejecución a la que quiere acceder desde la web, pero sólo si es a través de una interfaz CGI.  Tiene un pequeño y sencillo programa CGI que hace las comprobaciones y registros oportunos, y entonces actúa como un cliente en el dominio Unix y se conecta a su servidor privado.
+
+=head1 Clientes TCP con IO::Socket
+
+Para aquellos que prefieran una interfaz de programación de I<socket> de alto nivel, el módulo IO::Socket proporciona acceso orientado a objetos.  Si por alguna razón no tiene este módulo, puede bajar IO::Socket desde CPAN, donde también encontrará módulos que proporcionan interfaces fáciles a los siguientes sistemas: DNS, FTP, Ident (RFC 931), NIS y NISPlus, NNTP, Ping, POP3, SMTP, SNMP, SSLeay, Telnet y Time, por nombrar unos pocos.
+
+=head2 Un cliente sencillo
+
+Aquí hay un cliente que crea una conexión TCP al servicio "daytime" en el puerto 13 del servidor con nombre "localhost" e imprime todo lo que el servidor se ocupa de proporcionar.
+
+    #!/usr/bin/perl -w
+    use IO::Socket;
+    $remoto = IO::Socket::INET->new(
+                        Proto    => "tcp",
+                        PeerAddr => "localhost",
+                        PeerPort => "daytime(13)",
+                    )
+                 || die "no puedo conectar con el servicio daytime en localhost";
+    while (<$remoto>) { print }
+
+Cuando ejecuta este programa, debería obtener algo como esto:
+
+    Wed May 14 08:40:46 MDT 1997
+
+Aquí está la explicación de algunos parámetros del constructor new():
+
+=over 4
+
+=item C<Proto>
+
+Este es el protocolo a usar.  En este caso, el manejador I<socket> devuelto se conectará al I<socket> TCP, porque queremos una conexión orientada al flujo, esto es, una que actúe como si fuera un archivo plano tradicional.
+No todos los I<sockets> son de este tipo.  Por ejemplo, el protocolo UDP se puede usar para hacer un I<socket> datagrama, utilizado para pasar mensajes.
+
+=item C<PeerAddr>
+
+Es el nombre o dirección de Internet del ordenador remoto en donde está corriendo el servidor.  Podemos especificar un nombre largo como C<"www.perl.com">, o una dirección como C<"207.171.7.72">.  Para propósitos de demostración, usamos el nombre especial de ordenador C<"localhost">, que siempre debería significar la máquina actual en donde se esté ejecutando.  La correspondiente dirección de Internet para localhost es C<"127.0.0.1">, si desea usarlo, en su lugar.
+
+=item C<PeerPort>
+
+Es el nombre de servicio o número de puerto al que queremos conectarnos.
+Podrías haber usado simplemente C<"daytime"> en sistemas con un archivo de servicios del sistema bien configurado, (Nota a pie de página: El archivo de servicios del sistema se encuentra en I</etc/services> en sistemas Unix) pero aquí especificaremos el número de puerto (13) en paréntesis.  Usar solamente el número también funcionaría, pero los literales numéricos pone nerviosos a los programadores prudentes.
+
+=back
+
+¿Ha notado cómo el valor de retorno desde el constructor C<new> se usa como identificador de archivo en el bucle C<while>?  Esto es lo que se llama un I<identificador de archivo indirecto>, una variable escalar que contiene un identificador de archivo.  Puede usarlo de la misma manera en que lo haría con un identificador de archivo normal.  Por ejemplo, puede leer desde él una línea de esta manera:
+
+    $linea = <$identificador>;
+
+todas las líneas restantes de esta manera:
+
+    @lineas = <$identificador>;
+
+y enviar una línea de datos de esta otra manera:
+
+    print $identificador "algún dato\n";
+
+=head2 Un cliente Webget
+
+Aquí hay un cliente sencillo que toma un ordenador remoto que ofrece documentos, y luego una lista de archivos para obtener desde ese ordenador.  Este es un cliente más interesante que el anterior porque primero envía algo al servidor antes de obtener la respuesta del servidor.
+
+    #!/usr/bin/perl -w
+    use IO::Socket;
+    unless (@ARGV > 1) { die "uso: $0 ordenador url ..." }
+    $host = shift(@ARGV);
+    $EOL = "\015\012";
+    $BLANK = $EOL x 2;
+    for my $documento (@ARGV) {
+        $remoto = IO::Socket::INET->new( Proto     => "tcp",
+                                         PeerAddr  => $host,
+                                         PeerPort  => "http(80)",
+                  )     || die "no puedo conectar al httpd en $host";
+        $remoto->autoflush(1);
+        print $remoto "GET $documento HTTP/1.0" . $BLANK;
+        while ( <$remoto> ) { print }
+        close $remoto;
+    }
+
+Se asume que el servidor web que maneja el servicio HTTP esté en el puerto estándar, número 80.  Si el servidor al que está intentando conectarse está en un puerto diferente, como 1080 o 8080, deberá especificarlo: C<< PeerPort => 8080 >>.  El método C<autoflush> se usa en el I<socket> porque si no, el sistema podría almacenar temporalmente la salida que le enviamos.  (Si está en un Mac prehistórico, también necesitará cambiar en su código cada C<"\n"> que envíe por la red, a C<"\015\012">).
+
+Conectarse al servidor es sólo la primera parte del proceso: una vez que tenga la conexión, tiene que usar el lenguaje del servidor.  Cada servidor en la red tiene su propio lenguaje de comandos que espera como entrada.  La cadena que enviamos al servidor comenzando con "GET" está en sintaxis HTTP.  En este caso, simplemente pedimos cada documento especificado.
+Sí, realmente estamos haciendo una nueva conexión por cada documento, incluso aunque sea el mismo ordenador.  Esta es la forma en la que siempre se debe hablar HTTP.
+Versiones recientes de los navegadores web puede solicitar al servidor remoto que deje la conexión abierta un rato más, pero el servidor no tiene por qué conceder tal petición.
+
+Este es un ejemplo de ejecución del programa, que llamaremos I<webget>:
+
+    % webget www.perl.com /guanaco.html
+    HTTP/1.1 404 File Not Found
+    Date: Thu, 08 May 1997 18:02:32 GMT
+    Server: Apache/1.2b6
+    Connection: close
+    Content-type: text/html
+
+    <HEAD><TITLE>404 Archivo no encontrado</TITLE></HEAD>
+    <BODY><H1>Archivo no encontrado</H1>
+    La URL solicitada /guanaco.html no se encontró en este servidor.<P>
+    </BODY>
+
+Vale, esto no era muy interesante, porque no encontró ese documento concreto.  Pero una respuesta más larga no habría cabido en esta página.
+
+Para una versión con más características de este programa, debería ver el programa I<lwp-request> incluido con los módulos LWP, desde CPAN.
+
+=head2 Cliente interactivo con IO::Socket
+
+Bien, está muy bien si quiere enviar un comando y obtener una respuesta, pero ¿qué hay sobre tener algo completamente interactivo, algo igual a como funciona I<telnet>?  De esa manera puede escribir una línea, obtener la respuesta, escribir una línea, obtener la respuesta, etc.
+
+Este cliente es más complicado que los dos que hemos visto antes, pero si está en un sistema que soporta la poderosa llamada C<fork>, la solución no es tan áspera.  Una vez que ha hecho la conexión a cualquier servicio con el que quiere charlar, llame a C<fork> para clonar su proceso.  Cada uno de estos procesos idénticos tiene un trabajo muy sencillo: el padre copia todo desde el I<socket> a la salida estándar, mientras que el hijo, simultáneamente copia todo desde la entrada estándar al I<socket>.
+Cumplir con lo mismo usando un único proceso sería I<mucho> más difícil, porque es más fácil codificar dos procesos para hacer una cosa, que codificar un proceso para hacer dos cosas.  (Este principio I<keep-it-simple> (mantenlo sencillo) es una de las piedras angulares de la filosofía Unix, y también de la buena ingeniería del software, que es, probablemente el porqué se ha extendido a otros sistemas).
+
+Aquí está el código:
+
+    #!/usr/bin/perl -w
+    use strict;
+    use IO::Socket;
+    my ($host, $puerto, $pidhijo, $handle, $linea);
+
+    unless (@ARGV == 2) { die "uso: $0 host puerto" }
+    ($host, $puerto) = @ARGV;
+
+    # crear una conexión tcp al servidor remoto y puerto especificados
+    $handle = IO::Socket::INET->new(Proto     => "tcp",
+                                    PeerAddr  => $host,
+                                    PeerPort  => $puerto)
+               || die "no puedo conectar al puerto $puerto en $host: $!";
+
+    $handle->autoflush(1);       # así la salida se produce inmediatamente
+    print STDERR "[Conectado a $host:$puerto]\n";
+
+    # dividir el programa en dos procesos, gemelos
+    die "no puedo bifurcar: $!" unless defined($pidhijo = fork());
+
+    # el bloque if{} se ejecuta sólo en el proceso padre
+    if ($pidhijo) {
+        # copia del socket a la salida estándar
+        while (defined ($linea = <$handle>)) {
+            print STDOUT $linea;
+        }
+        kill("TERM", $pidhijo);  # manda SIGTERM al hijo
+    }
+    # el bloque else{} se ejecuta sólo en el proceso hijo
+    else {
+        # copia desde la entrada estándar al socket
+        while (defined ($linea = <STDIN>)) {
+            print $handle $linea;
+        }
+        exit(0);                # por si acaso
+    }
+
+La función C<kill> en el bloque C<if> del padre es el que envía una señal a nuestro proceso hijo, actualmente ejecutándose en el bloque C<else>, tan pronto como el servidor remoto cierre su lado marcando el final de la conexión.
+
+Si el servidor remoto envía datos al ritmo de un byte cada vez, y necesita esos datos inmediatamente sin esperar por una nueva línea (que podría no suceder), podría desear reemplazar el bucle C<while> en el padre con lo siguiente:
+
+    my $byte;
+    while (sysread($handle, $byte, 1) == 1) {
+        print STDOUT $byte;
+    }
+
+Hacer una llamada del sistema por cada byte que quiere leer no es muy eficiente (por decirlo suavemente) pero es lo más simple para enseñarlo y funciona razonablemente bien.
+
+=head1 Servidores TCP con IO::Socket
+
+Como siempre, arrancar un servidor es un poco más complicado que ejecutar un cliente.
+La idea es que el servidor crea una clase especial de I<socket> que no hace nada excepto escuchar en un determinado puerto para las conexiones entrantes.
+Lo hace llamando al método C<< IO::Socket::INET->new() >> con argumentos ligeramente diferentes de los que hace el cliente.
+
+=over 4
+
+=item Proto
+
+Este es el protocolo a usar.  Como nuestros clientes, aquí especificaremos C<"tcp">.
+
+=item LocalPort
+
+Especificamos un puerto local en el argumento C<LocalPort>, que no hacemos para el cliente.
+Este es el nombre de servicio o puerto en donde queremos servir. (Bajo Unix, los puertos inferiores a 1024 están restringidos al superusuario).  En nuestro ejemplo usaremos el puerto 9000, pero puede usar cualquier puerto no se esté usando en ese momento en su sistema.  Si intenta usar alguno que ya esté usado, obtendrá un mensaje de "Dirección ya está en uso".  Bajo Unix, el comando C<netstat -a> mostrará qué servicios actualmente tienen servidores.
+
+=item Listen
+
+El parámetro C<Listen> se establece al máximo número de conexiones pendientes que podemos aceptar antes de empezar a rechazar clientes entrantes.
+Piense en él como una cola de llamada en espera para su teléfono.
+El módulo de bajo nivel Socket tiene un símbolo especial para el máximo del sistema, que es SOMAXCONN.
+
+=item Reuse
+
+El parámetro C<Reuse> es necesario para que reiniciemos nuestro servidor manualmente sin esperar unos minutos a que se vacíen los búferes del sistema.
+
+=back
+
+Una vez que se crea el I<socket> usando los parámetros listados antes, el servidor entonces espera por la conexión de un nuevo cliente.  El servidor se queda bloqueado en el método C<accept>, que, eventualmente acepta una conexión bidireccional desde el cliente remoto.  (Asegúrese de hacer autoflush a este identificador para evitar el almacenamiento temporal).
+
+Para ser más amigable, nuestro servidor pide comandos al usuario.
+La mayor parte de los servidores no lo hacen.  Debido a que preguntamos sin enviar un nueva línea, tendrá que usar la variante C<sysread> del cliente interactivo anterior.
+
+Este servidor acepta uno de cinco diferentes comandos, reenviando la salida al cliente.  A diferencia de la mayor parte de los servidores de red, este maneja sólo un cliente entrante cada vez.  Los servidores multitarea se cubren en el capítulo 16 del libro del dromedario.
+
+Aquí está el código.  Haremos
+
+ #!/usr/bin/perl -w
+ use IO::Socket;
+ use Net::hostent;      # para la versión 0-ésima de gethostbyaddr
+
+ $PUERT = 9000;         # elija algo que no esté en uso
+
+ $servidor = IO::Socket::INET->new( Proto     => "tcp",
+                                  LocalPort => $PUERTO,
+                                  Listen    => SOMAXCONN,
+                                  Reuse     => 1);
+
+ die "no puedo establecer el servidor" unless $servidor;
+ print "[Servidor $0 acepta clientes]\n";
+
+ while ($cliente = $servidor->accept()) {
+   $cliente->autoflush(1);
+   print $cliente "Bienvenido a $0; escriba help para ver la lista de comandos.\n";
+   $hostinfo = gethostbyaddr($cliente->peeraddr);
+   printf "[Conexión desde %s]\n",
+          $hostinfo ? $hostinfo->name : $cliente->peerhost;
+   print $cliente "Comando: ";
+   while ( <$cliente>) {
+     next unless /\S/;     # línea en blanco
+     if    (/quit|exit/i)  { last                                       }
+     elsif (/date|time/i)  { printf $cliente "%s\n", scalar localtime() }
+     elsif (/who/i )       { print  $cliente `who 2>&1`                 }
+     elsif (/cookie/i )    { print  $cliente `/usr/games/fortune 2>&1`  }
+     elsif (/motd/i )      { print  $cliente `cat /etc/motd 2>&1`       }
+     else {
+       print $cliente "Comandos: quit date who cookie motd\n";
+     }
+   } continue {
+      print $cliente "Comando: ";
+   }
+   close $cliente;
+ }
+
+=head1 UDP: Paso de mensajes
+
+Otra clase de configuración cliente-servidor es una que no usa conexiones, sino mensajes.  Las comunicaciones UDP implica menos carga pero también proporciona menos fiabilidad, ya que no promete en absoluto que los mensajes lleguen, o ni siquiera en orden.  Aún así, UDP ofrece algunas ventajas sobre TCP, incluyendo ser capaz de "retransmisión" o "multidifusión" a un grupo entero de ordenadores destinos al mismo tiempo (normalmente en su subred local).  Si se encuentra a sí mismo muy preocupado sobre la fiabilidad y comienza a construir comprobaciones en su sistema de mensajes, entonces probablemente, debería simplemente empezar por usar TCP.
+
+Los datagramas UDP I<no> son un flujo de bytes y no deberían tratarse como tal.
+Esto hace que usar mecanismos de E/S con almacenamientos temporales internos como stdio (p.e.
+print() y amigos) sea algo especialmente pesado. Use syswrite(), o mejor, send() como en el ejemplo de más abajo.
+
+Aquí hay un programa UDP similar al ejemplo de cliente TCP Internet mostrado antes.  Sin embargo, en vez de comprobar un servidor cada vez, la versión UDP comprobará muchos asincrónicamente simulando una multidifusión y luego usando select() para hacer una espera con un tiempo límite para la E/S.  Para hacer algo similar con TCP, tendría que usar un identificador de I<socket> para cada servidor.
+
+ #!/usr/bin/perl -w
+ use strict;
+ use Socket;
+ use Sys::Hostname;
+
+ my ( $count, $hisiaddr, $hispaddr, $histime,
+      $host, $iaddr, $paddr, $port, $proto,
+      $rin, $rout, $rtime, $SECS_OF_70_YEARS);
+
+ $SECS_OF_70_YEARS = 2_208_988_800;
+
+ $iaddr = gethostbyname(hostname());
+ $proto = getprotobyname("udp");
+ $port = getservbyname("time", "udp");
+ $paddr = sockaddr_in(0, $iaddr); # 0 significa permitir elegir al kernel
+
+ socket(SOCKET, PF_INET, SOCK_DGRAM, $proto)   || die "socket: $!";
+ bind(SOCKET, $paddr)                          || die "bind: $!";
+
+ $| = 1;
+ printf "%-12s %8s %s\n",  "localhost", 0, scalar localtime();
+ $contador = 0;
+ for $host (@ARGV) {
+     $cuenta++;
+     $hisiaddr = inet_aton($host)              || die "servidor desconocido";
+     $hispaddr = sockaddr_in($port, $hisiaddr);
+     defined(send(SOCKET, 0, 0, $hispaddr))    || die "enviar $host: $!";
+ }
+
+ $rin = "";
+ vec($rin, fileno(SOCKET), 1) = 1;
+
+ # tiempo límite después de 10.0 segundos
+ while ($count && select($rout = $rin, undef, undef, 10.0)) {
+     $rtime = "";
+     $hispaddr = recv(SOCKET, $rtime, 4, 0)    || die "recv: $!";
+     ($port, $hisiaddr) = sockaddr_in($hispaddr);
+     $host = gethostbyaddr($hisiaddr, AF_INET);
+     $histime = unpack("N", $rtime) - $SECS_OF_70_YEARS;
+     printf "%-12s ", $host;
+     printf "%8d %s\n", $histime - time(), scalar localtime($histime);
+     $count--;
+ }
+
+Este ejemplo no incluye ningún reintento y por consecuente puede fallar al contactar con un servidor alcanzable. La principal razón para esto es la congestión de las colas en el envío a los servidores si el número de servidores a contactar es suficientemente grande.
+
+=head1 SysV IPC
+
+Mientras que System V IPC no se usa tan extensamente como los I<sockets>, aún así tiene algunos usos interesantes.  Sin embargo, no puede usar mmap() de SysV IPC o Berkeley para tener una variable compartida entre varios procesos.  Esto es porque Perl podría realojar su cadena cuando usted no quiere que suceda.  Para eso podría mirar por los módulos C<IPC::Shareable> o C<threads::shared>.
+
+Aquí hay un pequeño ejemplo que muestra el uso de memoria compartida.
+
+    use IPC::SysV qw(IPC_PRIVATE IPC_RMID S_IRUSR S_IWUSR);
+
+    $size = 2000;
+    $id = shmget(IPC_PRIVATE, $size, S_IRUSR | S_IWUSR);
+    defined($id)                    || die "shmget: $!";
+    print "shm key $id\n";
+
+    $message = "Mensaje #1";
+    shmwrite($id, $message, 0, 60)  || die "shmwrite: $!";
+    print "escribió: '$message'\n";
+    shmread($id, $buff, 0, 60)      || die "shmread: $!";
+    print "read : '$buff'\n";
+
+    # el búfer de shmread se rellena con caracteres cero.
+    substr($buff, index($buff, "\0")) = "";
+    print "no " unless $buff eq $message;
+    print "coincide\n";
+
+    print "borrar shm $id\n";
+    shmctl($id, IPC_RMID, 0)        || die "shmctl: $!";
+
+Aquí hay un ejemplo de un semáforo:
+
+    use IPC::SysV qw(IPC_CREAT);
+
+    $IPC_KEY = 1234;
+    $id = semget($IPC_KEY, 10, 0666 | IPC_CREAT);
+    defined($id)                    || die "semget: $!";
+    print "sem id $id\n";
+
+Ponga este código en un archivo separado para que se ejecute en más de un proceso.
+Llame al archivo F<tomar>:
+
+    # crear un semáforo
+
+    $IPC_KEY = 1234;
+    $id = semget($IPC_KEY, 0, 0);
+    defined($id)                    || die "semget: $!";
+
+    $semnum  = 0;
+    $semflag = 0;
+
+    # "tomar" semáforo
+    # espera que el semáforo sea cero
+    $semop = 0;
+    $opstring1 = pack("s!s!s!", $semnum, $semop, $semflag);
+
+    # Incrementar el contador del semáforo
+    $semop = 1;
+    $opstring2 = pack("s!s!s!", $semnum, $semop,  $semflag);
+    $opstring  = $opstring1 . $opstring2;
+
+    semop($id, $opstring)   || die "semop: $!";
+
+Ponga este código en un archivo separado para que se ejecute en más de un proceso.
+Llame a este archivo F<dar>:
+
+    # "dar" el semáforo
+    # ejecutar esto en el proceso original y verá
+    # que el segundo proceso continúa
+
+    $IPC_KEY = 1234;
+    $id = semget($IPC_KEY, 0, 0);
+    die unless defined($id);
+
+    $semnum  = 0;
+    $semflag = 0;
+
+    # Decrementa el contador de semáforo
+    $semop = -1;
+    $opstring = pack("s!s!s!", $semnum, $semop, $semflag);
+
+    semop($id, $opstring)   || die "semop: $!";
+
+El código SysV IPC anterior se escribió hace tiempo, y está, definitivamente, anticuado.  Para un aspecto más moderno, vea el módulo IPC::SysV.
+
+Un pequeño ejemplo que demuestra las colas de mensajes SysV:
+
+    use IPC::SysV qw(IPC_PRIVATE IPC_RMID IPC_CREAT S_IRUSR S_IWUSR);
+
+    my $id = msgget(IPC_PRIVATE, IPC_CREAT | S_IRUSR | S_IWUSR);
+    defined($id)                || die "msgget falló: $!";
+
+    my $sent      = "mensaje";
+    my $type_sent = 1234;
+
+    msgsnd($id, pack("l! a*", $type_sent, $sent), 0)
+                                || die "msgsnd falló: $!";
+
+    msgrcv($id, my $rcvd_buf, 60, 0, 0)
+                                || die "msgrcv falló: $!";
+
+    my($type_rcvd, $rcvd) = unpack("l! a*", $rcvd_buf);
+
+    if ($rcvd eq $sent) {
+        print "bien\n";
+    } else {
+        print "mal\n";
+    }
+
+    msgctl($id, IPC_RMID, 0)    || die "msgctl falló: $!\n";
+
+=head1 NOTAS
+
+La mayor parte de estas rutinas silenciosamente, pero amablemente devuelven C<undef> cuando fallan en lugar de provocar la muerte de su programa debido a excepciones no capturadas.  (De hecho, algunas de las nuevas funciones de conversión I<Socket> hacen croak() al recibir argumentos inválidos).  Es por tanto esencial comprobar los valores de retorno de estas funciones.  Siempre comience sus programas de I<socket> de esta forma para un resultado óptimo, y no olvide añadir el indicador B<-T> de comprobación de entintado a la línea C<#!> en los servidores:
+
+    #!/usr/bin/perl -Tw
+    use strict;
+    use sigtrap;
+    use Socket;
+
+=head1 ERRORES
+
+Todas estas rutinas crean problemas de portabilidad específicos del sistema.  Como se ha indicado en otro lugar, Perl está a merced de sus bibliotecas C para mucho de su comportamiento con el sistema.  Es probablemente más seguro asumir una semántica SysV rota para las señales y usar operaciones TCP y UDP I<socket> simples; p. e., no intente pasar descriptores de archivo abiertos sobre un I<socket> datagrama UDP si quiere que su código tenga alguna posibilidad de ser portátil.
+
+=head1 AUTOR
+
+Tom Christiansen, con vestigios ocasionales de la versión original de Larry Wall y sugerencias de los I<Perl Porters>.
+
+=head1 VEA TAMBIÉN
+
+Hay un montón más de trabajo en red que esto, pero con esto debería empezar.
+
+Para programadores intrépidos, el libro de texto indispensable es I<Unix Network
+Programming, 2nd Edition, Volume 1> de W. Richard Stevens (publicado por Prentice-Hall).  La mayor parte de los libros sobre trabajo en redes se fijan en el tema desde la perspectiva de un programador de C; la traducción a Perl se deja como un ejercicio para el lector.
+
+La página de manual IO::Socket(3) describe la biblioteca de objetos, y la página de manual Socket(3) describe la interfaz de los I<sockets> a bajo nivel.  Además de las funciones obvias en L<perlfunc>, debería también comprobar el archivo F<modules> en su sitio CPAN más cercano, especialmente L<http://www.cpan.org/modules/00modlist.long.html#ID5_Networking_>.
+Vea L<perlmodlib> o aún mejor, el F<Perl FAQ> para ver una descripción de lo que es CPAN y dónde obtenerlo si el enlace anterior no le funciona.
+
+La sección 5 del archivo F<modules> de CPAN está dedicada a "I<Networking, Device
+Control (modems), and Interprocess Communication>", y contiene numerosos módulos no empaquetados para el trabajo en red, operaciones Chat y Expect, programación CGI, DCE, FTP, IPC, NNTP, Proxy, Ptty, RPC, SNMP, SMTP, Telnet, Threads y ToolTalk, por nombrar unos pocos.
