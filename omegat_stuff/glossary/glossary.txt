@@ -216,3 +216,11 @@ sample	ejemplo
 another	otra
 over	sobre
 chance	posibilidad
+software	software
+Perl	Perl
+Linux	Linux
+favourite	favorito
+panel	panel
+symlink	enlace simbólico
+definitions	definiciones
+updates	actualizaciones
