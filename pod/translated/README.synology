@@ -1,0 +1,206 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos).
+Está escrito en formato POD (vea pod/perlpod.pod), un formato diseñado específicamente para ser legible tal cual. Pero si sabe Perl probablemente ya lo sabría.
+
+=head1 NAME
+
+perlsynology - Perl 5 en sistemas Synology DSM
+
+=head1 DESCRIPCIÓN
+
+Synology manufactura un vasto número de dispositivos de almacenamiento en red (I<Network Attached Storage>, NAS) que son muy populares en grandes organizaciones así como en pequeños negocios y casas.
+
+Los sistemas NAS se equipan con un gestor de almacenamiento (I<Synology Disk Storage Manager>, DSM), que es un sistema Linux sin adornos, mejorado con varias utilidades para la gestión del NAS. Existen muchos versiones del hardware: Marvell Armada (ARMv5tel, ARMv7l), Intel Atom (i686, x86_64), Freescale QorIQ (PPC), y más. Para una lista completa, vea el L<Synology FAQ|http://forum.synology.com/wiki/index.php/What_kind_of_CPU_does_my_NAS_have>.
+
+Ya que está basado en Linux, el NAS puede ejecutar muchos paquetes populares de software, incluyendo Perl. De hecho, Synology proporciona un paquete Perl preparado para instalarse que, dependiendo de la versión del DSM, el perl instalado va desde el 5.8.6 en DSM-4.3 al 5.18.4 en DSM-5.1.
+
+Existe una activa comunidad de usuarios que proporciona muchos paquetes de software para los sistemas DSM de Synology; en el momento de escribir este documento proporcionan Perl versión 5.18.4.
+
+Este documento describe varias características del sistema operativo DSM que afectará a cómo se configura Perl 5 (a partir de ahora sólo Perl), se compila y/o ejecuta. Se ha compilado y verificado por Johan Vromans para el Synology DS413 (QorIQ), con comentarios de H.Merijn Brand (DS213, ARMv5tel).
+
+=head2 Instalando el entorno de compilación
+
+Ya que DSM es un sistema Linux recortado, carece de muchas de las herramientas y bibliotecas que se encuentran normalmente en Linux. Las herramientas básicas como sh, cp, rm, etc. se implementan con L<BusyBox|http://en.wikipedia.org/wiki/BusyBox>.
+
+=over 4
+
+=item *
+
+Use su navegador favorito para abrir la página de gestión DSM e inicie el I<Package Center>.
+
+=item *
+
+Si quiere jugar con Perl, instale C<Perl>.
+
+=item *
+
+En I<Settings>, añada las siguientes fuentes de paquetes:
+
+  http://www.cphub.net
+  http://packages.quadrat4.de
+
+=item *
+
+También I<Settings>, en I<Channel Update>, seleccione I<Beta Channel>.
+
+=item *
+
+Pulse I<Refresh>. En el panel de la izquierda aparecerá el elemento "Community".
+Púlselo. Seleccione "Bootstrap Installer Beta" e instálelo.
+
+=item *
+
+Así mismo, instale "iPKGui Beta".
+
+La ventana de aplicación debería mostrar ahora un icono para iPKGui.
+
+=item *
+
+Inicie iPKGui. Instale los paquetes C<make>, C<gcc> y C<coreutils>.
+
+Si quiere jugar con Perl, instale C<patch>.
+
+=back
+
+El siguiente paso es añadir algunos enlaces simbólicos a las bibliotecas del sistema. Por ejemplo, el software de desarrollado necesita una biblioteca C<libm.so> que normalmente es un enlace simbólico a C<libm.so.6>. Synology sólo proporciona la última, y no el enlace simbólico.
+
+Aquí importa la arquitectura real del sistema Synology. Tiene que descubrir dónde se han instalado las bibliotecas gcc. Mira en /opt por un directorio similar a arm-none-linux-gnueab o powerpc-linux-gnuspe. En las instrucciones que siguen usaré powerpc-linux-gnuspe como ejemplo.
+
+=over 4
+
+=item *
+
+En la página de gestión DSM inicie el panel de control.
+
+=item *
+
+Pulse en Terminal, y active el servicio SSH.
+
+=item *
+
+Cierre Terminal y el panel de control.
+
+=item *
+
+Abra un shell en el Synology usando ssh y pase a ser root.
+
+=item *
+
+Ejecute los siguientes comandos:
+
+  cd /lib
+  ln -s libm.so.6 libm.so
+  ln -s libcrypt.so.1 libcrypt.so
+  ln -s libdl.so.2 libdl.so
+  cd /opt/powerpc-linux-gnuspe/lib  (o
+                                    /opt/arm-none-linux-gnueabi/lib)
+  ln -s /lib/libdl.so.2 libdl.so
+
+=back
+
+B<ADVERTENCIA:> cuando realiza una actualización del software del sistema, estos enlaces desaparecerán y necesitará rehacerlos.
+
+=head2 Compilar Perl 5
+
+Cuando se ha establecido el entorno de compilación, compilar y probar Perl es directo. La única cosa que necesita es hacer es descargar las fuentes habituales, y añadir un archivo Policy.sh como este:
+
+  # Administrativa.
+  perladmin="su.correo@va.aqui"
+
+  # Instala Perl en un árbol en /opt/perl en vez de /opt/bin.
+  prefix=/opt/perl
+
+  # Seleccione el compilador. Note que no existe un alias o enlace 'cc'.
+  cc=gcc
+
+  # Indicadores de compilación.
+  ccflags="-DDEBUGGING"
+
+  # Rutas de biblioteca e inclusión.
+  libpth="/lib"
+  locincpth="/opt/include"
+  loclibpth="/lib"
+
+Querrá crear el directorio destino y darle los permisos correctos antes de instalar, y así eliminar la necesidad de compilar Perl como superusuario.
+
+En el directorio donde desempaquetó las fuentes, ejecute los comandos conocidos:
+
+  ./Configure -des
+  make
+  make test
+  make install
+
+=head2 Problemas conocidos
+
+=head3 Configure
+
+Aún no se conocen problemas
+
+=head3 Compilar
+
+=over 4
+
+=item Mensaje de error "No se encontraron definiciones".
+
+Este error se generaba cuando no es posible encontrar las definiciones locales para los códigos de error, debido a una rara estructura del sistema de archivos de Synology.
+
+Este error se arregló en el git de desarrollo Perl versión 5.19, I<commit> 7a8f1212e5482613c8a5b0402528e3105b26ff24.
+
+=back
+
+=head3 Pruebas que fallan
+
+=over 4
+
+=item F<ext/DynaLoader/t/DynaLoader.t>
+
+Una subprueba falla debido a una rara estructura del sistema de archivos de Synology. Falta el archivo F</lib/glibc.so>.
+
+B<ADVERTENCIA:> No haga un enlace simbólico de F</lib/glibc.so.6> a F</lib/glibc.so> o algunos componentes del sistema empezarán a fallar.
+
+=back
+
+=head2 Prueba de ahumado de Perl 5
+
+Si la compilación completa exitosamente, puede establecer el sistema de pruebas ahumado (I<smoke>) tal como se describe en la documentación de Test::Smoke.
+
+Para la prueba de ahumado necesita ejecutar Perl. Puede tanto instalar el paquete suministrado por Synology para Perl 5.8.6, o compile e instale una suya propia, mucho más reciente versión.
+
+Note que yo no podría ejecutar exitosamente las pruebas cuando se iniciaban por el sistema de tareas de Synology (I<Task Scheduler>). Recurrí a iniciar las pruebas por medio de un trabajo cron ejecutado en otro sistema, usando ssh:
+
+  ssh nas1 wrk/Test-Smoke/smoke/smokecurrent.sh
+
+=head3 Parches locales
+
+Cuando los parches locales se aplican con pruebas de ahumado, el controlador de pruebas pedirá automáticamente la regeneración de ciertas tablas después de que se apliquen los parches. El Perl 5.8.6 suministrado por Synology (al menos en DS413) B<NO es capaz> de generar estas tablas. Generará códigos de operación (I<opcodes>) con valores ficticios, haciendo que la compilación falle.
+
+Puede impedir la regeneración añadiendo el valor
+
+  'flags' => 0,
+
+a la configuración ahumada, o añadiendo otro parche que inserte
+
+  exit 0 if $] == 5.008006;
+
+al comienzo del programa C<regen.pl>.
+
+=head2 Añadir bibliotecas
+
+El procedimiento anterior describe un entorno básico y de ello resulta en un Perl básico. Si quiere añadir bibliotecas adicionales a Perl, puede necesitar algunas configuraciones extra.
+
+Por ejemplo, el Perl básico no tiene ninguna de las bibliotecas DB (db, dbm, ndbm, gdsm). Puede añadirlas usando iPKGui; sin embargo, necesita establecer la variable de entorno LD_LIBRARY_PATH al valor apropiado:
+
+  LD_LIBRARY_PATH=/lib:/opt/lib
+  export LD_LIBRARY_PATH
+
+Estas configuraciones necesitan estar en efecto mientras Perl se compila, pero también cuando los programas se ejecutan.
+
+=head1 REVISIÓN
+
+Marzo de 2015, para Synology DSM 5.1.5022.
+
+=head1 AUTOR
+
+Johan Vromans <jvromans@squirrel.nl>
+H. Merijn Brand <h.m.brand@xs4all.nl>
+
+=cut
