@@ -1,0 +1,310 @@
+=encoding utf8
+
+=head1 NAME
+
+perlpolicy - Varios y variadas políticas y compromisos relacionados con el núcleo de Perl
+
+=head1 DESCRIPCIÓN
+
+Este es el documento oficial que registra todas las políticas sobre cómo colectivamente trabajan los Perl 5 Porters y mantienen el núcleo de Perl.
+
+=head1 GOBERNANZA
+
+=head2 Perl 5 Porters
+
+Los suscriptores a perl5-porters (los propios porteadores) vienen en diversos sabores.
+Algunos son simples curiosos, que raramente entran y en su lugar miran el desarrollo continuado para asegurarse de que están prevenidos de los nuevos cambios o características en Perl.  Algunos son representantes de fabricantes, que están ahí para asegurarse de que Perl continúa compilándose y funcionando en sus plataformas.  Algunos parchean cualquier error reportado en que ellos sepan cómo arreglarlo, algunos están parcheando activamente su área personal (hebras, Win32, el motor de I<regexp>), mientras que otros parece que no hacen nada excepto quejarse.  En otras palabras, es la mezcla normal entre personal técnico.
+
+Larry Wall preside este grupo de portadores.  Él tiene la última palabra en lo que se cambia o no se cambia en cualquiera de los lenguajes de programación Perl.
+En estos días, Larry invierte la mayor parte de su tiempo en Raku, mientras que Perl 5 es pastoreado por un calabacero (I<pumpking>), un portador responsable para definir qué es lo que se incluye en cada distribución y asegurarse de que eso sucede a intervalos regulares.
+
+Larry ve el desarrollo de Perl como el gobierno de los EEUU: existe el Legislativo (los portadores), la rama Ejecutiva (el calabacero), y la Corte Suprema (Larry).  El Legislativo puede discutir y enviar todos los parches que quieran a la rama Ejecutiva, pero la rama Ejecutiva es libre para vetarlos.  Raramente, la Corte Suprema tomará parte de la rama Ejecutiva sobre el Legislativo, o el Legislativo sobre la rama Ejecutiva.  Mayormente, sin embargo, el Legislativo y la rama Ejecutiva se supone que gestionarán sus diferencias sin casos de cortes de acusación.
+
+Algunas veces podrías ver referencias a las Reglas 1 y 2.  El poder de Larry como Corte Suprema se expresa en las siguientes Reglas:
+
+=over 4
+
+=item 1
+
+Larry siempre, por definición, tiene razón sobre cómo se debe comportar Perl.
+Esto significa que él tiene el poder del último veto sobre la funcionalidad del núcleo.
+
+=item 2
+
+Larry tiene permitido cambiar, más tarde, sus ideas sobre cualquier materia, sin importar si previamente se invocase la Regla 1.
+
+=back
+
+¿Lo tiene?  Larry siempre tiene razón, incluso cuando está equivocado.  Es raro ver que se ejercite cualquier Regla, pero a menudo se alude a ellas.
+
+=head1 MANTENIMIENTO Y SOPORTE
+
+Perl 5 se ha desarrollado por la comunidad, no por una entidad corporativa. Cada cambio aportado al núcleo de Perl es el resultado de una donación. Típicamente, estas donaciones son contribuciones de código o tiempo por miembros individuales de nuestra comunidad. De vez en cuando, estas donaciones entran en la forma de patrocinio corporativo o esponsorización organizativa de un individuo en particular o un proyecto.
+
+Como organización voluntaria, los compromisos que hacemos dependen fuertemente del buen deseo y trabajo duro de individuos que no tienen ninguna obligación de contribuir a Perl.
+
+Dicho esto, valoramos la estabilidad y seguridad de Perl y haber tenido hace mucho tiempo un pacto no escrito en toda la comunidad Perl para apoyar y mantener nuevas distribuciones de Perl.
+
+Este documento codifica el soporte y mantenimiento de los compromisos que la comunidad Perl debería esperar de los desarrolladores de Perl:
+
+=over
+
+=item *
+
+"Oficialmente" soportamos las dos más recientes series de distribuciones estables.  Ahora, 5.20.x y anteriores ya no tienen soporte.  Con la distribución de 5.26.0, "oficialmente" terminaremos el soporte para Perl 5.22.x, aparte de proporcionar actualizaciones de seguridad como se describe más abajo.
+
+=item *
+
+Intentaremos, lo mejor que podamos, arreglar los problemas críticos en las dos más recientes series estables de las distribuciones 5.x.  Arreglos para las series actualmente distribuidas tiene precedencia sobre las series anteriores.
+
+=item *
+
+Proporcionaremos, lo mejor que podamos, parches de seguridad "críticos" / distribuciones para cualquier versión principal de Perl cuya distribución 5.x.0 esté dentro de los pasados tres años.  Sólo podemos comprometernos a proporcionarlos para la más reciente distribución "y" en cualquier serie 5.x.y.
+
+=item *
+
+No proporcionaremos actualizaciones de seguridad o arreglo de errores para distribuciones de Perl en desarrollo.
+
+=item *
+
+Animamos a los fabricantes a empaquetar la publicación más reciente de Perl en el momento de congelar su código.
+
+=item *
+
+Como fabricante, puedes tener un requerimiento de soportar arreglos de seguridad más allá de los tres años de soporte comprometidos.  Podemos proporcionarte consejo y soporte limitado tanto como lo que tú ofreces y, donde sea posible se intentará aplicar esos parches a las ramas -maint relevantes en git, aunque podemos escoger o no crear distribuciones numeradas o disponer de parches "oficiales". Vea L<perlsec/INFORMACIÓN DE CONTACTO PARA VULNERABILIDADES DE SEGURIDAD> para más detalles sobre cómo empezar ese proceso.
+
+=back
+
+=head1 COMPATIBILIDAD HACIA ATRÁS Y OBSOLESCENCIA
+
+Nuestra comunidad tiene una fuerte creencia en que la retrocompatibilidad es una virtud, incluso cuándo la funcionalidad en cuestión es un defecto de diseño.
+
+A todos nos encantaría deshacer algunas equivocaciones que cometimos en décadas pasadas.  Vivir con cada error de diseño que hemos hecho puede llevarnos a un estancamiento doloroso.  Deshacer nuestras equivocaciones es muy, muy difícil.  Hacerlo sin, efectivamente, dañar a nuestros usuarios es casi imposibles.
+
+Últimamente se ha puesto de moda ignorar u oponerse activamente a la compatibilidad con versiones anteriores de Perl.  A veces, un cambio se propone para querer usurpar la sintaxis que anteriormente tenía otro significado.  A veces, un cambio quiere mejorar la loca semántica anterior.
+
+Al final de la carretera reside la locura.
+
+Exigir a los programadores finales que cambien solo algunas construcciones de lenguaje, incluso construcciones de lenguaje que ningún desarrollador bien educado usaría intencionadamente, equivale a decir "no debe actualizar a una nueva versión de Perl a menos que tenga una cobertura de prueba del 100 % y pueda realizar una auditoría manual completa de su código base". Si tuviéramos herramientas capaces de actualizar de forma segura el código fuente de Perl de una versión de Perl a otra, esta preocupación podría mitigarse significativamente.
+
+Queremos asegurarnos de que Perl continúa creciendo y floreciendo en los años y décadas venideros, pero no a expensas de nuestra comunidad de usuarios.
+
+Sintaxis y semántica actuales sólo deberían marcarse para destrucción en circunstancias muy limitadas.  Si se cree que se usan muy raramente, siguen la línea de la mejora actual del lenguaje Perl o del intérprete perl, y si el código afectado se puede actualizar fácilmente para continuar funcionando, se les puede considerar para extracción.  En caso de duda, la precaución dicta que favoreceremos la compatibilidad hacia atrás.  Cuándo una característica es obsoleta, se enviará una declaración razonada describiendo el proceso de decisión, y se proporcionará un enlace a los documentos perldelta pertinentes.
+
+Al usar un I<pragma> léxico para habilitar o deshabilitar un comportamiento heredado debería considerarse cuando sea apropiado, y en la ausencia de cualquier I<pragma> se debería habilitar el comportamiento heredado.  Qué cambios incompatibles hacia atrás se controlan implícitamente con un 'use v5.x.y' es una decisión que tendría que hacer el calabacero consultando a la comunidad.
+
+Históricamente, mantenemos un altísimo estándar sobre la compatibilidad hacia atrás/compatibilidad con los errores.  Cualquier accidente de implementación o efecto colateral al ejecutar algún trozo de código se considera que será una característica del lenguaje que será defendida con el mismo celo que cualquier otra característica o funcionalidad.  No importa cómo de frustrantes sean las características involuntarias, nosotros continuamos mejorando Perl, y estas características involuntarias a menudo merecen nuestra protección.  Es muy importante que el software actualmente escrito en Perl continúe funcionando correctamente.  Si los desarrolladores finales adoptaron un error como una característica, necesitamos tratarlo como tal.
+
+Las nuevas sintaxis y semánticas que no rompan las actuales construcciones y sintaxis del lenguaje tiene un nivel mucho más bajo.  Meramente, necesitan probar que son útiles, elegantes, bien diseñadas y probadas.  En muchos casos, estas adiciones, se marcarán por un tiempo como I<experimental>es.  Siga leyendo para obtener más detalles al respecto.
+
+=head2 Terminología
+
+Para asegurarnos de que estamos hablando sobre lo mismo cuándo hablamos de la eliminación de características o funcionalidades del núcleo de Perl, tenemos definiciones específicas para unas cuantas palabras y frases.
+
+=over
+
+=item experimental
+
+Si algo en el núcleo de Perl se marca como B<experimental>, podemos cambiar su comportamiento, desaprobarlo o eliminarlo sin avisar. Mientras que siempre intentaremos hacer lo mejor para suavizar la transición para los usuarios de las características experimentales, debería contactar con la lista de correo perl5-porters si encuentra útil una característica experimental y quiere ayudar a darle forma.
+
+Las características experimentales tienen que ser experimentales en dos distribuciones estables antes de marcarse como no-experimentales.  Las características experimentales revocarán su estado de experimental sólo cuando ya no tengan ningún error por cambios de diseño y cuando el comportamiento no ha cambiada durante el tiempo de un ciclo de desarrollo.  En otras palabras, un característica presente en v5.20.0 puede marcarse como no experimental en v5.22.0 si y sólo si su comportamiento no ha cambiado a lo largo de v5.21.
+
+=item obsoleto
+
+Si se ha marcado algo en el núcleo de Perl como B<obsoleto>, podemos eliminarlo del núcleo en el futuro, aunque no quisiéramos.  Generalmente, cambios incompatibles con lo anterior tendrán avisos de obsolescencia durante dos ciclos de distribución antes de eliminarse, pero pueden eliminarse después de justo un ciclo si el riesgo parece bastante bajo o los beneficios son realmente altos.
+
+A partir de Perl 5.12, las características y los módulos obsoletos advierten al usuario cuando se utilizan.
+Cuándo un módulo es obsoleto, también estará disponible en CPAN.
+Instalándolo desde CPAN silenciará las advertencias de obsolescencia para ese módulo.
+
+Si utiliza una característica o módulo obsoleto y cree que su eliminación del núcleo Perl podría ser una equivocación, por favor contacte con la lista de correo perl5-porters y abogar por su caso.  No eliminamos cosas sin una buena razón, pero algunas veces hay un contraargumento que no consideramos.
+Históricamente, no distinguimos entre características "obsoletas" y "desalentadas".
+
+=item desalentado
+
+De vez en cuando, podemos marcar como B<desalentadas> las construcciones y características del lenguaje que consideramos que tienen faltas.  Las características desalentadas no son, actualmente, candidatas para extraerlas, pero podemos desaprobarlas más tarde si se encuentran en medio de mejoras significativas del núcleo de Perl.
+
+=item eliminado
+
+Una vez que una característica, construcción o módulo se han marcado como obsoletos, podemos sacarlos del núcleo de Perl.  No sorprendentemente, decimos que hemos B<eliminado> esas cosas.  Cuándo un módulo se elimina, ya no se empaquetará con Perl, pero seguirá disponible en CPAN.
+
+=back
+
+=head1 RAMAS DE MANTENIMIENTO
+
+Las nuevas distribuciones de ramas de mantenimiento deberían contener sólo los cambios que caigan en una de las categorías llamadas "aceptables" indicadas más abajo, pero no deberían contener ningún cambio que caiga en una de las categorías "inaceptables".  (Por ejemplo, no se debe incluir un arreglo de un error de cuelgue si rompe la compatibilidad binaria).
+
+No es necesario incluir cada cambio que cumpla estos criterios, y en general el foco tendría que centrarse en asuntos de seguridad, errores de cuelgue, regresiones y problemas serios de instalación.  La tentación de incluir una plétora de cambios menores que no afecten la instalación o la ejecución de perl (p. ej., correcciones de ortografía en la documentación) deberían evitarse para reducir el riesgo de pasar algo por alto.  La intención es crear distribuciones de mantenimiento que son a la vez interesantes y que los usuarios pueden confiarse plenamente de su estabilidad.  (Una preocupación secundaria es evitar quemar al mantenedor-calabacero o abrumar a otros comisionados votando en cambios para ser incluidos (vea L</"Obtener cambios en la rama principal"> más abajo)).
+
+Los siguientes tipos de cambio pueden considerarse aceptables, mientras no caigan también en cualquiera de las categorías "inaceptables" indicadas más abajo:
+
+=over
+
+=item *
+
+Parches que arreglan CVE o problemas de seguridad.  Estos cambios tendrían que pasarse utilizando el mecanismo de reporte de seguridad en lugar de aplicarse directamente; vea L<perlsec/INFORMACIÓN DE CONTACTO PARA VULNERABILIDADES DE SEGURIDAD>.
+
+=item *
+
+Parches que corrigen errores de cuelgue, fracasos de aserción y corrupción de memoria pero que de otra manera cambian la funcionalidad o un impacto negativo del rendimiento de perl.
+
+=item *
+
+Parches que arreglan regresiones en el comportamiento de perl relativo a distribuciones anteriores, sin importar lo vieja que sea la regresión, ya que algunas personas pueden actualizarse desde versiones muy viejas de perl a la última versión.
+
+=item *
+
+Parches que arreglan errores en características que fueran nuevas en la correspondiente distribución estable 5.x.0.
+
+=item *
+
+Parches que arreglan cualquier cosa que impida o impacte seriamente la compilación o instalación de perl.
+
+=item *
+
+Errores de portabilidad, tales como cambios en Configure y los archivos en la carpeta hints/.
+
+=item *
+
+Parches mínimos que arreglan fallos en las pruebas específicas de la plataforma.
+
+=item *
+
+Actualizaciones de documentación que corrigen errores factuales, explica errores significativos o deficiencias en la implementación actual, o arreglan marcado incorrecto.
+
+=item *
+
+Actualizaciones a módulos con doble vida deberían consistir en parches mínimos que arreglan parches de cuelgue o problemas de seguridad (como antes).  Cualesquiera cambios a los módulos con doble vida para los cuales sean canónicos para CPAN deberían coordinarse con el autor que lo subió.
+
+=back
+
+Los siguientes tipos de cambio NO son aceptables:
+
+=over
+
+=item *
+
+Parches que rompen la compatibilidad binaria.  (Por favor, hable con el calabacero).
+
+=item *
+
+Parches que añada o elimine características.
+
+=item *
+
+Parches que añade nuevas advertencias o errores o características obsoletas.
+
+=item *
+
+Adaptaciones de Perl a una nueva plataforma, arquitectura o distribución del SO que implica cambios a la implementación.
+
+=item *
+
+Nuevas versiones de los módulos con doble vida NO deberían importarse en C<maint>.
+Pertenecen a la próxima serie estable.
+
+=back
+
+Si hay cualquier cuestión sobre si un parche dado podría merecer inclusión en una distribución C<maint>, entonces con seguridad no debería incluirse.
+
+=head2 Obteniendo cambios en la rama C<maint>
+
+Históricamente, sólo el calabacero escogerá los cambios desde C<bleadperl> en C<maintperl>.  Esto tiene problemas de escalado.  Al mismo tiempo, las ramas de mantenimiento de versiones estables de Perl necesitan tratarse con gran cuidado. Al final, a partir de Perl 5.12, tenemos un nuevo proceso para las ramas C<maint>.
+
+Cualquier comisionado puede escoger cualquier confirmación (I<commit>) desde la rama C<blead> a la C<maint> si envía un correo a perl5-porters anunciando su intención de escoger una confirmación específica junto con un razonamiento para hacerlo y al menos otros dos comisionados respondan a la lista dando su asentimiento. (Esta política aplica al actual y anterior calabaceros, así como otros comisionados).
+
+Se pueden utilizar en su lugar otros mecanismos de votación, mientras que el mismo número de votos se reúna de una manera transparente.  Específicamente, las propuestas de tales cambios de elección deben ser visibles para todo el mundo en perl5-porters de modo que las opiniones de todo el que esté interesado se puedan oír.
+
+No es necesario, para votar, quedarse en las entradas escogidas en perldelta asociadas con cambios que ya se han escogido, ni para el calabacero obtener los votos en cambios requeridos por el F<Porting/release_managers_guide.pod> donde tales cambios se pueden aplicar por medio de escoger entradas desde C<blead>.
+
+=head1 MÓDULOS CONTRIBUIDOS
+
+
+=head2 Un contrato social sobre el Control Artístico
+
+Lo que sigue es una declaración sobre el control artístico, definido como la habilidad de autores de paquetes para guiar el futuro de su código y mantener control sobre su trabajo.  Es un reconocimiento de que los autores deberían tener control sobre su trabajo, y que es una responsabilidad del resto de la comunidad Perl asegurarse que retienen este control.  Es un intento de documentar los estándares al cual nosotros, los desarrolladores Perl, pretendemos mantener.  Es un intento de escribir fuertes directrices sobre el respeto que nos debemos unos a otros como desarrolladores Perl.
+
+Esta declaración no es un contrato legal.  Esta declaración no es un documento legal, de ninguna manera o forma.  Perl se distribuye bajo la GNU Licencia Pública y bajo la Licencia Artística; ellas contienen los términos legales precisos.  Esta declaración no es sobre la ley o licencias.  Es sobre la comunidad, el respeto mutuo, la confianza y la cooperación de buena fe.
+
+Reconocemos que el núcleo de Perl, definido como el software distribuido con Perl en su corazón, es un proyecto de la unión de todos nuestros esfuerzos.
+De vez en cuando, un guión, módulo, o conjunto de módulos (de ahora en adelante referidos sencillamente como "módulo") se demuestra que es muy útil y/o tan integral para el correcto funcionamiento de Perl que tendría que ser distribuido con el núcleo de Perl.  Esto nunca debería hacerse sin el consentimiento explícito del autor, y un reconocimiento claro por todas las partes significa que el módulo se distribuye bajo los mismos términos como el propio Perl.  El autor de un módulo que realizara esa inclusión de un módulo en el núcleo de Perl significará necesariamente alguna pérdida de controlarlo, desde los cambios que ocasionalmente pueda tener que hacerse a corto plazo o por consistencia con el resto de Perl.
+
+Una vez que un módulo se ha incluido en el núcleo de Perl, aun así, todo el mundo implicado en mantener Perl tendría que ser consciente de que el módulo es todavía propiedad del autor original a no ser que el autor original explícitamente deje su propiedad.  En particular:
+
+=over
+
+=item *
+
+La versión del módulo en el núcleo de Perl aún debería considerarse trabajo del autor original.  Todos los parches, informes de errores y demás, deberían enviarse a él.  Sus directrices de desarrollo deberían respetarse siempre que sea posible.
+
+=item *
+
+Los parches los puede aplicar el calabacero titular sin la cooperación explícita del autor del módulo si y sólo si son muy menores, o de tiempo crítico (tales como el arreglo de problemas de seguridad), o si no se puede contactar con el autor del módulo.  Esos parches todavía tienen que devolverse al autor cuando sea posible, y si el autor decide hacer una versión con un arreglo alternativo, ese arreglo tendrá una preferencia mucha más alta a no ser que exista un problema serio con él.  Cualquier cambio no aprobado por el autor debería marcarse como tal, y reconocerse por el colaborador del cambio.
+
+=item *
+
+La versión del módulo distribuido con Perl debería ser, siempre que sea posible, la versión más tardía del módulo cuando lo distribuyó el autor (la más tardía no-beta en el caso de distribuciones públicas de Perl), a pesar de que el calabacero titular puede retrasar la actualización de la versión del módulo distribuido con Perl a la versión más tardía hasta que la versión más tardía se haya probado lo suficiente.
+
+=back
+
+En otras palabras, el autor de un módulo debería considerarse como el que tiene la última palabra sobre las modificaciones a su módulo siempre que sea posible (recordando que se espera que todas las personas implicadas trabajarán juntas y llegarán a compromisos razonables cuándo existan desacuerdos).
+
+Sin embargo, como último recurso:
+
+
+Si la futura visión del autor del módulo es suficientemente diferente de la visión conjunta del calabacero titular y perl5-porters de tal forma que causan problemas serios para Perl, el calabacero titular puede escoger formalmente el bifurcar la versión del módulo en el núcleo de Perl, de la mantenida por el autor.  Esto no debería hacerse a la ligera y debería B<siempre> que sea posible hacerse sólo después de una aportación directa de Larry.  Si se hace, entonces debe hacerse explícito en el módulo distribuido con el núcleo de Perl que es una versión bifurcada y que mientras que está basado en el trabajo del autor original, ya no está mantenido por él.  Esto tiene que anotarse tanto en la documentación como en los comentarios en código fuente del módulo.
+
+De nuevo, esto debería ser sólo el último recurso.  Idealmente, esto nunca debería pasar, y debería hacerse cada esfuerzo que sea posible en cooperación y compromiso antes de llegar a esa solución.  Si se demuestra que es necesaria la bifurcación de un módulo para la salud global de Perl, tiene que darse el crédito apropiado al autor original a perpetuidad y la decisión debería reevaluarse constantemente para ver si es posible una remezcla de las dos ramas más adelante.
+
+En todas las gestionas con los módulos aportados, todo el mundo que mantiene Perl debería recordar que el código pertenece al autor original, que quizás no estén en perl5-porters en un momento dado, y que un parche no es oficial a no ser que se haya integrado en la copia del módulo del autor.  Para ayudar con esto y con los puntos #1, #2 y #3 anteriores, debería mantenerse la información de contacto de los autores de todos los módulos aportados en la distribución Perl.
+
+Finalmente, la comunidad Perl globalmente reconoce ese respeto a la propiedad del código, respeto por el control artístico, crédito apropiado, y el esfuerzo activo para impedir la modificación involuntaria del código o vacíos de comunicación son vitales para la salud de la comunidad y el propio Perl.  Los miembros de una comunidad no deberían normalmente tener que recurrir a reglas y leyes para saber tratarse entre sí, y este documento, a pesar de que contiene reglas con objeto de ser claros, es sobre una actitud y aproximación general.  El primer paso en cualquier disputa debería ser una comunicación abierta, respeto para las visiones opuestas, y un intento para un compromiso.  En casi todas las circunstancias no hará falta nada más y, ciertamente, no debería hacer falta ninguna otra medida más drástica hasta que fallen todo canal de comunicación y discusión.
+
+
+=head1 DOCUMENTACIÓN
+
+La documentación de Perl es un recurso importante para nuestros usuarios. Es increíblemente importante para la documentación de Perl ser razonablemente coherente y reflejar con exactitud la implementación actual.
+
+Tanto como P5P mantiene colectivamente el código fuente, nosotros mantenemos colectivamente la documentación.  Escribir un poco de documentación no le da a un autor el control futuro de esa documentación.
+Al mismo tiempo, tanto como los cambios de código fuente deberían emparejarse con el estilo de sus bloques circundantes, así deberían ser los cambios de documentación.
+
+Los ejemplos en la documentación deberían ser ilustrativos del concepto que están explicando.  A veces, la mejor manera de mostrar cómo funciona una característica del lenguaje es con un pequeño programa que el lector puede correr sin modificación.  Más a menudo, los ejemplos consistirán de un extracto de código que contiene sólo los partes importantes.
+La definición de "importante" varía de un extracto a otro.
+A veces es importante declarar C<use strict> y C<use warnings>, inicializar todas las variables y capturar cada condición de error.
+Más a menudo, estas cosas ocultan la lección que el ejemplo pretendía enseñar.
+
+Ya que Perl se ha desarrollado por un equipo global de voluntarios, nuestra documentación a menudo contiene ortografías que parecen graciosas para I<alguien>.  La elección de las ortografías norteamericana/británica/otras queda como ejercicio para el autor de cada parte de la documentación.  Cuándo se remienda documentación, intente emular la documentación alrededor suyo, más que cambiar la prosa existente.
+
+En general, la documentación debería describir lo que Perl hace "ahora" más que en qué debería usarse.  Es perfectamente razonable incluir notas en la documentación sobre cómo el comportamiento ha cambiado desde las distribuciones anteriores, pero, con muy pocas excepciones, la documentación no es de "doble vida": no necesita describir plenamente cómo funcionaba en todo las versiones anteriores.
+
+=head1 ESTÁNDARES DE CONDUCTA
+
+El foro oficial para el desarrollo de perl es la lista de correo de los perl5-porters, mencionados antes, y su seguimiento de errores en rt.perl.org.  Se espera que todos los participantes en la discusión se adhieran a un estándar de conducta.
+
+=over 4
+
+=item *
+
+Siempre ser civilizado.
+
+=item * 
+
+Haga caso a los moderadores.
+
+=back
+
+La civilidad es sencilla: aferrarse a los hechos mientras evita comentarios denigrantes y el sarcasmo.  No es suficiente con ser veraz.  También debe ser civilizado.  Responder de forma incivilizada no es aceptable.
+
+Mientras que se requiere civilidad, se anima a ser bondadoso; si tiene alguna duda sobre si se está siendo civilizado, sencillamente pregunte "¿Soy siendo amable?" y aspire a serlo.
+
+Si los moderadores de la lista le dicen que no está siendo civilizado, considere cuidadosamente cómo han aparecido sus palabras antes de responder de cualquier manera.  ¿Fueron amables?  Puede protestar, pero la protesta repetida de una decisión repetidamente reafirmada no es aceptable.
+
+El comportamiento inaceptable resultará en un aviso público y claramente identificado.
+El comportamiento inaceptable repetido resultará en la expulsión de la lista de correo y la revocación de los derechos de actualizar rt.perl.org.  La primera expulsión es por un mes.  Las expulsiones subsiguientes se doblarán en longitud.  Después de seis meses sin advertencias, se reinicia la longitud de expulsión del usuario.  Las expulsiones, como los avisos, son públicos.
+
+La lista de moderadores será de conocimiento público.  Actualmente, son: Aaron Crane, Andy Dougherty, Ricardo Signes, Sawyer X y Steffen Müller.
+
+=head1 CRÉDITOS
+
+"Contrato Social sobre Módulos contribuidos" originalmente de Russ Allbery E<lt>rra@stanford.eduE<gt> y los perl5-porters.
+
