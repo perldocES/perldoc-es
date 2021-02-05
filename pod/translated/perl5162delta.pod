@@ -6,9 +6,9 @@ perl5162delta - qué hay de nuevo para perl v5.16.2
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.16.1 y la versión 5.16.2.
+Este documento describe las diferencias entre las distribuciones 5.16.1 y 5.16.2.
 
-Si va a actualizar desde una versión anterior, como la 5.16.0, debe leer primero L<perl5161delta>, donde se describen las diferencias entre las versiones 5.16.0 y 5.16.1.
+Si va a actualizar desde una distribución anterior, como la 5.16.0, debe leer primero L<perl5161delta>, donde se describen las diferencias entre las versiones 5.16.0 y 5.16.1.
 
 =head1 Cambios incompatibles
 

@@ -4,7 +4,7 @@ perl585delta - qué hay de nuevo para perl v5.8.5
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.8.4 y la versión 5.8.5.
+Este documento describe las diferencias entre las distribuciones 5.8.4 y 5.8.5.
 
 =head1 Cambios incompatibles
 
@@ -196,7 +196,7 @@ La prueba de regresión F<t/uni/class.t> ahora realiza muchas más pruebas, y pu
 
 =head1 Problemas en plataformas específicas
 
-Esta publicación se sabe que no se genera en Windows 95.
+Esta distribución se sabe que no se compila en Windows 95.
 
 =head1 Notificación de errores
 

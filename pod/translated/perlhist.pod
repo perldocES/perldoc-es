@@ -6,7 +6,7 @@ perlhist - Registro histórico de versiones de Perl
 
 =head1 DESCRIPCIÓN
 
-Este documento se creó con el objetivo de conservar un registro de las versiones del código fuente de Perl.
+Este documento se creó con el objetivo de conservar un registro de las distribuciones del código fuente de Perl.
 
 =head1 INTRODUCCIÓN
 
@@ -580,9 +580,9 @@ El nombre quedó incorporado al acervo cultural de la comunidad.  A la persona q
  Ricardo   5.24.0-RC5   2016-May-04
  Ricardo   5.24.0       2016-May-09
 
-=head2 TAMAÑOS DE VERSIÓN SIGNIFICATIVOS
+=head2 TAMAÑOS DE DISTRIBUCIÓN SIGNIFICATIVOS
 
-Por ejemplo, la notación "core: 212  29" de la versión 1.000 significa que ocupaba 212 kilobytes en el núcleo, distribuidos en 29 archivos.  Las etiquetas "core".."doc" se describen más abajo.
+Por ejemplo, la notación "core: 212  29" de la distribución 1.000 significa que ocupaba 212 kilobytes en el núcleo, distribuidos en 29 archivos.  Las etiquetas "core".."doc" se describen más abajo.
 
  release        core       lib         ext        t         doc
  ======================================================================

@@ -47,7 +47,7 @@ Para ver cuál está instalado en su sistema:
 
 =head2 Usar perl desde el centro de adaptaciones de HP
 
-El centro de adaptación de HP intenta seguir la demanda del cliente y publicar actualizaciones desde la comunidad de Código Abierto. Es obvio tener binarios precompilados de Perl, aunque "actualizados" es algo relativo. En el momento de escribir esto, solo estaba disponible perl-5.10.1 (con 5.16.3 siendo la última versión estable desde el punto de vista de los desarrolladores).
+El centro de adaptación de HP intenta seguir la demanda del cliente y distribuir actualizaciones desde la comunidad de Código Abierto. Es obvio tener binarios precompilados de Perl, aunque "actualizados" es algo relativo. En el momento de escribir esto, solo estaba disponible perl-5.10.1 (con 5.16.3 siendo la última distribución estable desde el punto de vista de los desarrolladores).
 
 Los centros de adaptación de HP están limitados a qué sistemas pueden adaptar y normalmente elijen las dos versiones disponibles más recientes del SO.
 
@@ -455,7 +455,7 @@ Parece que hay una cabecera del sistema rota en HP-UX 11.00 que rompe la compila
 
 =head1 Redeclaración de "sendpath" con un diferente especificador de clase de almacenamiento
 
-La siguiente recopilación de advertencias puede suceder en versiones de HP-UX anteriores a la 11.31 pero que no son problemas graves:
+La siguiente recopilación de advertencias puede suceder en distribuciones de HP-UX anteriores a la 11.31 pero que no son problemas graves:
 
  cc: "/usr/include/sys/socket.h", line 535: warning 562:
     Redeclaration of "sendfile" with a different storage class

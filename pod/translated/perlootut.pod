@@ -15,7 +15,7 @@ fue en febrero de 2013.
 
 Si está leyendo este documento en el futuro, es probable que las técnicas
 utilizadas sea más avanzadas. Para empezar le recomendamos que lea el documento perlootut
-de la versión estable más reciente de Perl, en lugar de esta
+de la distribución estable más reciente de Perl, en lugar de esta
 versión.
 
 =head1 DESCRIPCIÓN

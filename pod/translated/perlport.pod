@@ -657,9 +657,9 @@ o incluso una mezcla de ambos, como en:
 
 Incluso aunque VOS permita que el carácter barra inclinada aparezca en los objetos nombre, debido a que la adaptación VOS de Perl lo interpreta como un carácter delimitador del nombre de la ruta, archivos VOS, directorios, o enlaces cuyos nombres contienen un carácter barra, no pueden procesarse.  Tales archivos deben renombrarse antes de poder procesarse por Perl.
 
-Lanzamientos anteriores de VOS (anteriores a OpenVOS Release 17.0) limitan los nombres de archivo a 32 o menos caracteres, prohíben nombres de archivo que empiecen con un carácter C<->, y prohíben nombres de archivo que contengan cualquier carácter que coincida con C<< tr/ !#%&'()*;<=>?// >>.
+Distribuciones anteriores de VOS (anteriores a OpenVOS Release 17.0) limitan los nombres de archivo a 32 o menos caracteres, prohíben nombres de archivo que empiecen con un carácter C<->, y prohíben nombres de archivo que contengan cualquier carácter que coincida con C<< tr/ !#%&'()*;<=>?// >>.
 
-Nuevos lanzamientos de VOS (OpenVOS Release 17.0 o siguientes) soporta una característica conocida como nombres extendidos.  En estos lanzamientos, los nombres de archivo pueden contener hasta 255 caracteres, tienen prohibido comenzar con un carácter C<->, y el conjunto de caracteres prohibidos se reduce a cualquier carácter que coincida con C<< tr/#%*<>?// >>.  Hay restricciones que incluyen a los espacios y apóstrofes: estos caracteres no deben comenzar o terminar un nombre, ni pueden preceder o seguir inmediatamente a un punto.  Además, un espacio no debe preceder inmediatamente a otro espacio o guión.  Específicamente, las siguientes combinaciones de caracteres están prohibidas: espacio-espacio, espacio-guión, punto-espacio, espacio-punto, punto-apóstrofe, apóstrofe-punto, espacios por delante o detrás, y apóstrofe por delante o detrás.  A pesar de que un nombre de archivo extendido está limitado a 255 caracteres, un nombre de ruta sigue estando limitado a 256 caracteres.
+Nuevas distribuciones de VOS (OpenVOS Release 17.0 o siguientes) soporta una característica conocida como nombres extendidos.  En estas distribuciones, los nombres de archivo pueden contener hasta 255 caracteres, tienen prohibido comenzar con un carácter C<->, y el conjunto de caracteres prohibidos se reduce a cualquier carácter que coincida con C<< tr/#%*<>?// >>.  Hay restricciones que incluyen a los espacios y apóstrofes: estos caracteres no deben comenzar o terminar un nombre, ni pueden preceder o seguir inmediatamente a un punto.  Además, un espacio no debe preceder inmediatamente a otro espacio o guión.  Específicamente, las siguientes combinaciones de caracteres están prohibidas: espacio-espacio, espacio-guión, punto-espacio, espacio-punto, punto-apóstrofe, apóstrofe-punto, espacios por delante o detrás, y apóstrofe por delante o detrás.  A pesar de que un nombre de archivo extendido está limitado a 255 caracteres, un nombre de ruta sigue estando limitado a 256 caracteres.
 
 El valor de C<$^O> en VOS es "vos".  Para determinar la arquitectura en la que se está ejecutando sin recurrir a cargar todo C<%Config> puede examinar el contenido del array C<@INC>, así:
 
@@ -713,7 +713,7 @@ Por ello, en I<scripts> Perl OS/390 y VM/ESA se pueden ejecutar con una cabecera
 
     print "¡Hola desde Perl!\n";
 
-OS/390 soportará el truco I<shebang> C<#!> en el lanzamiento 2.8 y siguientes.
+OS/390 soportará el truco I<shebang> C<#!> en la distribución 2.8 y siguientes.
 Las llamadas a C<system> y comillas inversas pueden usar la sintaxis shell POSIX en todos los sistemas S/390.
 
 En el AS/400, si PERL5 está en su lista de bibliotecas, puede necesitar envolver sus I<scripts> Perl en un procedimiento CL para invocarlos así:
@@ -1342,7 +1342,7 @@ Nada útil. (S<RISC OS>)
 
 =head1 Plataformas compatibles
 
-De las siguientes plataformas se sabe que compilan Perl 5.12 (de abril de 2010, su fecha de lanzamiento) desde la distribución de código fuente estándar disponible en L<http://www.cpan.org/src>
+De las siguientes plataformas se sabe que compilan Perl 5.12 (de abril de 2010, su fecha de distribución) desde la distribución de código fuente estándar disponible en L<http://www.cpan.org/src>
 
 =over
 
@@ -1497,7 +1497,7 @@ Las siguientes plataformas se soportaron por una versión anterior de Perl pero 
 
 =head1 Plataformas soportadas (Perl 5.8)
 
-En julio de 2002 (el lanzamiento de 5.8.0), las siguientes plataformas fueron capaces de compilar Perl desde la distribución de código fuente estándar disponible en L<http://www.cpan.org/src/>
+En julio de 2002 (la distribución de 5.8.0), las siguientes plataformas fueron capaces de compilar Perl desde la distribución de código fuente estándar disponible en L<http://www.cpan.org/src/>
 
         AIX
         BeOS
@@ -1543,7 +1543,7 @@ En julio de 2002 (el lanzamiento de 5.8.0), las siguientes plataformas fueron ca
         1) en modo DOS se pueden usar tanto adaptaciones DOS como OS/2
         2) compiladores: Borland, MinGW (GCC), VC6
 
-Las siguientes plataformas han funcionado con lanzamientos anteriores (5.6 y 5.7), pero no gestionamos ni el arreglo ni las pruebas de éstas en el momento del lanzamiento de 5.8.0.  Hay muchas posibilidades de que muchas de éstas funcionen bien con 5.8.0.
+Las siguientes plataformas han funcionado con distribuciones anteriores (5.6 y 5.7), pero no gestionamos ni el arreglo ni las pruebas de éstas en el momento de la distribución de 5.8.0.  Hay muchas posibilidades de que muchas de éstas funcionen bien con 5.8.0.
 
         BSD/OS
         DomainOS
@@ -1560,7 +1560,7 @@ Se sabe que no funciona para 5.8.0 (pero se pueden usar 5.6.1 y 5.7.2):
 
 	AmigaOS 3
 
-De las siguientes plataformas se sabe que compilan Perl desde el código fuente en el pasado (5.005_03 y anteriores), pero no hemos sido capaces de verificar su estado para el lanzamiento actual, tanto porque las plataformas hardware/software son raros o porque no tenemos un campeón activo en estas plataformas, o ambos.  Están preparadas para funcionar, así que, adelante e intente compilarlas, y mande cualquier problema a perlbug@perl.org
+De las siguientes plataformas se sabe que compilan Perl desde el código fuente en el pasado (5.005_03 y anteriores), pero no hemos sido capaces de verificar su estado para la distribución actual, tanto porque las plataformas hardware/software son raros o porque no tenemos un campeón activo en estas plataformas, o ambos.  Están preparadas para funcionar, así que, adelante e intente compilarlas, y mande cualquier problema a perlbug@perl.org
 
         3b1
         A/UX
@@ -1594,14 +1594,14 @@ De las siguientes plataformas se sabe que compilan Perl desde el código fuente 
 
 Las siguientes plataformas tienen su propia distribución de código fuente y binarios disponible a través de L<http://www.cpan.org/ports/>
 
-                                Lanzamiento Perl
+                                Distribución Perl
 
         OS/400 (ILE)            5.005_02
         Tandem Guardian         5.004
 
 Las siguientes plataformas sólo tienen disponibles los binarios a través de L<http://www.cpan.org/ports/index.html> :
 
-                                Lanzamiento Perl
+                                Distribución Perl
 
         Acorn RISCOS            5.005_02
         AOS                     5.002

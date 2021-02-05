@@ -6,10 +6,9 @@ perldelta - Novedades de perl v5.14.1
 
 =head1 DESCRIPCIÓN
 
-En este documento se describen las diferencias entre la versión 5.14.0 y la versión 5.14.1.
+En este documento se describen las diferencias entre las distribuciones 5.14.0 y 5.14.1.
 
-Si va a actualizar desde una versión anterior, como la 5.12.0, debe leer primero 
-L<perl5140delta>, donde se describen las diferencias entre las versiones 5.12.0 y 5.14.0.
+Si va a actualizar desde una distribución anterior, como la 5.12.0, debe leer primero L<perl5140delta>, donde se describen las diferencias entre las versiones 5.12.0 y 5.14.0.
 
 =head1 Mejoras en el núcleo principal
 
@@ -202,7 +201,7 @@ Se ha corregido la documentación que indica los paquetes de Solaris necesarios 
 
 =item * 
 
-El I<script> de prueba F<lib/locale.t> se ha actualizado para trabajar en la publicación del próximo Lion.
+El I<script> de prueba F<lib/locale.t> se ha actualizado para trabajar en distribución publicación del próximo Lion.
 
 =item * 
 

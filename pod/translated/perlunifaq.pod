@@ -21,7 +21,7 @@ Para averiguar cuáles son las codificaciones de caracteres admitidas por Perl, 
 =head2 ¿Qué versión de Perl debo utilizar?
 
 Si puede, actualice a la versión más reciente; debe usar como mínimo la versión C<5.8.1>.
-En el tutorial y en las preguntas más frecuentes se supone que usa la versión más reciente.
+En el tutorial y en las preguntas más frecuentes se supone que usa la distribución más reciente.
 
 También debe comprobar los módulos y actualizarlos si es necesario. Por ejemplo, HTML::Entities requiere la versión >= 1.32 para funcionar correctamente, aunque esto no se indica en el registro de cambios.
 

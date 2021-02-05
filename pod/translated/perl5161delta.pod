@@ -6,9 +6,9 @@ perl5161delta - qué hay de nuevo para Perl 5.16.1
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.16.0 y la versión 5.16.1.
+Este documento describe las diferencias entre las distribuciones 5.16.0 y 5.16.1.
 
-Si va a actualizar desde una versión anterior, como 5.14.0, lea primero L<perl5160delta>, en el que se describen las diferencias entre 5.14.0 y  5.16.0.
+Si va a actualizar desde una distribución anterior, como 5.14.0, lea primero L<perl5160delta>, en el que se describen las diferencias entre 5.14.0 y 5.16.0.
 
 =head1 Seguridad
 
@@ -68,7 +68,7 @@ Se arregló una regresión que se introdujo en Perl v5.16.0 enel operador C<tr/I
 
 =item *
 
-Se añadió C<B::COP::stashlen>.   Proporciona acceso a un campo interno añadido en perl 5.16 en compilaciones para hilos.  Se rompió en el último momento antes de que saliera 5.16 [perl #113034].
+Se añadió C<B::COP::stashlen>.   Proporciona acceso a un campo interno añadido en perl 5.16 en compilaciones para hilos.  Se rompió en el último momento antes de que se lanzara 5.16 [perl #113034].
 
 =item *
 

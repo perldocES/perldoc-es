@@ -139,7 +139,7 @@ Nota para los usuarios de Linux Debian GNU/kFreeBSD: Antes de Perl v5.16.0, perl
 
 LinuxThreads es ahora obsoleto en Linux, y cachear C<getpid()> de esta manera hace incrustar perl innecesariamente complejo (debido a que tendrá que actualizar manualmente el valor de $$), así que ahora C<$$> y C<getppid()> siempre devolverán los mismos valores que la biblioteca C subyacente.
 
-Sistemas Debian GNU/kFreeBSD también usan LinuxThreads hasta la versión 6.0 (inclusive), pero después se trasladó a la semántica de hilos de FreeBSD, que es parecida a la POSIX.
+Sistemas Debian GNU/kFreeBSD también usan LinuxThreads hasta la distribución 6.0 (inclusive), pero después se trasladó a la semántica de hilos de FreeBSD, que es parecida a la POSIX.
 
 Para ver si su sistema está afectado por esta discrepancia compruebe si C<getconf GNU_LIBPTHREAD_VERSION | grep -q NPTL> devuelve un valor falso.  Los hilos NTPL preservan la semántica POSIX.
 
@@ -428,7 +428,7 @@ Como el enganche C<'IGNORE'> no está soportado por C<__WARN__>, puede deshabili
 
 La rutina indicada por C<$SIG{__DIE__}> se llama cuando una excepción grave está a punto de lanzarse.  El mensaje de error se pasa como primer argumento.  Cuando una rutina enganchada en C<__DIE__> regresa, el procesamiento de la excepción continúa como si no existiera el enganche, a menos que la rutina enganchada termine a través de un C<goto &sub>, la salida de un bucle, o un C<die()>.  El gestor de C<__DIE__> está explícitamente inhabilitado durante la llamada, para que pueda morir desde un controlador C<__DIE__>.  Lo mismo para C<__WARN__>.
 
-Debido a un fallo de implementación, el enganche C<$SIG{__DIE__}> se llama incluso dentro de un C<eval()>.  No lo utilice para volver a reescribir una excepción pendiente en C<$@>, o como un sustituto extraño para sobreescribir C<CORE::GLOBAL::die()>.  Esta acción extraña se arreglará en una futura versión de manera que C<$SIG{__DIE__}> sólamente se llamará si el programa está a punto de terminar, como era la intención original.  Cualquier otro uso es obsoleto.
+Debido a un fallo de implementación, el enganche C<$SIG{__DIE__}> se llama incluso dentro de un C<eval()>.  No lo utilice para volver a reescribir una excepción pendiente en C<$@>, o como un sustituto extraño para sobreescribir C<CORE::GLOBAL::die()>.  Esta acción extraña se arreglará en una futura distribución de manera que C<$SIG{__DIE__}> se llamará solo si el programa está a punto de terminar, como era la intención original.  Cualquier otro uso es obsoleto.
 
 Los gestores C<__DIE__>/C<__WARN__> son muy especiales, en un aspecto: pueden llamarse para informar de (posibles) errores encontrados por el analizador léxico.  En tal caso, el analizador léxico puede estar en estado de incoherencia, por lo que cualquier intento de evaluar código Perl desde tales gestores probablemente resultará en una violación de segmento.  Esto significa que las advertencias o errores que se deriven del análisis léxico de Perl se deberían usar con extrema precaución, por ejemplo:
 
@@ -1640,7 +1640,7 @@ X<$[>
 
 Esta variable almacena el índice del primer elemento en un array, y el primer carácter en una subcadena.  El valor predeterminado es 0, pero podría teóricamente ser puesto a 1 para hacer que Perl se comporte más como B<awk> (o Fortran) cuándo se extraen subcadenas y cuando se evalúan las funciones index() y substr().
 
-Con la publicación de Perl 5, las asignaciones a C<$[> se trataban como directivas de compilación, y no podían influir en el comportamiento de cualquier otro archivo.
+Con la distribución de Perl 5, las asignaciones a C<$[> se trataban como directivas de compilación, y no podían influir en el comportamiento de cualquier otro archivo.
 (Es por eso que sólo se le pueden asignar constantes en tiempo de compilación).
 Su uso está sumamente desaconsejado.
 

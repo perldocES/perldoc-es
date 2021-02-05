@@ -518,7 +518,7 @@ El programa undump era un viejo intento de aumentar la velocidad de un programa 
 
 =head2 ¿Cómo hacer que mi programa Perl consuma menos memoria?
 
-Cuando aparecen las contrapartidas de tiempo y espacio, ante un problema Perl, casi siempre, prefiere consumir memoria. Los escalares en Perl usan más memoria que las cadenas de caracteres en C; los array usan más que eso, y los hashes incluso más. Mientras que aun queda bastante por hacer, publicaciones recientes se han fijado en estos temas. Por ejemplo, como en 5.004, claves de hash duplicadas se comparten entre todos los hashes que las usan, así que no requieren reasignación.
+Cuando aparecen las contrapartidas de tiempo y espacio, ante un problema Perl, casi siempre, prefiere consumir memoria. Los escalares en Perl usan más memoria que las cadenas de caracteres en C; los array usan más que eso, y los hashes incluso más. Mientras que aun queda bastante por hacer, distribuciones recientes se han fijado en estos temas. Por ejemplo, como en 5.004, claves de hash duplicadas se comparten entre todos los hashes que las usan, así que no requieren reasignación.
 
 En algunos casos, usar substr() o vec() para simular arrays pueden ser muy beneficioso. Por ejemplo, un array de un millar de booleanos ocupará al menos 20 000 bytes, pero se puede convertir en un vector de bits en 125 bytes; un considerable ahorro de memoria. El módulo estándar Tie::SubstrHash también puede ayudar para ciertos tipos de estructuras de datos. Si está trabajando con módulos especialistas en manejar estructuras de datos (matrices, por ejemplo) que las implementen en C pueden usar menos memoria que sus equivalentes módulos en Perl.
 

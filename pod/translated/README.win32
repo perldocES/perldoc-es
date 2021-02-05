@@ -82,7 +82,7 @@ Asegúrese que la ruta al directorio de compilación no contiene espacios.  La c
 =item Microsoft Visual C++
 
 El nmake que viene con Visual C++ será suficiente para la compilación. Visual C requiere que se establezcan ciertas cosas en la consola antes de que se ejecute Visual C de forma exitosa. Para hacer que una consola sea capaz de ejecutar el compilador de C, necesitará antes ejecutar el archivo C<vcvars32.bat> para compilar para x86-32 y para x86-64 C<vcvarsall.bat x64> o C<vcvarsamd64.bat>. En una instalación típica de un compilador Microsoft C, estos archivos batch ya estarán en su variable de entorno C<PATH> así que solo tiene que escribirlos sin la ruta absoluta en su consola. Si necesita encontrar la ruta absoluta al archivo batch, se encuentra normalmente en sitios como C:\Archivos de programa\Microsoft Visual Studio\VC98\Bin.
-Con los nuevos productos de Microsoft C (publicado después de ~2004), el instalador pondrá un atajo en el menú de inicio para lanzar una nueva ventana de consola ya ajustada para su arquitectura objetivo (x86-32, x86-64 o IA64).
+Con los nuevos productos de Microsoft C (distribuidos después de ~2004), el instalador pondrá un atajo en el menú de inicio para lanzar una nueva ventana de consola ya ajustada para su arquitectura objetivo (x86-32, x86-64 o IA64).
 Con los nuevos compiladores, también puede usar los viejos archivos batch, si así lo prefiere.
 
 =item Microsoft Visual C++ 2008-2013 Express Edition
@@ -206,9 +206,9 @@ y establecer CCHOME, CCINCDIR y CCLIBDIR así como el entorno anterior.
 
 El nmake que viene con Platform SDK será suficiente para compilar Perl.  Asegúrese de que está compilando dentro de uno de los I<shell> "Entornos de compilación" disponibles después de instalar Platform SDK desde el menú de inicio.
 
-=item MinGW release 3 con gcc
+=item MinGW versión 3 con gcc
 
-Perl se puede compilar con gcc desde MinGW release 3 y siguientes (usando gcc 3.4.5 y siguientes).  Se puede descargar desde aquí:
+Perl se puede compilar con gcc desde MinGW versión 3 y siguientes (usando gcc 3.4.5 y siguientes).  Se puede descargar desde aquí:
 
 L<http://www.mingw.org/>
 
@@ -270,7 +270,7 @@ Escriba "dmake test" (o "nmake test").  Esto ejecutará la mayor parte de las co
 
 No debería haber fallos de pruebas.
 
-Si compila con Visual C++ 2013 entonces tres pruebas pueden fallar con problemas relacionados con el Tiempo de Ahorro de Luz (I<Daylight Saving Time>): F<t/io/fs.t>, F<cpan/HTTP-Tiny/t/110_mirror.t> y F<lib/File/Copy.t>. Los fallos están provocadas por errores en el CRT en VC++ 2013 que se corregirán en futuras publicaciones de VC++, como Microsoft explica aquí: L<https://connect.microsoft.com/VisualStudio/feedback/details/811534/utime-sometimes-fails-to-set-the-correct-file-times-in-visual-c-2013>. Mientras tanto, si necesita arreglar C<stat> y las funciones C<utime> debe mirar en la distribución de CPAN Win32::UTCFileTime.
+Si compila con Visual C++ 2013 entonces tres pruebas pueden fallar con problemas relacionados con el Tiempo de Ahorro de Luz (I<Daylight Saving Time>): F<t/io/fs.t>, F<cpan/HTTP-Tiny/t/110_mirror.t> y F<lib/File/Copy.t>. Los fallos están provocadas por errores en el CRT en VC++ 2013 que se corregirán en futuras distribuciones de VC++, como Microsoft explica aquí: L<https://connect.microsoft.com/VisualStudio/feedback/details/811534/utime-sometimes-fails-to-set-the-correct-file-times-in-visual-c-2013>. Mientras tanto, si necesita arreglar C<stat> y las funciones C<utime> debe mirar en la distribución de CPAN Win32::UTCFileTime.
 
 Si compila con ciertas versiones de gcc (por ejemplo 4.8.1) de www.mingw.org entonces F<ext/POSIX/t/time.t> puede fallar la prueba 17 debido a un error conocido en estas versiones de gcc: vea L<http://sourceforge.net/p/mingw/bugs/2152/>.
 

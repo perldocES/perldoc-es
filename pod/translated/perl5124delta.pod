@@ -6,9 +6,9 @@ perl5124delta - qué hay de nuevo para Perl 5.12.4
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.12.3 y la versión 5.12.4.
+Este documento describe las diferencias entre las distribuciones 5.12.3 y 5.12.4.
 
-Si está actualizando desde una versión anterior como la 5.12.2, primero lea L<perl5123delta>, que describe las diferencias entre 5.12.2 y la 5.12.3. Los principales cambios realizados en 5.12.0 se describen en L<perl5120delta>.
+Si está actualizando desde una distribución anterior como la 5.12.2, primero lea L<perl5123delta>, que describe las diferencias entre 5.12.2 y la 5.12.3. Los principales cambios realizados en 5.12.0 se describen en L<perl5120delta>.
 
 =head1 Cambios incompatibles
 

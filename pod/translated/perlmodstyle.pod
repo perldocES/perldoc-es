@@ -116,7 +116,7 @@ Ofrezca enlaces a información adicional (URL, correo electrónico)
 
 =back
 
-=head2 Consideraciones del lanzamiento
+=head2 Consideraciones de la distribución
 
 =over 4
 
@@ -454,7 +454,7 @@ COPYRIGHT y LICENCIA
 
 Mantenga la documentación cerca del código que documenta (documentación "en línea").  Incluya POD para un determinado método justo por encima de la subrutina del método.  Esto hace que sea más fácil mantener la documentación al día, y evita tener que documentar cada pieza de código dos veces (una en POD y otra vez en los comentarios).
 
-=head2 README, INSTALL, notas de lanzamiento, changelogs
+=head2 README, INSTALL, notas de la distribución, listas de cambios
 
 El módulo también debe incluir un archivo README que describa el módulo y dé consejos para obtener más información (página web, correo electrónico del autor).  
 
@@ -486,15 +486,15 @@ Al utilizar el Module::Build, suele ser así:
 
 =back
 
-Notas de versión o las listas de cambios deben producirse para cada versión de su software que describa los cambios visibles de su módulo, en términos relevantes para el usuario.
+Notas de la distribución o las listas de cambios deben producirse para cada versión de su software que describa los cambios visibles de su módulo, en términos relevantes para el usuario.
 
 A menos que tenga una buena razón para utilizar algún otro formato (por ejemplo, un formato utilizado en su empresa), la convención es nombrar el archivo de cambios como C<Changes>, y seguir el formato sencillo descrito en L<CPAN::Changes::Spec>.
 
-=head1 CONSIDERACIONES DEL LANZAMIENTO
+=head1 CONSIDERACIONES DE LA DISTRIBUCIÓN
 
 =head2 Numerado de versión
 
-Los números de versión deben indicar al menos las versiones principales y secundarias, y posiblemente, versiones menores.  Una versión principal es aquella en la que la mayor parte de la funcionalidad ha cambiado, o en los que se ha añadido una nueva funcionalidad importante.  Una versión menor es aquella en la que una pequeña cantidad de funcionalidad ha sido añadida o cambiada.  Números de versión de menor importancia se utilizan generalmente para los cambios que no afectan a la funcionalidad, tales como los parches en la documentación.
+Los números de versión deben indicar al menos las distribuciones principales y secundarias, y posiblemente, distribuciones menores.  Una distribución principal es aquella en la que la mayor parte de la funcionalidad ha cambiado, o en los que se ha añadido una nueva funcionalidad importante.  Una distribución menor es aquella en la que una pequeña cantidad de funcionalidad ha sido añadida o cambiada.  Números de versión de menor importancia se utilizan generalmente para los cambios que no afectan a la funcionalidad, tales como los parches en la documentación.
 
 El esquema de numeración de versiones más común en CPAN es el siguiente:
 
@@ -505,7 +505,7 @@ Un número correcto de versión en CPAN es un número de punto flotante con al m
     perl -MExtUtils::MakeMaker -le 'print MM->parse_version(shift)' \
                                                             'Foo.pm'
 
-Si desea liberar una versión 'beta' o 'alfa' de un módulo, pero no quiere que CPAN.pm lo liste, use un '_' después del número de versión normal seguido por al menos dos dígitos, por ejemplo. 1.20_01.  Si hace esto, se recomienda usar el siguiente modismo:
+Si desea distribuir una versión 'beta' o 'alfa' de un módulo, pero no quiere que CPAN.pm lo liste, use un '_' después del número de versión normal seguido por al menos dos dígitos, por ejemplo. 1.20_01.  Si hace esto, se recomienda usar el siguiente modismo:
 
   our $VERSION = "1.12_01"; # así la distribución CPAN tendrá
                             # el nombre de archivo correcto
@@ -515,7 +515,7 @@ Si desea liberar una versión 'beta' o 'alfa' de un módulo, pero no quiere que 
 
 Con este truco MakeMaker sólo leerá la primera línea y, por tanto, leerá el guión bajo, mientras que el intérprete de perl evaluará la $VERSION y convertirá la cadena en un número.  Operaciones ulteriores que traten con $VERSION como un número, podrán hacerlo sin provocar una advertencia sobre si $VERSION no es un número.
 
-Nunca lance nada (ni siquiera un parche de documentación de una sola palabra) sin incrementar el número.  Incluso un parche de la documentación de una sola palabra debe dar lugar a un cambio en la versión de nivel más bajo.
+Nunca distribuya nada (ni siquiera un parche de documentación de una sola palabra) sin incrementar el número.  Incluso un parche de la documentación de una sola palabra debe dar lugar a un cambio en la versión de nivel más bajo.
 
 Una vez elegido, es importante aferrarse a su esquema de versionado, sin reducir el número de dígitos.  Esto es porque empaquetadores "de terceros", como las distintas versiones del sistema FreeBSD, interpretan los números de versión de formas diferentes.  Si cambia el número de dígitos en su esquema de versionado, puede confundir a estos sistemas, así que ellos obtendrán las versiones de su módulo fuera de orden, que es algo, obviamente, malo.
 

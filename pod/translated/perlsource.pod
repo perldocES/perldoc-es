@@ -25,18 +25,17 @@ En L<perlinterp> encontrará más información sobre los archivos que integran e
 =head2 Módulos integrados en el núcleo
 
 Los módulos distribuidos como parte del núcleo de Perl se encuentran en cuatro subdirectorios.
-Dos de estos directorios contienen módulos integrados en el núcleo y los otros dos contienen módulos que además se publican en CPAN. Los módulos que se pueden publicar en CPAN se denominan módulos de «evolución dual».
+Dos de estos directorios contienen módulos integrados en el núcleo y los otros dos contienen módulos que además se distribuyen separadamente en CPAN. Los módulos que se pueden distribuir en CPAN se denominan módulos de «evolución dual».
 
 =over 4
 
 =item * F<lib/>
 
-Este directorio contiene módulos programados en Perl puro que solo se publican como parte del núcleo. A diferencia de otros módulos del núcleo, este directorio contiene I<todos> los módulos y sus pruebas.
+Este directorio contiene módulos programados en Perl puro que solo se distribuyen como parte del núcleo. A diferencia de otros módulos del núcleo, este directorio contiene I<todos> los módulos y sus pruebas.
 
 =item * F<ext/>
 
-Al igual que F<lib/>, este directorio contiene módulos que solo se publican
-como parte del núcleo.  Sin embargo, a diferencia de F<lib/>, un módulo de F<ext/>
+Al igual que F<lib/>, este directorio contiene módulos que solo se distribuyen como parte del núcleo.  Sin embargo, a diferencia de F<lib/>, un módulo de F<ext/>
 suele tener una estructura de directorios y archivos estilo CPAN, así como su propio archivo
 F<Makefile.PL>.  No se espera que un módulo de F<ext/>
 pueda trabajar con versiones anteriores de Perl 5.  Por esta razón, estos módulos pueden
@@ -45,12 +44,12 @@ C<blead> de Perl 5.
 
 =item * F<dist/>
 
-Este directorio contiene módulos de evolución dual en los que la versión canónica es la del código fuente de la rama B<blead>. Tenga en cuenta que es posible que algunos de los módulos de este directorio aún no se hayan publicado por separado en CPAN.  Los módulos de F<dist/> deberían poder
+Este directorio contiene módulos de evolución dual en los que la versión canónica es la del código fuente de la rama B<blead>. Tenga en cuenta que es posible que algunos de los módulos de este directorio aún no se hayan distribuido por separado en CPAN.  Los módulos de F<dist/> deberían poder
 trabajar con versiones anteriores de Perl 5.
 
 =item * F<cpan/>
 
-Este directorio contiene módulos de evolución dual en los que el módulo de CPAN es la versión canónica. No debe aplicar parches a estos módulos directamente. Los cambios realizados en estos módulos deben enviarse al mantenedor del módulo de CPAN. Cuando se hayan aplicado y publicado estos cambios, la nueva versión del módulo se incorporará al núcleo.
+Este directorio contiene módulos de evolución dual en los que el módulo de CPAN es la versión canónica. No debe aplicar parches a estos módulos directamente. Los cambios realizados en estos módulos deben enviarse al mantenedor del módulo de CPAN. Cuando se hayan aplicado y distribuido estos cambios, la nueva versión del módulo se incorporará al núcleo.
 
 =back
 

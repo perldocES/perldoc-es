@@ -613,7 +613,7 @@ La clase POSIX coincide con su homóloga del rango ASCII completo.
 
 Qué reglas se aplican se determina tal como se describe en L<perlre/¿Qué modificador de conjunto de caracteres está en vigor?>.
 
-Se ha propuesto cambiar este comportamiento en una futura publicación de Perl de modo que tanto si las reglas Unicode están activas o no, no cambiará el comportamiento: Más allá de la configuración regional, las clases POSIX se comportarán como las homólogas del rango ASCII.  Si desea comentar esta proposición, mande un correo electrónico C<perl5-porters@perl.org>
+Se ha propuesto cambiar este comportamiento en una futura distribución de Perl de modo que tanto si las reglas Unicode están activas o no, no cambiará el comportamiento: Más allá de la configuración regional, las clases POSIX se comportarán como las homólogas del rango ASCII.  Si desea comentar esta proposición, mande un correo electrónico C<perl5-porters@perl.org>
 
 =head4 Negación de clases de caracteres POSIX
 X<character class, negation>

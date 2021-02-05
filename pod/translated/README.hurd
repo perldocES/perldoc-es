@@ -7,7 +7,7 @@ perlhurd - Perl versión 5 en Hurd
 
 =head1 DESCRIPCIÓN
 
-Si desea usar Perl en Hurd, la distribución recomendada es Debian GNU/Hurd (visite http://www.debian.org/ ), aunque aún no existe una versión oficial estable.  Con toda seguridad habrá más problemas en la distribución binaria anterior, "gnu-0.2".
+Si desea usar Perl en Hurd, la distribución recomendada es Debian GNU/Hurd (visite http://www.debian.org/ ), aunque aún no existe una distribución oficial estable.  Con toda seguridad habrá más problemas en la distribución binaria anterior, "gnu-0.2".
 
 =head2 Problemas conocidos de Perl en Hurd 
 

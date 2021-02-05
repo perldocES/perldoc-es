@@ -12,11 +12,11 @@ En esta sección de preguntas más frecuentes se indica dónde se puede obtener 
 
 =head2 ¿Qué equipos son compatibles con Perl? ¿Dónde puedo obtener Perl?
 
-La versión estándar de Perl (la mantenida por el equipo de desarrollo de perl) sólo se distribuye en forma de código fuente. Encontrará las versiones más recientes en L<http://www.cpan.org/src/>.
+La versión estándar de Perl (la mantenida por el equipo de desarrollo de perl) sólo se distribuye en forma de código fuente. Encontrará las distribuciones más recientes en L<http://www.cpan.org/src/>.
 
 Perl se puede compilar y ejecutar en una gran variedad de plataformas. Es compatible con prácticamente todos los sistemas operativos derivados de Unix (la plataforma nativa de perl) conocidos y actuales, así como con otros sistemas como VMS, DOS, OS/2, Windows, QNX, BeOS, OS X, MPE/iX y Amiga.
 
-En el directorio L<http://www.cpan.org/ports/> encontrará distribuciones binarias para algunas plataformas comerciales. Como no forman parte de la distribución estándar, es posible que existan diferencias (de hecho, existen) con respecto a la versión básica de perl en diversos aspectos. Para averiguar cuáles son las diferencias, consulte las notas de la versión correspondiente. Estas diferencias pueden ser positivas (p. ej., extensiones para las características de una plataforma específica que no se ofrecen en la distribución de código fuente de perl) o negativas (p. ej., la distribución binaria puede estar basada en una distribución de código fuente de perl menos reciente).
+En el directorio L<http://www.cpan.org/ports/> encontrará distribuciones binarias para algunas plataformas comerciales. Como no forman parte de la distribución estándar, es posible que existan diferencias (de hecho, existen) con respecto a la versión básica de perl en diversos aspectos. Para averiguar cuáles son las diferencias, consulte las notas de la distribución correspondiente. Estas diferencias pueden ser positivas (p. ej., extensiones para las características de una plataforma específica que no se ofrecen en la distribución de código fuente de perl) o negativas (p. ej., la distribución binaria puede estar basada en una distribución de código fuente de perl menos reciente).
 
 =head2 ¿Cómo puedo obtener una versión binaria de perl?
 
@@ -135,7 +135,7 @@ Encontrará una lista completa de listas de correo relacionadas con Perl en L<ht
 
 =head2 ¿Dónde puedo adquirir una versión comercial de perl?
 
-Perl I<es> software comercial: tiene una licencia que su jefe puede analizar minuciosamente. Se distribuye en versiones y se proporciona en paquetes bien definidos. Tiene una gran comunidad de usuarios y existe mucha información sobre el lenguaje.
+Perl I<es> software comercial: tiene una licencia que su jefe puede analizar minuciosamente. Se difunde en distribuciones y se proporciona en paquetes bien definidos. Tiene una gran comunidad de usuarios y existe mucha información sobre el lenguaje.
 
 Si de todos modos necesita soporte comercial, L<ActiveState|http://www.activestate.com/activeperl> lo ofrece.
 
@@ -147,7 +147,7 @@ En primer lugar, debe asegurarse de que se trata realmente de un error. Cuando e
 
 Si ha encontrado un error en el intérprete de perl o en uno de los módulos de la biblioteca estándar (los que se incluyen con Perl), puede usar la utilidad L<perlbug> incluida en Perl (>= 5.004) para enviar un informe. Esta utilidad recopila información sobre la instalación para incluirla en el mensaje y después envía el informe a la dirección adecuada.
 
-Para determinar si un módulo está incluido en su versión de Perl, puede usar L<Module::CoreList>. Este módulo contiene información sobre los módulos (con sus versiones) incluidos en cada versión de Perl.
+Para determinar si un módulo está incluido en su versión de Perl, puede usar L<Module::CoreList>. Este módulo contiene información sobre los módulos (con sus versiones) incluidos en cada distribución de Perl.
 
 Todo módulo de CPAN tiene un sistema de seguimiento de errores configurado en RT, L<http://rt.cpan.org>.
 Puede enviar informes de error a RT a través de su interfaz web o por correo electrónico. Para notificar un informe de error, envíe un mensaje de correo electrónico a

@@ -15,7 +15,7 @@ Cuando decimos bajo "Mac OS", queremos decir Mac OS 7, 8 y 9, y I<no> Mac OS X.
 
 =head1 DESCRIPCIÓN
 
-La versión de Perl para el Mac OS se retiró oficialmente como Perl 5.12, aunque el lanzamiento oficial de la última versión de producción MacPerl correspondió a Perl 5.6. Aunque Perl 5.10 incluía la versión para Mac OS, ExtUtils::MakeMaker, una parte central de la instalación de infraestructura de módulos Perl oficialmente abandonó el soporte para Mac OS en abril de 2004.
+La versión de Perl para el Mac OS se retiró oficialmente como Perl 5.12, aunque el lanzamiento oficial de la última distribución de producción MacPerl correspondió a Perl 5.6. Aunque Perl 5.10 incluía la versión para Mac OS, ExtUtils::MakeMaker, una parte central de la instalación de infraestructura de módulos Perl oficialmente abandonó el soporte para Mac OS en abril de 2004.
 
 =head1 AUTOR
 

@@ -188,7 +188,7 @@ Vea también L<perlootut>, un tutorial que cubre la creación de clases, y L<per
 
 =head2 ¿Cómo puedo decir si una variable está manchada?
 
-Puede usar la función tainted() del módulo Scalar::Util, disponible desde CPAN (o incluido con Perl desde la publicación de 5.8.0).
+Puede usar la función tainted() del módulo Scalar::Util, disponible desde CPAN (o incluido con Perl desde la distribución de 5.8.0).
 Vea también L<perlsec/"Aclarado y detección de datos contaminados">.
 
 =head2 ¿Qué es una clausura?
@@ -716,7 +716,7 @@ Use este código, proporcionado por Mark-Jason Dominus:
         }
     }
 
-O, si está usando una versión reciente de Perl, puede usar en su lugar la función Symbol::delete_package().
+O, si está usando una distribución reciente de Perl, puede usar en su lugar la función Symbol::delete_package().
 
 =head2 ¿Cómo puedo usar una variable como el nombre de una variable?
 

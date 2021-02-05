@@ -123,7 +123,7 @@ L<Test::Simple|Test::Simple> y L<Test::More|Test::More> son buenos puntos de par
 
 =item Escriba el archivo README (LÉAME)
 
-Si va a subir el módulo a CPAN, los enanitos automatizados extraerán el archivo README y lo colocarán en su directorio de CPAN. También aparecerá en los directorios principales F<by-module> (por módulo) y F<by-category> (por categoría) si registra el módulo en la lista de módulos. Es recomendable incluir en el README una descripción detallada de lo que hace el módulo, así como los cambios visibles para el usuario con respecto a la versión anterior.
+Si va a subir el módulo a CPAN, los enanitos automatizados extraerán el archivo README y lo colocarán en su directorio de CPAN. También aparecerá en los directorios principales F<by-module> (por módulo) y F<by-category> (por categoría) si registra el módulo en la lista de módulos. Es recomendable incluir en el README una descripción detallada de lo que hace el módulo, así como los cambios visibles para el usuario con respecto a la distribución anterior.
 
 =back
 

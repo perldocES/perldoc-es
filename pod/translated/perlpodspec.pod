@@ -449,7 +449,7 @@ Ejemplos sencillos:
 
  .\" Pod::Man versión 3.14159, usando POD::Parser versión 1.92
 
-Los formateadores pueden también insertar comentarios adicionales, incluyendo: la fecha de publicación del programa formateador de Pod, la dirección de contacto del autor o autores del formateador, la hora actual, el nombre del archivo de entrada, las opciones de formateo que están activas, versión de Perl utilizada, etc.
+Los formateadores pueden también insertar comentarios adicionales, incluyendo: la fecha de la distribución del programa formateador de Pod, la dirección de contacto del autor o autores del formateador, la hora actual, el nombre del archivo de entrada, las opciones de formateo que están activas, versión de Perl utilizada, etc.
 
 Los formateadores también pueden elegir anotar los errores/advertencias como comentarios, además de o en lugar de emitirlos (como mensajes hacia STDERR o muriendo -con C<die>-).
 

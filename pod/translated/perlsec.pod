@@ -8,7 +8,7 @@ Perl se diseñó para que fuera fácil programar con seguridad incluso cuando se
 
 =head1 INFORMACIÓN DE CONTACTO SOBRE VULNERABILIDAD DE SEGURIDAD
 
-Si cree que ha encontrado una vulnerabilidad de seguridad en Perl, por favor, envíe un correo electrónico con todos los detalles a perl5-security-report@perl.org. Esto crea un tique Request Tracker en una cola especial que no está accesible públicamente. El correo se copiará, además, a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl se soporte. Por favor, utilice sólo esta dirección para problemas de seguridad en el núcleo de Perl, no para los módulos distribuidos de forma independiente en CPAN.
+Si cree que ha encontrado una vulnerabilidad de seguridad en Perl, por favor, envíe un correo electrónico con todos los detalles a perl5-security-report@perl.org. Esto crea un tique Request Tracker en una cola especial que no está accesible públicamente. El correo se copiará, además, a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la distribución de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl se soporte. Por favor, utilice sólo esta dirección para problemas de seguridad en el núcleo de Perl, no para los módulos distribuidos de forma independiente en CPAN.
 
 Cuando envíe una petición inicial a la dirección de correo sobre seguridad, por favor, no mande copia a otras terceras partes, porque si responden a todos, la respuesta generará un nuevo tique. Una vez que reciba la respuesta inicial con un número de tique C<[perl #NNNNNN]> en la cabecera, es correcto enviar copias de las sucesivas respuestas: todos los correos enviados a la dirección de perl5-security-report con el número de tique en la línea del asunto se añadirán al tique; sin el, se creará un nuevo tique.
 
@@ -121,7 +121,7 @@ no tiene sentido que C<$resultado> quede contaminado.
 
 =head2 Limpiar y detectar datos contaminados
 
-Para comprobar cuándo una variable contiene datos contaminados, y cuyo uso podría disparar un mensaje "Dependencia insegura", puede usar la función C<tainted()> del módulo Scalar::Util, disponible en su espejo CPAN más cercano, e incluido en Perl a partir de la publicación de v5.8.0.
+Para comprobar cuándo una variable contiene datos contaminados, y cuyo uso podría disparar un mensaje "Dependencia insegura", puede usar la función C<tainted()> del módulo Scalar::Util, disponible en su espejo CPAN más cercano, e incluido en Perl a partir de la distribución de v5.8.0.
 O quizás quiera usar la siguiente función C<is_tainted()>.
 
     sub is_tainted {
@@ -239,7 +239,7 @@ Sin embargo, si no está desactivada la característica del kernel del I<script>
 
 Compile este envoltorio en un binario ejecutable, y entonces póngale setuid o setgid a I<él> en lugar de a su I<script>.
 
-En los últimos años, los vendedores han comenzado a suministrar sistemas libres de este error de seguridad.  En tales sistemas, cuando el kernel pasa el nombre de un I<script> set-id para abrir el intérprete, en lugar de usar el nombre de una ruta, sujeto a problemas, en lugar de eso pasa I</dev/fd/3>.  Es un archivo especial que ya está abierto en el I<script>, así que no existe una condición de carrera para que los I<scripts> malignos la exploten.  En estos sistemas, Perl debería compilarse con C<-DSETUID_SCRIPTS_ARE_SECURE_NOW>.  El programa F<Configure> que compila Perl intenta adivinarlo por sí mismo, así que nunca tendría que especificarlo.  La mayor parte de las versiones de SysVr4 y BSD 4.4 esa esta aproximación para evitar la condición de carrera del kernel.
+En los últimos años, los vendedores han comenzado a suministrar sistemas libres de este error de seguridad.  En tales sistemas, cuando el kernel pasa el nombre de un I<script> set-id para abrir el intérprete, en lugar de usar el nombre de una ruta, sujeto a problemas, en lugar de eso pasa I</dev/fd/3>.  Es un archivo especial que ya está abierto en el I<script>, así que no existe una condición de carrera para que los I<scripts> malignos la exploten.  En estos sistemas, Perl debería compilarse con C<-DSETUID_SCRIPTS_ARE_SECURE_NOW>.  El programa F<Configure> que compila Perl intenta adivinarlo por sí mismo, así que nunca tendría que especificarlo.  La mayor parte de las distribuciones de SysVr4 y BSD 4.4 esa esta aproximación para evitar la condición de carrera del kernel.
 
 =head2 Proteger su programa
 
@@ -295,7 +295,7 @@ La función hash por defecto se ha modificado con la intención de hacer difíci
 
 =item Funciones Has alternativas
 
-El código fuente incluye la posibilidad de elegit de entre múltiple algoritmos hash.  Mientras que nosotros creemos que el hash perl por defecto es robusto frente a un ataque, hemos incluido la función hash Siphash como último recurso.  En el momento de la publicación de Perl 5.18.0, se cree que Siphash es criptográficamente robusto.  No es la función por defecto, ya que es mucho más lenta que la función hash por defecto.
+El código fuente incluye la posibilidad de elegit de entre múltiple algoritmos hash.  Mientras que nosotros creemos que el hash perl por defecto es robusto frente a un ataque, hemos incluido la función hash Siphash como último recurso.  En el momento de la distribución de Perl 5.18.0, se cree que Siphash es criptográficamente robusto.  No es la función por defecto, ya que es mucho más lenta que la función hash por defecto.
 
 =back
 

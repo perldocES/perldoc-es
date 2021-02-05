@@ -6,9 +6,9 @@ perl5182delta - qué hay de nuevo para Perl 5.18.2
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.18.1 y la 5.18.2.
+Este documento describe las diferencias entre las distribuciones 5.18.1 y 5.18.2.
 
-Si va a actualizar desde una versión anterior, como la 5.18.0, debe leer primero L<perl5181delta>, donde se describen las diferencias entre las versiones 5.18.0 y 5.18.1.
+Si va a actualizar desde una distribución anterior, como la 5.18.0, debe leer primero L<perl5181delta>, donde se describen las diferencias entre 5.18.0 y 5.18.1.
 
 =head1 Módulos y pragmas
 
@@ -117,7 +117,7 @@ Si encuentra algo que piensa que es un error, podría verificar los artículos p
 
 Si cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
 
-Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org  Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado.  Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org  Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la distribución de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado.  Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
 
 =head1 VEA TAMBIÉN
 

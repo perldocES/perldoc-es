@@ -367,7 +367,7 @@ Algunos de los valores que esta propiedad puede tener son:
     ON          Other Neutrals (otros neutrales)
 
 Esta propiedad siempre se escribe en la forma compuesta.
-Por ejemplo, C<\p{Bidi_Class:R}> coincide con caracteres que se escriben normalmente de derecha a izquierda.  A diferencia de la propiedad C<L</General_Category>>, a esta propiedad se le puede añadir más valores en una futura edición de Unicode.  Las listadas anteriormente comprendieron el conjunto completo para muchas ediciones de Unicode, pero se añadieron otras en Unicode 6.3; siempre puede encontrar las actuales en L<perluniprops>.  Y L<http://www.unicode.org/reports/tr9/> describe cómo usarlas.
+Por ejemplo, C<\p{Bidi_Class:R}> coincide con caracteres que se escriben normalmente de derecha a izquierda.  A diferencia de la propiedad C<L</General_Category>>, a esta propiedad se le puede añadir más valores en una futura distribución de Unicode.  Las listadas anteriormente comprendieron el conjunto completo para muchas distribuciones de Unicode, pero se añadieron otras en Unicode 6.3; siempre puede encontrar las actuales en L<perluniprops>.  Y L<http://www.unicode.org/reports/tr9/> describe cómo usarlas.
 
 =head3 B<Scripts>
 
@@ -394,7 +394,7 @@ Y solo los dos últimos coinciden:
  "\N{KATAKANA-HIRAGANA DOUBLE HYPHEN}" =~ /\p{scx=Hiragana} # Coincide
  "\N{KATAKANA-HIRAGANA DOUBLE HYPHEN}" =~ /\p{scx=Katakana} # Coincide
 
-C<Script_Extensions>, entonces, es un C<Script> mejorado, en que contiene menos caracteres en el I<script> C<Common> y, correspondientemente, más en otros I<scripts>.  Es nuevo en Unicode versión 6.0, y sus datos es probable que cambien significativamente en las siguientes ediciones, cuando las cosas se pongan en orden.
+C<Script_Extensions>, entonces, es un C<Script> mejorado, en que contiene menos caracteres en el I<script> C<Common> y, correspondientemente, más en otros I<scripts>.  Es nuevo en Unicode versión 6.0, y sus datos es probable que cambien significativamente en las siguientes distribuciones, cuando las cosas se pongan en orden.
 El nuevo código debería, probablemente, usar C<Script_Extensions>, y no un simple C<Script>.
 
 (De hecho, además de C<Common>, el I<script> C<Inherited>, contiene caracteres que se usan en múltiples I<scripts>.  Existen caracteres modificadores que heredan el valor de I<script> del carácter controlador.  Algunos de estos se usan en muchos I<scripts>, y así, van en C<Inherited> tanto los que están en C<Script> como en C<Script_Extensions>.
@@ -502,11 +502,11 @@ Existen muchos de estos, que son equivalentes, usando la notación C<\p{}>, para
 
 Esta propiedad se usa cuando necesita saber en qué versión de Unicode se encuentra un carácter.
 
-El "*" anterior es un espacio reservado para dos dígitos que representan el número de versión Unicode, como C<1.1> o C<4.0>; o incluso también puede ser C<Unassigned>.  Esta propiedad coincidirá con los puntos de código cuya disposición final se resolvió en el número de versión indicado; C<\p{Present_In: Unassigned}> coincidirá con aquellos puntos de código cuyo significado tiene, todavía, que asignarse.
+El "*" anterior es un espacio reservado para dos dígitos que representan el número de versión Unicode, como C<1.1> o C<4.0>; o incluso también puede ser C<Unassigned>.  Esta propiedad coincidirá con los puntos de código cuya disposición final se resolvió en el número de distribución indicada; C<\p{Present_In: Unassigned}> coincidirá con aquellos puntos de código cuyo significado tiene, todavía, que asignarse.
 
-Por ejemplo, C<U+0041> C<"LATIN CAPITAL LETTER A"> se presentó en la primerísima edición de Unicode disponible, que es la C<1.1>, así que esta propiedad es verdadera para todas las versiones "*".  Por otro lado, C<U+1EFF> no se asignó hasta la versión 5.1 cuando se convirtió en C<"LATIN SMALL LETTER Y WITH LOOP">, así que el único "*" con el que podría coincidir sería 5.1, 5.2 y superior.
+Por ejemplo, C<U+0041> C<"LATIN CAPITAL LETTER A"> se presentó en la primerísima distribución de Unicode disponible, que es la C<1.1>, así que esta propiedad es verdadera para todas las versiones "*".  Por otro lado, C<U+1EFF> no se asignó hasta la versión 5.1 cuando se convirtió en C<"LATIN SMALL LETTER Y WITH LOOP">, así que el único "*" con el que podría coincidir sería 5.1, 5.2 y superior.
 
-Unicode amuebla la propiedad C<Age> del que deriva esto último.  El problema con Age es que una interpretación estricta de él (que Perl toma) hace que coincida con la edición precisa del momento en que se introdujo el significado de un punto de código.  Así C<U+0041> coincidiría solo con 1.1; y C<U+1EFF> solo con 5.1.  Esto no es lo que normalmente quiere.
+Unicode amuebla la propiedad C<Age> del que deriva esto último.  El problema con Age es que una interpretación estricta de él (que Perl toma) hace que coincida con la distribución precisa del momento en que se introdujo el significado de un punto de código.  Así C<U+0041> coincidiría solo con 1.1; y C<U+1EFF> solo con 5.1.  Esto no es lo que normalmente quiere.
 
 Algunas implementaciones, que no son Perl, de la propiedad Age puede cambiar su significado a lo mismo que la propiedad C<Present_In> de Perl; sea consciente de esto.
 
@@ -967,7 +967,7 @@ Perl, en la mayor parte de los casos, levantará una advertencia cuando busque u
 
 En estos dos ejemplos, el carácter ha buscar no es Unicode, así que Unicode no define cómo debería hacerlo.  Claramente, no es un dígito hex. ASCII, así que el primer ejemplo debe fallar, y si lo hace, sin advertencia.  Pero es discutible que el segundo ejemplo debería ser indefinido, y por ello, resultar en un C<FALSE>.  Así que se levanta una advertencia.
 
-Por ello la advertencia se levanta para menos casos que en Perl anteriores, y solo cuando el resultado sea discutible.  Resulta que ninguna de las optimizaciones hechas por Perl (o probablemente nunca hechas) hacen que se salte la advertencia, así que resuelve los dos primeros problemas de Perl.  La propiedad que más se utiliza que queda afectada por este cambio es C<\p{Unassigned}> que es la forma corta de C<\p{General_Category=Unassigned}>.  A partir de v5.20, todos los puntos de código no Unicode se consideran que son C<Unassigned>.  En versiones anteriores la coincidencia fallaba porque el resultado se consideraba que era indefinido.
+Por ello la advertencia se levanta para menos casos que en Perl anteriores, y solo cuando el resultado sea discutible.  Resulta que ninguna de las optimizaciones hechas por Perl (o probablemente nunca hechas) hacen que se salte la advertencia, así que resuelve los dos primeros problemas de Perl.  La propiedad que más se utiliza que queda afectada por este cambio es C<\p{Unassigned}> que es la forma corta de C<\p{General_Category=Unassigned}>.  A partir de v5.20, todos los puntos de código no Unicode se consideran que son C<Unassigned>.  En distribuciones anteriores la coincidencia fallaba porque el resultado se consideraba que era indefinido.
 
 El único lugar donde la advertencia no se levantaba es cuando, después de aplicar las optimizaciones, provocaban que ni siquiera se intentara probar todo el patrón.  Por ejemplo, Perl puede figurarse que para que coincida una cadena con un cierto patrón de expresiones regulares, la cadena tiene que contener la subcadena C<"foobar">.  Antes de intentar la coincidencia, Perl puede buscar esa subcadena, y si no la encuentra, falla inmediatamente la coincidencia sin realmente intentarla; así que no se generan advertencias incluso si la cadena contiene un punto de código por encima de Unicode.
 
@@ -1115,7 +1115,7 @@ Antes de eso, o fuera de su ámbito, no se escapa ningún punto de código por e
 
 =back
 
-Por lo que ha visto hasta ahora, el efecto de C<unicode_strings> se incrementa a medida que salen nuevas versiones de Perl.  (Y el soporte de Unicode en Perl sigue mejorando; es mejor usar la última distribución disponible para obtener los resultados más completos y precisos como sea posible).  Note que C<unicode_strings> se elige automáticamente si usa S<C<use 5.012>> o superior.
+Por lo que ha visto hasta ahora, el efecto de C<unicode_strings> se incrementa a medida que salen nuevas distribuciones de Perl.  (Y el soporte de Unicode en Perl sigue mejorando; es mejor usar la última distribución disponible para obtener los resultados más completos y precisos como sea posible).  Note que C<unicode_strings> se elige automáticamente si usa S<C<use 5.012>> o superior.
 
 Para Perl anteriores que los descrito antes, o cuando se pase una cadena a una función fuera del ámbito de C<unicode_strings>, vea la siguiente sección.
 

@@ -667,7 +667,7 @@ X<$MATCH> X<$&> X<$POSTMATCH> X<$'> X<$PREMATCH> X<$`>
 
 (contribución de Anno Siegel)
 
-Una vez que Perl vea que necesita una de estas variables en cualquier parte del programa, las proporciona en todos y cada uno de los patrones de búsqueda. Esto significa que en cada patrón de búsqueda, se copiará la cadena entera, parte de ella en $`, parte en $&, y parte en $'. Esta penalización es más severa con cadenas largas y patrones que coinciden con frecuencia. Si puede, evite $&, $' y $`, pero si no puede, una vez que los use, úselos en todo, porque ya habrá pagado el precio. Recuerde que algunos algoritmos realmente los apreciarán. A partir de la versión 5.005, la variable $& ya no es "expansiva" de la misma manera que las otras dos.
+Una vez que Perl vea que necesita una de estas variables en cualquier parte del programa, las proporciona en todos y cada uno de los patrones de búsqueda. Esto significa que en cada patrón de búsqueda, se copiará la cadena entera, parte de ella en $`, parte en $&, y parte en $'. Esta penalización es más severa con cadenas largas y patrones que coinciden con frecuencia. Si puede, evite $&, $' y $`, pero si no puede, una vez que los use, úselos en todo, porque ya habrá pagado el precio. Recuerde que algunos algoritmos realmente los apreciarán. A partir de la distribución 5.005, la variable $& ya no es "expansiva" de la misma manera que las otras dos.
 
 Desde Perl 5.6.1 las variables especiales @- y @+ pueden reemplazar funcionalmente a $`, $& y $'. Estos arrays contienen punteros al comienzo y al final de cada coincidencia (vea perlvar para conocer toda la historia), así que le proporcionan esencialmente la misma información, pero sin el riesgo de un copiado excesivo de cadenas.
 

@@ -6,10 +6,9 @@ perl5124delta - qué hay de nuevo para Perl 5.14.4
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.14.3 y la versión 5.14.4.
+Este documento describe las diferencias entre las distribuciones 5.14.3 y 5.14.4.
 
-Si va a actualizar desde una versión anterior, como la 5.12.0, debe leer primero 
-L<perl5140delta>, donde se describen las diferencias entre las versiones 5.12.0 y 5.14.0.
+Si va a actualizar desde una distribución anterior, como la 5.12.0, debe leer primero L<perl5140delta>, donde se describen las diferencias entre las versiones 5.12.0 y 5.14.0.
 
 =head1 Mejoras en el núcleo principal
 
@@ -17,7 +16,7 @@ Ningún cambio con respecto a la versión 5.14.0.
 
 =head1 Seguridad
 
-Esta versión contiene un arreglo de seguridad principal, uno medio y otros menores.  Estos últimos están incluidos principalmente para permitir que el conjunto de pruebas pase limpiamente con la herramienta de direcciones higiénicas del compilador clang.
+Esta distribución contiene un arreglo de seguridad principal, uno medio y otros menores.  Estos últimos están incluidos principalmente para permitir que el conjunto de pruebas pase limpiamente con la herramienta de direcciones higiénicas del compilador clang.
 
 =head2 CVE-2013-1667: memory exhaustion with arbitrary hash keys
 

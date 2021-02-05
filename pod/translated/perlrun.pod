@@ -769,7 +769,7 @@ Una pseudocapa que activa un indicador en la capa inferior para avisar a Perl qu
 =item :win32
 X<:win32>
 
-En plataformas Win32 esta capa I<experimental> usa "identificadores" de E/S nativos en lugar de una capa de descriptor de archivo numérico tipo Unix. Se sabe que tiene errores en esta versión (5.14).
+En plataformas Win32 esta capa I<experimental> usa "identificadores" de E/S nativos en lugar de una capa de descriptor de archivo numérico tipo Unix. Se sabe que tiene errores en esta distribución (5.14).
 
 =back
 
@@ -778,9 +778,9 @@ El conjunto predeterminado de capas debería dar resultados aceptables en todas 
 Para plataformas Unix esto será equivalente a "unix perlio" o "stdio".
 Configure está configurado para preferir el "stdio" si la biblioteca del sistema proporciona un acceso más rápido al búfer; de lo contrario, se utiliza el "unix perlio" de la implementación.
 
-En Win32 el valor por defecto en esta versión (5.14) es "unix crlf". El "stdio" de Win32 tiene una serie de errores/fallas en PerlIO que son un poco dependientes de la versión y del proveedor del compilador de C. Usando nuestra propia capa C<crlf> como búfer, evita estos problemas y hace las cosas más uniformes.  La capa C<crlf> proporciona la conversión CRLF, así como almacenamiento en búfer.
+En Win32 el valor por defecto en esta distribución (5.14) es "unix crlf". El "stdio" de Win32 tiene una serie de errores/fallas en PerlIO que son un poco dependientes de la versión y del proveedor del compilador de C. Usando nuestra propia capa C<crlf> como búfer, evita estos problemas y hace las cosas más uniformes.  La capa C<crlf> proporciona la conversión CRLF, así como almacenamiento en búfer.
 
-Esta versión (5.14) utiliza C<unix> como la capa inferior de Win32, por lo que todavía utiliza las rutinas de descriptor numérico de archivo del compilador de C. Existe una capa experimental nativa C<win32>, que se espera que sea mejor y, finalmente, deba ser el valor por defecto en Win32.
+Esta distribución (5.14) utiliza C<unix> como la capa inferior de Win32, por lo que todavía utiliza las rutinas de descriptor numérico de archivo del compilador de C. Existe una capa experimental nativa C<win32>, que se espera que sea mejor y, finalmente, deba ser el valor por defecto en Win32.
 
 La variable de entorno PERLIO es completamente ignorada cuando Perl se ejecuta en el modo de contaminación.
 

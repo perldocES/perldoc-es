@@ -8,7 +8,7 @@ perlthrtut - Tutorial sobre hilos en Perl
 
 Este tutorial describe el uso de hilos con el intérprete Perl (algunas veces referidas como I<ithreads>).  En este modelo, cada hilo corre en su propio intérprete Perl, y se debe explicitar cualquier dato compartido entre hilos.  El interfaz a nivel de usuario para I<ithreads> usa la clase L<threads>.
 
-B<NOTA>: Existe otro viejo sabor de hilos Perl llamado el modelo 5.005 que usaba la clase L<threads>.  Es sabido que este viejo modelo tiene problemas, es obsoleto, y se eliminó en la publicación de 5.10.  Se le recomienda que migre cualquier código actual de hilos 5.005 al nuevo modelo tan pronto como sea posible.
+B<NOTA>: Existe otro viejo sabor de hilos Perl llamado el modelo 5.005 que usaba la clase L<threads>.  Es sabido que este viejo modelo tiene problemas, es obsoleto, y se eliminó en la distribución de 5.10.  Se le recomienda que migre cualquier código actual de hilos 5.005 al nuevo modelo tan pronto como sea posible.
 
 Puede saber cuál es (o no) el sabor de hilos que tiene, ejecutando C<perl -V> y mirando en la sección C<Platform>.
 Si tiene C<useithreads=define> tiene ithreads, si tiene C<use5005threads=define> tiene hilos 5.005.

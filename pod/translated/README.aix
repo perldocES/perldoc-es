@@ -73,7 +73,7 @@ Todas las pruebas se llevaron a cabo con el nivel de soporte tecnológico de AIX
 
 =head2 Generar Extensiones Dinámicas en AIX
 
-A partir de Perl 5.7.2 (y en consecuencia 5.8.x / 5.10.x / 5.12.x) y AIX 4.3 o en versiones más modernas, se utiliza la interfaz nativa de AIX de carga dinámica en el llamado modo de enlazado en tiempo de ejecución, en lugar del interfaz emulado que se utilizaba en Perl 5.6.1 y anteriores, para las versiones de AIX 4.2 y anteriores. Este cambio no rompe la compatibilidad hacia atrás con los módulos compilados de versiones anteriores de Perl. El cambio se hizo para hacer más compatible Perl con otras aplicaciones como Apache/mod_perl que están utilizando la interfaz nativa de AIX. Este cambio también permite el uso de código C++ con constructores estáticos y destructores en las extensiones de Perl, que no era posible con la interfaz de emulación.
+A partir de Perl 5.7.2 (y en consecuencia 5.8.x / 5.10.x / 5.12.x) y AIX 4.3 o en versiones más modernas, se utiliza la interfaz nativa de AIX de carga dinámica en el llamado modo de enlazado en tiempo de ejecución, en lugar del interfaz emulado que se utilizaba en las distribuciones Perl 5.6.1 y anteriores, para las distribuciones AIX 4.2 y anteriores. Este cambio no rompe la compatibilidad hacia atrás con los módulos compilados de distribuciones anteriores de Perl. El cambio se hizo para hacer más compatible Perl con otras aplicaciones como Apache/mod_perl que están utilizando la interfaz nativa de AIX. Este cambio también permite el uso de código C++ con constructores estáticos y destructores en las extensiones de Perl, que no era posible con la interfaz de emulación.
 
 Se recomienda utilizar la nueva interfaz.
 
@@ -230,7 +230,7 @@ AIX soporta la carga dinámica de objetos así como las bibliotecas compartidas.
 Las bibliotecas compartidas están, por convención, acabadas con el sufijo .a, que es un poco engañoso, ya que un archivo puede contener tanto miembros estáticos como dinámicos. 
 Para objetos Perl cargados dinámicamente se utiliza el sufijo .so, también utilizado en muchas otras plataformas.
 
-Tenga en cuenta que a partir de Perl 5.7.2 (y en consecuencia 5.8.0) y AIX 4.3 o en versiones más modernas, se utiliza la interfaz nativa de AIX de carga dinámica en el llamado modo de enlazado en tiempo de ejecución, en lugar del interfaz emulado que se utilizaba en Perl 5.6.1 y anteriores, para las versiones de AIX 4.2 y anteriores.  Este cambio no rompe la compatibilidad hacia atrás con los módulos compilados de versiones anteriores de Perl.  El cambio se hizo para hacer más compatible Perl con otras aplicaciones como Apache/mod_perl que están utilizando la interfaz nativa de AIX. Este cambio también permite el uso de código C++ con constructores estáticos y destructores en las extensiones de Perl, que no era posible con la interfaz de emulación.
+Tenga en cuenta que a partir de Perl 5.7.2 (y en consecuencia 5.8.0) y AIX 4.3 o en versiones más modernas, se utiliza la interfaz nativa de AIX de carga dinámica en el llamado modo de enlazado en tiempo de ejecución, en lugar del interfaz emulado que se utilizaba en las distribuciones Perl 5.6.1 y anteriores, para las distribuciones AIX 4.2 y anteriores.  Este cambio no rompe la compatibilidad hacia atrás con los módulos compilados de distribuciones anteriores de Perl.  El cambio se hizo para hacer más compatible Perl con otras aplicaciones como Apache/mod_perl que están utilizando la interfaz nativa de AIX. Este cambio también permite el uso de código C++ con constructores estáticos y destructores en las extensiones de Perl, que no era posible con la interfaz de emulación.
 
 =head2 El compilador ANSI C de IBM
 
@@ -372,7 +372,7 @@ Si su sistema AIX está instalado con soporte de 64 bits, puede esperarse que la
 =head2 AIX 4.2 y extensiones usando C++ con estáticos
 
 En AIX 4.2 las extensiones Perl que usan funciones C++ que usan estáticos pueden tener problemas, ya que los estáticos no se inicializan.
-En versiones más reciente de AIX esto ha sido resuelto mediante la vinculación de Perl con la biblioteca libc_r, pero por desgracia en AIX 4.2 la mencionada biblioteca tiene un oscuro problema, donde las diversas funciones relacionadas con el tiempo (como time() y gettimeofday()) devuelven valores defectuosos, y por lo tanto en AIX 4.2, Perl no está vinculado contra libc_r.
+En distribuciones más reciente de AIX esto ha sido resuelto mediante la vinculación de Perl con la biblioteca libc_r, pero por desgracia en AIX 4.2 la mencionada biblioteca tiene un oscuro problema, donde las diversas funciones relacionadas con el tiempo (como time() y gettimeofday()) devuelven valores defectuosos, y por lo tanto en AIX 4.2, Perl no está vinculado contra libc_r.
 
 =head1 AUTORES
 

@@ -127,7 +127,7 @@ Cualquier otra cosa es una abreviatura por conveniencia específica de Perl.  Es
  "\N{ae}"                               #  latin
  "\N{epsilon}"                          #  greek
 
-La v5.16 de Perl también soporta la importación de una etiqueta C<:loose> para poder especificar nombres de caracteres de forma difusa, que funciona como la coincidencia difusa de los nombres de propiedades, es decir, no tiene en cuanta las mayúsculas/minúsculas, espacios en blanco y guiones bajos:
+La distribución v5.16 de Perl también soporta la importación de una etiqueta C<:loose> para poder especificar nombres de caracteres de forma difusa, que funciona como la coincidencia difusa de los nombres de propiedades, es decir, no tiene en cuanta las mayúsculas/minúsculas, espacios en blanco y guiones bajos:
 
  "\N{euro sign}"                        # :loose (a partir de v5.16)
 
@@ -771,4 +771,4 @@ Un reconocimiento a través de un comentario en el código es algo cortés, pero
 
 =head1 HISTORIA DE REVISIONES
 
-v1.0.0 – primera publicación pública, 2012-02-27
+v1.0.0 – primera distribución pública, 2012-02-27

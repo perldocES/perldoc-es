@@ -31,7 +31,7 @@ Note que por ejemplo la instalación del SDK de Series 60 2.0 VC habla sobre Act
 
 Otros SDK o compiladores como Visual.NET, la versión de solo línea de comandos de Visual.NET, Borland, GnuPoc o sdk2unix, no se han intentado.
 
-Estas instrucciones, casi con certeza, no funcionarán con versiones anteriores de Symbian u otros SDK.  Naturalmente, son bienvenidos los parches para que esta adaptación funcione en otras versiones, SDK, compiladores, plataformas o dispositivos.
+Estas instrucciones, casi con certeza, no funcionarán con distribuciones anteriores de Symbian u otros SDK.  Naturalmente, son bienvenidos los parches para que esta adaptación funcione en otras distribuciones, SDK, compiladores, plataformas o dispositivos.
 
 (1) Obtenga el código fuente de una distribución Perl (por ejemplo el archivo perl-5.9.2.tar.gz está bien) desde L<http://www.cpan.org/src/> y desempaquetarlo en su directorio C:/Symbian en su sistema Windows.
 
@@ -254,7 +254,7 @@ La adaptación Symbian se licencia bajo los mismos términos que el propio Perl.
    no está soportado.
  - Compilar XS distinta de las que hay en el núcleo, no está soportado.
 
-Ya que es una publicación 0.algo, está casi garantizado que cualquier otra publicación será incompatible a nivel binario.  Como seña de esto, la exportación de símbolos Symbian se mantiene congelada y los archivos .def siempre se recompilan completamente.
+Ya que es una distribución 0.algo, está casi garantizado que cualquier otra distribución será incompatible a nivel binario.  Como seña de esto, la exportación de símbolos Symbian se mantiene congelada y los archivos .def siempre se recompilan completamente.
 
 =item *
 

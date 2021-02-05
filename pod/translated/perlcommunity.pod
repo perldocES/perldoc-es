@@ -49,7 +49,7 @@ Perlsphere es uno de los diversos agregadores disponibles de blogs sobre Perl.
 
 =item L<http://perlweekly.com/>
 
-Perl Weekly es una lista de correo semanal que informa sobre conferencias, lanzamientos y artículos de blog destacados.
+Perl Weekly es una lista de correo semanal que informa sobre conferencias, lanzamiento de distribuciones y artículos de blog destacados.
 
 =item L<http://use.perl.org/>
 

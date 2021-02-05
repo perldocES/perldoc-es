@@ -19,18 +19,18 @@ Este documento describe brevemente Perl bajo Mac OS X.
 
 =head1 DESCRIPCIÓN
 
-La última publicación Perl (5.24.0 en el momento de escribir esto) se compila sin cambios bajo todas las versiones de Mac OS X desde 10.3 "Panther" en adelante. 
+La última distribución Perl (5.24.0 en el momento de escribir esto) se compila sin cambios bajo todas las versiones de Mac OS X desde 10.3 "Panther" en adelante. 
 
 Para construir su propia versión de Perl necesitará 'make', que es parte de las herramientas de desarrollo de Apple, también conocidas como Xcode. Desde Mac OS X 10.7 "Lion" en adelante, se puede descargar por separado en el paquete 'Herramientas de línea de comandos' directamente desde L<https://developer.apple.com/downloads/> (necesitará una cuenta libre para entrar), o como parte de la distribución Xcode, disponible libremente en el I<App Store>. Xcode es una app bastante grande, así que si al menos ya lo tiene o realmente lo quiere tener, es aconsejable obtener el paquete 'Herramientas de línea de comandos' de forma separada desde el enlace anterior. Si lo quiere hacer desde Xcode, vaya a Xcode -> Preferencias -> Descargas y seleccione la opción 'Herramientas de línea de comandos'.
 
 Entre Mac OS X 10.3 "Panther" y 10.6 "Snow Leopard", el paquete 'Herramientas de línea de comandos' se llamó 'herramientas unix', y se suministraba con los DVD de instalación de Mac OS.
 
-Las primeras publicaciones de Mac OS X (10.2 "Jaguar" y anteriores) no incluyen una libc completamente segura con los hilos, así que el proceso con hilos no está totalmente soportado. También, las primeras publicaciones incluían una libdb con errores, así que se sabe que algunas pruebas fallan en estas publicaciones.
+Las primeras distribuciones de Mac OS X (10.2 "Jaguar" y anteriores) no incluyen una libc completamente segura con los hilos, así que el proceso con hilos no está totalmente soportado. También, las primeras distribuciones incluían una libdb con errores, así que se sabe que algunas pruebas fallan en estas publicaciones.
 
 
 =head2 Prefijo de instalación
 
-La ubicación de la instalación por defecto para esta publicación usa la disposición tradicional de directorios UNIX bajo /usr/local. Esta es la ubicación recomendada para la mayor parte de los usuarios, y dejará tranquilos al Perl suministrado por Apple y a sus módulos.
+La ubicación de la instalación por defecto para esta distribución usa la disposición tradicional de directorios UNIX bajo /usr/local. Esta es la ubicación recomendada para la mayor parte de los usuarios, y dejará tranquilos al Perl suministrado por Apple y a sus módulos.
 
 Usar un prefijo de instalación de '/usr' resultará en una disposición de directorios que se asemeja al Perl por defecto de Apple, con los módulos principales almacenados en '/System/Library/Perl/${version}', módulos CPAN almacenados en '/Library/Perl/${version}', y la adición de '/Network/Library/Perl/${version}' a @INC para los módulos que se almacenan en un servidor de archivos y utilizadas por muchos Mac.
 
@@ -120,7 +120,7 @@ La compilación por defecto de Perl estáticamente puede causar problemas con ap
 
 pero recuerde que en ese caso hay que pagar un costo por arrancar (vea más arriba sobre "libperl y Prebinding").
 
-A partir de Tiger (Mac OS X 10.4), Apple empaquetaba archivos de localización estropeados para la zona eu_ES (País Vasco, España).  En versiones anteriores de Perl, esto resultaba en fallos para la prueba F<lib/locale>. Estos fallos se han suprimido en la versión actual de Perl haciendo que la prueba ignore la zona rota.
+A partir de Tiger (Mac OS X 10.4), Apple empaquetaba archivos de localización estropeados para la zona eu_ES (País Vasco, España).  En distribuciones anteriores de Perl, esto resultaba en fallos para la prueba F<lib/locale>. Estos fallos se han suprimido en la distribución actual de Perl haciendo que la prueba ignore la zona rota.
 Si necesita usar la localización eu_ES, debe contactar con soporte de Apple.
 
 

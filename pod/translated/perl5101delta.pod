@@ -4,9 +4,9 @@ perl5101delta - qué hay de nuevo para perl v5.10.1
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.10.0 y la versión 5.10.1.
+Este documento describe las diferencias entre las distribuciones 5.10.0 y 5.10.1.
 
-Si está actualizando desde una versión anterior como la 5.8.8, primero lea L<perl5100delta>, que describe las diferencias entre 5.8.8 y la 5.10.0.
+Si está actualizando desde una distribución anterior como la 5.8.8, primero lea L<perl5100delta>, que describe las diferencias entre 5.8.8 y la 5.10.0.
 
 =head1 Cambios incompatibles
 
@@ -165,7 +165,7 @@ Consulte la documentación de C<ExtUtils::MakeMaker> o C<Module::Build> para má
 =item C<autodie>
 
 Es una nueva alternativa de ámbito léxico para el módulo C<Fatal>.
-La versión incluida es la 2.06_01. Tenga en cuenta que en esta versión, usando una cadena C<eval>uada cuando C<autodie> está activo puede causar que el comportamiento de autodie se fugue del ámbito actual. Vea L<autodie/"ERRORES"> para más detalles.
+La versión incluida es la 2.06_01. Tenga en cuenta que en esta distribución, usar una cadena C<eval>uada cuando C<autodie> está activo puede causar que el comportamiento de autodie se fugue del ámbito actual. Vea L<autodie/"ERRORES"> para más detalles.
 
 =item C<Compress::Raw::Bzip2>
 
@@ -222,7 +222,7 @@ Actualizado desde la versión 1.17 a la 1.13.
 =item C<feature>
 
 El significado de las características C<:5.10> y C<:5.10.X> ha cambiado ligeramente. El último componente, si existe (es decir, C<X>) es, simplemente, ignorado.
-Esto se basa en el supuesto de que las nuevas funciones, en general, no se añadirá a las versiones de mantenimiento. Por tanto, C<:5,10> y C<:5.10.X> tienen un efecto idéntico. Esto es un cambio en el comportamiento documentado para 5.10.0.
+Esto se basa en el supuesto de que las nuevas funciones, en general, no se añadirá a las distribuciones de mantenimiento. Por tanto, C<:5,10> y C<:5.10.X> tienen un efecto idéntico. Esto es un cambio en el comportamiento documentado para 5.10.0.
 
 =item C<fields>
 
@@ -573,7 +573,7 @@ Actualizado desde la versión 0.2808_01 a la 0.34_02.
 
 =item C<Module::CoreList>
 
-Actualizado desde la versión 2.13 a la 2.18. Esta publicación ya no contiene el hash C<Module::CoreList::patchlevel>.
+Actualizado desde la versión 2.13 a la 2.18. Esta distribución ya no contiene el hash C<Module::CoreList::patchlevel>.
 
 =item C<Module::Load>
 
@@ -1131,7 +1131,7 @@ Llamando a C<sv_chop()> o, de lo contrario, la actualización de un SV podría r
 
 =item *
 
-En la versión 5.10.0, C<inc_version_list> podría, incorrectamente, listar C<5.10.*> después de C<5.8.*>; esto afectó al orden de búsqueda de C<@INC> [RT #67628].
+En la distribución 5.10.0, C<inc_version_list> podría, incorrectamente, listar C<5.10.*> después de C<5.8.*>; esto afectó al orden de búsqueda de C<@INC> [RT #67628].
 
 =item *
 
@@ -1143,11 +1143,11 @@ En 5.10.0, C<printf> y C<sprintf> podrían producir el error fatal C<panic: utf8
 
 =item *
 
-En la versión 5.10.0, un método C<AUTOLOAD> creado dinámicamente podría ser pasado por alto (problema con el caché de métodos) [RT #60220,60232].
+En la distribución 5.10.0, un método C<AUTOLOAD> creado dinámicamente podría ser pasado por alto (problema con el caché de métodos) [RT #60220,60232].
 
 =item *
 
-En la versión 5.10.0, una combinación de C<use feature> y C<//ee> podría causar una fuga de memoria [RT #63110].
+En la distribución 5.10.0, una combinación de C<use feature> y C<//ee> podría causar una fuga de memoria [RT #63110].
 
 =item *
 
@@ -1442,7 +1442,7 @@ C<suidperl> se eliminará en 5.12.0. Esto proporciona un mecanismo para emular l
 
 =head1 Agradecimientos
 
-Parte del trabajo realizado en esta publicación se ha financiado con una ayuda de la TPF.
+Parte del trabajo realizado en esta distribución se ha financiado con una ayuda de la TPF.
 
 Nicholas Clark se retiró oficialmente del mantenimiento calabacero a finales de 2008, pero en realidad él ha puesto mucho esfuerzo desde entonces para ayudar a 5.10.1 a llegar a un estado apto para publicarse, incluyendo la redacción de una parte considerable de este perldelta.
 
@@ -1462,7 +1462,7 @@ Si usted encuentra algo que piensa que es un error, podría verificar los artíc
 
 Si usted cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
 
-Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. fuzzy Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar el lanzamiento de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
 
 =head1 VEA TAMBIÉN
 

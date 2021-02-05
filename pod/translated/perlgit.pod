@@ -502,9 +502,9 @@ Si desea eliminar su rama temporal, puede hacerlo con el siguiente comando:
 
 =head2 Confirmar en blead
 
-La rama 'blead' se convertirá en la siguiente versión de producción de Perl.
+La rama 'blead' se convertirá en la siguiente distribución de producción de Perl.
 
-Antes de enviar un cambio local a blead, es muy importante que haga una serie de cosas (si no quiere que los demás colaboradores le persigan munidos de horcas de labrador y antorchas):
+Antes de enviar un cambio local a blead, es muy importante que haga una serie de cosas (si no quiere que los demás colaboradores le persigan enarbolando horcas de labrador y antorchas):
 
 =over
 

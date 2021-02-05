@@ -4,7 +4,7 @@ perl586delta - qué hay de nuevo para perl v5.8.6
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.8.5 y la versión 5.8.6.
+Este documento describe las diferencias entre las distribuciones 5.8.5 y 5.8.6.
 
 =head1 Cambios incompatibles
 
@@ -42,7 +42,7 @@ Encode actualizado a la versión 2.08
 
 =item *
 
-ExtUtils::MakeMaker se mantiene en la versión 6.17, debido a que las últimas versiones estables actualmente disponibles en CPAN tienen algunos problemas con los módulos básicos en algunas plataformas principales.
+ExtUtils::MakeMaker se mantiene en la versión 6.17, debido a que las últimas distribuciones estables actualmente disponibles en CPAN tienen algunos problemas con los módulos básicos en algunas plataformas principales.
 
 =item *
 

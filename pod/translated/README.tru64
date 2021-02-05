@@ -12,7 +12,7 @@ Este documento describe varias características del sistema operativo UNIX Tru64
 =head2 Compilar Perl en Tru64
 
 El compilador recomendado para usar en Tru64 es el compilador nativo de C.
-El compilador nativo produce código mucho más rápido (la diferencia de velocidad es notable: varias docenas de puntos de porcentaje) y también código más correcto: si está considerando usar el compilador GNU C debería usar al menos la versión de la distribución 2.95.3 ya que se sabe que todas las versiones anteriores de gcc producen código roto al compilar Perl.  Una manifestación de esta rotura es el volcado del núcleo de la comprobación lib/sdbm; otras son los volcados de núcleo de muchas de las comprobaciones de op/regexp y op/pat, o comprobaciones ext/Storable (el patrón exacto de fallos depende de la versión del GCC y de los indicadores de optimización).
+El compilador nativo produce código mucho más rápido (la diferencia de velocidad es notable: varias docenas de puntos de porcentaje) y también código más correcto: si está considerando usar el compilador GNU C debería usar al menos la de la distribución 2.95.3 ya que se sabe que todas las distribuciones anteriores de gcc producen código defectuoso al compilar Perl.  Una manifestación de esta rotura es el volcado del núcleo de la comprobación lib/sdbm; otras son los volcados de núcleo de muchas de las comprobaciones de op/regexp y op/pat, o comprobaciones ext/Storable (el patrón exacto de fallos depende de la distribución del GCC y de los indicadores de optimización).
 
 Tanto el cc nativo como el gcc parecen consumir grandes cantidades de memoria cuando se compila Perl.  Se sabe que toke.c tiene problemas cuando se optimiza; con 256 megabytes en la sección de datos parece que es suficiente.  Otro problema conocido es el I<script> mktables, que compila las tablas de soporte para Unicode.  La configuración por defecto de la sección de datos del proceso en Tru64 debería ser un gigabyte, pero algunos sitios/sistemas podrían bajarlo.
 El proceso de configuración de Perl comprueba si hay límites de proceso demasiado bajos, y si es necesario baja la optimización para toke.c, y también da consejo en cómo elevar los límites del proceso (por ejemplo: C<ulimit -d 262144>)
@@ -32,7 +32,7 @@ En Tru64, Perl es capaz, automáticamente de usar archivos grandes, es decir, ar
 
 Si quiere usar hilos, debería primero usar el modelo de hilos de Perl 5.8.0 ejecutando Configure con -Duseithreads.
 
-Los hilos en Perl solo van a funcionar en Tru64 4.0 y nuevas versiones; versiones anteriores como 3.2 probablemente no vayan a funcionar apropiadamente con los hilos.
+Los hilos en Perl solo van a funcionar en Tru64 4.0 y nuevas distribuciones; distribuciones anteriores como 3.2 probablemente no vayan a funcionar apropiadamente con las hebras.
 
 En Tru64 V5 (al menos V5.1A, V5.1B) no puede compilar Perl con hilos con gcc porque la cabecera del sistema <pthread.h> comprueba explícitamente por ciertos compiladores de C, no siendo gcc (al menos 3.2.2) uno de ellos.  Pero el compilador de C del sistema debería funcionar bien.
 
@@ -41,7 +41,7 @@ En Tru64 V5 (al menos V5.1A, V5.1B) no puede compilar Perl con hilos con gcc por
 No puede ejecutar Configure para que Perl use dobles largos excepto que tenga al menos la versión V5.0 de Tru64; el soporte de dobles largos, sencillamente, no es lo suficientemente funcional antes de esa versión.  El Configure de Perl sobrescribirá los intentos de usar los dobles largos (notará esto al ver que Configure encuentra que la función modfl() no funciona como debiera).
 
 En el momento de escribir esto (junio de 2002), existe un error conocido en la libc de Tru64 al imprimir dobles largos cuando no se usa la notación "e".
-Los valores son correctos y utilizables, pero solo obtendrá un número limitado de dígitos mostrados a menos que fuerce el tema usando C<printf "%.33e",$num> o parecido.  Para versiones Tru64 V5.0A hasta la V5.1A, se espera que aparezca algún parche después de la salida de perl 5.8.0.  Si su libc todavía no se ha parcheado, obtendrá una advertencia desde Configure cuando seleccione dobles largos.
+Los valores son correctos y utilizables, pero solo obtendrá un número limitado de dígitos mostrados a menos que fuerce el tema usando C<printf "%.33e",$num> o parecido.  Para versiones Tru64 V5.0A hasta la V5.1A, se espera que aparezca algún parche después de la distribución de perl 5.8.0.  Si su libc todavía no se ha parcheado, obtendrá una advertencia desde Configure cuando seleccione dobles largos.
 
 =head2 Comprobaciones DB_File fallan en Tru64
 
@@ -60,7 +60,7 @@ Los enteros de Perl de Tru64 son automáticamente de 64 bit de ancho, por lo que
 
 =head2 Advertencias sobre el desbordamiento de punto flotante cuando se compila Perl en Tru64
 
-Cuando se compila Perl en Tru64 puede (dependiendo de la versión del compilador) vewr dos advertencias como estas
+Cuando se compila Perl en Tru64 puede (dependiendo de la distribución del compilador) ver dos advertencias como estas
 
  cc: Warning: numeric.c, line 104: In this statement, floating-point
  overflow occurs in evaluating the expression "1.8e308". (floatoverfl)
@@ -74,9 +74,9 @@ y al compilar la extensión POSIX
              return HUGE_VAL;
  -------------------^
 
-Los números de línea exactos puede variar entre las distintas versiones de Perl.  Las advertencias son benignas y se puede ignorar: en las últimas versiones del compilador de C las advertencias no deberían aparecer.
+Los números de línea exactos puede variar entre las distintas distribuciones de Perl.  Las advertencias son benignas y se puede ignorar: en las últimas distribuciones del compilador de C las advertencias no deberían aparecer.
 
-Cuando se compila el archivo F<pp_sys.c>  puede (dependiendo de la versión del sistema operativo) ver que se usa un indicador de compilación adicional: C<-DNO_EFF_ONLY_OK>.  Esto es normal y se refiere a una característica que es relevante solo si usa el I<pragma> C<filetest>.  En versiones anteriores del sistema operativo la característica estaba rota y NO_EFF_ONLY_OK instruye a Perl para que no la use.
+Cuando se compila el archivo F<pp_sys.c>  puede (dependiendo de la distribución del sistema operativo) ver que se usa un indicador de compilación adicional: C<-DNO_EFF_ONLY_OK>.  Esto es normal y se refiere a una característica que es relevante solo si usa el I<pragma> C<filetest>.  En distribuciones anteriores del sistema operativo la característica estaba rota y NO_EFF_ONLY_OK instruye a Perl para que no la use.
 
 =head2 Comprobar Perl en Tru64
 
@@ -97,7 +97,7 @@ necesita o bien recompilar su Perl en Tru64 4.0D o actualizar su Tru64 4.0D al m
 =head1 read_cur_obj_info: bad file magic number
 
 Puede mezcla el cc/ar/ld de Tru64 con el gcc/ar/ld de GNU.
-Esto puede funcionar, pero algunas veces no (su gcc o utilerías GNU se pueden haber compilador para una versión incompatible del sistema operativo).
+Esto puede funcionar, pero algunas veces no (su gcc o utilerías GNU se pueden haber compilador para una distribución incompatible del sistema operativo).
 
 Intente 'which ld' y 'which ld' (o intente 'ar --version' y 'ld --version', que funciona solo para las herramientas GNU, y se anunciará como tal), y ajustar su PATH para que use de forma coherente tanto las herramientas nativas o las herramientas GNU.  Después de ajustar su PATH, debe hacer un 'make distclean' e iniciar todo a partir de la ejecución de Configure ya que sino puede encontrarse en una situación confusa.
 

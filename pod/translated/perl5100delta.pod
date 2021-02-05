@@ -6,15 +6,15 @@ perl5100delta - qué hay de nuevo para Perl 5.10.0
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.8.8 y la versión 5.10.0.
+Este documento describe las diferencias entre las distribuciones 5.8.8 y 5.10.0.
 
-Muchas de las correcciones de errores en 5.10.0 ya se observaban en las versiones de mantenimiento de 5.8.x; no se duplicarán aquí y están documentadas en el conjunto de páginas de manual llamadas perl58[1-8]?delta.
+Muchas de las correcciones de errores en 5.10.0 ya se observaban en las distribuciones de mantenimiento de 5.8.x; no se duplicarán aquí y están documentadas en el conjunto de páginas de manual llamadas perl58[1-8]?delta.
 
 =head1 Mejoras en el núcleo principal
 
 =head2 El I<pragma> C<feature>
 
-El I<pragma> C<feature> se utiliza para activar una nueva sintaxis que rompe la compatibilidad Perl con versiones anteriores del lenguaje. Se trata de un I<pragma> léxico, al igual que C<strict> o C<warnings>.
+El I<pragma> C<feature> se utiliza para activar una nueva sintaxis que rompe la compatibilidad Perl con distribuciones anteriores del lenguaje. Se trata de un I<pragma> léxico, al igual que C<strict> o C<warnings>.
 
 En la actualidad las nuevas funciones disponibles son las siguientes: C<switch> (añade una sentencia switch), C<say> (añade una función predefinida C<say>), y C<state> (añade una palabra clave C<state> para declarar variables "estáticas"). Esas características se describen en sus propias secciones de este documento.
 
@@ -363,7 +363,7 @@ Como un efecto secundario de esto, la sobrecarga de las constantes ahora se prop
 =head2 chdir FOO
 
 Una palabra sencilla como argumento a chdir() ahora se reconoce como un identificador de archivo.
-Versiones anteriores interpretaban la palabra sencilla como un nombre de directorio.
+Distribuciones anteriores interpretaban la palabra sencilla como un nombre de directorio.
 (Gisle Aas)
 
 =head2 Gestión de archivos .pmc
@@ -452,7 +452,7 @@ En 5.10.0 y posteriores, el código advierte cuando principal contiene C<use war
 
 =head2 Actualizar módulos principales de forma individual
 
-Ahora hay más módulos básicos disponibles a través de CPAN.  Si desea actualizar uno de estos módulos, no es necesario esperar a una nueva versión de Perl.  Desde dentro de la I<shell> de cpan, ejecutando el comando 'r' presentará un informe de los módulos con actualizaciones disponibles.  Vea C<perldoc CPAN> para más información.
+Ahora hay más módulos básicos disponibles a través de CPAN.  Si desea actualizar uno de estos módulos, no es necesario esperar a una nueva distribución de Perl.  Desde dentro de la I<shell> de cpan, ejecutando el comando 'r' presentará un informe de los módulos con actualizaciones disponibles.  Vea C<perldoc CPAN> para más información.
 
 =head2 Cambios en la prágmata
 

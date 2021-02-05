@@ -288,7 +288,7 @@ Es posible que encuentre varios conceptos de Perl familiares en esta colección 
 
 =head2 ¿Está la lista al día?
 
-Cada versión de Perl incluye documentación actualizada en el momento del lanzamiento. Esto supone un problema para mantener una lista de libros actualizada. Es probable que se hayan publicado libros muy interesantes desde que se incluyó la lista en esta versión de Perl. Si lo desea, puede consultar la versión más reciente de la lista en L<http://perldoc.perl.org/perlbook.html>.
+Cada versión de Perl incluye documentación actualizada en el momento del lanzamiento de la versión. Esto supone un problema para mantener una lista de libros actualizada. Es probable que se hayan publicado libros muy interesantes desde que se incluyó la lista en esta distribución de Perl. Si lo desea, puede consultar la versión más reciente de la lista en L<http://perldoc.perl.org/perlbook.html> .
 
 En la escala temporal de Internet, algunos de los libros de la lista parecen anticuados, pero los hemos incluido porque su contenido sigue siendo válido en la actualidad. En Perl no todo cambia a diario.
 Muchos de los libros para principiantes describen características y técnicas básicas que mantienen su vigencia. Sin embargo, en general intentaremos limitar esta lista a libros publicados en los últimos cinco años.

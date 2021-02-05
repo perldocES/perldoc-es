@@ -6,9 +6,9 @@ perl5142delta - qué hay de nuevo para perl v5.14.2
 
 =head1 DESCRIPCIÓN
 
-En este documento se describen las diferencias entre la versión 5.14.1 y la versión 5.14.2.
+En este documento se describen las diferencias entre las distribuciones 5.14.1 y 5.14.2.
 
-Si va a actualizar desde una versión anterior, como 5.14.0, lea primero L<perl5141delta>, en el que se describen las diferencias entre 5.14.0 y  5.14.1.
+Si va a actualizar desde una distribución anterior, como 5.14.0, lea primero L<perl5141delta>, en el que se describen las diferencias entre 5.14.0 y 5.14.1.
 
 =head1 Mejoras en el núcleo principal
 

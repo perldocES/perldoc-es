@@ -6,10 +6,9 @@ perl5143delta - qué hay de nuevo para Perl 5.14.3
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.14.2 y la versión 5.14.3.
+Este documento describe las diferencias entre las distribuciones 5.14.2 y 5.14.3.
 
-Si va a actualizar desde una versión anterior, como la 5.12.0, debe leer primero 
-L<perl5140delta>, donde se describen las diferencias entre las versiones 5.12.0 y 5.14.0.
+Si va a actualizar desde una distribución anterior, como la 5.12.0, debe leer primero L<perl5140delta>, donde se describen las diferencias entre las versiones 5.12.0 y 5.14.0.
 
 =head1 Mejoras en el núcleo principal
 

@@ -13,7 +13,7 @@ perltie - cómo esconder una clase de objetos en un simple variable
 
 =head1 DESCRIPCIÓN
 
-Antes del lanzamiento de v5.0 de Perl, un programador podía usar dbmopen() para conectar, mágicamente, una base de datos en disco en el formato estándar Unix dbm(3x), a un %HASH en su programa.  Sin embargo, cada Perl se compilaba con una u otra biblioteca dbm, pero no con ambas, y no podía extender este mecanismo a otros paquetes o tipos de variables.
+Antes de la distribución de v5.0 de Perl, un programador podía usar dbmopen() para conectar, mágicamente, una base de datos en disco en el formato estándar Unix dbm(3x), a un %HASH en su programa.  Sin embargo, cada Perl se compilaba con una u otra biblioteca dbm, pero no con ambas, y no podía extender este mecanismo a otros paquetes o tipos de variables.
 
 Ahora ya puede.
 

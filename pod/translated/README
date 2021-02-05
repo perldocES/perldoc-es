@@ -13,7 +13,7 @@ El lenguaje se diseñó para ser práctico (fácil de usar, eficaz, completo), m
 
 Para ver una introducción a las características del lenguaje, consulte pod/perlintro.pod.
 
-Encontrará una descripción de los cambios importantes de esta versión en pod/perldelta.pod.
+Encontrará una descripción de los cambios importantes de esta distribución en pod/perldelta.pod.
 
 También hay muchos libros sobre Perl de diversos editores, que cubren una amplia variedad de temas.  Vea pod/perlbook.pod para obtener más información.
 

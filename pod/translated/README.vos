@@ -8,13 +8,13 @@ perlvos - Perl para Stratus OpenVOS
 
 Este archivo contiene instrucciones de cómo construir Perl en el sistema operativo Stratus OpenVOS.  Perl es un lenguaje de I<scripts> o lenguaje de macros que es popular en muchos sistemas.  Consulte L<perlbook> para ver una lista de buenos libros sobre Perl.
 
-Estas son las instrucciones para la generación de Perl desde el código fuente.  Esta versión de Perl requiere soporta el enlazado dinámico que se encuentra en la versión 17.1 OpenVOS y esto no se soporta en la versión 17.0 o anteriores de OpenVOS.
+Estas son las instrucciones para la generación de Perl desde el código fuente.  Esta versión de Perl requiere soporta el enlazado dinámico que se encuentra en la distribución 17.1 OpenVOS y esto no se soporta en la distribución 17.0 o anteriores de OpenVOS.
 
 Si está ejecutando VOS versión 14.4.1 o posterior, puede obtener una copia pre-compilada de la distribución de perl, mediante la compra del producto GNU Tools, de Stratus Technologies.
 
 =head1 COMPILAR PERL PARA OPENVOS
 
-Para compilar perl a partir de su código fuente en la plataforma Stratus V Series, debe tener OpenVOS versión 17.1.0 o posterior, GNU Tools versión 3.5 o posterior, y las bibliotecas de Runtime C/POSIX.
+Para compilar perl a partir de su código fuente en la plataforma Stratus V Series, debe tener OpenVOS Release 17.1.0 o posterior, GNU Tools Release 3.5 o posterior, y las bibliotecas de Runtime C/POSIX.
 
 Siga las instrucciones normales para compilar perl; p.e., entrar en bash, ejecute el I<script> Configure, y luego use "gmake" para compilar perl.
 

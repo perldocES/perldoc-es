@@ -28,7 +28,7 @@ Para buscar en los títulos de las cuestiones de perlfaq:
 
 Revise L<https://github.com/perl-doc-cats/perlfaq/wiki>.  Si no encuentra su sugerencia, cree una petición o envíe la suya a L<https://github.com/perl-doc-cats/perlfaq>.
 
-Una vez aprobada, los cambios se mezclan en L<https://github.com/tpf/perlfaq>, el repositorio que nutre L<http://learn.perl.org/faq/>, y se distribuyen con el siguiente lanzamiento de Perl 5.
+Una vez aprobada, los cambios se mezclan en L<https://github.com/tpf/perlfaq>, el repositorio que nutre L<http://learn.perl.org/faq/>, y se distribuyen con la siguiente distribución de Perl 5.
 
 =head2 ¿Qué pasa si mi cuestión no se responde en el FAQ?
 

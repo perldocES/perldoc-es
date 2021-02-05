@@ -4,11 +4,11 @@ perl581delta - qué hay de nuevo en perl v5.8.1
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.8.0 y la versión 5.8.1.
+Este documento describe las diferencias entre las distribuciones 5.8.0 y 5.8.1.
 
-Si está actualizando desde una versión anterior como la 5.6.1, primero lea L<perl58delta>, que describe las diferencias entre 5.6.0 y la 5.8.0.
+Si está actualizando desde una distribución anterior como la 5.6.1, primero lea L<perl58delta>, que describe las diferencias entre 5.6.0 y la 5.8.0.
 
-En caso de que usted se está preguntando sobre 5.6.1, fue una corrección de errores, idéntica a la versión de desarrollo 5.7.1.  ¿Confundido?  Esta línea de tiempo, con suerte, le ayudará un poco: lista los lanzamientos importantes, sus programas de mantenimiento y las versiones de desarrollo.
+En caso de que usted se está preguntando sobre 5.6.1, fue una corrección de errores, idéntica a la distribución de desarrollo 5.7.1.  ¿Confundido?  Esta línea de tiempo, con suerte, le ayudará un poco: lista las distribuciones importantes, sus distribuciones de mantenimiento y las distribuciones de desarrollo.
 
           Nuevo	Mantenimiento	Desarrollo
 
@@ -68,7 +68,7 @@ v-strings con múltiples números como C<v65.66> y C<65.66.67> siguen siendo v-s
 
 =head2 (Win32) La opción -C ha sido reasignada
 
-La opción -C ha cambiado de una forma incompatible.  La semántica anterior de esta opción sólo tiene sentido en Win32 y sólo con "use utf8" en el universo de versiones 5.6.x, y no tienen sentido para la implementación de Unicode en 5.8.0.  Dado que esta opción quizás no podría haberse utilizado más por cualquier persona, se ha reutilizado.  El comportamiento que esta opción activaba en las versiones 5.6.x se puede soportar de manera transparente, dependiendo de la moda, en una próxima versión.
+La opción -C ha cambiado de una forma incompatible.  La semántica anterior de esta opción sólo tiene sentido en Win32 y sólo con "use utf8" en el universo de distribuciones 5.6.x, y no tienen sentido para la implementación de Unicode en 5.8.0.  Dado que esta opción quizás no podría haberse utilizado más por cualquier persona, se ha reutilizado.  El comportamiento que esta opción se activaba en las distribuciones 5.6.x se puede soportar de manera transparente, dependiendo de la moda, en una próxima distribución.
 
 Para la nueva vida de esta opción, vea L<"UTF-8 ya no está por defecto bajo la configuración regional de UTF-8"> y L<perlrun/-C>.
 
@@ -83,7 +83,7 @@ Perl 5.8.1 usa el modificador /d cuando se ejecuta el I<shell> cmd.exe, internam
 En Perl 5.8.0 se introdujeron muchas características Unicode.   Una de ellas resultó ser de más molestia que beneficio: la automágica (y silenciosa) "UTF-8-fijación" de los identificadores de archivo, incluyendo los identificadores de archivo estándar, si la configuración regional del usuario indica el uso de UTF-8.
 
 Por ejemplo, si usted tenía C<en_US.UTF-8> como su configuración local, su STDIN y STDOUT fueron automáticamente "UTF-8", en otras palabras, se hizo un binmode(..., ": utf8") de forma implícita.  Esto significaba que intentando imprimir, por ejemplo, chr(0xff), terminaba imprimiendo los bytes 0xc3 0xbf.  Difícilmente se acordaría de ello a menos que fuera consciente de esta característica de Perl 5.8.0.
-El problema es que la gran mayoría de la gente no lo era: por ejemplo, en RedHat versiones 8 y 9, la configuración local B<por defecto> es UTF-8, por lo que todos los usuarios de RedHat obtenían identificadores de archivo UTF-8, lo quisieran o no.
+El problema es que la gran mayoría de la gente no lo era: por ejemplo, en las distribuciones RedHat 8 y 9, la configuración local B<por defecto> es UTF-8, por lo que todos los usuarios de RedHat obtenían identificadores de archivo UTF-8, lo quisieran o no.
 El dolor se intensificó por que la implementación de Unicode de Perl 5.8.0 (todavía) tenía errores desagradables, especialmente en relación con el uso de s// y tr///.  (Errores que se han corregido en 5.8.1)
 
 Por lo tanto se tomó la decisión de dar marcha atrás a esta característica y se cambió, desde una manera por defecto implícita y silenciosa a otra opción explícita y consciente.  La nueva opción de la línea de comandos de Perl C<-C> y su contrapartida en la variable de entorno PERL_UNICODE ahora se pueden utilizar para controlar la forma en que Perl y Unicode interactuan en las interfaces como E/S y, por ejemplo, los argumentos en la línea de comandos.  Vea L<perlrun/-C> y L<perlrun/PERL_UNICODE> para más información.
@@ -329,7 +329,7 @@ C<perlcc -B> trabaja ahora por lo menos un poco mejor, mientras que C<perlcc -c>
 
 =head1 Nueva documentación
 
-perl573delta se ha añadido a la lista de las diferencias entre las versiones de desarrollo (ya bastante obsoletas) 5.7.2 y 5.7.3.
+perl573delta se ha añadido a la lista de las diferencias entre las distribuciones de desarrollo (ya bastante obsoletas) 5.7.2 y 5.7.3.
 
 perl58delta ha sido añadido: es el perldelta de 5.8.0, detallando las diferencias entre 5.6.0 y 5.8.0.
 
@@ -363,7 +363,7 @@ Ahora se pueden generar subconjuntos de módulos básicos de Perl usando los ind
 En Cygwin Perl ahora se puede construir con soporte de hilos de ejecución (C<Configure -Duseithreads>).
 Esto funciona tanto con Cygwin 1.3.22 y Cygwin 1.5.3.
 
-En las versiones más recientes de FreeBSD Perl 5.8.0 la compilación falló debido a que trata de utilizar F<malloc.h>, que en FreeBSD es solo un archivo ficticio, y es un error fatal incluso el tratar de usarlo.  Ahora ya no se utiliza F<malloc.h>.
+En las distribuciones más recientes de FreeBSD Perl 5.8.0 la compilación falló debido a que trata de utilizar F<malloc.h>, que en FreeBSD es solo un archivo ficticio, y es un error fatal incluso el tratar de usarlo.  Ahora ya no se utiliza F<malloc.h>.
 
 Se sabe que Perl se genera también ahora en Hitachi HI-UXMPP.
 
@@ -636,7 +636,7 @@ Perl 5.8.1 se genera y funciona bien con Cygwin 1.3: con (uname-a) C<CYGWIN_NT-5
 
 =head2 HP-UX: advertencias de HP cc sobre sendfile y sendpath
 
-Con ciertas versiones del compilador de C de HP (por ejemplo, B.11.11.02) obtendrá muchas advertencias como esta (líneas ajustadas para facilitar la lectura):
+Con ciertas distribuciones del compilador de C de HP (por ejemplo, B.11.11.02) obtendrá muchas advertencias como esta (líneas ajustadas para facilitar la lectura):
 
   cc: "/usr/include/sys/socket.h", line 504: warning 562:
     Redeclaración de "sendfile" con un especificador de clase de almacenamiento diferente:
@@ -649,7 +649,7 @@ Estas advertencias aparecen durante la generación de Perl y durante ciertas pru
 
 =head2 IRIX: t/uni/tr_7jis.t falla falsamente
 
-La prueba t/uni/tr_7jis.t se sabe que da un informe de fallo bajo 'make test' o la prueba se cuelga con determinadas versiones de IRIX (por lo menos la IRIX 6.5 y compiladores MIPSpro versión 7.3.1.1m), pero si se ejecuta manualmente la prueba pasa de forma completa.
+La prueba t/uni/tr_7jis.t se sabe que da un informe de fallo bajo 'make test' o la prueba se cuelga con determinadas distribuciones de IRIX (por lo menos la IRIX 6.5 y compiladores MIPSpro versión 7.3.1.1m), pero si se ejecuta manualmente la prueba pasa de forma completa.
 
 =head2 Mac OS X: no usemymalloc
 
@@ -657,22 +657,22 @@ El malloc Perl (C<-Dusemymalloc>) no funciona en absoluto en Mac OS X. Sin embar
 
 =head2 Tru64: No generación con threaded con el GNU cc (gcc)
 
-En las últimas versiones de Tru64 (por ejemplo, v5.1B o posterior) gcc no se puede utilizar para compilar un Perl con soporte de hilos de ejecución (-Duseithreads) debido a que el archivo del sistema C<< <pthread.h> >> no sabe nada sobre gcc.
+En las últimas distribuciones de Tru64 (por ejemplo, v5.1B o posterior) gcc no se puede utilizar para compilar un Perl con soporte de hilos de ejecución (-Duseithreads) debido a que el archivo del sistema C<< <pthread.h> >> no sabe nada sobre gcc.
 
 =head2 Win32: sysopen, sysread, syswrite
 
-A partir de la versión 5.8.0, sysopen()/sysread()/syswrite() no se comportan como lo hacían antes en 5.6.1 y anteriores, con respecto al modo "texto".
-Estos funciones predefinidas, ahora, funcionan siempre en modo "binario" (incluso si se pasó a sysopen() el indicador O_TEXT, o si se utilizó binmode() con el identificador de archivo).  Tenga en cuenta que este problema sólo afecta a los archivos de disco, ya que los I<sockets> y tuberías siempre han estado en modo "binario" en la versión para Windows.  Ya que este comportamiento se considera actualmente un error, un comportamiento compatible puede ser re-introducido en una futura versión.  Hasta entonces, el uso de sysopen(), sysread() y syswrite() no está soportado para las operaciones en modo "texto".
+A partir de la distribución 5.8.0, sysopen()/sysread()/syswrite() no se comportan como lo hacían antes en 5.6.1 y anteriores, con respecto al modo "texto".
+Estos funciones predefinidas, ahora, funcionan siempre en modo "binario" (incluso si se pasó a sysopen() el indicador O_TEXT, o si se utilizó binmode() con el identificador de archivo).  Tenga en cuenta que este problema sólo afecta a los archivos de disco, ya que los I<sockets> y tuberías siempre han estado en modo "binario" en la versión para Windows.  Ya que este comportamiento se considera actualmente un error, un comportamiento compatible puede ser re-introducido en una futura distribución.  Hasta entonces, el uso de sysopen(), sysread() y syswrite() no está soportado para las operaciones en modo "texto".
 
 =head1 Direcciones futuras
 
-Las siguientes cosas B<pueden> suceder en el futuro.  Los primeros lanzamientos a disposición del público de estas características serán publicadas en la versión desarrollador Perl 5.9.x, culminando con la publicación de Perl 5.10.0.  Estas son nuestras mejores estimaciones por el momento: nos reservamos el derecho de reconsiderarlo.
+Las siguientes cosas B<pueden> suceder en el futuro.  Las primeras distribuciones a disposición del público de estas características serán publicadas en la distribución desarrollador Perl 5.9.x, culminando con la distribución Perl 5.10.0.  Estas son nuestras mejores estimaciones por el momento: nos reservamos el derecho de reconsiderarlo.
 
 =over 4
 
 =item *
 
-PerlIO se convertirá en el predeterminado.  En la actualidad (en Perl 5.8.x) la biblioteca stdio todavía se utiliza si Perl piensa que puede usar ciertos trucos para hacer que stdio vaya B<realmente> más rápido.  Para futuras versiones nuestro objetivo es hacer que PerlIO vaya aún más rápido.
+PerlIO se convertirá en el predeterminado.  En la actualidad (en Perl 5.8.x) la biblioteca stdio todavía se utiliza si Perl piensa que puede usar ciertos trucos para hacer que stdio vaya B<realmente> más rápido.  Para futuras distribuciones nuestro objetivo es hacer que PerlIO vaya aún más rápido.
 
 =item *
 

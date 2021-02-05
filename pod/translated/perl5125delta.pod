@@ -6,9 +6,9 @@ perl5125delta - qué hay de nuevo para Perl 5.12.5
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.12.4 y la versión 5.12.5.
+Este documento describe las diferencias entre las distribuciones 5.12.4 y 5.12.5.
 
-Si está actualizando desde una versión anterior como la 5.12.3, primero lea L<perl5124delta>, que describe las diferencias entre 5.12.3 y la 5.12.4.
+Si está actualizando desde una distribución anterior como la 5.12.3, primero lea L<perl5124delta>, que describe las diferencias entre 5.12.3 y la 5.12.4.
 
 =head1 Seguridad
 
@@ -137,7 +137,7 @@ Perl 5.10.0 introdujo una lógica defectuosa que hizo que "U*", en el medio de u
 
 split() ya no modifica C<@_> cuando se le llama en contexto escalar o I<void>.
 En contexto  I<void> ahora produce una advertencia "Uso inútil de split".
-Esto es realmente un cambio introducido en Perl 5.12.0, pero no se incluyó en el lanzamiento de L<perl5120delta>.
+Esto es realmente un cambio introducido en Perl 5.12.0, pero no se incluyó en la distribución de L<perl5120delta>.
 
 =head1 Agradecimientos
 

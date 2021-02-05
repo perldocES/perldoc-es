@@ -10,7 +10,7 @@ Para una guía de introducción más corta, a sólo las características esencia
 
 =head1 DESCRIPCIÓN
 
-Antes de la publicación de Perl 5, era difícil representar estructuras complejas de datos, porque todas las referencias tenían que ser simbólicas -e incluso entonces era difícil referirse a una variable en lugar de a una entrada de la tabla de símbolos-.
+Antes de la distribución de Perl 5, era difícil representar estructuras complejas de datos, porque todas las referencias tenían que ser simbólicas -e incluso entonces era difícil referirse a una variable en lugar de a una entrada de la tabla de símbolos-.
 Perl ahora no sólo hace que sea más fácil usar referencias simbólicas a variables, sino que también le permite tener referencias "duras" a cualquier trozo de datos o código.
 Cualquier escalar puede contener una referencia dura.  Dado que los arrays y los hashes contienen escalares, ahora puede fácilmente generar arrays de arrays, arrays de hashes, arrays de hashes de funciones, y así sucesivamente.
 
@@ -188,7 +188,7 @@ Una referencia se puede crear mediante el uso de una sintaxis especial, cariños
 
 Todos ellos se explican por sí mismos, excepto para C<*foo{IO}>, que requiere una atención especial.  Devuelve el identificador de E/S, utilizado para los identificadores de archivo (L<perlfunc/open>), I<sockets> (L<perlfunc/socket> and L<perlfunc/socketpair>), e identificadores de directorio (L<perlfunc/opendir>).  Por razones de compatibilidad con versiones anteriores de Perl, C<*foo{IDENTIFICADOR_ARCHIVO}> es un sinónimo de C<*foo{IO}>, a pesar de que no se recomienda, para usar en su lugar un uso consistente de un único nombre: IO.  En versiones de perl entre v5.8 y v5.22, emitirá una advertencia de obsolescencia, pero esta obsolescencia se rescindió.
 
-C<*foo{COSA}> devuelve undef si esta COSA particular todavía no se ha usado, excepto en el caso de los escalares.  C<*foo{SCALAR}> devuelve una referencia a un escalar anónimo si $foo todavía no se ha usado.  Esto podría cambiar en una futura versión.
+C<*foo{COSA}> devuelve undef si esta COSA particular todavía no se ha usado, excepto en el caso de los escalares.  C<*foo{SCALAR}> devuelve una referencia a un escalar anónimo si $foo todavía no se ha usado.  Esto podría cambiar en una futura distribución.
 
 C<*foo{NAME}> y C<*foo{PACKAGE}> son la excepción, en que devuelven cadenas de caracteres, en lugar de referencias.  Devuelven el paquete y el nombre del propio typeglob, en lugar del que le fue asignado.  Así que, después de C<*foo=*Foo::bar>, C<*foo> devolverá "*Foo::bar" cuando se usa como cadena, pero C<*foo{PACKAGE}> y C<*foo{NAME}> seguirán generando "main" y "foo", respectivamente.
 

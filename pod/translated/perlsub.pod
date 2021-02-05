@@ -490,7 +490,7 @@ Esto no funciona, sin embargo, con los métodos de objeto; para encontrarlos, to
 X<state> X<state variable> X<estática> X<variable, persistente> X<variable, estática> X<clausura>
 
 Existen dos formas de construir variables privadas persistentes en Perl 5.10.
-Primero, puede simplemente usar la característica C<state>.  O, puede usar clausuras, si quiere seguir siendo compatible con las versiones anteriores a 5.10.
+Primero, puede simplemente usar la característica C<state>.  O, puede usar clausuras, si quiere seguir siendo compatible con las distribuciones anteriores a 5.10.
 
 =head3 Variables persistentes con state()
 
@@ -612,7 +612,7 @@ Note, sin embargo, que esto restringe la localización de algunos valores; por e
 Una excepción es la variable escalar por defecto: a partir de perl 5.14 C<local($_)> siempre le quitará toda la magia de $_, para hacer que sea posible, de forma segura, reusar $_ en una subrutina.
 
 B<ADVERTENCIA>: La localización de arrays y hashes enlazados no funciona actualmente como se ha descrito.
-Esto se arreglará en un próximo lanzamiento de Perl; mientras tanto, evite código que confíe de cualquier comportamiento particular de la localización de arrays y hashes enlazados (localizar elementos individuales funciona bien).
+Esto se arreglará en una próxima distribución de Perl; mientras tanto, evite código que confíe de cualquier comportamiento particular de la localización de arrays y hashes enlazados (localizar elementos individuales funciona bien).
 Vea L<perl58delta/"Localizar arrays y hashes enlazados está roto"> para más detalles.
 X<local, tie>
 

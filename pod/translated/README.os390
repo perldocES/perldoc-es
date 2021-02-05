@@ -13,7 +13,7 @@ Por favor, envíe sus comentarios por correo a L<perlbug@perl.org|mailto:perlbug
 
 =head1 DESCRIPCIÓN
 
-Esta es una versión de Perl completamente portado para OS/390 versión 2 subversiones 3, 5, 6, 7, 8 y 9.  Es posible que funcione en otras versiones o subversiones, pero esta es la única en la que lo hemos probado.
+Esta es una versión de Perl completamente portado para OS/390 versión 2 distribuciones 3, 5, 6, 7, 8 y 9.  Es posible que funcione en otras versiones o distribuciones, pero esta es la única en la que lo hemos probado.
 
 Quizás necesite llevar a cabo algunas tareas de configuración del sistema antes de ejecutar el I<script> Configure para Perl.
 
@@ -220,12 +220,12 @@ El I<script> installman intentará ejecutarse en OS/390.  Habrá unos pocos erro
 
 Cuando se utiliza perl en OS/390 por favor, tenga en cuenta que los juegos de caracteres EBCDIC y ASCII son diferentes.  Vea perlebcdic.pod para más información sobre las cuestiones sobre tal conjunto de caracteres.  Las funciones predefinidas de Perl que pueden comportarse de manera diferente en EBCDIC también se mencionan en el documento perlport.pod.
 
-La Open Edition (UNIX System Services) de V2R8 en adelante soporta la invocación de I<script> con la forma #!/path/to/perl.  Hay un PTF disponible desde IBM para V2R7 que permitirá soporte del shell/kernel para #!.  Versiones de USS anteriores a V2R7 no soporta la invocación de un I<script> por medio de #!.
+La Open Edition (UNIX System Services) de V2R8 en adelante soporta la invocación de I<script> con la forma #!/path/to/perl.  Hay un PTF disponible desde IBM para V2R7 que permitirá soporte del shell/kernel para #!.  Distribuciones de USS anteriores a V2R7 no soporta la invocación de un I<script> por medio de #!.
 Si está ejecutando V2R6 o anteriores, vea entonces
 
     head `whence perldoc`
 
-por un ejemplo de cómo usar el truco del "eval exec" para pedir al I<shell> que Perl ejecute sus I<scripts> en las versiones más viejas de Unix System Services.
+para ver un ejemplo de cómo usar el truco del "eval exec" para pedir al I<shell> que Perl ejecute sus I<scripts> en las distribuciones más viejas de Unix System Services.
 
 Si está teniendo problemas con los corchetes entonces considere cambiar su rlogin o cliente de telnet.  Intente evitar los emuladores más viejos de 3270 e ISHELL para trabajar con Perl en USS.
 
@@ -323,7 +323,7 @@ Hay archivos web de la lista de correo en:
 
 =head1 HISTORIA
 
-Este documento lo escribió originalmente David Fiander para la versión 5.005 de Perl.
+Este documento lo escribió originalmente David Fiander para la distribución 5.005 de Perl.
 
 Este documento se I<podificó> para la distribución 5.005_03 de Perl el 11 de marzo de 1999.
 

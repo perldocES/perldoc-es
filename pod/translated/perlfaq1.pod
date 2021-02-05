@@ -34,7 +34,7 @@ Si lo desea, puede obtener soporte comercial para Perl, pero a la mayoría de lo
 
 (contribución de brian d foy)
 
-Esto suele ser una cuestión de opinión y gusto, y no hay una respuesta definitiva para todos. En general, conviene usar la versión estable actual o la versión estable inmediatamente anterior.
+Esto suele ser una cuestión de opinión y gusto, y no hay una respuesta definitiva para todos. En general, conviene usar la actual distribución estable o la distribución estable inmediatamente anterior.
 En la actualidad, éstas son perl5.22.x y perl5.20.x respectivamente.
 
 Si desea usar otras versiones, para decidir cuál es la que más le conviene debe tener en cuenta varias cosas, como las siguientes:
@@ -51,7 +51,7 @@ Las versiones más recientes de perl incorporan más correcciones de errores.
 
 =item *
 
-La comunidad Perl tiende a ofrecer soporte para las versiones más recientes, por lo que le costará menos encontrar ayuda para estas versiones.
+La comunidad Perl tiende a ofrecer soporte para las distribuciones más recientes, por lo que le costará menos encontrar ayuda para ellas.
 
 =item *
 
@@ -60,11 +60,11 @@ http://www.cert.org/advisories/CA-1997-17.html).
 
 =item *
 
-Las versiones más recientes suelen estar menos implementadas y probadas. Si no le gusta arriesgar, es posible que prefiera esperar unos meses para ver qué problemas detectan los usuarios.
+Las versiones más recientes suelen estar menos implementadas y probadas, así que si no le gusta arriesgar, es posible que prefiera esperar unos meses después de esta distribución para ver qué problemas detectan los usuarios.
 
 =item *
 
-Las versiones anteriores más recientes (en este caso, perl5.18.x) suelen mantenerse durante un tiempo, aunque en menor medida que las versiones actuales.
+Las distribuciones anteriores más recientes (en este caso, perl5.18.x) suelen mantenerse durante un tiempo, aunque en menor medida que las distribuciones actuales.
 
 =item *
 
@@ -72,11 +72,11 @@ Actualmente nadie ofrece soporte para Perl 4 de forma activa. Hace diez años er
 
 =item *
 
-El equipo que trabaja en Rakudo, la implementación más avanzada actualmente de Perl 6, publicó en julio de 2010 una distribución de Perl 6 "útil y utilizable, para pioneros", denominada Rakudo Star. Encontrará más información en L<http://rakudo.org/>.
+El equipo que trabaja en Rakudo, la implementación más avanzada actualmente de Perl 6, publicaba en julio de 2010 una distribución de Perl 6 "útil y utilizable, para pioneros", denominada Rakudo Star. Encontrará más información en L<http://rakudo.org/>.
 
 =item *
 
-Hay dos líneas de desarrollo de perl: una versión de mantenimiento y una versión experimental. Las versiones de mantenimiento son estables; en estas versiones se utiliza un número par como número de versión secundaria (p. ej., perl5.18.x, donde 18 es el número de versión secundaria). Las versiones experimentales pueden incluir características que no se incluyen en las versiones estables; en este caso el número de versión secundaria es un número impar (p. ej., perl5.19.x, donde 19 es la versión secundaria).
+Hay dos líneas de desarrollo de perl: una versión de mantenimiento y una versión experimental. Las distribuciones de mantenimiento son estables; en estas versiones se utiliza un número par como número de versión secundaria (p. ej., perl5.18.x, donde 18 es el número de versión secundaria). Las versiones experimentales pueden incluir características que no se incluyen en las distribuciones estables; en este caso el número de versión secundaria es un número impar (p. ej., perl5.19.x, donde 19 es la versión secundaria).
 
 =back
 
@@ -86,7 +86,7 @@ Se puede resumir de la siguiente manera: Perl 4 es el antecesor de Perl 5 y Perl
 
 El número que va detrás de Perl (el 5 de Perl 5) es la versión principal del intérprete de Perl (es decir, perl), así como la versión del lenguaje. Cada versión principal incorpora diferencias importantes que no son compatibles con las versiones anteriores.
 
-Actualmente, la versión principal de Perl es Perl 5, que se lanzó en 1994. Permite ejecutar I<scripts> de la versión principal anterior, Perl 4 (lanzada en marzo de 1991), pero incluye diferencias importantes.
+Actualmente, la versión principal de Perl es Perl 5, que se lanzó en 1994. Permite ejecutar I<scripts> de la versión principal anterior, Perl 4 (distribuida en marzo de 1991), pero incluye diferencias importantes.
 
 Perl 6 es una reinvención de Perl. Es un lenguaje del mismo linaje, pero incompatible. Estos dos lenguajes no son mutuamente excluyentes, sino que se complementan. Perl 6 no sustituye a Perl 5, y viceversa. Vea L</"¿Qué es Perl 6?"> a continuación para obtener más información.
 
@@ -107,13 +107,13 @@ Si desea aprender más sobre Perl 6 o ayudarnos en nuestra cruzada por mejorar P
 
 =head2 ¿Es Perl estable?
 
-Las versiones de producción, que incorporan correcciones de errores y funcionalidad nueva, se someten a pruebas intensivas antes de su lanzamiento. Desde el lanzamiento de la versión 5.000, hemos lanzado una versión de producción al año (en promedio).
+Las distribuciones de producción, que incorporan correcciones de errores y funcionalidad nueva, se someten a pruebas intensivas antes de su distribución. Desde el lanzamiento de la versión 5.000, hemos distribuido una versión de producción al año (en promedio).
 
 Ocasionalmente, el equipo de desarrollo de Perl realiza cambios en los componentes internos del lenguaje, pero siempre se hace lo posible por mantener la compatibilidad con las versiones anteriores.
 
-=head2 ¿Con qué frecuencia se lanzan nuevas versiones de Perl?
+=head2 ¿Con qué frecuencia se distribuyen nuevas versiones de Perl?
 
-Recientemente se acordó el plan de lanzar una versión nueva de Perl cada mes de abril, aproximadamente, pero dando prioridad a la calidad de la distribución, por lo que la fecha de lanzamiento es flexible; no se fija una fecha estricta.  En L<http://www.cpan.org/src/README.html> se pueden ver las fechas de lanzamiento históricas.
+Recientemente se acordó el plan de lanzar una distribución nueva de Perl cada mes de abril, aproximadamente, pero dando prioridad a la calidad de la distribución, por lo que la fecha de distribución es flexible; no se fija una fecha estricta.  En L<http://www.cpan.org/src/README.html> se pueden ver las fechas de distribución históricas.
 
 Los números de versión secundaria pares (5.18, 5.20, 5.22) indican versiones de producción, mientras que los números de versión secundaria impares (5.19, 5.21, 5.23) indican versiones de desarrollo. Es probable que nunca tenga que instalar una versión de desarrollo de Perl, a menos que desee probar una funcionalidad experimental.
 

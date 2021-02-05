@@ -6,9 +6,9 @@ perl5123delta - qué hay de nuevo en perl v5.12.3
 
 =head1 DESCRIPCIÓN
 
-Este documento describe las diferencias entre la versión 5.12.2 y la versión 5.12.3.
+Este documento describe las diferencias entre las distribuciones 5.12.2 y 5.12.3.
 
-Si está actualizando desde una versión anterior como la 5.12.1, primero lea L<perl5122delta>, que describe las diferencias entre 5.12.1 y la 5.12.2.  Los principales cambios realizados en 5.12.0 se describen en L<perl5120delta>.
+Si está actualizando desde una distribución anterior como la 5.12.1, primero lea L<perl5122delta>, que describe las diferencias entre 5.12.1 y la 5.12.2.  Los principales cambios realizados en 5.12.0 se describen en L<perl5120delta>.
 
 =head1 Cambios incompatibles
 
@@ -20,7 +20,7 @@ Si está actualizando desde una versión anterior como la 5.12.1, primero lea L<
 =head2 C<keys>, C<values> funcionan con arrays
 
 Ahora puede usar las funciones predefinidas C<keys>, C<values>, C<each> con arrays (anteriormente sólo se podía utilizar con los hashes).  Vea L<perlfunc> para más detalles.
-Esto es realmente un cambio introducido en Perl 5.12.0, pero no se incluyó en el perldelta del lanzamiento.
+Esto es realmente un cambio introducido en Perl 5.12.0, pero no se incluyó en la distribución de perldelta.
 
 =head1 Corrección de errores
 
@@ -69,7 +69,7 @@ Si usted encuentra algo que piensa que es un error, podría verificar los artíc
 
 Si usted cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
 
-Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. fuzzy Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar la liberación de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar el lanzamiento de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
 
 =head1 VEA TAMBIÉN
 

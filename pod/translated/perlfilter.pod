@@ -239,7 +239,7 @@ Al ejecutar produce esta salida:
 
 El ejemplo de rot13 fue un ejemplo trivial. Aquí hay otra demostración que muestra una pocas características más.
 
-Digamos que quiere incluir un montón de código de depuración en su I<script> Perl durante el desarrollo, pero no quiere que esté disponible en la versión de producción. Los filtros de código fuente ofrecen una solución. Para que el ejemplo siga siendo sencillo, digamos que quiere que la salida de depuración se controle por medio de una variable de entorno, C<DEBUG>. El código de depuración se activa si la variable existe, sino, se desactiva.
+Digamos que quiere incluir un montón de código de depuración en su I<script> Perl durante el desarrollo, pero no quiere que esté disponible en el producto distribuido. Los filtros de código fuente ofrecen una solución. Para que el ejemplo siga siendo sencillo, digamos que quiere que la salida de depuración se controle por medio de una variable de entorno, C<DEBUG>. El código de depuración se activa si la variable existe, sino, se desactiva.
 
 Dos líneas con marcas especiales rodean el código de depuración, como este:
 

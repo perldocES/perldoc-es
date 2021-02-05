@@ -854,7 +854,7 @@ Puede simular una entrada TTY al depurador, añadiendo comandos arbitrarios a @D
 
     sub afterinit { push @DB::typeahead, "b 4", "b 6"; }
 
-El cual intentará establecer puntos de parada en las líneas 4 y 6 inmediatamente después de la inicialización del depurador. Note que @DB::typeahead no es un interfaz soportado, y está sujeto a cambios en el futuro.
+El cual intentará establecer puntos de parada en las líneas 4 y 6 inmediatamente después de la inicialización del depurador. Note que @DB::typeahead no es un interfaz soportado, y está sujeto a cambios en futuras distribuciones.
 
 Si quiere modificar el depurador, haga una copia de F<perl5db.pl> en la biblioteca Perl y modifíquelo como desee.
 Entonces querrá estableces su variable de entorno C<PERL5DB> para que sea algo así:

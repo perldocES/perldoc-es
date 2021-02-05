@@ -224,3 +224,11 @@ panel	panel
 symlink	enlace simbólico
 definitions	definiciones
 updates	actualizaciones
+maintenance	mantenimiento
+release	distribución
+release	versión
+release	lanzamiento de la versión
+release	publicación
+releases	distribuciones
+compromise	compromiso
+should	debería

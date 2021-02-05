@@ -11,7 +11,7 @@ Este documento ofrece una idea general de Unicode y cómo usar Unicode en Perl. 
 Unicode es un conjunto de caracteres que planea codificar todos los sistemas de escritura del mundo, más muchos otros símbolos.
 
 Unicode e ISO/IEC 10646 son estándares coordinados que unifican casi todos los estándares de conjuntos de caracteres modernos, cubriendo más de 80 sistemas de escritura y cientos de lenguajes, incluyendo todas las lenguas modernas comercialmente importantes.  También están codificados la mayor parte de los diccionarios Chinos, Japoneses y Coreanos. Los estándares cubrirán finalmente casi todos los caracteres en mas de 250 sistemas de escritura y miles de lenguas.
-Unicode 1.0 se liberó en octubre de 1991 y 6.0 en octubre de 2010.
+Unicode 1.0 se distribuyó en octubre de 1991 y 6.0 en octubre de 2010.
 
 Un I<carácter> Unicode es una entidad abstracta.  No está ligado a ningún ancho entero particular, especialmente no del C<char> del lenguaje C.
 Unicode es neutral con respecto al lenguaje y de lo que se muestra en pantalla: no codifica la lengua del texto, y no necesariamente define fuentes u otros detalles de disposición gráfica.  Unicode opera sobre caracteres y sobre texto construido a partir de estos caracteres.
@@ -34,7 +34,7 @@ Debido a la compatibilidad hacia atrás con las codificaciones anteriores, la id
 Cuando al principio se concibió Unicode, se pensaba que se podrían representar todos los caracteres del mundo usando una palabra de 16 bit; entonces haría falta un máximo de C<0x10000> (o 65 536) caracteres, desde el C<0x0000> al C<0xFFFF>.  Pronto se probó que era una equivocación, y desde Unicode 2.0 (julio de 1996), Unicode se definió para llegar a los 21 bits (C<0x10FFFF>), y Unicode 3.1 (marzo de 2001) definió los primeros caracteres por encima de C<0xFFFF>.
 Los primeros C<0x10000> caracteres se llaman el I<Plane 0> (Plano 0), o el I<Basic Multilingual Plane> (BMP) (Plano Multilingual Básico).  Con Unicode 3.1, 17 (sí, diecisiete) planos se definieron, pero aún no están completamente llenos de caracteres definidos.
 
-Cuando se codifica un nuevo idioma, Unicode, generalmente, elegirá un C<bloque> de puntos de código sin reservar para estos caracteres.  En retrospectiva, el número de puntos de código en estos bloques ha sido siempre equitativamente divisible por 16.  Los extras en un bloque, no necesario actualmente, se dejan sin reservar, para una ampliación en el futuro.  Pero existen ocasiones cuando una última versión necesita más puntos de código que el extra disponible, y se debe reservar un nuevo bloque en algún lugar, no contiguo al inicial, para gestionar ese desbordamiento.  Así, se ve que la aparente primera elección de "bloque" no es la principal organización ni la adecuada, y por eso se creó la propiedad C<Script>.  (Más tarde se añadió una propiedad I<script> mejorada, la propiedad C<Script_Extensions> (Extensiones al I<script>)).  Estos puntos de código que están en los bloques de desbordamiento pueden seguir teniendo el mismo I<script> que en los originales.  El concepto de I<script> encaja de forma aproximada con el lenguaje natural: existe el I<script> C<Latin>, I<script> C<Greek>, y así; y existen varios I<scripts> artificiales, como C<Common> para caracteres que se usan en I<scripts> múltiples, como en los símbolos matemáticos.  Los I<scripts>, normalmente, comparten diversas partes de algunos bloques.  Para más información sobre los I<scripts>, vea L<perlunicode/Scripts>.
+Cuando se codifica un nuevo idioma, Unicode, generalmente, elegirá un C<bloque> de puntos de código sin reservar para estos caracteres.  En retrospectiva, el número de puntos de código en estos bloques ha sido siempre equitativamente divisible por 16.  Los extras en un bloque, no necesario actualmente, se dejan sin reservar, para una ampliación en el futuro.  Pero existen ocasiones cuando una última distribución necesita más puntos de código que el extra disponible, y se debe reservar un nuevo bloque en algún lugar, no contiguo al inicial, para gestionar ese desbordamiento.  Así, se ve que la aparente primera elección de "bloque" no es la principal organización ni la adecuada, y por eso se creó la propiedad C<Script>.  (Más tarde se añadió una propiedad I<script> mejorada, la propiedad C<Script_Extensions> (Extensiones al I<script>)).  Estos puntos de código que están en los bloques de desbordamiento pueden seguir teniendo el mismo I<script> que en los originales.  El concepto de I<script> encaja de forma aproximada con el lenguaje natural: existe el I<script> C<Latin>, I<script> C<Greek>, y así; y existen varios I<scripts> artificiales, como C<Common> para caracteres que se usan en I<scripts> múltiples, como en los símbolos matemáticos.  Los I<scripts>, normalmente, comparten diversas partes de algunos bloques.  Para más información sobre los I<scripts>, vea L<perlunicode/Scripts>.
 Existe la división en bloques, pero es casi completamente accidental; el artefacto de cómo los caracteres se han y siguen almacenándose.  (Note que este párrafo ha sobresimplificado cosas para seguir con la idea de introducción.  Unicode, realmente, no codifica lenguas, sino sistemas de escritura para ellas -sus I<scripts>-; y un I<script> se puede usar para muchas lenguas.  Unicode también codifica cosas que no forma realmente de las lenguas, como los símbolos como C<BAGGAGE CLAIM>).
 
 Los puntos de código Unicode son solo números abstractos.  Para meter y sacar estos números abstractos, de alguna manera los números se deben I<codificar> o I<serializar>.  Unicode define algunas I<formas de codificación de caracteres>, de las cuales I<UTF-8> es la más popular.  UTF-8 es una codificación de longitud variable que codifica caracteres Unicode con 1 a 4 bytes.  Otras codificaciones son UTF-16 y UTF-32 y sus variantes I<big-> y I<little-endian> (UTF-8 es independiente de la ordenación de los bytes).  El ISO/IEC 10646 define las formas de codificación UCS-2 y UCS-4.
@@ -43,8 +43,8 @@ Para más información sobre las codificaciones -por ejemplo, para aprender qué
 
 =head2 Soporte Unicode de Perl
 
-A partir de Perl v5.6.0, tiene la capacidad de manejar Unicode de forma nativa.  Perl v5.8.0, sin embargo, es la primera versión recomendada para hacer un trabajo serio con Unicode.  La versión de mantenimiento 5.6.1 arregla muchos de los problemas de la implementación inicial de Unicode, pero, por ejemplo, las expresiones regulares siguen sin funcionar con Unicode en 5.6.1.
-Perl v5.14.0 es la primera versión donde el soporte Unicode está (casi) integrado de forma transparente sin problemas (la excepción sigue estando en unas diferencias con L<quotemeta|perlfunc/quotemeta>, y se arregló a partir de Perl 5.16.0).   Para activar este soporte transparente, debería usar C<use feature 'unicode_strings'> (que se selecciona automáticamente si usa C<use 5.012> o superior).  Ver L<feature>.
+A partir de Perl v5.6.0, tiene la capacidad de manejar Unicode de forma nativa.  Perl v5.8.0, sin embargo, es la primera distribución recomendada para hacer un trabajo serio con Unicode.  La distribución de mantenimiento 5.6.1 arregla muchos de los problemas de la implementación inicial de Unicode, pero, por ejemplo, las expresiones regulares siguen sin funcionar con Unicode en 5.6.1.
+Perl v5.14.0 es la primera distribución donde el soporte Unicode está (casi) integrado de forma transparente sin problemas (la excepción sigue estando en unas diferencias con L<quotemeta|perlfunc/quotemeta>, y se arregló a partir de Perl 5.16.0).   Para activar este soporte transparente, debería usar C<use feature 'unicode_strings'> (que se selecciona automáticamente si usa C<use 5.012> o superior).  Ver L<feature>.
 (5.14 también arregla un número de errores y desviaciones del estándar Unicode).
 
 Antes de Perl v5.8.0, el uso de C<use utf8> era para declarar que las operaciones en el bloque actual o archivo deberían seguir las reglas Unicode.
@@ -82,14 +82,14 @@ Todas las características que combinan Unicode y E/S también requieren usar la
 
 =head2 Unicode y EBCDIC
 
-Perl 5.8.0 añadió soporte para Unicode en las plataformas EBCDIC.  Se permitió que este soporte desapareciera en las últimas versiones, pero se revivió en 5.22.
+Perl 5.8.0 añadió soporte para Unicode en las plataformas EBCDIC.  Se permitió que este soporte desapareciera en las últimas distribuciones, pero se revivió en 5.22.
 El soporte Unicode es un poco más complejo de implementar ya que son necesarias conversiones adicionales.  Vea L<perlebcdic> para más información.
 
 En plataformas EBCDIC, la forma de codificación Unicode interna es UTF-EBCDIC en lugar de UTF-8.  La diferencia es que como UTF-8 es "ASCII-seguro" en que los caracteres ASCII se codifican tal cual en UTF-8, mientras que UTF-EBCDIC es "EBCDIC-seguro", en que todos los caracteres básicos (que incluye a todos los que tengan equivalentes en ASCII (como C<"A">, C<"0">, C<"%">, I<etc.>) son los mismos tanto en EBCDIC como en UTF-EBCDIC.  A menudo, la documentación usará el término "UTF-8" para significar igual que UTF-EBCDIC.  Es el caso para este documento.
 
 =head2 Crear Unicode
 
-Esta sección se aplica completamente a los Perl a partir de v5.22.  Los problemas de las versiones anteriores están en la subsección más abajo L</Problemas de las versiones anteriores>.
+Esta sección se aplica completamente a los Perl a partir de v5.22.  Los problemas de las distribuciones anteriores están en la subsección más abajo L</Problemas de las distribuciones anteriores>.
 
 Para crear caracteres Unicode en literales, use la notación C<\N{...}> en las cadenas doblemente entrecomilladas.
 
@@ -131,7 +131,7 @@ C<utf8::unicode_to_native()> se usa para que el código Perl sea portable en pla
 
 Consulte L</"Más recursos"> para ver cómo encontrar todos estos nombres y códigos numéricos.
 
-=head3 Problemas de las versiones anteriores
+=head3 Problemas de las distribuciones anteriores
 
 En plataformas EBCDIC, antes de v5.22, usar C<\N{U+...}> no funcionaba apropiadamente.
 

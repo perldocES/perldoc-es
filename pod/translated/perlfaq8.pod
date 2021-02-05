@@ -14,7 +14,7 @@ Lea las P+F y la documentación específica a la adaptación de perl a su sistem
 
 =head2 ¿Cómo descubro bajo qué sistema operativo estoy corriendo?
 
-La variable C<$^O> (C<$OSNAME> si usa C<English>) contiene una indicación del nombre del sistema operativo (no su número de publicación) donde se compiló su binario perl.
+La variable C<$^O> (C<$OSNAME> si usa C<English>) contiene una indicación del nombre del sistema operativo (no su número de distribución) donde se compiló su binario perl.
 
 =head2 ¿Por qué exec() no retorna?
 X<exec> X<system> X<fork> X<open> X<pipe>
@@ -1050,7 +1050,7 @@ Aquí están las maneras sugeridas para modificar su ruta de inclusión, incluye
 
 =back
 
-La última es particularmente útil porque sabe distinguir entre diferentes arquitecturas. El módulo pragmático C<lib.pm> se incluyó por primera vez con la publicación 5.002 de Perl.
+La última es particularmente útil porque sabe distinguir entre diferentes arquitecturas. El módulo pragmático C<lib.pm> se incluyó por primera vez con la distribución 5.002 de Perl.
 
 =head2 ¿Dónde están instalados los módulos?
 

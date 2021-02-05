@@ -141,7 +141,7 @@ X<my>
 El modificador C<when> es una característica experimental que apareció por primera vez en Perl 5.14.  Para usarlo, debe incluir una declaración C<use v5.14>.
 (Técnicamente, se requiere sólo la característica C<switch>, pero este detalle no estaba disponible antes de 5.14).  Solo es operativo desde dentro de un bucle C<foreach> o un bloque C<given>, y se ejecuta la sentencia sólo si es cierta la coincidencia inteligente C<< $_ ~~ I<EXPR> >>.  Si la instrucción se ejecuta, es seguida por un C<next> desde el interior de un C<foreach> y por un C<break> desde el interior de un C<given>.
 
-En la implementación actual, el bucle C<foreach> puede estar en cualquier lugar dentro del ámbito dinámico del modificador C<when>, pero debe estar dentro del ámbito léxico del bloque C<given>.  Esta restricción puede relajarse en una futura versión.  Vea a continuación L</"Instrucciones Switch">.
+En la implementación actual, el bucle C<foreach> puede estar en cualquier lugar dentro del ámbito dinámico del modificador C<when>, pero debe estar dentro del ámbito léxico del bloque C<given>.  Esta restricción puede relajarse en una futura distribución.  Vea a continuación L</"Instrucciones Switch">.
 
 =head2 Instrucciones compuestas
 X<statement, compound> X<block> X<bracket, curly> X<curly bracket> X<brace>

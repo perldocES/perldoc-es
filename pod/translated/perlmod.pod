@@ -59,7 +59,7 @@ Usamos la notación C<*nombre> para hacer referencia al valor de cada entrada de
 
 Puede usar esto para imprimir todas las variables del paquete, por ejemplo.  La biblioteca estándar (aunque anticuada) F<dumpvar.pl> y el módulo Devel::Symdump de CPAN lo usan.
 
-El resultado de crear directamente nuevas entradas en la tabla de símbolos o de modificar cualquier entrada que no sea ya un I<typeglob> no está definido y puede estar sujeto a cambios entre versiones de Perl.
+El resultado de crear directamente nuevas entradas en la tabla de símbolos o de modificar cualquier entrada que no sea ya un I<typeglob> no está definido y puede estar sujeto a cambios entre distribuciones de Perl.
 
 Una asignación a un I<typeglob> realiza una operación de creación de alias. Por ejemplo:
 
