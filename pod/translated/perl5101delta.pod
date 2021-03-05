@@ -878,7 +878,7 @@ F<Configure> permitirá el uso de C<-fstack-protector>, para proporcionar protec
 
 F<Configure> ahora determinará el correcto prototipado para las funciones reentrantes, y para C<gconvert>, si está usando un compilador de C++ en lugar de un compilador de C.
 
-En Unix, si se genera a partir de un árbol conteniendo un repositorio git, el proceso de configuración anotará el hash de confirmación que haya obtenido, para mostrarlo en la salida de C<perl -v> y C<perl -V>. Confirmaciones no almacenadas son automáticamente agregadas a la lista de parches locales mostrada por C<perl -V>.
+En Unix, si se genera a partir de un árbol conteniendo un repositorio git, el proceso de configuración anotará el hash de confirmación que haya obtenido, para mostrarlo en la salida de C<perl -v> y C<perl -V>. Las confirmaciones no almacenadas son automáticamente agregadas a la lista de parches locales mostrada por C<perl -V>.
 
 =head2 Mejoras en la compilación
 
@@ -1450,7 +1450,7 @@ Steffen Mueller y David Golden, en particular, ayudaron a obtener módulos CPAN 
 
 Craig Berry fue incansable en conseguir que se ejecutara maint en VMS, sin importar cuántas veces lo rompiéramos.
 
-El otro grupo principal de colaboradores contribuyó con la mayor parte de los cambios, y aplicaron la mayoría de los parches enviados por cientos de colaboradores que figuran en F<AUTORES>.
+El otro grupo principal de contribuidores contribuyó con la mayor parte de los cambios, y aplicaron la mayoría de los parches enviados por cientos de colaboradores que figuran en F<AUTORES>.
 
 (Perdón por todas las personas que no he mencionado por su nombre).
 
@@ -1462,7 +1462,7 @@ Si usted encuentra algo que piensa que es un error, podría verificar los artíc
 
 Si usted cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
 
-Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los participantes principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar el lanzamiento de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los contribuidores principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar el lanzamiento de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
 
 =head1 VEA TAMBIÉN
 

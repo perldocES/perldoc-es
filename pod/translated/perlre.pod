@@ -1350,7 +1350,7 @@ ya que, si se detecta I<A> pero no se detecta I<B>, el verbo C<(*THEN)> volverá
 =item C<(*COMMIT)> C<(*COMMIT:args)>
 X<(*COMMIT)>
 
-Este es "patrón de compromiso" C<< <commit> >> o C<:::> de Perl 6. Es un patrón de ancho cero similar a C<(*SKIP)>, con la diferencia de que, cuando se produce la vuelta atrás a causa de un error, provoca un error de coincidencia de todo el patrón. No habrá nuevos intentos para encontrar una coincidencia válida avanzando el puntero de inicio.
+Este es el "patrón de confirmación" C<< <commit> >> o C<:::> de Perl 6. Es un patrón de ancho cero similar a C<(*SKIP)>, con la diferencia de que, cuando se produce la vuelta atrás a causa de un error, provoca un error de coincidencia de todo el patrón. No habrá nuevos intentos para encontrar una coincidencia válida avanzando el puntero de inicio.
 Por ejemplo,
 
  'aaabaaab' =~ /a+b?(*COMMIT)(?{print "$&\n"; $contador++})(*FAIL)/;

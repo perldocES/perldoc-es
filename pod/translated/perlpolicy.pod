@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-perlpolicy - Varios y variadas políticas y compromisos relacionados con el núcleo de Perl
+perlpolicy - Varios y variadas políticas y confirmaciones relacionadas con el núcleo de Perl
 
 =head1 DESCRIPCIÓN
 
@@ -41,11 +41,11 @@ Larry tiene permitido cambiar, más tarde, sus ideas sobre cualquier materia, si
 
 Perl 5 se ha desarrollado por la comunidad, no por una entidad corporativa. Cada cambio aportado al núcleo de Perl es el resultado de una donación. Típicamente, estas donaciones son contribuciones de código o tiempo por miembros individuales de nuestra comunidad. De vez en cuando, estas donaciones entran en la forma de patrocinio corporativo o esponsorización organizativa de un individuo en particular o un proyecto.
 
-Como organización voluntaria, los compromisos que hacemos dependen fuertemente del buen deseo y trabajo duro de individuos que no tienen ninguna obligación de contribuir a Perl.
+Como organización voluntaria, las confirmaciones que hacemos dependen fuertemente del buen deseo y trabajo duro de individuos que no tienen ninguna obligación de contribuir a Perl.
 
 Dicho esto, valoramos la estabilidad y seguridad de Perl y haber tenido hace mucho tiempo un pacto no escrito en toda la comunidad Perl para apoyar y mantener nuevas distribuciones de Perl.
 
-Este documento codifica el soporte y mantenimiento de los compromisos que la comunidad Perl debería esperar de los desarrolladores de Perl:
+Este documento codifica el soporte y mantenimiento de las confirmaciones que la comunidad Perl debería esperar de los desarrolladores de Perl:
 
 =over
 
@@ -134,7 +134,7 @@ Una vez que una característica, construcción o módulo se han marcado como obs
 
 Las nuevas distribuciones de ramas de mantenimiento deberían contener sólo los cambios que caigan en una de las categorías llamadas "aceptables" indicadas más abajo, pero no deberían contener ningún cambio que caiga en una de las categorías "inaceptables".  (Por ejemplo, no se debe incluir un arreglo de un error de cuelgue si rompe la compatibilidad binaria).
 
-No es necesario incluir cada cambio que cumpla estos criterios, y en general el foco tendría que centrarse en asuntos de seguridad, errores de cuelgue, regresiones y problemas serios de instalación.  La tentación de incluir una plétora de cambios menores que no afecten la instalación o la ejecución de perl (p. ej., correcciones de ortografía en la documentación) deberían evitarse para reducir el riesgo de pasar algo por alto.  La intención es crear distribuciones de mantenimiento que son a la vez interesantes y que los usuarios pueden confiarse plenamente de su estabilidad.  (Una preocupación secundaria es evitar quemar al mantenedor-calabacero o abrumar a otros comisionados votando en cambios para ser incluidos (vea L</"Obtener cambios en la rama principal"> más abajo)).
+No es necesario incluir cada cambio que cumpla estos criterios, y en general el foco tendría que centrarse en asuntos de seguridad, errores de cuelgue, regresiones y problemas serios de instalación.  La tentación de incluir una plétora de cambios menores que no afecten la instalación o la ejecución de perl (p. ej., correcciones de ortografía en la documentación) deberían evitarse para reducir el riesgo de pasar algo por alto.  La intención es crear distribuciones de mantenimiento que son a la vez interesantes y que los usuarios pueden confiarse plenamente de su estabilidad.  (Una preocupación secundaria es evitar quemar al mantenedor-calabacero o abrumar a otros contribuidores votando en cambios para ser incluidos (vea L</"Obtener cambios en la rama principal"> más abajo)).
 
 Los siguientes tipos de cambio pueden considerarse aceptables, mientras no caigan también en cualquiera de las categorías "inaceptables" indicadas más abajo:
 
@@ -211,7 +211,7 @@ Si hay cualquier cuestión sobre si un parche dado podría merecer inclusión en
 
 Históricamente, sólo el calabacero escogerá los cambios desde C<bleadperl> en C<maintperl>.  Esto tiene problemas de escalado.  Al mismo tiempo, las ramas de mantenimiento de versiones estables de Perl necesitan tratarse con gran cuidado. Al final, a partir de Perl 5.12, tenemos un nuevo proceso para las ramas C<maint>.
 
-Cualquier comisionado puede escoger cualquier confirmación (I<commit>) desde la rama C<blead> a la C<maint> si envía un correo a perl5-porters anunciando su intención de escoger una confirmación específica junto con un razonamiento para hacerlo y al menos otros dos comisionados respondan a la lista dando su asentimiento. (Esta política aplica al actual y anterior calabaceros, así como otros comisionados).
+Cualquier contribuidor puede escoger cualquier confirmación (I<commit>) desde la rama C<blead> a la C<maint> si envía un correo a perl5-porters anunciando su intención de escoger una confirmación específica junto con un razonamiento para hacerlo y al menos otros dos contribuidores respondan a la lista dando su asentimiento. (Esta política aplica al actual y anterior calabaceros, así como otros contribuidores).
 
 Se pueden utilizar en su lugar otros mecanismos de votación, mientras que el mismo número de votos se reúna de una manera transparente.  Específicamente, las propuestas de tales cambios de elección deben ser visibles para todo el mundo en perl5-porters de modo que las opiniones de todo el que esté interesado se puedan oír.
 

@@ -1,0 +1,843 @@
+=encoding utf8
+
+=for comment
+Para aplicar un formato uniforme a este archivo, use:
+  perl ./Porting/podtidy pod/perlhack.pod
+
+=head1 NAME
+
+perlhack - Cómo hackear Perl
+
+=head1 DESCRIPCIÓN
+
+En este documento se explica cómo funciona el desarrollo de Perl.  Incluye detalles sobre la lista de correo de los Perl 5 Porters, el repositorio Perl, el rastreador de errores Perlbug, directrices de parcheo, y comentarios sobre la filosofía de desarrollo de Perl.
+
+=head1 GUÍA ULTRARRÁPIDA DE CREACIÓN DE PARCHES
+
+Si desea enviar un único y pequeño parche, como una corrección de un documento pod, un test de un error, correcciones de comentarios, etc., el procedimiento es muy sencillo. Aquí está el cómo:
+
+=over 4
+
+=item * Compruebe el repositorio de código fuente
+
+El código fuente de perl está almacenado en un repositorio de git.  Puede clonar el repositorio con el siguiente comando:
+
+  % git clone git://perl5.git.perl.org/perl.git perl
+
+=item * Asegúrese de que sigue el último consejo
+
+En caso de que el consejo en esta guía se haya actualizado recientemente, lea la última versión directamente del código fuente de perl:
+
+  % perldoc pod/perlhack.pod
+
+=item * Implemente el cambio
+
+I<Hack>, I<hack>, I<hack>.  Recuerde que Perl corre en muchas plataformas diferentes, con sistemas operativos diferentes que tiene capacidades diferentes, diferentes organizaciones de sistemas de archivos, e incluso diferentes conjuntos de caracteres.  L<perlhacktips> le aconseja sobre esto mismo.
+
+=item * Pruebe el cambio
+
+Puede ejecutar todas las pruebas con los siguientes comandos:
+
+  % ./Configure -des -Dusedevel
+  % make test
+
+Siga I<hackeando> hasta que pase las pruebas.
+
+=item * Confirme sus cambios
+
+Confirmar su trabajo salvará el cambio I<en su sistema local>:
+
+  % git commit -a -m 'El mensaje de confirmación viene aquí'
+
+Asegúrese de que el mensaje de confirmación describe su cambio en una única sentencia.  Por ejemplo, "Corrección de errores ortográficos en perlhack.pod".
+
+=item * Envíe el cambio a perlbug
+
+El siguiente paso es remitir su parche al sistema de tiques del núcleo de Perl.
+
+Si sus cambios son en un simple C<git commit>, ejecute los siguientes comandos para generar el archivo de parches y adjúntelo a su informe de errores:
+
+  % git format-patch -1
+  % ./perl -Ilib utils/perlbug -p 0001-*.patch
+
+El programa perlbug le preguntará unas pocas cuestiones sobre su dirección de correo electrónico y el parche que está suministrando.  Una vez que las responda entregará su parche vía I<email>.
+
+Si sus cambios están en múltiples confirmaciones, genere un archivo de parche para cada uno y páselos a perlbug con la opción C<-p> separando con comas:
+
+  % git format-patch -3
+  % ./perl -Ilib utils/perlbug -p 0001-fix1.patch,0002-fix2.patch,\
+  > 0003-fix3.patch
+
+Cuando se le pregunte, escoja un asunto que resuma sus cambios.
+
+=item * Gracias
+
+Los portadores aprecian el tiempo que gasta ayudando a hacer mejor a Perl.
+¡Gracias!
+
+=item * La próxima vez
+
+La próxima vez que desee hacer un parche, necesita empezar desde el último perl en un estado prístino.  Compruebe que no tenga ningún cambio local o archivos añadidos en el C<check-out> que desee mantener, y entonces ejecute estos comandos:
+
+  % git pull
+  % git reset --hard origin/blead
+  % git clean -dxf
+
+=back
+
+=head1 NOTIFICACIÓN DE ERRORES
+
+Si desea notificar un error en Perl, debe usar la herramienta de línea de comandos F<perlbug>.  Esta herramienta se asegurará de que el informe de error incluya toda la información necesaria de configuración y del sistema.
+
+Puede revisar los errores y las revisiones de Perl existentes a través de la interfaz web L<http://rt.perl.org/>.
+
+Por favor compruebe el archivo de la lista de los perl5-porters (vea abajo) y/o el sistema de seguimiento de errores antes de suministrar un informe de errores.  A menudo, encontrará que el error ya se ha reportado.
+
+Puede entrar en el sistema de seguimiento y comentarlo en el actual reporte de errores.  Si tiene información adicional con respecto a un error actual, por favor, añádalo.  Esto ayudará a los porteadores a arreglarlo.
+
+=head1 PERL 5 PORTERS
+
+La lista de correo perl5-porters (p5p) es donde se mantiene y desarrolla la distribución Perl estándar.  También se refiere a la gente que mantiene Perl como "Perl 5 Porters", "p5p" o simplemente, los "porters".
+
+Está disponible un archivo de la lista con opción de búsqueda en L<http://markmail.org/search/?q=perl5-porters>.  Hay también un archivo en L<http://archive.develooper.com/perl5-porters@perl.org/>.
+
+=head2 Lista de correo perl-changes
+
+La lista de correo perl5-changes recibe una copia de cada revisión enviada a las ramas de mantenimiento y desarrollo del repositorio de perl.  Vea L<http://lists.perl.org/list/perl5-changes.html> para más información sobre la subscripción y archivado.
+
+=head2 #p5p en IRC
+
+También hay muchos porteadores activos en el canal L<irc://irc.perl.org/#p5p>.
+Puede unirse al canal y hacer preguntas sobre cómo I<hackear> el núcleo de Perl.
+
+=head1 OBTENER EL CÓDIGO FUENTE DE PERL
+
+Todo el código fuente de Perl se almacena en un repositorio central de Git en I<perl5.git.perl.org>.  El repositorio contiene muchas revisiones desde Perl 1 en adelante y todas las revisiones desde Perforce, el anterior sistema de control de versiones.
+
+En L<perlgit> encontrará una descripción mucho más detallada del uso de git con el repositorio de Perl.
+
+=head2 Acceso de lectura mediante Git
+
+Necesitará en su ordenador una copia de Git.  Puede descargarse una copia del repositorio usando el protocolo git:
+
+  % git clone git://perl5.git.perl.org/perl.git perl
+
+Este comando clona el repositorio y crea una copia local en el directorio F<perl>.
+
+Si un cortafuegos le impide usar el protocolo git, puede clonar el repositorio a través de http, aunque este método es mucho más lento:
+
+  % git clone http://perl5.git.perl.org/perl.git perl
+
+=head2 Acceso de lectura a través de Internet
+
+Puede tener acceso al repositorio a través de Internet.  Esto le permite navegar por el árbol, ver confirmaciones recientes, suscribirse a fuentes RSS de los cambios, buscar por una confirmación en particular, y más.  Se encuentra en L<http://perl5.git.perl.org/perl.git>.  Un espejo del repositorio se encuentra en L<https://github.com/Perl/perl5>.
+
+=head2 Acceso de lectura mediante rsync
+
+También puede elegir usar rsync para obtener una copia del árbol de código fuente actual para la rama bleadperl y todas las ramas de mantenimiento:
+
+  % rsync -avz rsync://perl5.git.perl.org/perl-current .
+  % rsync -avz rsync://perl5.git.perl.org/perl-5.12.x .
+  % rsync -avz rsync://perl5.git.perl.org/perl-5.10.x .
+  % rsync -avz rsync://perl5.git.perl.org/perl-5.8.x .
+  % rsync -avz rsync://perl5.git.perl.org/perl-5.6.x .
+  % rsync -avz rsync://perl5.git.perl.org/perl-5.005xx .
+
+(Añada la opción C<--delete> para eliminar los archivos remanentes).
+
+Para obtener una lista completa de los puntos de sincronización disponibles:
+
+  % rsync perl5.git.perl.org::
+
+=head2 Acceso de escritura mediante git
+
+Si tiene una pequeña confirmación, por favor vea L<perlgit> para más detalles sobre cómo usar git.
+
+=head1 PARCHEAR PERL
+
+Si está planeando hacer un trabajo más extenso que un pequeño arreglo, le animamos a que lea la documentación que sigue más abajo.  Esto le ayudará a centrarse en su trabajo y hacer más fácil la incorporación de sus parches en el código fuente de Perl.
+
+=head2 Envío de archivos de revisión
+
+Si tiene que suministrar un pequeño parche, por favor envíelo vía perlbug.  También puede enviar un mensaje de correo directamente a perlbug@perl.org.  Tenga en cuenta que los mensajes enviados a través de perlbug se canalizarán a través de una cola de moderación, por lo que es posible que no reciba una respuesta inmediatamente.
+
+Cuando se haya procesado el envío, recibirá un mensaje de correo electrónico de nuestro sistema de seguimiento de incidencias.  Este mensaje de correo electrónico incluirá un número de incidencia.  Cuando su revisión llegue al sistema de seguimiento de incidencias, también se enviará a la lista perl5-porters@perl.org.
+
+Los parches son revisados y debatidos en la lista p5p.  En general, las revisiones sencillas y que no generen controversia, se aplicarán sin debate.
+Cuando se haya aplicado la revisión, se actualizará la incidencia y se le enviará una notificación por correo electrónico.  También se enviará un mensaje de correo electrónico a la lista p5p.
+
+En otros casos, el parche necesitará más trabajo o discusión.  Esto sucederá en la lista p5p.
+
+Se le anima a que participe en la discusión y que defienda su parche.  Algunas veces su parche se perderá en la mezcolanza.  Si en un mes no se ha tomado una decisión, es apropiado enviar un correo de recuerdo a p5p.  Por favor, recuerde que los desarrolladores de Perl 5 son todos ellos voluntarios, así que sea amable.
+
+Los cambios siempre se aplican directamente a la rama de desarrollo principal, denominada "blead".  Se pueden aportar algunos parches a una rama de mantenimiento.  Si piensa que su parche es apropiado para la rama de mantenimiento (vea L<perlpolicy/RAMAS DE MANTENIMIENTO>), por favor explique el porqué cuando lo suministre.
+
+=head2 Conseguir que se acepte su parche
+
+Si está suministrando un código de un parche hay varias cosas que puede hacer para ayudar a que los Perl 5 Porters acepten su parche.
+
+=head3 Estilo de parche
+
+Si utilizó git para comprobar el código fuente de Perl, entonces al usar C<git format-patch> producirá un parche en un estilo propio para Perl.  El comando C<format-patch> produce un archivo de parches por cada confirmación realizada.  Si prefiere enviar un único parche para todas las confirmaciones, puede usar C<git diff>.
+
+  % git checkout blead
+  % git pull
+  % git diff blead nombre-de-mi-rama
+
+Este comando genera un archivo de revisión basado en las diferencias entre la rama blead y su rama actual.  Es importante asegurarse de que la rama blead está actualizada antes de generar el archivo de diferencias, por lo que antes hay que ejecutar el comando C<git pull>.
+
+Es muy recomendable usar git (si es posible).  Hará su vida más fácil, y la nuestra también.
+
+Sin embargo, puede crear un archivo de revisión válido aunque no use git.  Necesitará una copia prístina del código fuente de Perl con la que sacar diferencias.
+Los porteadores prefieren diferencias (diff) unificadas.  Puede usar GNU C<diff> para producir un archivo de diferencias:
+
+  % diff -Npurd perl.pristina perl.mia
+
+Asegúrese que hace un C<make realclean> en su copia de Perl para eliminar cualquier artefacto de compilación, u obtendrá un resultado confuso.
+
+=head3 Mensaje de compromiso
+
+A medida que crea cada parche que pretende suministrar al código fuente de Perl, es importante escribir un buen mensaje para cada confirmación.  Esto es especialmente importante si su suministro consiste en una serie de confirmaciones.
+
+La primera línea del mensaje de la confirmación debería ser una corta descripción, sin punto.  No debería ser mayor que la línea de asunto en un correo, siendo 50 caracteres una buena regla.
+
+Un montón de herramientas Git (Gitweb, GitHub, git log --pretty=oneline, ...) sólo mostrarán la primera línea (recortada a 50 caracteres) cuando presenten resúmenes de confirmaciones.
+
+El mensaje de confirmación debería incluir una descripción del problema que el parche corrige o la nueva funcionalidad que el parche añade.
+
+Como regla general, su mensaje de confirmación debería ayudar a un programador que conozca el núcleo de Perl a entender rápidamente qué está intentando hacer, cómo lo está intentando hacer, y por qué los cambios importan a Perl.
+
+=over 4
+
+=item * Por qué
+
+Su mensaje de confirmación debería describir por qué el cambio que está haciendo es importante.  Cuando alguien mire su cambio seis meses o seis años más tarde, su intención debería ser clara.
+
+Si está desaprobando una característica con la intención de simplificar más tarde otro trozo de código, dígalo así.  Si está arreglando un problema de prestaciones o añadiendo una nueva característica para dar soporte a alguna otra parte del núcleo, menciónelo.
+
+=item * Qué
+
+Su mensaje de confirmación debería describir qué parte del núcleo de Perl está cambiando y qué espera que haga su parche.
+
+=item * Cómo
+
+Mientras que no es necesario para los cambios en la documentación, nuevas pruebas o parches triviales, a menudo merece la pena explicar cómo funciona su cambio.
+Incluso si hoy le parece claro, puede que no se lo parezca a un portador el próximo mes o próximo año.
+
+=back
+
+Un mensaje de confirmación no tiene la intención de sustituir a los comentarios en su código.  Los mensajes de confirmación deberían describir el cambio realizado, mientras que los comentarios del código deberían describir el estado actual del código.
+
+Si ha implementado una nueva característica, completa con documentación, pruebas y código bien comentado, será suficiente un breve mensaje de confirmación.  Si, sin embargo, sólo ha cambiado un único carácter en el interior del intérprete o I<lexer>, podría necesitar escribir una pequeña novela para asegurarse de que los futuros lectores entiendan qué hizo y por qué lo hizo.
+
+=head3 Comentarios, comentarios, comentarios
+
+Asegúrese de que comenta adecuadamente su código.  Mientras que comentar todas las líneas es innecesario, debería documentarse cualquier cosa que aproveche efectos colaterales de los operadores, que cree cambios que caigan fuera de la función parcheada, o que otros pueden encontrar confuso.  Si va a equivocarse, es mejor hacerlo añadiendo demasiados comentarios, que demasiado pocos.
+
+Los mejores comentarios explican I<el por qué> el código hace lo que hace, no I<el qué hacen>.
+
+=head3 Estilo
+
+En general, debe seguir el estilo del código al que desea aplicar una revisión.
+
+En particular, siga estas directrices para parchear el código fuente de Perl:
+
+=over 4
+
+=item *
+
+tabuladores de 8 espacios (¡sin excepciones!)
+
+=item *
+
+sangrado de 4 para el código, sangrado de 2 para los #define anidados de C++
+
+=item *
+
+Intente siempre no exceder de la columna 79
+
+=item *
+
+Prototipo de ANSI C
+
+=item *
+
+Cada C<else> en su línea y el estilo de sangrado "K&R" para las estructuras de control
+
+=item *
+
+Nada de comentarios estilo C++ (//)
+
+=item *
+
+Marque los lugares que necesitan revisarse con XXX (¡y revíselos a menudo!)
+
+=item *
+
+Las llaves de apertura se alinean con "if" cuando la condición abarca múltiples líneas; de lo contrario debería ir al final de la línea.
+
+=item *
+
+En definiciones de función, el nombre comienza en la columna 0 (el tipo del valor retornado está en la línea anterior)
+
+=item *
+
+Un sólo espacio después de las palabras clave que preceden a paréntesis, no espacio entre nombre de función y el paréntesis siguiente
+
+=item *
+
+Evite las asignaciones en condicionales, pero si son inevitables, use un paréntesis extra, por ejemplo, "if (a && (b = c)) ..."
+
+=item *
+
+"return foo;" en lugar de "return(foo);"
+
+=item *
+
+"if (!foo) ..." en lugar de "if (foo == FALSE) ...", etc.
+
+=item *
+
+No declare variables con "register".  Puede ser contraproducente con compiladores modernos, y está obsoleto en C++, bajo el cual se compila regularmente el código fuente de Perl.
+
+=item *
+
+Funciones I<in-line> que están en las cabeceras que son accesibles al código XS necesitan poder compilarse sin advertencias con los indicadores de compilación extra más comunes, tales como C<-Wswitch-default> del gcc que advierte de si una sentencia switch no tiene una sentencia case "default".  El uso de los indicadores extra es el de cazar problemas potenciales en código C legal, y a menudo lo usan los empaquetadores de Perl, tales como los distribuidores de Linux.
+
+=back
+
+=head3 Conjunto de tests
+
+Si su parche cambia código (en lugar de sólo cambiar documentación), debería también incluir uno o más casos de prueba que ilustre el error que está corrigiendo o valide la nueva funcionalidad que está añadiendo.  En general, debe actualizar un archivo de test existente en lugar de crear uno nuevo.
+
+Su paquete de pruebas de las adiciones debería, generalmente, seguir estas directrices (cortesía de Gurusamy Sarathy <gsar@activestate.com>):
+
+=over 4
+
+=item *
+
+Conoce qué está comprobando.  Lea la documentación y el código fuente.
+
+=item *
+
+Tienda a fallar, no a acertar.
+
+=item *
+
+Interprete los resultados de forma estricta.
+
+=item *
+
+Use características no relacionadas (esto eliminará interacciones extrañas).
+
+=item *
+
+Use modismos no estándares (de lo contrario no está comprobando al estilo TIMTOWTDI (I<Hay más de una forma de hacerlo>)).
+
+=item *
+
+Evite utilizar números de prueba fijos en el código siempre que sea posible (el EXPECTED/GOT encontrado en t/op/tie.t es mucho más mantenible, y da mejores informes de fracaso).
+
+=item *
+
+Dé mensajes de error significativos cuando una prueba falle.
+
+=item *
+
+Evite usar qx// y system() a menos que esté probándolos.  Si los utiliza, asegúrese que cubre _todas_ las plataformas perl.
+
+=item *
+
+Elimine los archivos temporales que cree.
+
+=item *
+
+Promueva las advertencias imprevistas a errores con $SIG{__WARN__}.
+
+=item *
+
+Asegúrese de usar las bibliotecas y los módulos empaquetados con la versión comprobada, no con los que ya estaban instalados.
+
+=item *
+
+Añada comentarios al código que explique qué está probando.
+
+=item *
+
+Haga innecesario actualizar la cadena '1..42'.  O asegúrese de que lo actualiza.
+
+=item *
+
+Compruebe _todos_ los comportamientos de un operador biblioteca o función indicada.
+
+Compruebe todos los argumentos opcionales.
+
+Compruebe los valores de retorno en varios contextos (booleano, escalar, lista, valor a la izquierda).
+
+Use variables tanto global como léxicas.
+
+No olvide lo excepcional, los casos patológicos.
+
+=back
+
+=head2 Parchear un módulo principal
+
+Esto funciona justo igual a parchear cualquier otra cosa, con una consideración añadida.
+
+Los módulos en el directorio F<cpan/> se mantienen fuera del núcleo de Perl.  Cuando el autor actualiza el módulo, las actualizaciones simplemente se copian en el núcleo.  Vea la documentación del módulo o su listado en L<http://search.cpan.org/> para más información sobre cómo reportar errores o remitir parches.
+
+En la mayor parte de los casos, los parches de los módulos en F<cpan/> deberían subirse y no deberían aplicarse individualmente al núcleo de Perl.  Si, absolutamente, un parche a un archivo en F<cpan/> no puede esperar para arreglar y subirse, publicarlo en CPAN y copiarlo en blead, debe añadir (o actualizar) una entrada C<CUSTOMIZED> en el archivo F<"Porting/Maintainers.pl"> para indicar que se ha hecho una modificación local.  Vea F<"Porting/Maintainers.pl"> para más detalles.
+
+En contraste, los módulos en el directorio F<dist/> se mantienen en el núcleo.
+
+=head2 Actualizar perldelta
+
+Para cambios bastante significativos que garanticen una entrada en F<pod/perldelta.pod>, los portadores apreciarán si entrega una entrada junto con su cambio real.  Cambios significativos incluyen, pero no están limitados a:
+
+=over 4
+
+=item *
+
+Añadir, desaprobar, o eliminar características principales
+
+=item *
+
+Añadir, desaprobar, eliminar o actualizar módulos principales o con doble vida
+
+=item *
+
+Añadir nuevas pruebas del núcleo
+
+=item *
+
+Arreglar problemas de seguridad y errores del núcleo visibles por el usuario
+
+=item *
+
+Cambios que podrían romper código actual, tanto a nivel de perl o de C
+
+=item *
+
+Mejoras significativas de prestaciones
+
+=item *
+
+Añadir, eliminar o cambios significativos de la documentación en el directorio F<pod/>
+
+=item *
+
+Cambios importantes específicos de plataformas
+
+=back
+
+Por favor, asegúrese de que añade la entrada de perldelta en la sección correcta dentro de F<pod/perldelta.pod>.  Más información sobre cómo escribir buenas entradas en perldelta está disponible en la sección C<Style> de F<Porting/how_to_write_a_perldelta.pod>.
+
+=head2 ¿Qué es lo que hace bueno a un parche?
+
+Pueden ser polémicas las nuevas características y extensiones al lenguaje.  No hay un conjunto específico de criterios que determine qué características se añaden, pero aquí hay algunas cuestiones a considerar cuando se desarrolla un parche:
+
+=head3 ¿El concepto coincide con las metas generales de Perl?
+
+Nuestras metas incluyen, pero no están limitadas a:
+
+=over 4
+
+=item 1.
+
+Mantenerlo rápido, simple y útil.
+
+=item 2.
+
+Mantener las características/conceptos tan ortogonales como sea posible.
+
+=item 3.
+
+No hay límites arbitrarios (plataformas, tamaño de datos, culturas).
+
+=item 4.
+
+Mantenerlo abierto y entusiasmado para usar/parchear/defender Perl en todas partes.
+
+=item 5.
+
+Asimilar tanto las nuevas tecnologías, como construir puentes a ellas.
+
+=back
+
+=head3 ¿Dónde está la implementación?
+
+Todas las conversaciones del mundo son inútiles sin una implementación.  En casi cada caso, se esperaría que la persona o personas que argumentan por una nueva característica sean los que la implementen.  Los portadores capaces de codificar las nuevas características tienen su propia agenda, y no están disponibles para implementar su (posiblemente buena) idea.
+
+=head3 Compatibilidad con versiones anteriores
+
+Es un pecado capital romper los programas actuales de Perl.  Las nuevas advertencias pueden ser problemáticas: algunos dicen que un programa que emite advertencias no está roto, mientras que otros dicen que sí.  Añadir palabras clave tiene el potencial de romper programas, cambiar el significado de secuencias actuales de token o funciones podrían romper programas.
+
+El núcleo de Perl 5 incluye mecanismos para ayudar a los portadores a hacer más compatibles los cambios incompatibles hacia atrás, tales como los módulos L<feature> y L<deprecate>.  Por favor, úselos cuando sea apropiado.
+
+=head3 ¿Podría ser, en cambio, un módulo?
+
+Perl 5 tiene mecanismos de extensión, módulos y XS, específicamente para evitar la necesidad de seguir cambiando el intérprete de Perl.  Puede escribir módulos que exporten funciones, puede proporcionar prototipos de estas funciones para que puedan llamarse como funciones incorporadas, puede incluso escribir código XS para enredar con las estructuras de datos en tiempo de ejecución del intérprete Perl si quiere implementar cosas realmente complicadas.
+
+Siempre que sea posible, las nuevas características deberían prototiparse en un módulo CPAN antes de considerarse para el núcleo.
+
+=head3 ¿Es la característica suficientemente genérica?
+
+¿Es algo que sólo el suministrador quiere añadir al lenguaje, o es algo ampliamente útil?  A veces, en lugar de añadir una característica con un foco ajustado, los portadores podrían decidir esperar hasta que alguien implemente una característica más general.
+
+=head3 ¿Puede generar nuevos errores?
+
+Reescrituras radicales de grandes partes del intérprete Perl tienen el potencial de presentar nuevos errores.
+
+=head3 ¿Cómo de grande es?
+
+Cuanto más pequeño y localizado sea el cambio, mejor.  De modo parecido, una serie de pequeños parches es preferible a un único gran parche.
+
+=head3 ¿Impide otras características deseables?
+
+Es muy posible que un parche se rechace si cierra futuras vías de desarrollo.  Por ejemplo, un parche que asigne una verdadera y final interpretación de los prototipos es muy posible que se rechace porque aún existen opciones para el futuro de los prototipos que aún no se han investigado.
+
+=head3 ¿Es robusta la implementación?
+
+Buenos parches (código ajustado, completo, correcto) tiene más probabilidades de entrar.  Ñapas o parches incorrectos podrían colocarse al final de la cola hasta que el calabacero tenga tiempo para arreglarlo, o podría descartarlo sin más.
+
+=head3 ¿Es la implementación lo suficientemente genérica como para que sea portátil?
+
+Los peores parches hacen uso de características específicas del sistema.  Es altamente improbable que las adiciones no portátiles al lenguaje Perl sean aceptadas.
+
+=head3 ¿Se ha probado la implementación?
+
+Los parches que cambian el comportamiento (arreglando errores o introduciendo nuevas características) deben incluir pruebas de regresión para verificar que todo funciona como se espera.
+
+Sin las pruebas proporcionadas por el autor original, ¿cómo podría cualquiera, al cambiar perl en el futuro, estar seguro de que inadvertidamente no rompe el comportamiento que el parche implementa? Y sin pruebas, ¿cómo puede el autor del parche confiarse de que su duro trabajo puesto en el parche no será accidentalmente descartado por otro, en el futuro?
+
+=head3 ¿Hay suficiente documentación?
+
+Los parches sin documentación probablemente estarán poco pensados o incompletos.  No se pueden añadir o cambiar nuevas características sin documentación, así que es importante suministrar un parche tanto para los documentos pod como para el código fuente.
+
+=head3 ¿Existe otra manera de hacerlo?
+
+Larry dijo "Aunque el eslogan de Perl es I<Hay Más de Una Forma de Hacerlo>, dudo que pueda hacer algo de 10 formas".  Aún así, esto es un truco heurístico para navegar: la adición esencial de un hombre es la peor chapuza de otro.
+
+=head3 ¿Genera demasiado trabajo?
+
+Trabajo para los calabaceros, trabajo para los programadores Perl, trabajo para los autores de los módulos... Se supone que Perl debe ser sencillo.
+
+=head3 Los parches hablan más alto que las palabras
+
+Código funcionando siempre es preferible a ideas en el cielo.  Un parche que añada una característica tiene una probabilidad mucho más alta para que forme parte del lenguaje que la petición de una característica aleatoria, sin importar lo fervorosa que podría ser la argumentación.  Esto enlaza con el "¿Será útil?", como el hecho de que alguien tomó el tiempo necesario para demostrar un fuerte deseo por esa característica.
+
+=head1 PRUEBAS
+
+El núcleo usa el mismo estilo de pruebas que el resto de Perl, una simple ejecución "ok/not ok" por medio de Test::Harness, pero hay unas pocas consideraciones especiales.
+
+Existen tres formas de escribir una prueba en el núcleo: L<Test::More>, F<t/test.pl> y el ocasional C<print $test ? "ok 42\n" : "not ok 42\n">.
+La decisión de qué usar depende de en qué partes del paquete de pruebas está trabajando.  Esto es una medida para impedir un fallo de alto nivel (tal como una ruptura en Config.pm) que provoquen fallos en las pruebas de la funcionalidad básica.
+
+La biblioteca F<t/test.pl> proporciona algunas de las características de L<Test::More>, pero evita cargar buena parte de los módulos y usa el menor número posible de características principales.
+
+Si escribe su propio test, use el L<Test Anything
+Protocol|http://testanything.org>.
+
+=over 4
+
+=item * F<t/base>, F<t/comp> y F<t/opbasic>
+
+Ya que no sabemos si un C<require> funciona, o incluso las subrutinas, use pruebas ocasionales para estos tres.  Avance con cuidado para evitar usar la característica que se está probando.  Las pruebas en F<t/opbasic>, por ejemplo, se han puesto ahí en lugar de en F<t/op> porque prueba la funcionalidad que F<t/test.pl> presumiblemente ha demostrado que funciona.
+
+=item * F<t/cmd>, F<t/run>, F<t/io> y F<t/op>
+
+Ahora que se han probado los require() y subrutinas básicos, puede usar la biblioteca F<t/test.pl>.
+
+También puede usar condicionalmente ciertas bibliotecas como Config, pero asegúrese de saltar la prueba de forma amable si no existe.
+
+=item * Todo lo demás
+
+Ahora que se ha probado el núcleo de Perl, L<Test::More> puede y se debería usar.  También puede usar el paquete completo de módulos principales en las pruebas.
+
+=back
+
+Cuando dice "make test", Perl usa el programa F<t/TEST> para ejecutar el paquete de pruebas (excepto bajo Win32 donde en su lugar se usa F<t/harness>).
+Todas las pruebas se ejecutan desde el directorio F<t/>, B<no> el directorio que contiene la prueba.  Esto provoca algunos problemas con las pruebas en F<lib/>, así que aquí hay algunas oportunidades para parchear.
+
+Debe ser triplemente consciente sobre los problemas de la compilación cruzada.  Esto, normalmente, se basa en usar L<File::Spec>, evitando cosas como C<fork()> y C<system()> a menos que sea absolutamente necesario, y no asumir que un carácter dado tiene un valor ordinal particular (punto de código) o que su representación UTF-8 se compone de bytes particulares.
+
+Hay muchas funciones disponibles para especificar caracteres y puntos de código de forma portátil, en las pruebas.  Las funciones siempre disponibles C<utf8::unicode_to_native()> y su inversa C<utf8::native_to_unicode()> toman puntos de código y las traduce apropiadamente.  El archivo F<t/charset_tools.pl> tiene varias funciones que pueden ser útiles.  Tiene versiones de dos funciones anteriores que toman cadenas como entradas, no simples puntos de código numéricos: C<uni_to_native()> y C<native_to_uni()>.  Si tiene que mirar en los bytes individuales que conforman una cadena codificada en UTF-8, C<byte_utf8a_to_utf8n()> toma como entrada una cadena de estos bytes codificados para una plataforma ASCII, y devuelve la cadena equivalente en la plataforma nativa.  Por ejemplo, C<byte_utf8a_to_utf8n("\xC2\xA0")> devuelve la secuencia de bytes en la plataforma actual que forma el UTF-8 de C<U+00A0>, ya que C<"\xC2\xA0"> son los bytes UTF-8 en una plataforma ASCII para ese punto de código.  Esta función devuelve C<"\xC2\xA0"> en una plataforma ASCII, y C<"\x80\x41"> en una EBCDIC 1047.
+
+Pero más fácil es, si el carácter es especificable como un literal, como C<"A"> o C<"%">, para usarlo así; si no es especificable, puede usar C<\N{}>, si los efectos colaterales no son problemáticos.  Simplemente especifique todos los caracteres en hex., usando C<\N{U+ZZ}> en lugar de C<\xZZ>.  C<\N{}> es el nombre Unicode, y así siempre le da el carácter Unicode.  C<\N{U+41}> es el carácter cuyo punto de código Unicode es C<0x41>, por tanto es C<'A'> en todas las plataformas.
+Los efectos colaterales son:
+
+=over 4
+
+=item *
+
+Las que seleccionan reglas Unicode.  Significa que en cadenas con dobles comillas, la cadena siempre se convierte a UTF-8 para forzar una interpretación Unicode (puede degradarla con C<utf8::downgrade()> para convertirla de nuevo a no-UTF8, si es posible).  En patrones de expresiones regulares, no se hace la conversión, pero si el modificador de conjunto de caracteres no fuera C</d>, se cambia a C</u>.
+
+=item *
+
+Si usa la forma C<\N{I<nombre carácter>}>, se carga automáticamente el módulo L<charnames>.  Esto quizás no sea lo más apropiado para el nivel de pruebas que esté haciendo.
+
+=back
+
+Si está probando configuraciones regionales (vea L<perllocale>), hay funciones de apoyo en F<t/loc_tools.pl> para permitirle ver qué configuraciones regionales existen en su plataforma actual.
+
+=head2 Objetivos especiales en C<make test>
+
+Existen varios objetivos especiales en make que se pueden usar para probar Perl ligeramente diferente que el objetivo estándar "test".  No todos ellos se espera que le proporcionen un 100 % de éxito.  Muchos de ellos tienen varios alias, y muchos de ellos no están disponibles en ciertos sistemas operativos.
+
+=over 4
+
+=item * test_porting
+
+Esto ejecuta algunas pruebas de salud básicas en el árbol de código fuente y ayuda a cazar errores básicos antes de suministrar un parche.
+
+=item * minitest
+
+Ejecuta F<miniperl> en los tests F<t/base>, F<t/comp>, F<t/cmd>, F<t/run>, F<t/io>, F<t/op>, F<t/uni> y F<t/mro>.
+
+=item * test.valgrind check.valgrind
+
+(Sólo en Linux) Ejecuta todas las pruebas usando, de la herramienta "valgrind", las opciones de fuga de memoria + traviesos accesos a memoria.  Los archivos de registro se nombrarán como F<testname.valgrind>.
+
+=item * test_harness
+
+Ejecuta el paquete de pruebas con el programa de control F<t/harness>, en lugar de F<t/TEST>.  F<t/harness> es más sofisticado, y usa el módulo L<Test::Harness>, por ello usar este test supone que perl funciona en su mayor parte.  La principal ventaja para nuestros propósitos es que imprime al final un resumen detallado de las pruebas que han fallado.  También, a diferencia de F<t/TEST>, no redirige stderr a stdout.
+
+Note que bajo Win32 F<t/harness> siempre se usa en lugar de F<t/TEST>, así que existe el objetivo especial "test_harness".
+
+Bajo Win32 con el objetivo "test" puede usar las variables de entorno TEST_SWITCHES y TEST_FILES para controlar el comportamiento de F<t/harness>.  Esto significa que puede decir
+
+    nmake test TEST_FILES="op/*.t"
+    nmake test TEST_SWITCHES="-torture" TEST_FILES="op/*.t"
+
+=item * test-notty test_notty
+
+Establece PERL_SKIP_TTY_TEST a verdadero antes de ejecutar pruebas normales.
+
+=back
+
+=head2 Tests paralelos
+
+La distribución principal ahora puede ejecutar sus pruebas de regresión en paralelo en las plataformas de tipo Unix.  En lugar de ejecutar C<make test>, establezca en su entorno la variable C<TEST_JOBS> al número de pruebas que se deben ejecutar en paralelo, y ejecute C<make test_harness>.  En un I<shell> de la familia Bourne, esto se puede hacer así
+
+    TEST_JOBS=3 make test_harness  # Ejecuta 3 test en paralelo
+
+Se utiliza una variable de entorno, en lugar de ejecutarse por sí mismo en paralelo, porque L<TAP::Harness> tiene que ser capaz, por sí mismo, de programar I<scripts> de test individuales sin que haya conflictos entre ellos, y no hay un interfaz estándar de C<make> para interactuar con las programaciones de sus trabajos.
+
+Tenga en cuenta que en la actualidad algunos I<scripts> de prueba pueden fallar cuando se ejecuta en paralelo (sobre todo F<dist/IO/t/io_dir.t>).  Si es necesario ejecute los I<scripts> una vez más de forma secuencial y mire a ver si los errores desaparecen.
+
+=head2 Ejecutar pruebas manualmente
+
+Puede ejecutar manualmente parte del paquete de pruebas usando los siguientes comandos desde el directorio F<t/>:
+
+    ./perl -I../lib TEST lista-de-archivos-.t
+
+o bien
+
+    ./perl -I../lib harness lista-de-archivos-.t
+
+(Si no especifica I<scripts> de prueba, se ejecutará todo el conjunto de pruebas).
+
+=head2 Usar F<t/harness> para pruebas
+
+Si usa C<harness> para las pruebas, tiene a su disposición varias opciones en la línea de comandos.  Los argumentos son los que siguen, y están en el orden en que deben aparecer si se usan juntos.
+
+    harness -v -torture -re=patrón LISTA DE ARCHIVOS A PROBAR
+    harness -v -torture -re LISTA DE PATRONES A COINCIDIR
+
+Si se omite C<LISTA DE ARCHIVOS A PROBAR>, la lista de archivos se obtiene desde el manifiesto.  La lista de archivos pueden incluir comodines de shell que se expandirán.
+
+=over 4
+
+=item * -v
+
+Ejecuta las pruebas bajo el modo verboso así que puede ver qué pruebas se ejecutaron, y depurar la salida.
+
+=item * -torture
+
+Ejecuta las pruebas de tortura así como el conjunto normal.
+
+=item * -re=PATRÓN
+
+Filtra la lista de archivos así que todos los archivos de prueba coinciden con el PATRÓN.
+Note que esta forma es distinta de la de B<-re LISTA DE PATRONES> a continuación, en que también permite proporcionar la lista de archivos.
+
+=item * -re LISTA DE PATRONES
+
+Filtra la lista de archivos así que todos los archivo de prueba coinciden con la /(LISTA|DE|PATRONES)/.  Note que con esta forma los patrones se unen con '|' y ya no puede suministrar una lista de archivos, así que entonces los archivos de pruebas se obtienen desde el manifiesto (MANIFEST).
+
+=back
+
+Puede ejecutar una prueba individual mediante un comando similar a 
+
+    ./perl -I../lib ruta/a/foo.t
+
+excepto que establece algunas variables de entorno que pueden afectar a la ejecución de la prueba:
+
+=over 4
+
+=item * PERL_CORE=1
+
+indica que estamos ejecutando este test como parte del paquete de pruebas del núcleo de perl.  Esto es útil para los módulos que tienen una doble vida en CPAN.
+
+=item * PERL_DESTRUCT_LEVEL=2
+
+se establece a 2 si no estaba puesta antes (vea L<perlhacktips/PERL_DESTRUCT_LEVEL>).
+
+=item * PERL
+
+(sólo lo usa F<t/TEST>) si se establece, sobrescribe la ruta de acceso al ejecutable perl que debería usarse para ejecutar las pruebas (por defecto era F<./perl>).
+
+=item * PERL_SKIP_TTY_TEST
+
+si se establece, indica que se salten las pruebas que necesiten una terminal.  Realmente ya lo establece el Makefile, pero se puede forzar artificialmente ejecutando 'make test_notty'.
+
+=back
+
+=head3 Las variables de entorno que pueden influir en las pruebas
+
+=over 4
+
+=item * PERL_TEST_Net_Ping
+
+Establecer esta variable hace ejecutar todas las pruebas de módulos Net::Ping, de lo contrario se obviarán algunas pruebas que interaccionan con el mundo exterior.  Consulte L<perl58delta>.
+
+=item * PERL_TEST_NOVREXX
+
+Establecer esta variable hace obviar las pruebas vrexx.t para OS2::REXX.
+
+=item * PERL_TEST_NUMCONVERTS
+
+Esto establece una variable en op/numconvert.t.
+
+=item * PERL_TEST_MEMORY
+
+Establecer esta variable incluye las pruebas en F<t/bigmem/>.  Debería establecerse al número de gigabytes de memoria para pruebas, por ejemplo
+C<PERL_TEST_MEMORY=4> indica que las pruebas que requieren 4 GiB de memoria disponible se pueden ejecutar con seguridad.
+
+=back
+
+Vea también la documentación para los módulos Test y Test::Harness, para ver más variables de entorno que afectan al testeo.
+
+=head2 Pruebas de rendimiento
+
+El archivo F<t/perf/benchmarks> contiene trozos de código perl que sirven para medir rendimiento en un rango de versiones de perl, por la herramienta F<Porting/bench.pl>. Si arregla o mejora un problema de rendimiento, querrá añadir al archivo un código de ejemplo representativo, y ejecutar F<bench.pl> otra vez contra el anterior y actuales versiones de perl para ver las diferencias, y si a consecuencia de ello algo se ha enlentecido.
+
+El archivo F<t/perf/opcount.t> se ha diseñado para probar si un trozo de código en particular que se ha compilado en un optree contiene un número específico de tipos particulares de op. Esto es bueno para probar si las optimizaciones que alteran op, tales como convertir un op C<aelem> en un op C<aelemfast>, lo están haciendo realmente.
+
+Los archivos F<t/perf/speed.t> y F<t/re/speed.t> están diseñados para probar cosas que se ejecutan miles de veces más lentas si una optimización en particular se ha roto (por ejemplo, el caché de longitud utf8 en grandes cadenas utf8).
+Añada una prueba que tome normalmente una fracción de segundo, y si de lo contrario tarda minutos, hace que el archivo de test falle por agotamiento de tiempo.
+
+=head1 MÁS LECTURAS PARA LOS HACKER MÁS INTRÉPIDOS
+
+Para I<hackear> las tripas de Perl, necesitará leer las siguientes cosas:
+
+=over 4
+
+=item * L<perlsource>
+
+Una visión general del árbol de código fuente de Perl.  Esto le ayudará a encontrar los archivos por los que está buscando.
+
+=item * L<perlinterp>
+
+Una visión general del código fuente del intérprete Perl y algunos detalles sobre cómo Perl hace lo que hace.
+
+=item * L<perlhacktut>
+
+Este documento relata la creación de un pequeño parche al código C de Perl.  Si está recién iniciando el I<hackeo> del núcleo de Perl, esto le ayudará a entender cómo funciona.
+
+=item * L<perlhacktips>
+
+Más detalles sobre cómo I<hackear> el núcleo de Perl.  Este documento se centra en los detalles a un nivel más bajo, tales como escribir pruebas, problemas de compilación, portabilidad, depuración, etc.
+
+Si planea I<hackear> seriamente en C, asegúrese de que se lee esto.
+
+=item * L<perlguts>
+
+Esto es de importancia primordial ya que es la documentación de dónde va qué en el código fuente de Perl.  Léalo un par de veces y podría empezar a tener sentido; no se preocupe si aún no lo tiene, porque la mejor forma de estudiar es leerlo en conjunción con vistazos al código fuente de Perl, y esto lo haremos más tarde.
+
+Las "illustrated perlguts" de Gisle Aas, también conocidas como I<illguts>, son imágenes muy útiles.
+
+L<http://search.cpan.org/dist/illguts/>
+
+=item * L<perlxstut> y L<perlxs>
+
+Un conocimiento funcional sobre programación de XSUB es increíblemente útil para el I<hackeo> del núcleo; XSUB usan técnicas derivadas de código PP, la parte de las tripas que realmente ejecutan un programa Perl.  Es más suave aprender estas técnicas a partir de ejemplos y explicaciones sencillas que desde el propio núcleo.
+
+=item * L<perlapi>
+
+La documentación de la API de Perl explica lo que hacen algunas de las funciones internas, así como muchas de las macros utilizadas en el código.
+
+=item * F<Porting/pumpkin.pod>
+
+Esto es una colección de palabras de sabiduría para un portador Perl; algo de ella sólo es útil al que retiene la calabaza, pero la mayor parte aplica a cualquiera que quiera desarrollar sobre Perl.
+
+=back
+
+=head1 CPAN TESTERS Y PERL SMOKERS
+
+Los CPAN testers ( http://testers.cpan.org/ ) son un grupo de voluntarios que prueban los módulos de CPAN en una variedad de plataformas.
+
+Perl Smokers ( http://www.nntp.perl.org/group/perl.daily-build/ and http://www.nntp.perl.org/group/perl.daily-build.reports/ ) prueban automáticamente las distribuciones de código fuente Perl en plataformas con configuraciones diferentes.
+
+Ambos esfuerzos agradecen la llegada de nuevos voluntarios.  Para conseguir implicarse en las pruebas smoke del propio perl visite L<http://search.cpan.org/dist/Test-Smoke/>.  Para empezar a probar los módulos CPAN visite L<http://search.cpan.org/dist/CPANPLUS-YACSmoke/> o
+L<http://search.cpan.org/dist/minismokebox/> o L<http://search.cpan.org/dist/CPAN-Reporter/>.
+
+=head1 ¿Y DESPUÉS?
+
+Si ha leído toda la documentación en este documento y en los listados antes, está más preparado para I<hackear> Perl.
+
+Aquí hay algunas recomendaciones
+
+=over 4
+
+=item *
+
+Suscríbase a perl5-porters, siga los parches e intente entenderlos; no tema preguntar si una parte no está clara; quién sabe, quizás descubra un error en el parche...
+
+=item *
+
+Lea el README asociado con su sistema operativo, por ejemplo README.aix en el IBM AIX OS.  No dude en suministrar parches al README si encuentra que algo falta o cambia en la distribución de un nuevo SO.
+
+=item *
+
+Encuentre un área de Perl que le parezca interesante, y vea si puede aprender cómo funciona.  Escaneé el código fuente, y entre en el depurador.  ¡Juegue, cambie, investigue, trampee! Probablemente entenderá no sólo el área elegido sino también un rango mucho más amplio de la actividad de F<perl>, y probablemente más pronto de lo que piensa.
+
+=back
+
+=head2 "El Camino sigue y sigue, más allá de la puerta donde comenzó.".
+
+Si puede hacer estas cosas, es que ya comenzó en la larga marcha de la portabilidad de Perl.  Gracias por querer ayudar a que Perl sea mejor; y ¡feliz I<hackeo>!
+
+=head2 Menciones metafóricas
+
+Si reconoció la cita anterior sobre el Camino, es afortunado.
+
+La mayor parte de los proyectos de software comienza cada archivo con una descripción literal del propósito de cada archivo.  En lugar de eso, Perl comienza cada uno con una alusión literaria a los propósitos del archivo.
+
+Como en los capítulos de muchos libros, todos los archivos de código fuente Perl (junto con otros pocos aquí y allí) comienzan con una inscripción epigramática que alude, indirecta o metafóricamente, al material que está a punto de leer.
+
+Las citas se toman de los escritos de J.R.R. Tolkien perteneciendo casi siempre a su legendario I<El Señor de los Anillos>.  Los capítulos y números de página se toman de las siguientes ediciones:
+
+=over 4
+
+=item *
+
+I<El Hobbit>, de J.R.R. Tolkien.  Se usó el libro de tapa dura, edición 10º aniversario de 2007, publicado en Reino Unido por Harper Collins Publishers y en los EEUU por Houghton Mifflin Company.
+
+=item *
+
+I<El Señor de los Anillos>, by J.R.R. Tolkien.  Se usó el libro de tapa dura, edición 50º aniversario de 2004, publicado en Reino Unido por Harper Collins Publishers y en los EEUU por Houghton Mifflin Company. 
+
+=item *
+
+I<Las baladas de Beleriand>, by J.R.R. Tolkien y publicada póstumamente por su hijo y ejecutor literario, C.J.R. Tolkien, siendo el tercero de 12 volúmenes en la descomunal I<Historia de la Tierra Media> de Christopher.  Los números de página derivan de la edición de tapa dura, publicada primero en 1983 por George Allen & Unwin; no se cambiaron los números de página para la edición especial completa de 3 volúmenes de 2002 de varias ediciones en papel, todas de nuevo por Harper Collins o Houghton Mifflin.
+
+=back
+
+Otros libros de JRRT usados para las citas podrían incluir I<Las aventuras de Tom Bombadil>, I<El Silmarillion>, I<Cuentos inconclusos de Númenor y la Tierra Media>, y I<Los hijos de Húrin>, todos excepto el primero reunidos póstumamente por CJRT.  Pero I<El Señor de los Anillos> es en sí mismo adecuado y probablemente lo mejor para sacar citas, siempre que pueda encontrar allí una cita apropiada.
+
+Así que si va a suministrar un nuevo, completo archivo de código fuente de primer nivel a Perl, debería acomodarse a esta peculiar práctica seleccionando la cita apropiada de Tolkien, reteniendo la ortografía y puntuación original y usar el mismo formato para el resto de citas.  Indirecto y con rodeos también están bien; recuerde: es una metáfora, así que ser meta, después de todo, es de lo que se trata.
+
+=head1 AUTOR
+
+Actualmente la lista de correo perl5-porters se encarga de actualizar este documento redactado originalmente por Nathan Torkington.

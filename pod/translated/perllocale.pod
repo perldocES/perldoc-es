@@ -563,7 +563,7 @@ Vea también L<I18N::Langinfo> y C<RADIXCHAR>.
 
 =head2 Categoría C<LC_MONETARY>: Formateo de cantidades monetarias
 
-El estándar C define la categoría C<LC_MONETARY>, pero no hay ninguna función que se vea afectada por sus contenidos.  (Los que tienen experiencia en comités de estándares reconocerán que el grupo de trabajo decidió deshacerse del tema).  Por lo tanto, Perl, esencialmente, no toma cuenta de ello.  Si realmente quiere usar C<LC_MONETARY>, puede consultar su contenido -vea L<La función localeconv>- y utilizar la información que devuelve en sus rutinas de formateo de cantidades de divisas, de su propia aplicación.  Sin embargo, también puede encontrar que esta información, a pesar de que puede ser voluminosa y compleja, todavía no acabe de satisfacer sus necesidades: el formato de moneda es un hueso duro de roer.
+El estándar C define la categoría C<LC_MONETARY>, pero no hay ninguna función que se vea afectada por sus contenidos.  (Los que tienen experiencia en confirmaciones de estándares reconocerán que el grupo de trabajo decidió deshacerse del tema).  Por lo tanto, Perl, esencialmente, no toma cuenta de ello.  Si realmente quiere usar C<LC_MONETARY>, puede consultar su contenido -vea L<La función localeconv>- y utilizar la información que devuelve en sus rutinas de formateo de cantidades de divisas, de su propia aplicación.  Sin embargo, también puede encontrar que esta información, a pesar de que puede ser voluminosa y compleja, todavía no acabe de satisfacer sus necesidades: el formato de moneda es un hueso duro de roer.
 
 Vea también L<I18N::Langinfo> y C<CRNCYSTR>.
 

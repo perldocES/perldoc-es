@@ -23,7 +23,7 @@ Puede crear un clon de solo lectura de este repositorio. Para ello, ejecute:
 
 Este comando usa el protocolo git (puerto 9418).
 
-Si un firewall le impide usar el protocolo git, puede clonar el repositorio a través de http, aunque este método es mucho más lento:
+Si un cortafuegos le impide usar el protocolo git, puede clonar el repositorio a través de http, aunque este método es mucho más lento:
 
   % git clone http://perl5.git.perl.org/perl.git perl
 
@@ -355,7 +355,7 @@ C<git help bisect> ofrece mucha más información sobre cómo puede manipular la
 
 =head2 Ramas puntuales e historial de reescritura
 
-Los usuarios individuales que deseen aplicar cambios deben crear ramas puntuales en B<nombre>/B<nombre_descriptivo>:
+Los contribuidores individuales que deseen aplicar cambios deben crear ramas puntuales en B<nombre>/B<nombre_descriptivo>:
 
   % rama="$nombre/$nombre_descriptivo"
   % git checkout -b $rama
@@ -504,7 +504,7 @@ Si desea eliminar su rama temporal, puede hacerlo con el siguiente comando:
 
 La rama 'blead' se convertirá en la siguiente distribución de producción de Perl.
 
-Antes de enviar un cambio local a blead, es muy importante que haga una serie de cosas (si no quiere que los demás colaboradores le persigan enarbolando horcas de labrador y antorchas):
+Antes de enviar un cambio local a blead, es muy importante que haga una serie de cosas (si no quiere que los demás contribuidores le persigan enarbolando horcas de labrador y antorchas):
 
 =over
 
@@ -669,7 +669,7 @@ Finalmente, deberá borrar la rama remota I<smoke-me>:
 
 =head2 Nota sobre los servidores I<camel> (camello) y I<dromedary> (dromedario)
 
-Las personas que contribuyen cambios tienen acceso SSH a los dos servidores que ofrecen servicio a C<perl5.git.perl.org>. Uno es C<perl5.git.perl.org> (I<camel>), el repositorio "principal". El otro es C<users.perl5.git.perl.org> (I<dromedary>), que se puede usar para pruebas y desarrollo general. El servidor I<dromedary> sincroniza el árbol git de I<camel> cada pocos minutos. No debe insertar cambios en I<camel>. Ambos equipos también tienen un servidor reflejado de CPAN completo en F</srv/CPAN>. Use estos servidores. Para compartir archivos con el público general, I<dromedary> ofrece F<~/public_html/> como
+Las personas que confirman cambios tienen acceso SSH a los dos servidores que ofrecen servicio a C<perl5.git.perl.org>. Uno es C<perl5.git.perl.org> (I<camel>), el repositorio "principal". El otro es C<users.perl5.git.perl.org> (I<dromedary>), que se puede usar para pruebas y desarrollo general. El servidor I<dromedary> sincroniza el árbol git de I<camel> cada pocos minutos. No debe insertar cambios en I<camel>. Ambos equipos también tienen un servidor reflejado de CPAN completo en F</srv/CPAN>. Use estos servidores. Para compartir archivos con el público general, I<dromedary> ofrece F<~/public_html/> como
 C<http://users.perl5.git.perl.org/~usuario/>
 
 El acceso de estos hosts al exterior está considerablemente restringido mediante firewall. Hacia fuera, solo se admiten rsync, ssh y git. Para http y ftp puede usar http://webproxy:3128 como proxy. Para la entrada, el firewall trata de detectar ataques y bloquea las direcciones IP con actividad sospechosa. A veces (aunque raramente) esto produce falsos positivos y en ese caso se le bloqueará. La forma más rápida de conseguir que le desbloqueen es notificárselo a los administradores.

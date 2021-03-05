@@ -232,3 +232,12 @@ release	publicación
 releases	distribuciones
 compromise	compromiso
 should	debería
+commit	confirmación
+committer	contribuidor
+pumpking	calabacero
+target	objetivo
+suite	paquete
+hand	manualmente
+match	coincidencia
+wildcard	comodín
+wildcards	comodines

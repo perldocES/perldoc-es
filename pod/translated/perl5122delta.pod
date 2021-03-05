@@ -1,0 +1,270 @@
+=encoding utf8
+
+=head1 NAME
+
+perl5120delta - qué hay de nuevo para Perl 5.12.2
+
+=head1 DESCRIPCIÓN
+
+Este documento describe las diferencias entre las distribuciones 5.12.1 y 5.12.2.
+
+Si está actualizando desde una versión principal anterior, como la 5.10.1, lea primero L<perl5120delta>, que describe las diferencias entre 5.10.1 y 5.12.0, así como L<perl5121delta>, que describe los cambios anteriores en la series de distribuciones estables 5.12.
+
+=head1 Cambios incompatibles
+
+No hay cambios intencionadamente incompatibles con 5.12.1. Si los hay, los errores e informes serán bienvenidos.
+
+=head1 Mejoras en el núcleo principal
+
+Aparte de los errores arreglados listados más abajo, no debería haber cambios visibles (para el usuario) en el lenguaje, en esta distribución.
+
+=head1 Módulos y pragmas
+
+=head2 Nuevos módulos y pragmas
+
+Esta distribución no presenta nuevos módulo o I<pragmata>.
+
+=head2 Cambios en la prágmata
+
+En la distribución anterior, las sentencias C<no I<VERSION>;> disparan un error que podría causar que L<feature> se cargue y que se active el modo L<strict> de forma involuntaria.
+
+=head2 Módulos actualizados
+
+=over 4
+
+=item C<Carp>
+
+Actualizado desde la versión 1.16 a la 1.17.
+
+L<Carp> ahora detecta sobrecargas incompletas en L<caller()|perlfunc/"caller EXPR"> y evita C<@DB::args> ficticios. Para proporcionar rastreos, Carp confía en el particular comportamiento del C<caller> incorporado. Carp ahora detecta si otro código ha sobrepasado todo esto con una implementación incompleta, y modifica su rastreo de forma acorde. Anteriores sobrepases incompletos podrían causar valores incorrectos en los rastreos (mejor caso), u oscuros errores fatales (peor caso)
+
+Esto arregla ciertos casos de C<Extrañas copias de ARRAY> provocadas por módulos que sobrepasan C<caller()> incorrectamente.
+
+=item C<CPANPLUS>
+
+Un parche a F<cpanp-run-perl> se ha portado desde CPANPLUS C<0.9004>. Esto resuelve L<RT #55964|http://rt.cpan.org/Public/Bug/Display.html?id=55964> y L<RT #57106|http://rt.cpan.org/Public/Bug/Display.html?id=57106>, que están relacionados con fallos en la instalación de distribuciones que usan C<Module::Install::DSL>.
+
+=item C<File::Glob>
+
+Se ha arreglado una regresión que causaba un fallo de cuelgue al encontrar C<CORE::GLOBAL::glob> después de cargar C<File::Glob>.  Ahora, se delega correctamente a una expansión externa vía C<pp_glob>.
+
+=item C<File::Copy>
+
+C<File::Copy::copy(FILE, DIR)> ahora está documentada.
+
+=item C<File::Spec>
+
+Actualizado desde la versión 3.31 a la 3.31_01.
+
+Se hicieron diversos arreglos de portabilidad en C<File::Spec::VMS>: ahora se reconoce un carácter de dos puntos como un delimitador en las especificaciones de los sistemas de archivos nativos; delimitadores escapados con ángulos se reconocen para manejar mejor las especificaciones extendidas; C<catpath()> devuelve un directorio vacío en lugar del directorio actual si el nombre del directorio indicado es vacío; C<abs2rel()> maneja apropiadamente la entrada estilo Unix.
+
+=back
+
+=head1 Cambios en utilidades
+
+=over
+
+=item *
+
+F<perlbug> ahora siempre da al informador la posibilidad de cambiar la dirección de correo que se intentó adivinar.
+
+=item *
+
+F<perlbug> ya no debería advertir sobre valores no inicializados cuando use las opciones C<-d> y C<-v>.
+
+=back
+
+=head1 Cambios en la documentación actual
+
+=over
+
+=item *
+
+La política actual sobre compatibilidad hacia atrás y obsolescencia se ha añadido a L<perlpolicy>, junto con definiciones de los términos como I<obsolescencia>.
+
+=item *
+
+El uso de L<perlfunc/srand> se ha clarificado.
+
+=item *
+
+La entrada para L<perlfunc/die> se ha reorganizado para enfatizar su rol en el mecanismo de excepciones.
+
+=item *
+
+El archivo L<INSTALL> de Perl se ha clarificado para estableces explícitamente que Perl requiere un compilador de C compatible con C89 ANSI.
+
+=item *
+
+Se han documentado C<getsockopt()> y C<setsockopt()> de L<IO::Socket>.
+
+=item *
+
+Se ha documentado la inhabilidad de F<alarm()> de interrumpir E/S bloqueante en Windows.
+
+=item *
+
+L<Math::TrulyRandom> no se ha actualizado desde 1996 y se ha eliminado como solución recomendada para generar números aleatorios.
+
+=item *
+
+L<perlrun> se ha actualizado para aclarar el comportamiento de los indicadores octales a F<perl>.
+
+=item *
+
+Para aliviar la confusión del usuario, Se han documentado C<$#> y C<$*>, dos variables especiales que se eliminaron en versiones anteriores de Perl.
+
+=item *
+
+La versión de L<perlfaq> empaquetada con el núcleo de Perl se ha actualizado desde la versión oficial del FAQ, el cual se mantiene ahora en la rama C<briandfoy/perlfaq> del repositorio Perl en L<git://perl5.git.perl.org/perl.git>.
+
+=back
+
+=head1 Mejoras en la instalación y configuración
+
+=head2 Mejoras en la configuración
+
+=over
+
+=item *
+
+Se ha arreglado la sonda de configuración C<d_u32align> en ARM.
+
+=back
+
+=head2 Mejoras en la compilación
+
+=over
+
+=item *
+
+Un error "C<incompatible operand types>" en expresiones ternarias cuándo se compila con C<clang>.
+
+=item *
+
+Perl ahora se salta las pruebas setuid de C<File::Copy> en particiones que él detecta montadas como C<nosuid>.
+
+=back
+
+=head1 Arreglo de determinados errores
+
+=over 4
+
+=item *
+
+Se ha arreglado un posible segfault en el typemap por defecto de C<T_PRTOBJ>.
+
+=item *
+
+Se ha arreglado una posible fuga de memoria al usar L<caller()|perlfunc/"caller EXPR"> al establecer C<@DB::args>.
+
+=item *
+
+Se arreglaron diversas fugas de memoria al cargar módulos XS.
+
+=item *
+
+C<unpack()> ahora maneja correctamente el contexto escalar para C<%32H> y C<%32u>, arreglando un posible cuelgue.  C<split()> podría colgarse debido a que el tercer elemento de la pila no es la expresión regular esperada.  C<unpack("%2H", ...)> podría devolver el resultado desempaquetado y la suma de control en la pila, como lo haría C<unpack("%2u", ...)>.
+L<[perl #73814]|http://rt.perl.org/rt3/Ticket/Display.html?id=73814>
+
+=item *
+
+Perl ahora evita utilizar memoria después de llamar a C<free()> en F<pp_require> cuando existan CODEREF en C<@INC>.
+
+=item *
+
+Se ha arreglado un error que podría causar mensajes "C<Unknown error> cuando se llama a "C<call_sv(code, G_EVAL)>" desde un destructor XS.
+
+=item *
+
+La implementación de la característica C<open $fh, 'E<gt>' \$*búfer> ahora soporta la magia de obtener/establecer y así enlazar los búferes correctamente.
+
+=item *
+
+Los códigos de operación C<pp_getc>, C<pp_tell> y C<pp_eof> ahora hacen espacio en la pila para sus valores de regreso en casos donde no se pasó ningún argumento.
+
+=item *
+
+Cuando se comparan cadenas unicode bajo algunas condiciones, una vuelta atrás inapropiada podría resultar en un error C<Malformed UTF-8 character (fatal)>. Esto ya no debería ocurrir.
+Vea L<[perl #75680]|http://rt.perl.org/rt3/Public/Bug/Display.html?id=75680>
+
+=back
+
+=head1 Notas específicas por cada plataforma
+
+=head2 AIX
+
+=over
+
+=item *
+
+F<README.aix> se ha actualizado con información sobre la distribución del compilador XL C/C++ V11.
+
+=back
+
+=head2 Windows
+
+=over
+
+=item *
+
+Cuando se compilaba Perl con el compilador cruzado mingw64 x64, los valores C<incpath>, C<libpth>, C<ldflags>, C<lddlflags> y C<ldflags_nolargefiles> en F<Config.pm> y F<Config_heavy.pl>, no se establecían correctamente debido a que, con ese compilador, los directorios include y lib no están inmediatamente por debajo de C<$(CCHOME)>.
+
+=back
+
+=head2 VMS
+
+=over
+
+=item *
+
+F<git_version.h> ahora se instala en VMS. Esto fue un descuido en v5.12.0 que provocaba que fallaran la compilación de algunas extensiones.
+
+=item *
+
+Se han arreglado algunas fugas de memoria L<stat()|perlfunc/"stat FILEHANDLE">.
+
+=item *
+
+Se ha arreglado una fuga de memoria en C<Perl_rename()> debido a una reserva doble.
+
+=item *
+
+Se ha arreglado una fuga de memoria en C<vms_fid_to_name()> (utilizada por C<realpath()> y C<realname()>).
+
+=back
+
+=head1 Agradecimientos
+
+Perl 5.12.2 representa aproximadamente tres meses de desarrollo desde Perl 5.12.1 y contiene aproximadamente 2000 líneas de cambios en 100 archivos por parte de 9 autores.
+
+Perl sigue floreciendo en su tercera década gracias a una vibrante comunidad de usuarios y desarrolladores.  Las siguientes personas aportaron las mejoras que hicieron posible Perl 5.12.2:
+
+Abigail, Ævar Arnfjörð Bjarmason, Ben Morrow, brian d foy, Brian Phillips, Chas. Owens, Chris 'BinGOs' Williams, Chris Williams,
+Craig A. Berry, Curtis Jewell, Dan Dascalescu, David Golden, David
+Mitchell, Father Chrysostomos, Florian Ragwitz, George Greer, H.Merijn
+Brand, Jan Dubois, Jesse Vincent, Jim Cromie, Karl Williamson, Lars
+Dɪᴇᴄᴋᴏᴡ 迪拉斯, Leon Brocard, Maik Hentsche, Matt S Trout,
+Nicholas Clark, Rafael Garcia-Suarez, Rainer Tammer, Ricardo Signes,
+Salvador Ortiz Garcia, Sisyphus, Slaven Rezic, Steffen Mueller, Tony Cook,
+Vincent Pit and Yves Orton.
+
+=head1 Notificación de errores
+
+Si usted encuentra algo que piensa que es un error, podría verificar los artículos publicados recientemente en el grupo de noticias comp.lang.perl.misc y la base de datos de errores de perl en http://rt.perl.org/perlbug/  También puede haber información en http://www.perl.org/, la página oficial de Perl.
+
+Si usted cree que tiene un error no declarado, por favor, ejecute el programa B<perlbug> incluido en su distribución.  Asegúrese de reducir la aparición del error en un programa que sea pequeño, pero suficiente.  Su informe de error, junto con la salida de C<perl -V>, se enviarán a perlbug@perl.org para analizarse por el equipo de adaptación de Perl.
+
+Si el fallo que está reportando tiene implicaciones de seguridad, que lo hace inadecuado para enviarse a una lista de correo pública, por favor, envíelo a perl5-security-report@perl.org. Esto apunta a una lista de correo de suscripción cerrada y no archivada, que incluye a todos los contribuidores principales, que podrán ayudar a evaluar el impacto de los problemas, encontrar una resolución, y ayudar a coordinar el lanzamiento de parches para mitigar o solucionar el problema en todas las plataformas en las que Perl está soportado. Debe usar esta dirección únicamente para problemas de seguridad relacionados con el núcleo de Perl, no para módulos que se distribuyan por separado en CPAN.
+
+=head1 VEA TAMBIÉN
+
+En el archivo F<Changes> encontrará una explicación de cómo obtener información detallada de los cambios.
+
+El archivo F<INSTALL> contiene instrucciones para compilar Perl.
+
+El archivo F<README> contiene información general.
+
+En los archivos F<Artistic> y F<Copying> encontrará información de copyright.
+
+=cut
