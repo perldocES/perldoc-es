@@ -72,7 +72,7 @@ Time::HiRes actualizado a la versión 1.65
 
 =head1 Cambios en utilidades
 
-Perl tiene una nueva opción de línea de comandos llamada -dt, que activa el soporte de hebras en el depurador.
+Perl tiene una nueva opción de línea de comandos llamada -dt, que activa el soporte de hilos en el depurador.
 
 =head1 Mejoras en el rendimiento
 

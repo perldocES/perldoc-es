@@ -54,7 +54,7 @@ Este modelo también es útil para una forma de programación recursiva donde, e
 
 Si tiene experiencia con otras implementaciones de hilos, podría encontrar que hay algunas cosas que no se espera.  Es muy importante recordar cuando se trata con hilos Perl que I<los hilos Perl no son hilos X> para todos los valores de X. No son hilos POSIX, o DecThreads, o hilos verdes de Java, o hilos Win32.  Hay semejanzas, y los conceptos principales son los mismos, pero si empieza a mirar los detalles de la implementación se encontrará decepcionado o confuso.  Posiblemente ambos.
 
-Esto no quiere decir que los hilos Perl sean completamente diferentes de todo lo que se haya visto antes. No lo son.  El modelo de hilos Perl debe mucho a otros modelos de hilos, especialmente POSIX.  Aun así, ya que Perl no es C, los hilos Perl no son hilos POSIX.  Así que si se encuentra a sí mismo buscando por I<mutexes> (exclusiones mutuas), o prioridades de hilos, es momento de dar un paso atrás y pensar sobre qué quiere hacer y de cómo Perl puede hacerlo.
+Esto no quiere decir que los hilos Perl sean completamente diferentes de todo lo que se haya visto antes. No lo son.  El modelo de hilos Perl debe mucho a otros modelos de hilos, especialmente POSIX.  Aún así, ya que Perl no es C, los hilos Perl no son hilos POSIX.  Así que si se encuentra a sí mismo buscando por I<mutexes> (exclusiones mutuas), o prioridades de hilos, es momento de dar un paso atrás y pensar sobre qué quiere hacer y de cómo Perl puede hacerlo.
 
 Aun así, es importante recordar que los hilos Perl no puede hacer cosas mágicas a menos que los hilos de su sistema operativo lo permitan. Así si su sistema bloquea el proceso entero con C<sleep()>, Perl normalmente también lo hará.
 
@@ -341,7 +341,7 @@ C<lock()> bloquea el hilo hasta que la variable bloqueada esté disponible.  Cua
 
 Es importante anotar que el bloqueo no impide el acceso a la variable en cuestión, solo bloquea los intentos.  Esto es en consonancia con la larga tradición Perl de una programación cortés, y del correspondiente archivo de bloqueo que C<flock()> le proporciona.
 
-Puede bloquear arrays y hashes así como escalares.  Bloquear un array, aun así, no bloqueará subsecuentes bloqueos en elementos del array, solo bloquea los intentos sobre el array mismo.
+Puede bloquear arrays y hashes así como escalares.  Bloquear un array, aún así, no bloqueará subsecuentes bloqueos en elementos del array, solo bloquea los intentos sobre el array mismo.
 
 Los bloqueos son recursivos, que significa que está permitido para un hilo bloquear una variable más de una vez.  El bloqueo se mantendrá hasta que el C<lock()> más externo de la variable salga del ámbito. Por ejemplo:
 
@@ -465,7 +465,7 @@ Los semáforos tiene dos métodos, C<down()> y C<up()>: C<down()> decrementa el 
     $thr2->join();
     $thr3->join();
 
-Las tres invocaciones de la subrutina operan en sincronización.  El semáforo, aun así, se asegura que sólo un hilo está accediendo a la vez a la variable global.
+Las tres invocaciones de la subrutina operan en sincronización.  El semáforo, aún así, se asegura que sólo un hilo está accediendo a la vez a la variable global.
 
 =head2 Lo avanzado de los semáforos
 
@@ -497,7 +497,7 @@ La cuestión, naturalmente, es ¿por qué haría algo así? ¿Por qué crear un 
 
 Por ejemplo, tomemos un programa gestionado por interfaz gráfica de usuario (GUI).  Tiene un semáforo que usa acceso sincronizado a la pantalla, así que sólo un hilo está dibujando cada vez.  Útil, pero naturalmente no quiere que cualquier hilo comience a dibujar hasta que las cosas están establecidas apropiadamente.  En este caso, puede crear un semáforo con un contador puesto a cero, y aumentarlo cuando las cosas estén preparadas para dibujarse.
 
-Los semáforos con contadores mayores que uno también son útiles para establecer cuotas.  Digamos, por ejemplo, que tiene un número de hilos que pueden hacer E/S al mismo tiempo.  Aun así, no quiere que todos los hilos lean y escriban al mismo tiempo, ya que pueden, potencialmente, inundar sus canales de E/S, o agotar la cuota de indicadores de archivo de su proceso.  Puede usar un semáforo inicializado al número de peticiones concurrentes de E/S (o archivos abiertos) que quiera tener al mismo tiempo, y que sus hilos se bloqueen y desbloqueen por sí mismos, calladamente.
+Los semáforos con contadores mayores que uno también son útiles para establecer cuotas.  Digamos, por ejemplo, que tiene un número de hilos que pueden hacer E/S al mismo tiempo.  Aún así, no quiere que todos los hilos lean y escriban al mismo tiempo, ya que pueden, potencialmente, inundar sus canales de E/S, o agotar la cuota de indicadores de archivo de su proceso.  Puede usar un semáforo inicializado al número de peticiones concurrentes de E/S (o archivos abiertos) que quiera tener al mismo tiempo, y que sus hilos se bloqueen y desbloqueen por sí mismos, calladamente.
 
 Incrementos o decrementos mayores son apropiados en aquellos casos donde un hilo necesita comprobar o devolver un número de recursos al mismo tiempo.
 

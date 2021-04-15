@@ -193,7 +193,7 @@ La función L<C<utf8::utf8_upgrade()>|utf8/Funciones de utilidad> se puede usar 
 
 =item * Existen métodos adicionales para los patrones de expresiones regulares
 
-Un patrón que se ha compilador con los modificadores C<< /u >> o C<< /a >> se trata como Unicode (aun así existen algunas restricciones con C<< /a >>).
+Un patrón que se ha compilador con los modificadores C<< /u >> o C<< /a >> se trata como Unicode (aún así existen algunas restricciones con C<< /a >>).
 Bajo los modificadores C<< /d >> y C<< /l >>, existen muchas otras indicaciones relacionadas con Unicode; vea L<perlre/Modificadores de conjunto de caracteres>.
 
 =back
@@ -977,7 +977,7 @@ Este comportamiento es como el "Haz lo que digo" de los primeros Perl, para la m
 
 (vea L<warnings>).  En este modo de operación, Pero levantará la advertencia para todas las coincidencias contra puntos de código no Unicode (no solo los discutibles), e impide las optimizaciones que podrían hacer que no se emita una advertencia.  (Actualmente, sigue sin avisar si la coincidencia ni siquiera se intenta, como en el ejemplo anterior del C<"foobar">).
 
-En resumen, Perl trata ahora de forma normal, a los puntos de código no Unicode como puntos de código Unicode sin asignar, para las coincidencias de expresiones regulares, levantando una advertencia solo cuando el resultado sea discutible.  Aún así, si la advertencia se hace fatal, no se obvia.
+En resumen, Perl trata ahora de forma normal, a los puntos de código no Unicode como puntos de código Unicode sin asignar, para las coincidencias de expresiones regulares, levantando una advertencia solo cuando el resultado sea discutible.  Aun así, si la advertencia se hace fatal, no se obvia.
 
 Hay una excepción para todo esto.  C<\p{All}> se parece a una propiedad Unicode, pero es una extensión Perl que se define como cierta para todos los puntos de código posibles, Unicode o no, así que no se genera ninguna advertencia cuando se busque una coincidencia contra un punto de código no Unicode.  (Antes de v5.20, era un sinónimo exacto para C<\p{Any}>, coincidiendo con puntos de código del C<0>
 al C<0x10FFFF>).

@@ -128,7 +128,7 @@ Perl ahora detecta correctamente y lee I<scripts> con la marca BOM y UTF-16 (sin
 
 =item *
 
-Creando una nueva hebra cuando existen referencias débiles tenía errores, y con frecuencia causaba advertencias en el momento de la destrucción del intérprete. El fallo conocido ahora está arreglado.
+Crear un nuevo hilo cuando existen referencias débiles tenía errores, y con frecuencia causaba advertencias en el momento de la destrucción del intérprete. El fallo conocido ahora está arreglado.
 
 =item *
 
@@ -140,11 +140,11 @@ Anteriormente, si la función de Perl expansor de archivo encontraba un director
 
 =item *
 
-El tiempo de creación de hebras puede variar mucho entre ejecuciones idénticas. Esto fue causado por un pobre algoritmo de hash en las rutinas de clonado de hebras, que ya se ha resuelto.
+El tiempo de creación de hilos puede variar mucho entre ejecuciones idénticas. Esto fue causado por un pobre algoritmo de hash en las rutinas de clonado de hilos, que ya se ha resuelto.
 
 =item *
 
-El funcionamiento interno de la aplicación ithreads no comprobaba si la creación de hebras a nivel del sistema operativo había fracasado. threads->create() ahora devuelve C<undef> si falla la creación de la hebra en lugar de colgar a perl.
+El funcionamiento interno de la aplicación ithreads no comprobaba si la creación de hilos a nivel del sistema operativo había fracasado. threads->create() ahora devuelve C<undef> si falla la creación del hilo en lugar de colgar a perl.
 
 =back
 

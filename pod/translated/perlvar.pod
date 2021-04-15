@@ -161,7 +161,7 @@ En algunas plataformas el relleno puede extenderse por todo el largo de la longi
 
 Nota para los usuarios de BSD: modificar C<$0> no elimina por completo "perl" de la salida de ps(1).  Por ejemplo, la modificación de C<$0> en C<"foobar"> puede resultar C<"perl: foobar (perl)"> (el que salga el prefijo C<"perl:"> y el sufijo "(perl)" depende de la variante y de versión exacta de BSD).  Esta es una característica del sistema operativo, Perl no puede evitarlo.
 
-En los I<scripts> multihebra Perl coordina los hilos de manera que cualquier hilo puede modificar su copia de C<$0> y el cambio se hace visible para ps(1) (suponiendo que el sistema operativo juegue limpio).  Tenga en cuenta que la visión de C<$0> desde los otros hilos no va a cambiar, ya que tienen sus propias copias de ella misma.
+En los I<scripts> multihilo Perl coordina los hilos de manera que cualquier hilo puede modificar su copia de C<$0> y el cambio se hace visible para ps(1) (suponiendo que el sistema operativo juegue limpio).  Tenga en cuenta que la visión de C<$0> desde los otros hilos no va a cambiar, ya que tienen sus propias copias de ella misma.
 
 Si el programa se ha entregado a perl a través de las opciones C<-e> o C<-E>, C<$0> contendrá la cadena C<"-e">.
 
@@ -498,7 +498,7 @@ Generalmente, puede usar el valor de C<$^X> para volver a invocar una copia inde
 
     @primera_ejecucion = `$^X -le "print int rand 100 for 1..100"`;
 
-Pero recuerde que no todos los sistemas operativos son compatibles con fork() o con la captura de la salida de los comandos, por lo que esta compleja declaración quizás no sea portátil.
+Pero recuerde que no todos los sistemas operativos son compatibles con fork() o con la captura de la salida de los comandos, por lo que esta compleja declaración quizás no sea portable.
 
 No es seguro usar el valor de C<$^X> como un nombre de ruta de un archivo, ya que algunos sistemas operativos que tienen un sufijo obligatorio en los archivos ejecutables no requieren el uso del sufijo al invocar un comando.  Para convertir el valor de C<$^X> a un nombre de ruta, utilice las siguientes instrucciones:
 
@@ -1188,7 +1188,7 @@ Bajo VMS, C<$^E> proporciona el valor de estado VMS del último error del sistem
 
 Bajo OS/2, C<$^E> se establece al código de error de la última llamada a la API de OS/2, ya sea a través de CRT, o directamente desde perl.
 
-Bajo Win32, C<$^E> siempre devuelve la información del último de error reportado por la llamada Win32 C<GetLastError()> que describe el último error que viene del interior de la API de Win32.  La mayoría del código específico de Win32 informará de errores a través de C<$^E>.  ANSI C y llamadas parecidas a Unix asignan valores a C<errno> y así la mayor parte del código Perl portátil informará de errores a través de C<$!>.
+Bajo Win32, C<$^E> siempre devuelve la información del último de error reportado por la llamada Win32 C<GetLastError()> que describe el último error que viene del interior de la API de Win32.  La mayoría del código específico de Win32 informará de errores a través de C<$^E>.  ANSI C y llamadas parecidas a Unix asignan valores a C<errno> y así la mayor parte del código Perl portable informará de errores a través de C<$!>.
 
 Las advertencias mencionadas en la descripción de C<L</$!>> se aplican también, por lo general, a C<$^E>.
 

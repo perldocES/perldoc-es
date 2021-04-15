@@ -19,7 +19,7 @@ Este documento ofrece un idea general de las capacidades y limitaciones de la em
 =head1 DESCRIPCIÓN
 
 La emulación fork() se implementó a nivel del intérprete Perl.
-Lo que esto significa, en general, es que ejecutar fork(), realmente, clonará el intérprete que está corriendo y todo su estado, y ejecutará el intérprete en una hebra separada, comenzando la ejecución de la hebra justo después del punto donde se llamó a fork(), en el padre.  Nos referiremos a la hebra que implementa este "proceso" hijo como el pseudo-proceso.
+Lo que esto significa, en general, es que ejecutar fork(), realmente, clonará el intérprete que está corriendo y todo su estado, y ejecutará el intérprete en un hilo separado, comenzando la ejecución del hilo justo después del punto donde se llamó a fork(), en el padre.  Nos referiremos al hilo que implementa este "proceso" hijo como el pseudo-proceso.
 
 Todo esto se diseñó para que fuera transparente al programa Perl que llamó a fork().  El padre regresa del fork() con un ID de un pseudo-proceso, que puede, más tarde, usarse en cualquiera de las funciones de manipulación de procesos; el hijo regresa del fork() con un valor de C<0> para indicar que él es el pseudo-proceso hijo.
 
@@ -50,7 +50,7 @@ Estas llamadas esperarán apropiadamente por la terminación del pseudo-proceso 
 
 =item kill()
 
-Se puede usar C<kill('KILL', ...)> para terminar un pseudo-proceso pasándole el ID devuelto por el fork(). El resultado de matar un pseudo-proceso es impredecible y no se debería usar excepto en circunstancias horribles, porque el sistema operativo no puede garantizar la integridad de los recursos del proceso cuando se termina una hebra en ejecución.  El proceso que implementa los pseudo-procesos puede quedar bloqueado, y colgarse el intérprete Perl. Note que usar C<kill('KILL', ...)> en un pseudo-proceso() puede, típicamente, causar agotamiento de la memoria, porque la hebra que implementa el pseudo-proceso no tiene oportunidad de hacer una limpieza de los recursos.
+Se puede usar C<kill('KILL', ...)> para terminar un pseudo-proceso pasándole el ID devuelto por el fork(). El resultado de matar un pseudo-proceso es impredecible y no se debería usar excepto en circunstancias horribles, porque el sistema operativo no puede garantizar la integridad de los recursos del proceso cuando se termina un hilo en ejecución.  El proceso que implementa los pseudo-procesos puede quedar bloqueado, y colgarse el intérprete Perl. Note que usar C<kill('KILL', ...)> en un pseudo-proceso() puede, típicamente, causar agotamiento de la memoria, porque el hilo que implementa el pseudo-proceso no tiene oportunidad de hacer una limpieza de los recursos.
 
 También puede usarse C<kill('TERM', ...)> en pseudo-procesos, pero la señal no se entregará mientras que el pseudo-proceso esté bloqueado por una llamada del sistema; por ejemplo, esperando a que un I<socket> conecte, o intentando leer de un I<socket> cuando no hay datos disponibles.  A partir de Perl 5.14, el proceso padre no esperará a que los hijos terminen, una vez que se les envíe la señal con C<kill('TERM', ...)>, para evitar bloqueos entre ellos durante el proceso de salida.  Tendrá que llamar explícitamente a waitpid() para asegurarse de que el hijo tiene tiempo para limpiarse a sí mismo, pero también es responsable de que el hijo no esté bloqueado en ninguna operación de E/S.
 
@@ -72,7 +72,7 @@ Todos los identificadores abiertos están dup()licados en los pseudo-procesos, a
 
 =head2 Límites de recursos
 
-A los ojos del sistema operativo, los pseudo-procesos creados a través de la emulación fork() son simplemente hebras del mismo proceso.  Esto significa que cualquier limitación a nivel de proceso impuesta por el sistema operativo se aplica a todos los pseudo-procesos tomados en conjunto.  Esto incluye cualquier límite impuesto por el sistema operativo en el número de identificadores de archivos, directorios y I<sockets> abiertos, límites en el espacio usado en disco, límites en la utilización de la CPU, etc.
+A los ojos del sistema operativo, los pseudo-procesos creados a través de la emulación fork() son simplemente hilos del mismo proceso.  Esto significa que cualquier limitación a nivel de proceso impuesta por el sistema operativo se aplica a todos los pseudo-procesos tomados en conjunto.  Esto incluye cualquier límite impuesto por el sistema operativo en el número de identificadores de archivos, directorios y I<sockets> abiertos, límites en el espacio usado en disco, límites en la utilización de la CPU, etc.
 
 =head2 Matar al proceso padre
 
@@ -192,9 +192,9 @@ Las subrutinas externas (XSUB) que mantienen su propio estado global pueden no f
 
 La emulación de fork() puede no ejecutarse como se espera cuando se ejecuta en una aplicación que incruste un intérprete Perl y llame a la API de Perl que pueda evaluar partes de código Perl.  Esto enraíza en el hecho que la emulación solo tiene conocimiento sobre las estructuras de datos propias del intérprete de Perl y no sabe nada el estado de la aplicación que la contiene.  Por ejemplo, cualquier estado almacenado por la pila de llamadas de la propia aplicación está fuera de su alcance.
 
-=item Seguridad de las hebras en las extensiones
+=item Seguridad de los hilos en las extensiones
 
-Ya que la emulación de fork() ejecuta código en múltiples hebras, las extensiones que llaman a bibliotecas que no sean seguras en hebras, pueden no funcionar con fiabilidad cuando se llame a fork().  A medida que el soporte de hebras de Perl se soporta, gradualmente, incluso en plataformas con fork() nativo, se espera que tales extensiones se arreglen para que sean seguras dentro de las hebras.
+Ya que la emulación de fork() ejecuta código en múltiples hilos, las extensiones que llaman a bibliotecas que no sean seguras en hilos, pueden no funcionar con fiabilidad cuando se llame a fork().  A medida que el soporte de hilos de Perl se soporta, gradualmente, incluso en plataformas con fork() nativo, se espera que tales extensiones se arreglen para que sean seguras dentro de los hilos.
 
 =back
 
@@ -210,7 +210,7 @@ Vea L</kill()>, arriba.
 
 =item *
 
-Tener ID de pseudo-procesos con números enteros negativos rompe la regla de dejar aparte el valor C<-1> porque las funciones wait() y waitpid() lo tratan como algo especial.  La asunción tácita, en la implementación actual, es que el sistema nunca reserva un ID de hebra con el número C<1> para las hebras de usuario.  Se implementará, en el futuro, una mejor representación para los ID de los pseudo-procesos.
+Tener ID de pseudo-procesos con números enteros negativos rompe la regla de dejar aparte el valor C<-1> porque las funciones wait() y waitpid() lo tratan como algo especial.  La asunción tácita, en la implementación actual, es que el sistema nunca reserva un ID de hilo con el número C<1> para los hilos de usuario.  Se implementará, en el futuro, una mejor representación para los ID de los pseudo-procesos.
 
 =item *
 

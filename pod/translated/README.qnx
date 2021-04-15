@@ -103,7 +103,7 @@ Puede descargar el NDK desde L<http://developer.blackberry.com/native/downloads/
 
 Vea L<http://developer.blackberry.com/native/documentation/cascades/getting_started/setting_up.html> para instrucciones para establecer su dispositivo antes de intentar nada.
 
-Una vez que instale el NDK y establezca su dispositivo, todo lo que resta es establecer el dispositivo y el entorno de compilación cruzada.  Blackberry proporciona un I<script>, C<bbndk-env.sh> (que de forma ocasional puede llamarse algo como C<bbndk-env_10_1_0_4828.sh>) que se puede usar para hacer esto.  Aún así, hay un pequeño inconveniente que tenemos que solventar: el I<script> modifica PATH así que 'gcc' o 'ar' apunta a sus equivalentes de la compilación cruzada, que detiene el proceso de compilación.
+Una vez que instale el NDK y establezca su dispositivo, todo lo que resta es establecer el dispositivo y el entorno de compilación cruzada.  Blackberry proporciona un I<script>, C<bbndk-env.sh> (que de forma ocasional puede llamarse algo como C<bbndk-env_10_1_0_4828.sh>) que se puede usar para hacer esto.  Aun así, hay un pequeño inconveniente que tenemos que solventar: el I<script> modifica PATH así que 'gcc' o 'ar' apunta a sus equivalentes de la compilación cruzada, que detiene el proceso de compilación.
 
 Así que en cambio querrá hacer algo como esto:
 

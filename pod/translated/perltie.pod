@@ -523,7 +523,7 @@ Aquí está el recuperador para nuestro DotFiles de ejemplo.
 	}
     }
 
-Fue fácil escribirlo haciendo una llamada al comando Unix cat(1), pero, probablemente, sería más portátil abrir el archivo manualmente (y algo más eficiente).  Naturalmente, ya que los archivos punto son un concepto del Unix, no estamos preocupados.
+Fue fácil escribirlo haciendo una llamada al comando Unix cat(1), pero, probablemente, sería más portable abrir el archivo manualmente (y algo más eficiente).  Naturalmente, ya que los archivos punto son un concepto del Unix, no estamos preocupados.
 
 =item STORE esto, clave, valor
 X<STORE>

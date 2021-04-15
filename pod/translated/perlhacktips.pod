@@ -1,0 +1,1150 @@
+
+=encoding utf8
+
+=for comment
+Para aplicar un formato uniforme a este archivo, use:
+  perl ./Porting/podtidy pod/perlhacktips.pod
+
+=head1 NAME
+
+perlhacktips - Consejos para modificar el código C del núcleo de Perl
+
+=head1 DESCRIPCIÓN
+
+Este documento le ayudará a aprender la mejor manera de hackear el código C principal de Perl.  Cubre problemas comunes, depuración, perfilado y más.
+
+Si aún no ha leído L<perlhack> y L<perlhacktut>, podría querer hacerlo antes.
+
+=head1 PROBLEMAS COMUNES
+
+El código fuente de Perl sigue las reglas de ANSI C89: no hay extensiones C99 (o C++).  En algunos casos tenemos que tomar en consideración los requerimientos pre-ANSI.
+¿No le preocupa que una plataforma en particular tenga un Perl roto? Todavía sigo escuchando esta demanda a los programadores de J2EE.
+
+=head2 Problemas del entorno de Perl
+
+=over 4
+
+=item *
+
+No compilar con soporte para hilos
+
+Compilar con soporte para hilos (-Duseithreads) reescribe completamente los prototipos de funciones de Perl.  Es mejor probar sus cambios con él.
+Relacionado con esto es la diferencia entre la API de "Perl_-less" y "Perl_-ly", por ejemplo:
+
+  Perl_sv_setiv(aTHX_ ...);
+  sv_setiv(...);
+
+La primera se pasa explícitamente en el contexto, que se necesita por ejemplo en las compilaciones con hilos.  La segunda lo hace implícitamente; no los mezcle.  Si no está pasando en un aTHX_, necesitará hacer un dTHX (o un dVAR) como la primera cosa en la función.
+
+Vea L<perlguts/"Cómo se soporta múltiples intérpretes y concurrencia"> para una discusión más amplia sobre el contexto.
+
+=item *
+
+No compilar con -DDEBUGGING
+
+La definición de DEBUGGING expone más código al compilador, y por tanto más posibilidades de que las cosas vayan mal.  Debería probarlo.
+
+=item *
+
+Presentar globales (modificables)
+
+No presente ningún global modificable, verdaderamente global o archivo estático.
+Es una mala práctica y complica el hilado y otras formas de concurrencia.  La forma correcta es presentarles como nuevas variables del intérprete, vea F<intrpvar.h> (hacia el final, por compatibilidad binaria).
+
+Presentar globales de sólo lectura (const) está bien, mientras que lo verifique con, por ejemplo, C<nm libperl.a|egrep -v ' [TURtr] '> (si su C<nm> tiene una salida estilo BSD) que los datos que añade realmente son de sólo lectura.  (Si lo es, no debería mostrarse en la salida del comando).
+
+Si quiere tener cadenas estáticas, hágalas constantes:
+
+  static const char etc[] = "...";
+
+Si quiere tener arrays de cadenas constantes, note cuidadosamente la combinación correcta de C<const>:
+
+    static const char * const yippee[] =
+        {"hi", "ho", "silver"};
+
+Hay una forma de esconder completamente cualquier global modificable (todas se mueven al cúmulo), estableciendo la opción de compilación C<-DPERL_GLOBAL_STRUCT_PRIVATE>.  Normalmente no se usa, pero se puede usar en las pruebas; lea más sobre ella en L<perlguts/"Background y PERL_IMPLICIT_CONTEXT">.
+
+=item *
+
+No exportar su nueva función
+
+Algunas plataformas (Win32, AIX, VMS, OS/2, por nombrar unos pocos) requieren que cualquier función que sea parte de la API pública (la biblioteca compartida de Perl) explícitamente se marque como exportada.  Vea la discusión sobre F<embed.pl> en L<perlguts>.
+
+=item *
+
+Exportar su nueva función
+
+El nuevo y reluciente resultado tanto de su nueva funcionalidad genuina o de su ardua refactorización, ahora está preparado y correctamente exportado.  Así qué, ¿qué podría salir mal?
+
+Quizás, en primer lugar, que simplemente su función no necesitaba exportarse.  Perl tiene una larga y no tan gloriosa historia de exportar funciones que no deberían haber sido.
+
+Si la función se usa sólo dentro de un archivo de código fuente, hágala estática.  Vea la discusión sobre F<embed.pl> en L<perlguts>.
+
+Si la función se usa a lo largo de varios archivos, pero sólo para el uso interno de Perl (y esto debería ser el caso más común), no lo exporte a la API pública.  Vea la discusión sobre F<embed.pl> en L<perlguts>.
+
+=back
+
+=head2 Problemas de portabilidad
+
+Lo siguiente son las causas más comunes de fallos de compilación o ejecución, no tan comunes para Perl.  El P+F de C es una buena lectura de cama.  Por favor, compruebe sus cambios con tantos compiladores de C y plataformas como pueda; nosotros lo haremos de todas maneras, así que es mejor ahorrarse la vergüenza pública.
+
+Si usa gcc, puede añadir la opción C<-std=c89> que con suerte cazará la mayor parte de estos fallos de portabilidad.  (Sin embargo también podría cazar incompatibilidades en sus archivos de cabecera de su sistema).
+
+Use el indicador de Configure C<-Dgccansipedantic> para habilitar los indicadores de gcc C<-ansi -pedantic> que fuerza reglas ANSI más estrictas.
+
+Si usa C<gcc -Wall> note que no se proporcionan todas las posibles advertencias (como C<-Wunitialized>) a menos que también compile con C<-O>.
+
+Note que si usa gcc, a partir de Perl 5.9.5 los archivos principales del código fuente de Perl (los que están en el nivel más alto en la distribución del código fuente, pero no, por ejemplo, las extensiones bajo ext/) se compilan automáticamente con tantos indicadores C<-std=c89>, C<-ansi>, C<-pedantic> y una selección de C<-W>, como sea posible (vea cflags.SH).
+
+También estudie L<perlport> cuidadosamente para evitar ninguna mala asunción sobre el sistema operativo, sistemas de archivos, conjunto de caracteres, y así.
+
+De vez en cuando pruebe un "make microperl" para ver si aún puede compilar Perl con un número mínimo de interfaces.  (Vea README.micro).
+
+No asuma que un sistema operativo implique a un determinado compilador.
+
+=over 4
+
+=item *
+
+Convertir punteros a enteros o convertir enteros a punteros
+
+    void castaway(U8* p)
+    {
+      IV i = p;
+
+o bien
+
+    void castaway(U8* p)
+    {
+      IV i = (IV)p;
+
+Ambos son malos, y rotos, y no portables.  Use la macro PTR2IV() que hace lo correcto.  (Igualmente, existe PTR2UV(), PTR2NV(), INT2PTR() y NUM2PTR()).
+
+=item *
+
+Convertir entre punteros de función y punteros de datos
+
+Técnicamente hablando, convertir entre punteros de funciones y punteros de datos no es portable e indefinido, pero hablando de forma práctica parece que funciona, pero debería usar las macros FPTR2DPTR() y DPTR2FPTR().
+Algunas veces también puede jugar con las uniones.
+
+=item *
+
+Asumir que sizeof(int) == sizeof(long)
+
+Hay plataformas donde los largos (B<long>) son de bit, y otras donde los enteros (B<int>) son de 64 bit, y aunque no queremos impresionarte, incluso plataformas donde los cortos (B<short>) son de 64 bit.  Todo esto es legal, de acuerdo al estándar C.  (En otras palabras, "long long" no es una forma portable de especificar 64 bit, y "long long" ni siquiera garantiza que sea más ancho que un "long").
+
+En cambio, use las definiciones IV, UV, IVSIZE, I32SIZE y así.
+Evite cosas como I32 porque B<no> están garantizados que sean I<exactamente> de 32 bit: son de I<al menos> 32 bit, ni están garantizados que sean B<int> o B<long>.  Si necesita real y explícitamente variables de 64 bit, use I64 y U64, pero sólo si está protegido por HAS_QUAD.
+
+=item *
+
+Asumir que puede desreferenciar cualquier tipo de puntero para cualquier tipo de dato
+
+  char *p = ...;
+  long pony = *(long *)p;    /* MAL */
+
+Muchas plataformas, muy correctamente, le darán un volcado de núcleo en lugar de un poni si sucede que p no está correctamente alineado.
+
+=item *
+
+Reconvertir "valores a la izquierda"
+
+  (int)*p = ...;    /* MAL */
+
+Simplemente, no es portable.  Haga que su valor a la izquierda sea del tipo correcto, o quizás usar variables temporales, o trucos sucios con uniones.
+
+=item *
+
+Asumir B<cualquier cosa> sobre las estructuras (struct) (especialmente aquellas que no controla, como las que vienen de las cabeceras del sistema)
+
+=over 8
+
+=item *
+
+Que un cierto campo existe en una estructura
+
+=item *
+
+Que no existen otros campos además de los que usted conoce
+
+=item *
+
+Que un campo es de un cierto signo, tamaño o tipo
+
+=item *
+
+Que los campos están en un determinado orden
+
+=over 8
+
+=item *
+
+Mientras que C garantiza la ordenación especificada en la definición de la estructura, las definiciones podrían diferir entre diferentes plataformas
+
+=back
+
+=item *
+
+Que el sizeof(struct) o los alineamientos son los mismos en todas partes
+
+=over 8
+
+=item *
+
+Podrían existir bytes de relleno entre los campos para alinearlos: los bytes pueden ser cualquier cosa
+
+=item *
+
+Se requiere que las estructuras estén alineadas al máximo alineamiento requerido por los campos, que para los tipos nativos es normalmente equivalente al sizeof() del campo
+
+=back
+
+=back
+
+=item *
+
+Asumir que el conjunto de caracteres es de tipo ASCII
+
+Perl puede compilarse y ejecutarse en plataformas EBCDIC.  Vea L<perlebcdic>.
+Esto es transparente en su mayor parte, pero debido a que los conjuntos de caracteres difieren, no debería usar constantes numéricas (decimal, octal, ni hex) para referirse a los caracteres.  Puede decir C<'A'> con seguridad, pero no C<0x41>.
+Puede decir C<'\n'> con seguridad, pero no C<\012>.  Sin embargo, puede usar las macros definidas en F<utf8.h> para especificar cualquier punto de código de forma portable.
+C<LATIN1_TO_NATIVE(0xDF)> se convierte en el punto de código que significa LATIN SMALL LETTER SHARP S en cualquier plataforma en la que se ejecute (en plataformas ASCII se compila sin añadir ningún código extra, así que tienen cero impacto en el rendimiento).  Las entradas aceptables a C<LATIN1_TO_NATIVE> son desde C<0x00> hasta C<0xFF>.  Si no está garantizado que esté en ese rango, use en su lugar C<UNICODE_TO_NATIVE>.
+C<NATIVE_TO_LATIN1> y C<NATIVE_TO_UNICODE> traducen en la dirección opuesta.
+
+Si necesita la representación en cadena de un carácter que no tiene un nombre nemónico en C, debería añadirlo a la lista en F<regen/unicode_constants.pl>, y deje que Perl le cree C<#define>, basado en la plataforma actual.
+
+Note que las macros C<isI<FOO>> y C<toI<FOO>> en F<handy.h> funcionan correctamente sobre puntos de código y cadenas nativos.
+
+También, el rango 'A' - 'Z' en ASCII es una secuencia irrompible de 26 caracteres alfabéticos en mayúsculas.  Esto no es verdad en EBCDIC.  Ni desde la 'a' a la 'z'.  Pero '0' - '9' es un rango irrompible en ambos sistemas.  No asuma nada sobre otros rangos.  (Note que el manejo especial de rangos en patrones de expresiones regulares y transliteraciones le hace aparecer al código Perl que los antes mencionados rangos son irrompibles).
+
+Muchos de los comentarios en el código actual ignoran la posibilidad de EBCDIC, y por tanto pueden estar mal, incluso si el código funciona.  Esto es realmente un tributo a la exitosa inserción transparente de ser capaz de manejar EBCDIC sin tener que cambiar código preexistente.
+
+UTF-8 y UTF-EBCDIC son dos diferentes codificaciones utilizadas para representar puntos de código Unicode como secuencias de bytes.  Macros con los mismos nombres (pero con diferentes definiciones) en F<utf8.h> y F<utfebcdic.h> se usan para hacerle creer al código que les llama que sólo existe una codificación.
+Casi siempre se refiere a C<utf8>, pero también representa a la versión EBCDIC.  De nuevo, los comentarios en el código puede estar mal incluso si el propio código está bien.  Por ejemplo, el concepto de C<caracteres invariantes> de UTF-8 difiere entre ASCII y EBCDIC.  En plataformas ASCII, sólo los caracteres que no tienen activado el bit más alto (es decir, aquellos cuyos ordinales son ASCII estricto, 0 - 127) son invariantes, y la documentación y comentarios en el código lo asumen, refiriéndose a menudo a algo como, digamos, C<hibit>.  La situación difiere y no es tan simple en máquinas EBCDIC, pero mientras que el propio código use bien la macro C<NATIVE_IS_INVARIANT()>, todo funciona, incluso si los comentarios están mal.
+
+Como se indica en L<perlhack/PRUEBAS>, cuando escriba I<scripts> de pruebas, el archivo F<t/charset_tools.pl> contiene algunas funciones de apoyo para escribir pruebas válidas tanto en plataformas ASCII y EBCDIC.  A veces, aún así, una prueba no puede usar una función y es inoportuno tener diferentes versiones de prueba dependiendo de la plataforma.  Existen 20 puntos de código que son lo mismo en los 4 conjuntos de caracteres reconocidos actualmente por Perl (las 3 páginas de código EBCDIC más la ISO 8859-1 (ASCII/Latin1)).  Se pueden usar en tales pruebas, aunque existe una pequeña posibilidad de que Perl se vuelva disponible en otro conjunto de caracteres, rompiendo su prueba.  Todos excepto uno de estos puntos de código son caracteres de control C0.  Los controles más significativos son iguales a C<\0>, C<\r> y C<\N{VT}> (también especificables como C<\cK>, C<\x0B>, C<\N{U+0B}> o C<\013>).  El único que no es control es U+00B6 PILCROW SIGN.  Los controles que son lo mismo tienen el mismo patrón en los cuatro conjuntos de caracteres, sin importar la cualidad UTF8 de la cadena que los contiene.  El patrón de bit para U+B6 es el mismo en los 4 para las cadenas no-UTF8, pero difiere cuando está dentro de una cadena codificada como UTF-8.  Los únicos otros puntos de código que tienen alguna suerte de semejanza en los 4 conjuntos de caracteres son la pareja 0xDC y 0xFC.
+Juntos representan la B<LATIN LETTER U WITH DIAERESIS> mayúscula y minúscula, pero cuándo es mayúscula y cuándo minúscula están invertidos: 0xDC es la capital en Latin1 y 0xFC es la letra pequeña, mientras que 0xFC es la capital en EBCDIC y 0xDC es la pequeña.  Esta rareza puede explotarse escribiendo pruebas insensibles al tamaño de caja que son lo mismo a lo largo de los 4 conjuntos de caracteres.
+
+=item *
+
+Asumir que el conjunto de caracteres es sólo ASCII
+
+ASCII es una codificación de 7 bit, pero los bytes contienen 8 bit.  Los 128 caracteres extra tienen diferentes significados dependiendo de la configuración regional.  Si no hay configuración regional, estos caracteres extra se consideran actualmente como no asignados, y esto presenta algunos problemas.  Esto ha cambiado a partir de 5.12 así que estos caracteres se pueden considerar como Latin-1 (ISO-8859-1).
+
+=item *
+
+Mezclar #define y #ifdef
+
+  #define BURGLE(x) ... \
+  #ifdef BURGLE_OLD_STYLE        /* MAL */
+  ... hacerlo a la vieja usanza ... \
+  #else
+  ... hacerlo siguiendo las nuevas maneras ... \
+  #endif
+
+No puede "apilar" directivas cpp de forma portable.  Por ejemplo, en lo anterior necesita dos #define de BURGLE() separados, uno por cada rama del #ifdef.
+
+=item *
+
+Añadir cosas que no son comentarios después de #endif o #else
+
+  #ifdef SNOSH
+  ...
+  #else !SNOSH    /* MAL */
+  ...
+  #endif SNOSH    /* MAL */
+
+El #endif y el #else no pueden tener nada que no sean comentarios, después de ellos.  Si quiere documentar que se está haciendo (que es una buena idea especialmente si las ramas son largas), use comentarios (C):
+
+  #ifdef SNOSH
+  ...
+  #else /* !SNOSH */
+  ...
+  #endif /* SNOSH */
+
+La opción de gcc C<-Wendif-labels> advierte sobre la variante indeseable (por defecto a partir de Perl 5.9.4).
+
+=item *
+
+Tener una coma después del último elemento de una lista enum.
+
+  enum color {
+    CERULEAN,
+    CHARTREUSE,
+    CINNABAR,     /* MAL */
+  };
+
+no es portable.  Quite la última coma.
+
+También note que si los enum se metamorfosean implícitamente a enteros variando del compilador, podría necesitar indicar una reconversión (int).
+
+=item *
+
+Usar comentarios //
+
+  // Esta función confunde al zorklator.   /* MAL */
+
+Eso es C99 o C++.  Perl es C89.  Muchos compiladores de C permiten usar silenciosamente los comentarios // pero al aumentar la severidad de ANSI C89 (algo que nos gusta hacer) hace que la compilación falle.
+
+=item *
+
+Mezclar declaraciones y código
+
+  void zorklator()
+  {
+    int n = 3;
+    set_zorkmids(n);    /* MAL */
+    int q = 4;
+
+Eso es C99 o C++.  Algunos compiladores de C lo permite, pero usted no debería hacerlo.
+
+La opción de gcc C<-Wdeclaration-after-statements> escanea por tales problemas (por omisión a partir de Perl 5.9.4).
+
+=item *
+
+Presentar variables dentro de for()
+
+  for(int i = ...; ...; ...) {    /* MAL */
+
+Eso es C99 o C++.  Mientras que estaría estupendo tenerlo también en C89 para limitar el ámbito de la variable del bucle, desgraciadamente, no podemos hacerlo.
+
+=item *
+
+Mezclar punteros a char con signo, con punteros a char sin signo
+
+  int foo(char *s) { ... }
+  ...
+  unsigned char *t = ...; /* O U8* t = ... */
+  foo(t);   /* MAL */
+
+Mientras que esto es una práctica legal, es ciertamente dudosa, y acaba siendo fatal en al menos una plataforma: por ejemplo, el cc del VMS lo considera en error fatal.  Una causa para que la gente cometa este error es que un "char desnudo" y por lo tanto, desreferenciar un "puntero a char desnudo" tiene una indefinición en el signo: depende del compilador y los indicadores del compilador y de la plataforma subyacente si el resultado es con signo o no.  Por esta razón misma usar un 'char' como índice de array está mal.
+
+=item *
+
+Macros que tienen constantes de cadena y sus argumentos como subcadenas de cadenas constantes
+
+  #define FOO(n) printf("number = %d\n", n)    /* MAL */
+  FOO(10);
+
+La semántica pre-ANSI era equivalente a
+
+  printf("10umber = %d\10");
+
+que probablemente no es lo que esperaría.  Desafortunadamente, sólo en AIX hay un razonable, normal y moderno compilador de C que hace "una verdadera retro compatibilidad", que es lo que sigue sucediendo incluso aunque el resto del compilador AIX sea un muy feliz C89.
+
+=item *
+
+Usar formatos printf para tipos C no básicos
+
+   IV i = ...;
+   printf("i = %d\n", i);    /* MAL */
+
+Mientras que esto podría funcionar por accidente en alguna plataforma (donde sucede que IV es un C<int>), por lo general no se puede.  IV podría ser algo más grande.  Incluso peor situación es con tipos más específicos (definidos por el paso de configuración de Perl en F<config.h>):
+
+   Uid_t who = ...;
+   printf("who = %d\n", who);    /* MAL */
+
+El problema aquí es que Uid_t podría no ser no sólo de ancho C<int> sino también que podría ser sin signo, en cuyo caso los uid grandes se imprimen como valores negativos.
+
+No hay una simple solución para esto debido a la inteligencia limitada de printf(), pero para muchos tipos está disponible el formato correcto, tanto con sufijos 'f' o '_f', por ejemplo:
+
+   IVdf /* IV en decimal */
+   UVxf /* UV es hexadecimal */
+
+   printf("i = %"IVdf"\n", i); /* El IVdf es una cadena constante. */
+
+   Uid_t_f /* Uid_t en decimal */
+
+   printf("who = %"Uid_t_f"\n", who);
+
+O puede intentar convertirlo a un tipo "lo suficientemente ancho":
+
+   printf("i = %"IVdf"\n", (IV)algo_muy_pequeño_y_con_signo);
+
+También recuerde que el formato C<%p> lo que realmente requiere es un puntero a void:
+
+   U8* p = ...;
+   printf("p = %p\n", (void*)p);
+
+La opción gcc C<-Wformat> escanea por tales problemas.
+
+=item *
+
+Usar ciegamente macros variadic (número variable de argumentos)
+
+gcc las ha tenido por un tiempo con su propia sintaxis, y C99 las incorporó con una sintaxis estandarizara.  No use lo primero, y use el último sólo si está definida HAS_C99_VARIADIC_MACROS.
+
+=item *
+
+Pasar ciegamente va_list
+
+No todas las plataformas soportan pasar va_list a posteriores funciones varargs (stdarg).  Lo correcto es copiar la va_list usando Perl_va_copy() si está definida NEED_VA_COPY.
+
+=item *
+
+Usar expresiones de sentencia gcc
+
+   val = ({...;...;...});    /* MAL */
+
+Mientras que es una buena extensión, no es portable.  El código Perl ciertamente lo admite si está disponible para ganar alguna velocidad extra (esencialmente una forma divertida de programación en línea), pero no debería.
+
+=item *
+
+Ligar varias sentencias juntas en una macro
+
+Use las macros STMT_START y STMT_END.
+
+   STMT_START {
+      ...
+   } STMT_END
+
+=item *
+
+Probar por sistemas operativos o versiones cuando debería probar por características
+
+  #ifdef __FOONIX__    /* MAL */
+  foo = quux();
+  #endif
+
+A menos que sepa con un 100 % que quux() está sólo disponible para el sistema operativo "Foonix" B<y> que está disponible B<y> funcionando correctamente para B<todas> las versiones pasadas, presentes, B<y> futuras de "Foonix", lo anterior es muy incorrecto.  Esto es más correcto (aún así sigue siendo no perfecto, porque lo que sigue se comprueba en tiempo de compilación):
+
+  #ifdef HAS_QUUX
+  foo = quux();
+  #endif
+
+¿Cómo se define HAS_QUUX para donde se necesita?  Bien, si sucede que Foonix es lo suficientemente parecido a Unix capaz de ejecutar el guión Configure, y a Configure se le ha enseñado a detectar y probar quux(), HAS_QUUX se definirá correctamente.  En otras plataformas, el correspondiente paso por la configuración hará lo mismo.
+
+En una pizca, si no puede esperar a que se eduque a Configure, o si tiene una buena joroba de dónde podría estar disponible quux(), puede intentar temporalmente lo siguiente:
+
+  #if (defined(__FOONIX__) || defined(__BARNIX__))
+  # define HAS_QUUX
+  #endif
+
+  ...
+
+  #ifdef HAS_QUUX
+  foo = quux();
+  #endif
+
+Pero, en cualquier caso, intente mantener separados las características y los sistemas operativos.
+
+Un buen recurso sobre las macros predefinidas para varios sistemas operativos, compiladores, y así, es L<http://sourceforge.net/p/predef/wiki/Home/>
+
+=item *
+
+Asumir que los contenidos de la memoria estática apuntada por los valores de retorno de las envolturas de Perl para las funciones de la biblioteca C, no cambia.  Muchas funciones de la biblioteca C devuelven punteros a almacenamiento estático que puede sobreescribirse por sucesivas llamadas a las mismas funciones o relacionadas.  Perl tiene envolturas ligeras para algunas de estas funciones, las cuales no hacen copias de la memoria estática.  Un buen ejemplo es la interfaz a las variables de entorno que están en activo para el programa.  Perl tiene C<PerlEnv_getenv> para obtener los valores desde el entorno.  Pero el retorno es un puntero a memoria estática en la biblioteca C.  Si va a usar el valor inmediatamente para probar algo, está bien, pero si guarda el valor y espera que no cambie por el procesamiento posterior, podría equivocarse, porque quizás lo que no sepa es que diferentes implementaciones de la biblioteca C se comportan de forma diferente, y la que está en la plataforma que está probando podría funcionar en esa situación.  Pero en algunas plataformas, una subsecuente llamada a C<PerlEnv_getenv> o función relacionada sobrescribirá la memoria a la que la primera estaba apuntando.  Esto ha llevado a algunos problemas difíciles de depurar.  Para evitar estos problemas haga una copia con L<perlapi/savepv>.  Tendrá que liberar la copia cuando termine para evitar fugas de memoria.  Si no tiene control sobre cuándo se libera, necesitará hacer la copia en un escalar mortal, así:
+
+ if ((s = PerlEnv_getenv("foo") == NULL) {
+    ... /* manejar el caso NULL */
+ }
+ else {
+     s = SvPVX(sv_2mortal(newSVpv(s, 0)));
+ }
+
+El anterior ejemplo funciona sólo si C<"s"> termina con C<NUL>; si no, tendrá que pasar su longitud a C<newSVpv>.
+
+=back
+
+=head2 Interfaces problemáticos del sistema
+
+=over 4
+
+=item *
+
+malloc(0), realloc(0), calloc(0, 0) no son portables.  Para ser portables al menos deben reservar un byte.  (En general, raramente necesitará trabajar a este nivel tan bajo, sino que en lugar de eso usará las diferentes envolturas a malloc).
+
+=item *
+
+snprintf() - el valor de retorno no es portable.  Use en su lugar my_snprintf().
+
+=back
+
+=head2 Problemas de seguridad
+
+Último pero no menos, aquí hay diferentes trucos para una codificación segura.
+Vea también L<perlclib> para los reemplazos libc/stdio que uno debería usar.
+
+=over 4
+
+=item *
+
+No use gets()
+
+O le ridiculizaremos públicamente.  En serio.
+
+=item *
+
+No use tmpfile()
+
+Use en su lugar mkstemp().
+
+=item *
+
+No use strcpy() o strcat() o strncpy() o strncat()
+
+Use en su lugar my_strlcpy() y my_strlcat(): ellas usan tanto la implementación nativa, o la propia implementación de Perl (tomada de la implementación del dominio público de INN).
+
+=item *
+
+No use sprintf() o vsprintf()
+
+Si realmente quiere simples cadenas de bytes, use en su lugar my_snprintf() y my_vsnprintf(), que intentará usar snprintf() y vsnprintf() si están disponibles API más seguras.  Si quiere algo más elegante que una sencilla cadena de bytes, use L<C<Perl_form>()|perlapi/form> o SV y L<C<Perl_sv_catpvf()>|perlapi/sv_catpvf>.
+
+Note que glibc C<printf()>, C<sprintf()>, etc., tienen errores antes de la versión 2.17.  No le permitirán un formato C<%.s>, con precisión, para crear una cadena que no sea un UTF8 válido si la configuración regional subyacente es UTF-8.  Lo que sucede es que C<%s> y su operando son simplemente obviados, sin advertirlo.
+L<https://sourceware.org/bugzilla/show_bug.cgi?id=6530>.
+
+=item *
+
+No use atoi()
+
+Use en su lugar grok_atoUV().  atoi() tiene un mal comportamiento en desbordamientos, y no se puede usar para un interpretado incremental.  Afectado también por la configuración regional, lo cuál es malo.
+
+=item *
+
+No use strtol() o strtoul()
+
+Use en su lugar grok_atoUV().  strtol() o strtoul() (o sus amigables disfraces de macros IV/UV, Strtol() y Strtoul(), o Atol() y Atoul()) están afectadas por la configuración regional, lo cual es malo.
+
+=back
+
+=head1 DEPURACIÓN
+
+Puede compilar una especial versión de depuración de Perl, que permita usar la opción C<-D> de Perl para que muestre más de lo que Perl está haciendo.
+Pero algunas veces no hay alternativa que bucear con el depurador, tanto para ver la traza de pila de un volcado del núcleo (muy útil en un reporte de error), o intentar adivinar qué fue mal antes de que sucediera el volcado del núcleo, o cómo acabamos terminando con resultados erróneos o inesperados.
+
+=head2 Husmeando Perl
+
+Para husmear lo que hace Perl, probablemente querrá compilar Perl para depuración, algo como esto:
+
+    ./Configure -d -D optimize=-g
+    make
+
+C<-g> es un indicador para el compilador de C para que produzca información de depuración que nos permitirá ir paso a paso en un programa en ejecución, y ver en qué función C estamos (sin la información de depuración sólo podríamos ver las direcciones numéricas de las funciones, que no es muy útil).
+
+F<Configure> también activará el símbolo de compilación C<DEBUGGING> que habilita todo el código de depuración de código en Perl.  Hay un rango entero de cosas que puede depurar con esto: L<perlrun> las lista todas, y la mejor manera de saber para qué sirven es jugar con ellas.  Probablemente las opciones más útiles son
+
+    l  Contexto (bucle) procesado de pila
+    t  Ejecución en modo traza
+    o  Resolución de métodos y sobrecarga
+    c  Conversiones cadena/número
+
+Alguna de la funcionalidad del código de depuración se puede conseguir usando módulos XS.
+
+    -Dr => use re 'debug'
+    -Dx => use O 'Debug'
+
+=head2 Usar un depurador a nivel de código fuente
+
+Si no le ayuda la salida de depuración de C<-D>, es momento para ir paso a paso a través de la ejecución de perl con un depurador a nivel de código fuente.
+
+=over 3
+
+=item *
+
+Usaremos C<gdb> para nuestros ejemplos; los principios se aplicarán a cualquier depurador (muchos fabricantes llaman a su depurador C<dbx>), pero compruebe el manual del que está usando.
+
+=back
+
+Para arrancar el depurador, escriba
+
+    gdb ./perl
+
+O si tiene un volcado de núcleo:
+
+    gdb ./perl core
+
+Querrá hacer esto en el árbol de código fuente de Perl para que el depurador pueda leer el código fuente.  Debería ver el mensaje de copyright, seguido del prompt.
+
+    (gdb)
+
+C<help> le llevará a la documentación, pero los comandos más útiles son:
+
+=over 3
+
+=item * run [args]
+
+Ejecuta el programa con los argumentos proporcionados.
+
+=item * break nombre_función
+
+=item * break fuente.c:xxx
+
+Le dice al depurador que queríamos pausar la ejecución cuando alcancemos tanto a la función indicada (¡pero vea L<perlguts/Funciones internas>!) como la línea proporcionada en el archivo indicado.
+
+=item * step
+
+Paso a paso por el programa, una línea cada vez.
+
+=item * next
+
+Paso a paso por el programa, una línea cada vez, sin entrar en las funciones.
+
+=item * continue
+
+Ejecuta hasta el siguiente punto de ruptura.
+
+=item * finish
+
+Ejecuta hasta el final de la función actual, y se vuelve a parar.
+
+=item * 'enter'
+
+Simplemente pulsando Entrar repetirá la operación más reciente; una bendición cuando avanzamos por millas de código fuente.
+
+=item * ptype
+
+Imprime la definición C del argumento proporcionado.
+
+  (gdb) ptype PL_op
+  type = struct op {
+      OP *op_next;
+      OP *op_sibparent;
+      OP *(*op_ppaddr)(void);
+      PADOFFSET op_targ;
+      unsigned int op_type : 9;
+      unsigned int op_opt : 1;
+      unsigned int op_slabbed : 1;
+      unsigned int op_savefree : 1;
+      unsigned int op_static : 1;
+      unsigned int op_folded : 1;
+      unsigned int op_spare : 2;
+      U8 op_flags;
+      U8 op_private;
+  } *
+
+=item * print
+
+Ejecuta el código C proporcionado e imprime los resultados.  B<ADVERTENCIA>: Perl hace un fuerte uso de las macros, y F<gdb> no soporta necesariamente macros (vea a continuación L</"gdb soporte de macros">).  Tendrá que sustituirlas usted mismo, o invocar cpp en los archivos de código fuente (vea L</"Los objetivos .i">) Así, por ejemplo, no puede decir
+
+    print SvPV_nolen(sv)
+
+sino que tiene que decir
+
+    print Perl_sv_2pv_nolen(sv)
+
+=back
+
+Puede encontrar útil tener un "diccionario de macros", que puede producir diciendo C<cpp -dM perl.c | sort>.  Incluso entonces, F<cpp> no aplicará por usted esas macros recursivamente.
+
+=head2 gdb soporte de macros
+
+Versiones recientes de F<gdb> tienen un soporte de macros más justo, pero para usarlo necesitará compilar perl con definiciones de macros incluidas en la información de depuración.  Usar F<gcc> versión 3.1, significa configurar con C<-Doptimize=-g3>.  Otros compiladores podrían usar una opción diferente (si al final soportan macros de depuración).
+
+=head2 Volcar estructuras de datos Perl
+
+Una forma de lidiar con este infierno de macros es usar las funciones de volcado en F<dump.c>; esto funciona un poco como un L<Devel::Peek|Devel::Peek> interno, pero también cubre OP y otras estructuras que no puede obtener desde Perl.  Veamos un ejemplo.
+Usaremos C<$a = $b + $c> vista antes, pero demos un poco de contexto: C<$b = "6XXXX"; $c = 2.3;>.  ¿Dónde es un buen lugar para parar y fisgar por ahí?
+
+Usando C<pp_add>, la función que examinamos antes para implementar el operador C<+>:
+
+    (gdb) break Perl_pp_add
+    Breakpoint 1 at 0x46249f: file pp_hot.c, line 309.
+
+Note que usamos C<Perl_pp_add> y no C<pp_add>; vea L<perlguts/Funciones internas>.  Con el punto de ruptura en su lugar, podemos ejecutar nuestro programa:
+
+    (gdb) run -e '$b = "6XXXX"; $c = 2.3; $a = $b + $c'
+
+Montones de basura pasará por delante a medida que gdb lea en los archivos relevantes del código fuente y bibliotecas, y luego:
+
+    Breakpoint 1, Perl_pp_add () at pp_hot.c:309
+    309         dSP; dATARGET; tryAMAGICbin(add,opASSIGN);
+    (gdb) step
+    311           dPOPTOPnnrl_ul;
+    (gdb)
+
+Miramos antes en este trozo de código, y dijimos que C<dPOPTOPnnrl_ul> coloca dos C<NV> en C<left> y C<right>; vamos a expandirlo ligeramente:
+
+ #define dPOPTOPnnrl_ul  NV right = POPn; \
+                         SV *leftsv = TOPs; \
+                         NV left = USE_LEFT(leftsv) ? SvNV(leftsv) : 0.0
+
+C<POPn> toma el SV desde la parte superior de la pila y obtiene su NV tanto directamente (si C<SvNOK> esta establecido) o llamando a la función C<sv_2nv>.  C<TOPs> toma el siguiente SV de la parte superior de la pila - sí, C<POPn> usa C<TOPs> - pero no lo elimina.  Nosotros entonces usamos C<SvNV> para obtener el NV desde C<leftsv> de la misma manera que antes - sí, C<POPn> usa C<SvNV>.
+
+Ya que no tenemos un NV para C<$b>, usaremos C<sv_2nv> para convertirlo.  Si damos un nuevo paso, nos encontraremos aquí:
+
+    (gdb) step
+    Perl_sv_2nv (sv=0xa0675d0) at sv.c:1669
+    1669        if (!sv)
+    (gdb)
+
+Ahora podemos usar C<Perl_sv_dump> para investigar el SV:
+
+    (gdb) print Perl_sv_dump(sv)
+    SV = PV(0xa057cc0) at 0xa0675d0
+    REFCNT = 1
+    FLAGS = (POK,pPOK)
+    PV = 0xa06a510 "6XXXX"\0
+    CUR = 5
+    LEN = 6
+    $1 = void
+
+Sabemos que vamos a obtener C<6>, así que terminemos la subrutina:
+
+    (gdb) finish
+    Ejecuta hasta que salga por #0  Perl_sv_2nv (sv=0xa0675d0) at sv.c:1671
+    0x462669 in Perl_pp_add () at pp_hot.c:311
+    311           dPOPTOPnnrl_ul;
+
+Nosotros también volcamos este op: la op actual siempre se almacena en C<PL_op>, y podemos volcarlo con C<Perl_op_dump>.  Esto nos proporcionará una salida similar a L<B::Debug|B::Debug>.
+
+    (gdb) print Perl_op_dump(PL_op)
+    {
+    13  TYPE = add  ===> 14
+        TARG = 1
+        FLAGS = (SCALAR,KIDS)
+        {
+            TYPE = null  ===> (12)
+              (was rv2sv)
+            FLAGS = (SCALAR,KIDS)
+            {
+    11          TYPE = gvsv  ===> 12
+                FLAGS = (SCALAR)
+                GV = main::b
+            }
+        }
+
+# terminamos esto más tarde #
+
+=head2 Usar gdb para buscar en partes específicas de un programa
+
+Con el ejemplo anterior, ya sabía buscar en C<Perl_pp_add>, pero ¿qué pasa si existen múltiples llamadas a ella por todos lados, o no sabe por cuál op debe mirar?
+
+Una forma para hacer esto es de inyectar una extraña llamada en algún sitio cerca de donde está buscando.  Por ejemplo, podría añadir C<study> antes de su método:
+
+    study;
+
+Y en gdb hacer:
+
+    (gdb) break Perl_pp_study
+
+Y entonces ir paso a paso hasta llegar a lo que está buscando.  Este funciona bien en un bucle si quiere sólo parar en ciertas iteraciones:
+
+    for my $c (1..100) {
+        study if $c == 50;
+    }
+
+=head2 Usar gdb para buscar qué está haciendo el intérprete/intérprete léxico
+
+Si quiere ver qué está haciendo perl cuando interpreta/lexifica su código, puede usar C<BEGIN {}>:
+
+    print "Antes\n";
+    BEGIN { study; }
+    print "Después\n";
+
+Y en gdb:
+
+    (gdb) break Perl_pp_study
+
+Si quiere ver qué está haciendo el intérprete/intérprete léxico dentro de los bloques C<if> y parecidos necesita ser un poco más delicado:
+
+    if ($a && $b && do { BEGIN { study } 1 } && $c) { ... }
+
+=head1 ANÁLISIS ESTÁTICO DEL CÓDIGO FUENTE
+
+Existen varias herramientas para analizar código fuente C B<estáticamente>, opuesto a B<dinámicamente>, esto es, sin ejecutar el código.  Es posible detectar fugas de recursos, comportamiento indefinido, falta de concordancia en tipos, problemas de portabilidad, rutas de código que podrían causar accesos ilegales de memoria, y otros problemas similares simplemente interpretando el código C y mirando en el grafo resultante, que explican la ejecución y el flujo de datos.  De hecho, esto es exactamente cómo los compiladores de C saben que tienen que dar advertencias sobre código dudoso.
+
+=head2 lint, splint
+
+El viejo y buen inspector de calidad de código C, C<lint>, está disponible en diversas plataformas, pero, por favor tenga en cuenta que existen diversas y diferentes implementaciones por parte de diferentes fabricantes, que significa que los indicadores no son idénticos en diferentes plataformas.
+
+Existe una variante de lint llamada C<splint> (Secure Programming Lint) disponible desde http://www.splint.org/ que debería compilarse en cualquier plataforma Unix.
+
+Existen objetivos C<lint> y C<splint> en Makefile, pero quizás tenga que lidiar con los indicadores (vea lo anterior).
+
+=head2 Coverity
+
+Coverity (http://www.coverity.com/) es un producto similar a lint y puesto como base de pruebas para sus productos comprueban periódicamente varios proyectos de código abierto, y proporcionan cuentas a desarrolladores de código abierto a las bases de datos de errores.
+
+Esto es la configuración de Coverity para el proyecto perl5: L<https://scan.coverity.com/projects/perl5>
+
+=head2 HP-UX cadvise (Code Advisor)
+
+HP tiene un analizador estático de C/C++ para HP-UX llamado Code Advisor.
+(No se proporciona enlace porque la URL es horriblemente larga y parece horriblemente inestable; use el motor de búsqueda de su elección para encontrarlo).  Esta recomendado el uso de la receta C<cadvise_cc> con C<Configure ... -Dcc=./cadvise_cc> (vea el cadvise "User Guide"); así como el uso de C<+wall>.
+
+=head2 cpd (detector cut-and-paste -cortar y pegar)
+
+La herramienta cpd detecta la codificación cut-and-paste.  Si cambia una instancia del código cut-and-pasted, todos los otros probablemente también deberían cambiar.  Por lo tanto tal código probablemente debería convertirse en una subrutina o macro.
+
+cpd (http://pmd.sourceforge.net/cpd.html) es parte del proyecto pmd (http://pmd.sourceforge.net/).  pmd se escribió originalmente para el análisis estático de código Java, pero más tarde la parte cpd de él se extendió para interpretar también a C y C++.
+
+Descargue el pmd-bin-X.Y.zip () del sitio SourceForge, extraiga pmd-X.Y.jar, y entonces ejecútelo en el código fuente a probar:
+
+  java -cp pmd-X.Y.jar net.sourceforge.pmd.cpd.CPD \
+   --minimum-tokens 100 --files /alguno/donde/src --language c > cpd.txt
+
+Puede correrlo con límites de memoria, en cuyo caso debería usar la opción -Xmx:
+
+  java -Xmx512M ...
+
+=head2 Advertencias de gcc
+
+Aunque se puede escribir mucho sobre la inconsistencia y problemas de cobertura de las advertencias de gcc (como que C<-Wall> no significa "todas las advertencias", o algunos problemas comunes de portabilidad no cubiertos por C<-Wall>, o tanto C<-ansi> como C<-pedantic> siendo una colección de advertencias pobremente definidas, y así), gcc sigue siendo una herramienta útil para mantener nuestro código limpio de mocos.
+
+El C<-Wall> está por defecto habilitado.
+
+El C<-ansi> (y su compañero, C<-pedantic>) estaría bien que siempre estuviera habilitado, pero desafortunadamente no son seguros en todas las plataformas; pueden, por ejemplo causar conflictos fatales con las cabeceras del sistema (Solaris sería un primer ejemplo).  Si Configure usa C<-Dgccansipedantic>, el inicial C<cflags> selecciona C<-ansi -pedantic> para la plataforma donde se saben que son seguros.
+
+A partir de Perl 5.9.4 se añaden los siguientes indicadores extra:
+
+=over 4
+
+=item *
+
+C<-Wendif-labels>
+
+=item *
+
+C<-Wextra>
+
+=item *
+
+C<-Wdeclaration-after-statement>
+
+=back
+
+Estaría bien tener los siguientes indicadores pero podrían necesitar su propio jefe de los establos de Augías:
+
+=over 4
+
+=item *
+
+C<-Wpointer-arith>
+
+=item *
+
+C<-Wshadow>
+
+=item *
+
+C<-Wstrict-prototypes>
+
+=back
+
+C<-Wtraditional> es otro ejemplo de la molesta tendencia de gcc para empaquetar un montón de advertencias bajo un indicador (en la práctica sería imposible desplegar porque se quejaría un montón) pero contiene algunas advertencias que sería beneficioso tener por si mismo, tales como la advertencia sobre las constantes de cadena dentro de las macro conteniendo los argumentos de macro: se comporta en el pre-ANSI de forma diferente que en el ANSI, y algunos compiladores de C siguen en transición, siendo AIX un ejemplo.
+
+=head2 Advertencias de otros compiladores de C
+
+Otros compiladores de C (sí, B<existen> otros compiladores de C que el gcc) a menudo tienen sus modos "ANSI estricto" o "ANSI estricto con algunas extensiones de portabilidad" activados, como por ejemplo Sun Workshop tiene su modo C<-Xa> activado (aún así implícitamente), o el DEC (estos días, HP...) tiene su modo C<-std1> activado.
+
+=head1 DEPURADORES DE MEMORIA
+
+B<NOTA 1>: Ejecutar bajo viejos depuradores de memoria como Purify, valgrind o Third Degree enlentece en gran medida la ejecución: los segundos se vuelven minutos, y los minutos, horas.  Por ejemplo en Perl 5.8.1, ext/Encode/t/Unicode.t toma un tiempo extraordinariamente largo para completarse bajo, por ejemplo, Purify, Third Degree y valgrind.  Bajo valgrind le lleva más de seis horas, incluso en un potente ordenador.  Este test debe estar haciendo algo que no es nada amigable con los depuradores de memoria.  Si no se ve esperando, puede simplemente matar el proceso perl.
+valgrind enlentece la ejecución aproximadamente por un factor de 10; AddressSanitizer por un factor de 2.
+
+B<NOTA 2>: Minimizar el número de falsas alarmas de fugas de memoria (vea L</PERL_DESTRUCT_LEVEL> para más información), tiene que establecer la variable de entorno PERL_DESTRUCT_LEVEL a 2.  Por ejemplo, algo como esto:
+
+    env PERL_DESTRUCT_LEVEL=2 valgrind ./perl -Ilib ...
+
+B<NOTA 3>: Existen conocidas fugas de memoria cuando hay errores en tiempo de compilación dentro de eval o require; ver C<S_doeval> en la pila de llamadas es un buen signo de esto.  Arreglar estas fugas no es trivial, desafortunadamente, pero finalmente se arreglarán.
+
+B<NOTA 4>: L<DynaLoader> no se limpiará completamente a menos que se compile con la opción de Configure C<-Accflags=-DDL_UNLOAD_ALL_AT_EXIT>.
+
+=head2 valgrind
+
+La herramienta valgrind se puede usar para descubrir tanto las fugas de memoria como los accesos ilegales a la memoria del cúmulo.  Hasta la versión 3.3.0, Valgrind sólo soporta Linux en x86, x86-64 y PowerPC y Darwin (OS X) en x86 y x86-64.  Se puede usar el objetivo especial "test.valgrind" para ejecutar las pruebas bajo valgrind.  Los errores y fugas de memoria encontrados se registran en archivos con nombre F<testfile.valgrind> y por defecto la salida se muestra en directo.
+
+Ejemplo de uso:
+
+    make test.valgrind
+
+Ya que valgrind añade una sobrecarga significativa, las pruebas tomarán mucho más tiempo para ejecutarse.  Las pruebas valgrind soportan la ejecución en paralelo, así:
+
+    TEST_JOBS=9 make test.valgrind
+
+Note que las dos invocaciones anteriores serán muy verbosas ya que las comprobaciones de memoria y fugas de ella están activadas por defecto.  Si sólo quiere ver errores puros, intente:
+
+    VG_OPTS='-q --leak-check=no --show-reachable=no' TEST_JOBS=9 \
+        make test.valgrind
+
+Valgrind también proporciona la herramienta cachegrind, invocada en perl como:
+
+    VG_OPTS=--tool=cachegrind make test.valgrind
+
+Ya que las bibliotecas del sistema (más notablemente glibc) también disparan errores, valgrind permite suprimir tales errores usando archivos de supresión.  El archivo de supresión por omisión que viene con valgrind ya captura muchos de ellos.  Algunas supresiones adicionales se definen en F<t/perl.supp>.
+
+Para conseguir valgrind y tener más información vea
+
+    http://valgrind.org/
+
+=head2 AddressSanitizer
+
+AddressSanitizer es una extensión clang y gcc, incluida en clang desde v3.1 y gcc desde v4.8.  Comprueba punteros ilegales al cúmulo, punteros globales, punteros de pila y errores de lo queda tanto usado como libre, y es lo suficientemente rápido como para compilar fácilmente con él su perl depurado y optimizado.
+Aún así no comprueba las fugas de memoria.  AddressSanitizer está disponible para Linux, Mac OS X y pronto para Windows.
+
+Para compilar perl con AddressSanitizer, su invocación de Configure debería parecerse a esto:
+
+    sh Configure -des -Dcc=clang \
+       -Accflags=-faddress-sanitizer -Aldflags=-faddress-sanitizer \
+       -Alddlflags=-shared\ -faddress-sanitizer
+
+donde estos argumentos significan:
+
+=over 4
+
+=item * -Dcc=clang
+
+Esto debería reemplazarse por la ruta completa a su ejecutable clang si no está en su ruta.
+
+=item * -Accflags=-faddress-sanitizer
+
+Compile los códigos fuente de perl y extensiones con AddressSanitizer.
+
+=item * -Aldflags=-faddress-sanitizer
+
+Enlace el ejecutable perl con AddressSanitizer.
+
+=item * -Alddlflags=-shared\ -faddress-sanitizer
+
+Enlaza extensiones dinámicas con AddressSanitizer.  Debe especificar manualmente C<-shared> porque al usar C<-Alddlflags=-shared> impedirá que Configure establezca un valor por omisión para C<lddlflags>, que normalmente contiene C<-shared> (al menos en Linux).
+
+=back
+
+Vea también L<http://code.google.com/p/address-sanitizer/wiki/AddressSanitizer>.
+
+
+=head1 PERFILAR
+
+Dependiendo de su plataforma existen varias maneras de perfilar Perl.
+
+Existen dos técnicas comunes para el perfilado de ejecutables: I<estadística en tiempo de muestreo> y I<cuenta de bloques básicos>.
+
+El primer método toma muestras periódicamente del contador de programa de la CPU, y ya que el contador de programa se puede correlacionar con el código generado para las funciones, obtenemos una vista estadística de en qué funciones está gastando su tiempo.  La cuestión es que funciones muy pequeñas/rápidas tienen una baja probabilidad de mostrarse en el perfilado, y ese interrumpir periódicamente el programa (esto ocurre muy frecuentemente, en la escala de los milisegundos) impone una sobrecarga adicional que puede afectar a los resultados.  El primer problema se puede aliviar ejecutando el código por mucho tiempo (en general es una buena idea para perfilar), el segundo problema se mantiene normalmente en guardia por las propias herramientas de perfilado.
+
+El segundo método divide el código generado en I<bloques básicos>.
+Bloques básicos son secciones de código que aparecen sólo al comienzo y salen sólo al final.  Por ejemplo, un salto condicional empieza un bloque básico.  El perfilado de bloque básico normalmente funciona I<instrumentando> el código añadiendo código de marca I<enter basic block #nnnn> al código generado.  Entonces durante la ejecución del código los contadores de bloque básico se actualizan apropiadamente.  El problema es que el código extra añadido puede alterar los resultados: de nuevo, las herramientas de perfilado normalmente intentan factorizar sus propios efectos al margen de los resultados.
+
+=head2 Perfilado Gprof
+
+I<gprof> es una herramienta de perfilado disponible en muchas plataformas Unix que usa I<estadística en tiempo de muestreo>.  Puede compilar una versión de perfilado de F<perl> usando gcc con el indicador C<-pg>.  O edite F<config.sh> o vuelva a ejecutar F<Configure>.  Ejecutar la versión perfilada de Perl creará un archivo de salida llamado F<gmon.out> que contiene los datos de perfilado recolectados durante la ejecución.
+
+pista rápida:
+
+    $ sh Configure -des -Dusedevel -Accflags='-pg' \
+        -Aldflags='-pg' -Alddlflags='-pg -shared' \
+        && make perl
+    $ ./perl ... # crea gmon.out en el directorio actual
+    $ gprof ./perl > out
+    $ less out
+
+(probablemente necesita añadir C<-shared> a la línea C<-Alddlflags> hasta que se resuelva RT #118199)
+
+La herramienta F<gprof> puede entonces mostrar los datos recolectados de diversas maneras.
+Normalmente F<gprof> entiende las siguientes opciones:
+
+=over 4
+
+=item * -a
+
+Suprime estáticamente las funciones definidas desde el perfilador.
+
+=item * -b
+
+Suprime las descripciones verbosas en el perfilado.
+
+=item * -e rutina
+
+Excluye del perfilado la rutina indicada y sus descendientes.
+
+=item * -f rutina
+
+Sólo muestra en el perfilado la rutina indicada y sus descendientes.
+
+=item * -s
+
+Genera un archivo de resumen llamado F<gmon.sum> que se puede entregar a subsecuentes ejecuciones de gprof para acumular datos a lo largo de varias ejecuciones.
+
+=item * -z
+
+Muestra rutinas que tienen cero uso.
+
+=back
+
+Para una explicación más detallada de los comandos disponibles y formatos de salida, vea su propia documentación local de F<gprof>.
+
+=head2 Perfilado GCC gcov
+
+El I<perfilado de bloques básicos> está disponible oficialmente en gcc 3.0 y superior.
+Puede compilar una versión perfilada de F<perl> usando gcc con los indicadores C<-fprofile-arcs -ftest-coverage>.  O edite F<config.sh> o vuelva a ejecutar F<Configure>.
+
+pista rápida:
+
+    $ sh Configure -des -Dusedevel -Doptimize='-g' \
+        -Accflags='-fprofile-arcs -ftest-coverage' \
+        -Aldflags='-fprofile-arcs -ftest-coverage' \
+        -Alddlflags='-fprofile-arcs -ftest-coverage -shared' \
+        && make perl
+    $ rm -f regexec.c.gcov regexec.gcda
+    $ ./perl ...
+    $ gcov regexec.c
+    $ less regexec.c.gcov
+
+(probablemente necesita añadir C<-shared> a la línea C<-Alddlflags> hasta que se resuelva RT #118199)
+
+Ejecutar la versión perfilada de Perl causará que se genere la salida del perfilado.  Por cada archivo fuente se creará un acompañante archivo F<.gcda>.
+
+Para mostrar los resultados use la utilidad I<gcov> (que debería estar ya instalada si tiene instalado un gcc 3.0 o superior).  F<gcov> se ejecuta en archivos de código, como este
+
+    gcov sv.c
+
+que causará que se cree F<sv.c.gcov>.  Los archivos F<.gcov> contienen el código fuente con anotaciones sobre frecuencias relativas de ejecución indicadas con marcas "#".  Si quiere generar archivos F<.gcov> para todos los archivos objeto perfilados, puede ejecutar algo como esto:
+
+    for file in `find . -name \*.gcno`
+    do sh -c "cd `dirname $file` && gcov `basename $file .gcno`"
+    done
+
+Opciones útiles para F<gcov> incluyen C<-b> que condensará el bloque básico, rama, y cobertura de llamada de función, y C<-c> que en lugar de frecuencias relativas usarán los contadores actuales.  Para más información sobre el uso de F<gcov> y perfilado de bloque básico con gcc, vea el último manual de GNU CC.  A partir de gcc 4.8, esto está en L<http://gcc.gnu.org/onlinedocs/gcc/Gcov-Intro.html#Gcov-Intro>
+
+=head1 TRUCOS VARIOS
+
+=head2 PERL_DESTRUCT_LEVEL
+
+Si quiere ejecutar manualmente por sí mismo cualquiera de las pruebas usando, por ejemplo, valgrind, por favor note que por defecto perl B<no> limpia explícitamente toda la memoria que reserva (tal como las arenas de memoria global) sino que en lugar de eso permite que el exit() de todo el programa "tome cuidado" de tales reservas, también conocidas como "destrucción global de objetos".
+
+Hay una forma de decirle a perl que complete la limpieza: establezca la variable de entorno PERL_DESTRUCT_LEVEL a un valor distinto de cero.  La envoltura t/TEST lo establece a 2, y esto es algo que también necesita hacer, si no quiere ver "fugas globales": Por ejemplo, para ejecutar bajo valgrind
+
+    env PERL_DESTRUCT_LEVEL=2 valgrind ./perl -Ilib t/foo/bar.t
+
+(Nota: el módulo de Apache mod_perl usa esta variable de entorno para sus propios propósitos y extender su semántica.  Refiera a la documentación de mod_perl para más información.  También, los hilos hacen lo equivalente de establecer esta variable al valor de 1).
+
+Si, al final de una ejecución obtiene el mensaje I<N scalars leaked>, puede recompilar con C<-DDEBUG_LEAKING_SCALARS>, que causará que las direcciones de todos estos SV fugados se vuelquen junto con los detalles sobre dónde originalmente se reservó cada SV.  Esta información se muestra también con Devel::Peek.  Note que se registran los detalles extra con cada incremento de memoria que los SV usan, así que no debería usarse en entornos de producción.  También convierte C<new_SV()> desde una macro en una función real, así que puede usar su depurador favorito para descubrir dónde se reservaron esos molestos SV.
+
+Si está viendo que está perdiendo memoria en tiempo de ejecución, pero ni valgrind ni C<-DDEBUG_LEAKING_SCALARS> encontraron nada, probablemente está perdiendo SV que siguen siendo alcanzables y que se limpiaron durante la destrucción del intérprete.  En tales casos, al usar la opción C<-Dm> puede llevarle a la fuente de la fuga.  Si el ejecutable se compiló con C<-DDEBUG_LEAKING_SCALARS>, C<-Dm> mostrará las reservas de los SV además de las reservas de memoria.  Cada reserva de SV tiene un número de serie distintivo que se escribirá en la creación y destrucción del SV.  Así que si está ejecutando el código con fugas en un bucle, necesita mirar en los SV que se han creado, pero nunca destruido en cada ciclo.  Si se encuentra tal SV, establezca un punto de ruptura condicional dentro de C<new_SV()> y haga que se pare cuando C<PL_sv_serial> es igual al número de serie del SV con fugas.  Entonces cazará al intérprete en exactamente el estado en que se reservó el SV, que es suficiente en muchos casos para encontrar la fuente de la fuga.
+
+Ya que C<-Dm> está usando la capa PerlIO para la salida, él mismo reservará un buen grupo de SV, que se esconden para evitar recursión.  En lugar de eso puede saltarse la capa PerlIO si usa el SV del sistema de registro proporcionado por C<-DPERL_MEM_LOG>.
+
+=head2 PERL_MEM_LOG
+
+Si se compila con C<-DPERL_MEM_LOG> (C<-Accflags=-DPERL_MEM_LOG>), tanto las reservas de memoria y reservas de SV pasan a través de las funciones de registro, que es útil para establecer puntos de ruptura.
+
+A menos que también se compile con C<-DPERL_MEM_LOG_NOIMPL> (C<-Accflags=-DPERL_MEM_LOG_NOIMPL>), las funciones de registro leen $ENV{PERL_MEM_LOG} para determinar si registrar el evento, y cómo:
+
+    $ENV{PERL_MEM_LOG} =~ /m/           Registra todas las op. de memoria
+    $ENV{PERL_MEM_LOG} =~ /s/           Registra todas las op. de SV
+    $ENV{PERL_MEM_LOG} =~ /t/           incluye los sellos de tiempo en el registro
+    $ENV{PERL_MEM_LOG} =~ /^(\d+)/      escribir en el ident. de archivo indicado (por defecto, 2)
+
+Registrar memoria es algo similar a C<-Dm> pero es independiente de C<-DDEBUGGING>, y a un nivel superior; todos los usos de Newx(), Renew() y Safefree() se registran con el archivo y número de línea del código fuente del llamador (y nombre de la función C, si está soportada por el compilador de C).  En contraste, C<-Dm> está directamente ligada a C<malloc()>.  El registro de SV es similar.
+
+Ya que el registro no usa PerlIO, todas las reservas de SV se registran y no se incluyen reservas de SV extra al activar el registro.  Si se compiló con C<-DDEBUG_LEAKING_SCALARS>, también se registra el número de serie de cada reserva de SV.
+
+=head2 DDD sobre gdb
+
+Los que depuran perl con el frontal DDD sobre gdb pueden encontrar útil lo siguiente:
+
+Puede extender el menú de atajos de conversión de datos, así por ejemplo puede mostrar el valor IV de un SV con un clic, sin escribir nada.
+Para hacer esto simplemente edite el archivo ~/.ddd/init y añada al final:
+
+  ! Display shortcuts.
+  Ddd*gdbDisplayShortcuts: \
+  /t ()   // Convertir a bin\n\
+  /d ()   // Convertir a dec\n\
+  /x ()   // Convertir a hex\n\
+  /o ()   // Convertir a oct(\n\
+
+las siguientes dos líneas:
+
+  ((XPV*) (())->sv_any )->xpv_pv  // 2pvx\n\
+  ((XPVIV*) (())->sv_any )->xiv_iv // 2ivx
+
+así que ahora puede hacer conversiones de ivx y pvx o puede enchufar allí la "conversión" de sv_peek:
+
+  Perl_sv_peek(my_perl, (SV*)()) // sv_peek
+
+(El my_perl es para compilaciones con hilos).  Sólo recuerde que cada línea, excepto la última, debe terminar con \n\
+
+O de otra forma, edite el archivo init interactivamente así: tercer botón del ratón -> New Display -> Edit Menu
+
+Note: puede definir hasta 20 atajos de conversión en la sección gdb.
+
+=head2 Trazado de C
+
+En algunas plataformas Perl soporta recuperar el trazado a nivel de C (similar a lo que hacen los depuradores simbólicos, como gdb).
+
+El trazado devuelve la traza de pila del marco de llamadas C, con los nombres de símbolos (nombres de función), los nombres de objetos (como "perl"), y si también puede, las posiciones del código fuente (archivo:línea).
+
+Las plataformas soportadas son Linux y OS X (algunas *BSD podrían funcionar al menos parcialmente, pero aún no se han probado).
+
+Esta característica no se ha probado con múltiples hilos, pero sólo mostrará la traza del hilo haciendo el trazado.
+
+La característica necesita activarse con C<Configure -Dusecbacktrace>.
+
+C<-Dusecbacktrace> también activa el mantener la información de depuración cuando se compila/enlaza (a menudo: C<-g>).  Muchos compiladores/enlazadores soportan tanto la optimización como el mantener la información de depuración.  La información de depuración se necesita para los nombres de símbolos y las posiciones del código fuente.
+
+Las funciones estáticas podrían no estar visibles para la traza.
+
+Las posiciones de código fuente, incluso si está disponible, pueden a menudo faltar o ser incorrectas si el compilador tiene, por ejemplo, código en línea.  El optimizador puede hacer desafiante el hacer coincidir el código fuente y el código objeto.
+
+=over 4
+
+=item Linux
+
+Usted B<debe> tener instalada la biblioteca BFD (-lbfd), o si no C<perl> fallará al enlazar.  La BFD se distribuye normalmente como parte de las binutils GNU.
+
+Resumen: C<Configure ... -Dusecbacktrace> y necesita C<-lbfd>.
+
+=item OS X
+
+Las posiciones de código fuente están soportadas B<sólo> si tiene instaladas las Developer Tools.  (BFD B<no> se necesita).
+
+Resumen: C<Configure ... -Dusecbacktrace> y estaría bien tener instaladas las Developer Tools.
+
+=back
+
+Opcionalmente, para probar esta característica, puede querer activar el volcado automático de la traza justo antes de que se emita una advertencia o mensaje de croak (die), añadiendo C<-Accflags=-DUSE_C_BACKTRACE_ON_ERROR> a Configure.
+
+A menos que se active esta característica adicional, nada es visible sobre la funcionalidad de la traza, excepto para el nivel Perl/XS.
+
+Además, incluso si tiene activada la compilación de esta característica, necesita activarla en tiempo de ejecución con una variable de entorno: C<PERL_C_BACKTRACE_ON_ERROR=10>.  Debe ser un entero superior a cero, indicando el número de marco deseado.
+
+Recuperar la traza del nivel de Perl (usando por ejemplo una extensión XS) es mucho menos emocionante de lo que uno podría esperar: normalmente verá C<runops>, C<entersub> y no mucho más.  Se pretende que esta API se llame B<desde dentro> de la implementación Perl, no desde la ejecución a nivel de Perl.
+
+La API C para la traza es como sigue:
+
+=over 4
+
+=item get_c_backtrace
+
+=item free_c_backtrace
+
+=item get_c_backtrace_dump
+
+=item dump_c_backtrace
+
+=back
+
+=head2 Poison
+
+Si ve en un depurador un área de memoria misteriosamente llena de 0xABABABAB o 0xEFEFEFEF, puede estar viendo el efecto de las macros Poison(), vea L<perlclib>.
+
+=head2 Árboles op (optree) de sólo lectura
+
+Bajo ithreads el optree es de sólo lectura.  Si quiere aplicar esto, para comprobar accesos de escritura desde código con errores, compile con C<-Accflags=-DPERL_DEBUG_READONLY_OPS> para activar código que reserva memoria de op vía C<mmap>, y lo establece como de sólo lectura cuando se adjunta a una subrutina.
+Cualquier acceso de escritura a un op resulta en un C<SIGBUS> y aborta.
+
+Se pretende usar este código sólo para desarrollo, e incluso puede que no sea portable para todas las variantes de Unix.  También, es una solución del 80 %, en que no es capaz de convertir todas las op a sólo lectura.  Específicamente, no se aplica a las op slabs dentro de los bloques C<BEGIN>.
+
+Aun así, como solución al 80 % sigue siendo efectiva, ya que en el pasado cazaba errores.
+
+=head2 ¿Cuándo un booleano no es un booleano?
+
+En compiladores pre-C99, C<bool> se definía como equivalente a C<char>.
+Consecuentemente la asignación de un tipo más largo a un C<bool> no es segura y puede truncarse.  La macro C<cBOOL> existe para convertirlo correctamente.
+
+En esas plataformas y compiladores donde C<bool> realmente es un booleano (C++, C99), es fácil olvidar esa conversión.  Puede forzar que un C<bool> sea un C<char> compilando con C<-Accflags=-DPERL_BOOL_AS_CHAR>.  También puede desear ejecutar C<Configure> con algo como
+
+    -Accflags='-Wconversion -Wno-sign-conversion -Wno-shorten-64-to-32'
+
+o el equivalente de su compilador para hacer más fácil el mostrar los truncamientos inseguros que aparecen.
+
+=head2 Los objetivos .i
+
+Puede expandir las macros en un archivo F<foo.c> diciendo
+
+    make foo.i
+
+que expandirá las macros usando cpp.  No se asuste por los resultados.
+
+=head1 AUTOR
+
+Actualmente la lista de correo perl5-porters se encarga de actualizar este documento redactado originalmente por Nathan Torkington.

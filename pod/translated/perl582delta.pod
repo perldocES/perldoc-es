@@ -24,9 +24,9 @@ La asignación al azar hash introducido con 5.8.1 se ha modificado. Se constató
 Estamos muy agradecidos con el proyecto Debian por sus aportaciones en este ámbito.
 Vea L<perlsec/"Ataques de complejidad algorítmica"> para la justificación original de este cambio.
 
-=head2 Multihilos
+=head2 Hilos
 
-Varias agotamientos de memoria, asociados con variables compartidas entre hilos han sido corregidos.
+Varios agotamientos de memoria, asociados con variables compartidas entre hilos han sido corregidos.
 
 =head1 Módulos y pragmas
 

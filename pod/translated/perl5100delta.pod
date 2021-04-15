@@ -929,7 +929,7 @@ Esto solía ser un error de sintaxis; se requería un C<< -> >>.
 Anteriormente, cuando se ejecutaba con las advertencias habilitadas a nivel global a través de C<-w>, una desactivación selectiva de categorías de advertencias específicas podría, realmente, desactivar todas las advertencias.
 Esto ha sido corregido; ahora C<no warnings 'io';> sólo desactivará las advertencias en la clase C<io>. Anteriormente, desactivaría erróneamente todas las advertencias.
 
-=item Mejoras en hebras
+=item Mejoras en hilos
 
 Varias fugas de memoria en ithreads fueron cerradas. Además, ithreads se ha hecho menos intenso con el consumo de memoria.
 
@@ -1143,7 +1143,7 @@ El manejo de Unicode aún no está claro en varios lugares, donde es dependiente
 
 =head1 Problemas en plataformas específicas
 
-Cuando se compila con g++ y soporte para hebras en Linux, se ha informado que C<$!> deja de funcionar correctamente. Esto se relaciona con el hecho de que la glibc proporciona dos implementaciones strerror_r(3), y perl selecciona la incorrecta.
+Cuando se compila con g++ y soporte para hilos en Linux, se ha informado que C<$!> deja de funcionar correctamente. Esto se relaciona con el hecho de que la glibc proporciona dos implementaciones strerror_r(3), y perl selecciona la incorrecta.
 
 =head1 Notificación de errores
 

@@ -994,7 +994,7 @@ Devuelve un valor booleano indicando si EXPR tiene un valor que no sea el valor 
 
 Muchas operaciones devuelven L<C<undef>|/undef EXPR> para indicar un error, fin de archivo, error del sistema, variable no inicializada u otras condiciones excepcionales.  Esta función le permite distinguir L<C<undef>|/undef EXPR> de otros valores.  (Un simple test booleano no distinguirá entre L<C<undef>|/undef EXPR>, cero, la cadena vacía y C<"0">, que son todos iguales a falso).  Note que como L<C<undef>|/undef EXPR> es un escalar válido, su presencia no indica I<necesariamente> una condición excepcional: L<C<pop>|/pop ARRAY> devuelve L<C<undef>|/undef EXPR> cuando su argumento es un array vacío, I<o> cuando el elemento a devolver sea un L<C<undef>|/undef EXPR>.
 
-Puede usar también C<defined(&func)> para comprobar si la subrutina C<func> se ha definido.  No se afecta el valor devuelto debido a ninguna declaración posterior de C<func>.  Una subrutina que no se ha definido puede aún así ejecutarse: su paquete puede tener un método C<AUTOLOAD> que la hace aparecer la primera vez que es llamada; ver L<perlsub>.
+Puede usar también C<defined(&func)> para comprobar si la subrutina C<func> se ha definido.  No se afecta el valor devuelto debido a ninguna declaración posterior de C<func>.  Una subrutina se puede llamar aunque aún no se haya definido: su paquete puede tener un método C<AUTOLOAD> que la hace aparecer la primera vez que es llamada; ver L<perlsub>.
 
 Se desaconseja el uso de L<C<defined>|/defined EXPR> sobre datos agregados (hashes y arrays).  Se usó para informar si la memoria para los datos agregados se había reservado.  Este comportamiento puede desaparecer en futuras versiones de Perl.
 Utilize en su lugar una comprobación de tamaño:
@@ -3389,7 +3389,7 @@ C<$Config{longlongsize}> es indefinido en sistemas sin soporte de long largo.
 
 =item *
 
-Los formatos enteros C<s>, C<S>, C<i>, C<I>, C<l>, C<L>, C<j>, y C<J> inherentemente no portátiles entre procesadores y sistemas operativos porque siguen el orden nativo de los bytes.  Por ejemplo, un entero de 4 bytes 0x12345678 (305419896 en decimal) se ordenaría nativamente (dispuesto en y gestionado por los registros de la CPU) en bytes como
+Los formatos enteros C<s>, C<S>, C<i>, C<I>, C<l>, C<L>, C<j>, y C<J> inherentemente no portables entre procesadores y sistemas operativos porque siguen el orden nativo de los bytes.  Por ejemplo, un entero de 4 bytes 0x12345678 (305419896 en decimal) se ordenaría nativamente (dispuesto en y gestionado por los registros de la CPU) en bytes como
 
     0x12 0x34 0x56 0x78  # big-endian    (byte superior antes)
     0x78 0x56 0x34 0x12  # little-endian (byte inferior antes
@@ -3421,7 +3421,7 @@ o desde la línea de comandos:
 
 Las ordenaciones C<"1234"> y C<"12345678"> son little-endian; C<"4321"> y C<"87654321"> son big-endian.  Sistemas con binarios multiarquitectura serán C<"ffff">, indicando que la información estática no funciona, y que se deben hacer pruebas en tiempo de ejecución.
 
-Para enteros empaquetados de forma portátil, o bien usar los formatos C<n>, C<N>, C<v>, y C<V> o bien los modificadores C<< > >> y C<< < >> descritos a continuación.  Vea también L<perlport>.
+Para enteros empaquetados de forma portable, o bien usar los formatos C<n>, C<N>, C<v>, y C<V> o bien los modificadores C<< > >> y C<< < >> descritos a continuación.  Vea también L<perlport>.
 
 =item *
 
@@ -3448,7 +3448,7 @@ Los modificadores C<< > >> o C<< < >> solo pueden usarse con formatos de punto f
 =item *
 
 Forzar una ordenación de bytes en valores de punto flotante para el intercambio de datos sólo puede funcionar si todas las plataformas utilizan la misma representación binaria de punto flotante IEEE.  Incluso si todas las plataformas usan IEEE, todavía puede haber diferencias sutiles.  El ser capaz de usar C<< > >> o C<< < >> en valores de punto flotante puede ser útil, pero también peligroso si no sabe exactamente lo que está haciendo.
-No es una forma general de almacenar de forma portátil los valores de punto flotante.
+No es una forma general de almacenar de forma portable los valores de punto flotante.
 
 =item *
 
@@ -3515,7 +3515,7 @@ Para los comandos de alineación, un C<contador> de 0 es equivalente a un C<cont
 =item *
 
 C<n>, C<N>, C<v> y C<V> aceptan el modificador C<!> para representar enteros de 16-/32-bit con signo en distinta ordenación de bytes.
-Esto es portátil solo cuando todas las plataformas compartiendo datos empaquetados usa la misma representación binaria de enteros con signo; por ejemplo, cuando todas las plataformas utilizan la representación de complemento a dos.
+Esto es portable solo cuando todas las plataformas compartiendo datos empaquetados usa la misma representación binaria de enteros con signo; por ejemplo, cuando todas las plataformas utilizan la representación de complemento a dos.
 
 =item *
 
@@ -4345,7 +4345,7 @@ IDENTIFICADOR_ARCHIVO puede ser una expresión cuyo valor da el nombre del ident
 
 Nota sobre lo de I<en bytes>: incluso si el identificador de archivo se ha establecido para operar en caracteres (por ejemplo usando la capa de open C<:encoding(utf8)>), L<C<tell>|/tell IDENTIFICADOR_ARCHIVO> devolverá desplazamientos en bytes, no en caracteres (porque implementando esto convertirían en lentas a L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE> y L<C<tell>|/tell IDENTIFICADOR_ARCHIVO>).
 
-Si desea posicionar el archivo para las funciones L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> o L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, no utilice L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, porque hace impredecible y no portátil la posición de lectura/escritura del archivo a causa del efecto del almacenamiento en búfer del archivo.
+Si desea posicionar el archivo para las funciones L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> o L<C<syswrite>|/syswrite IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>, no utilice L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, porque hace impredecible y no portable la posición de lectura/escritura del archivo a causa del efecto del almacenamiento en búfer del archivo.
 Use, en cambio, L<C<sysseek>|/sysseek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>.
 
 Debido a las normas y rigores de la norma ANSI C, en algunos sistemas tendrá que hacer una búsqueda cada vez que alterne entre la lectura y la escritura.  Entre otras cosas, esto puede tener el efecto de llamar a los L<clearerr(3)> de stdio.
@@ -4509,7 +4509,7 @@ X<setpgrp> X<group>
 
 =for Pod::Functions set the process group of a process
 
-Establece el grupo de procesos en curso para el PID especificado, C<0> para el proceso actual.  Eleva una excepción si se usa en una máquina que no implemente POSIX L<setpgid(2)> o BSD L<setpgrp(2)>.  Si los argumentos se omiten, el valor predeterminado es C<0,0>.  Tenga en cuenta que la versión de BSD 4.2 de L<C<setpgrp>|/setpgrp PID,PGRP> no acepta ningún argumento, por lo que sólo C<setpgrp(0,0)> es portátil.  Vea también L<C<POSIX::setsid()>|POSIX/C<setsid>>.
+Establece el grupo de procesos en curso para el PID especificado, C<0> para el proceso actual.  Eleva una excepción si se usa en una máquina que no implemente POSIX L<setpgid(2)> o BSD L<setpgrp(2)>.  Si los argumentos se omiten, el valor predeterminado es C<0,0>.  Tenga en cuenta que la versión de BSD 4.2 de L<C<setpgrp>|/setpgrp PID,PGRP> no acepta ningún argumento, por lo que sólo C<setpgrp(0,0)> es portable.  Vea también L<C<POSIX::setsid()>|POSIX/C<setsid>>.
 
 Cuestiones de portabilidad: L<perlport/setpgrp>.
 
@@ -4791,7 +4791,7 @@ Ejemplos:
     use sort 'stable';
     my @nuevo = sort { substr($a, 3, 5) cmp substr($b, 3, 5) } @viejo;
 
-    # fuerza el uso del mergesort (no portátil fuera de Perl v5.8)
+    # fuerza el uso del mergesort (no portable fuera de Perl v5.8)
     use sort '_mergesort';  # note el desalentador _
     my @nuevo = sort { substr($a, 3, 5) cmp substr($b, 3, 5) } @viejo;
 
@@ -5328,7 +5328,7 @@ No todos los campos están soportados por todos los sistemas de archivos.  Aquí
 
 (El epoch fue a las 00:00 GMT del 1 de enero de 1970)
 
-(*) No todos los campos están soportados por todos los sistemas de archivos.  En particular, el campo ctime no es portátil.  En particular, no puede esperar que sea el "tiempo de creación"; vea L<perlport/"Archivos y sistemas de archivos"> para más detalles.
+(*) No todos los campos están soportados por todos los sistemas de archivos.  En particular, el campo ctime no es portable.  En particular, no puede esperar que sea el "tiempo de creación"; vea L<perlport/"Archivos y sistemas de archivos"> para más detalles.
 
 Si a L<C<stat>|/stat IDENTIFICADOR_ARCHIVO> se le pasa el identificador de archivo especial consistente en un subrayado, no se hacen estadísticas, sino que se devuelve el contenido actual de la estructura de estadísticas de la última llamada L<C<stat>|/stat IDENTIFICADOR_ARCHIVO>, L<C<lstat>|/lstat IDENTIFICADOR_ARCHIVO>, o test de archivos.  Ejemplo:
 
@@ -5658,7 +5658,7 @@ Nota sobre lo de I<en bytes>: incluso si el identificador de archivo se ha estab
 
 L<C<sysseek>|/sysseek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE> omite el búfer normal de E/S, por lo que mezclar esto con otros tipos de lecturas distintas de L<C<sysread>|/sysread IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO> (por ejemplo L<C<readline>|/readline EXPR> o L<C<read>|/read IDENTIFICADOR_ARCHIVO,ESCALAR,LONGITUD,DESPLAZAMIENTO>), L<C<print>|/print IDENTIFICADOR_ARCHIVO LISTA>, L<C<write>|/write IDENTIFICADOR_ARCHIVO>, L<C<seek>|/seek IDENTIFICADOR_ARCHIVO,POSICIÓN,DÓNDE>, L<C<tell>|/tell IDENTIFICADOR_ARCHIVO>, o L<C<eof>|/eof IDENTIFICADOR_ARCHIVO> pueden causar confusión.
 
-Para DÓNDE puede usar también las constantes C<SEEK_SET>, C<SEEK_CUR> y C<SEEK_END> (inicio del archivo, posición actual y fin de archivo) desde el módulo L<Fcntl>.  El uso de las constantes también es más portátil que confiar en 0, 1 y 2.  Por ejemplo, para definir una función "systell":
+Para DÓNDE puede usar también las constantes C<SEEK_SET>, C<SEEK_CUR> y C<SEEK_END> (inicio del archivo, posición actual y fin de archivo) desde el módulo L<Fcntl>.  El uso de las constantes también es más portable que confiar en 0, 1 y 2.  Por ejemplo, para definir una función "systell":
 
     use Fcntl 'SEEK_CUR';
     sub systell { sysseek($_[0], 0, SEEK_CUR) }

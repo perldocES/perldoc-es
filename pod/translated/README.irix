@@ -69,7 +69,7 @@ En Irix 6.2 con hilos perl, tiene que tener los siguientes parches instalados:
         2254 Pthread arreglos en biblioteca
         2401 6.2 acumulativo kernel para todas las plataformas
 
-B<IMPORTANTE>: Sin el parche 2401, un error del kernel en Irix 6.2 causará que su máquina entre en pánico y casque cuando ejecute perl enhebrado.  Irix 6.3 y siquientes están bien.
+B<IMPORTANTE>: Sin el parche 2401, un error del kernel en Irix 6.2 causará que su máquina entre en pánico y casque cuando ejecute un perl enhilado.  Irix 6.3 y siquientes están bien.
 
     Gracias a Hannu Napari <Hannu.Napari@hut.fi> por la información
     de parches en pthreads.

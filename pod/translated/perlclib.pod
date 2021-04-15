@@ -173,7 +173,7 @@ Para enfatizar que está operando solo en caracteres ASCII, puede añadir C<_A> 
  strtol(s, &p, n)            grok_atoUV(s, &uv, &e)
  strtoul(s, &p, n)           grok_atoUV(s, &uv, &e)
 
-Un uso típico es hacer comprobaciones de rango sobre C<uv> antes del ajuste:
+Un uso típico es hacer comprobaciones de rango sobre C<uv> antes de la conversión:
 
   int i; UV uv; char* end_ptr;
   if (grok_atoUV(input, &uv, &end_ptr)

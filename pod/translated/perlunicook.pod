@@ -25,7 +25,7 @@ A menos que se indique lo contrario, todos los ejemplos siguientes requieren est
  use open      qw(:std :utf8);    # los flujos no declarados, en UTF-8
  use charnames qw(:full :short);  # ya no es necesario en v5.16
 
-Esto I<obligará>, incluso a los programadores en Unix, a hacer C<binmode> sobre los flujos binarios, o abrirlos con C<:raw>, pero es la única forma de acceder a ellos de una forma portátil.
+Esto I<obligará>, incluso a los programadores en Unix, a hacer C<binmode> sobre los flujos binarios, o abrirlos con C<:raw>, pero es la única forma de acceder a ellos de una forma portable.
 
 B<ATENCIÓN>: C<use autodie> (pre 2.26) y C<use open> no se llevan bien, el uno con el otro.
 

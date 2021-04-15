@@ -107,7 +107,7 @@ Win32.pm/Win32.xs se han trasladado desde el módulo libwin32 al núcleo de Perl
 
 =item open
 
-=item threads
+=item hilos
 
 I<Threads> desligados son ahora también compatibles con Windows.
 

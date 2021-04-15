@@ -902,7 +902,7 @@ En Cygwin ahora quitamos el último número de la DLL. Este ha sido el comportam
 
 =item FreeBSD
 
-Los archivos de pistas ahora identifican las bibliotecas correctas de enhebrado en FreeBSD 7 y versiones posteriores.
+Los archivos de pistas ahora identifican las bibliotecas correctas de hilado en FreeBSD 7 y versiones posteriores.
 
 =item Irix
 
@@ -1329,11 +1329,11 @@ Pruebas para C<dbmopen> y C<dbmclose>.
 
 =item t/op/index_thr.t
 
-Pruebas de la interacción de C<index> y hebras.
+Pruebas de la interacción de C<index> e hilos.
 
 =item t/op/pat_thr.t
 
-Pruebas de la interacción de patrones y hebras esotéricos.
+Pruebas de la interacción de patrones e hilos esotéricos.
 
 =item t/op/qr_gc.t
 
@@ -1341,11 +1341,11 @@ Prueba que C<qr> no tenga fugas.
 
 =item t/op/reg_email_thr.t
 
-Pruebas de la interacción de expresiones regulares y hebras.
+Pruebas de la interacción de expresiones regulares e hilos.
 
 =item t/op/regexp_qr_embed_thr.t
 
-Pruebas de la interacción de patrones con C<qr//> embebido y hebras.
+Pruebas de la interacción de patrones con C<qr//> embebido e hilos.
 
 =item t/op/regexp_unicode_prop.t
 
@@ -1353,7 +1353,7 @@ Pruebas de las propiedades Unicode en expresiones regulares.
 
 =item t/op/regexp_unicode_prop_thr.t
 
-Pruebas de la interacción de las propiedades Unicode y hebras.
+Pruebas de la interacción de las propiedades Unicode e hilos.
 
 =item t/op/reg_nc_tie.t
 
@@ -1373,7 +1373,7 @@ Comprueba que C<setpgrp> funciona.
 
 =item t/op/substr_thr.t
 
-Pruebas de la interacción de C<substr> y hebras.
+Pruebas de la interacción de C<substr> e hilos.
 
 =item t/op/upgrade.t
 

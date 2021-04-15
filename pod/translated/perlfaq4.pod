@@ -271,7 +271,7 @@ Para llamar a una función en cada entero en un (pequeño) rango, B<puede> usar:
 
     my @resultados = map { alguna_func($_) } (5 .. 25);
 
-pero debe tener en cuenta que, de esta forma, el operador C<..> crea una lista de todos los enteros en el rango, que pueden tomar un montón de memoria para rangos grandes. Aún así, el problema no ocurre cuando se usa C<..> dentro de un bucle C<for>, por que en ese caso el operador rango se optimiza para I<iterar> por el rango, sin crear la lista entera. Así que
+pero debe tener en cuenta que, de esta forma, el operador C<..> crea una lista de todos los enteros en el rango, que pueden tomar un montón de memoria para rangos grandes. Aun así, el problema no ocurre cuando se usa C<..> dentro de un bucle C<for>, por que en ese caso el operador rango se optimiza para I<iterar> por el rango, sin crear la lista entera. Así que
 
     my @resultados = ();
     for my $i (5 .. 500_005) {
@@ -478,7 +478,7 @@ Tiene el mismo problema con L<Time::Local>, que le proporcionará la respuesta i
 
 El propio Perl nunca tuvo un problema Y2K, pero eso no impidió que las personas crearan problemas Y2K en sus propios programas. Vea la documentación de C<localtime> para usarlo de forma apropiada.
 
-A partir de Perl 5.12, C<localtime> y C<gmtime> pueden gestionar fechas posteriores al 03:14:08 del 19 de enero de 2038, momento en que se producirá el desbordamiento de una fecha basada en 32 bits. Aún así podría obtener una advertencia en un C<perl> de 32 bits:
+A partir de Perl 5.12, C<localtime> y C<gmtime> pueden gestionar fechas posteriores al 03:14:08 del 19 de enero de 2038, momento en que se producirá el desbordamiento de una fecha basada en 32 bits. Podría obtener una advertencia en un C<perl> de 32 bits:
 
     % perl5.12 -E 'say scalar localtime( 0x9FFF_FFFFFFFF )'
     Integer overflow in hexadecimal number at -e line 1.
@@ -1708,7 +1708,7 @@ Para ordenar un hash, empiece con las claves. En este ejemplo, entregamos la lis
         printf "%-20s %6d\n", $clave, $hash{$clave};
     }
 
-Aun así podríamos ser más elegantes con el bloque C<sort()>. En lugar de comparar las claves, podemos calcular un valor a partir de ellas, y usarlo como valor de comparación.
+Aún así podríamos ser más elegantes con el bloque C<sort()>. En lugar de comparar las claves, podemos calcular un valor a partir de ellas, y usarlo como valor de comparación.
 
 Por ejemplo, para hacer nuestro informe ordenado sin tener en cuenta el tamaño de caja, usamos C<lc> para pasar a minúsculas las claves antes de compararlas:
 

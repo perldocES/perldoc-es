@@ -308,7 +308,7 @@ X<copy> X<file, copy> X<File::Copy>
 
 (contribución de brian d foy)
 
-Use el módulo L<File::Copy>. Viene con Perl y puede hacer una verdadera copia a través de sistemas de archivos, y hace su magia de una manera portátil.
+Use el módulo L<File::Copy>. Viene con Perl y puede hacer una verdadera copia a través de sistemas de archivos, y hace su magia de una manera portable.
 
     use File::Copy;
 
@@ -706,7 +706,7 @@ Si su sistema operativo soporta una apropiada utilidad mv(1) o su equivalente fu
 
     rename($viejo, $nuevo) or system("mv", $viejo, $nuevo);
 
-Puede que sea más portátil usar en cambio el módulo L<File::Copy>.
+Puede que sea más portable usar en cambio el módulo L<File::Copy>.
 Simplemente copie el nuevo archivo al nuevo nombre (comprobando los valores que se devuelven), y luego borre el viejo. No es lo mismo, semánticamente, que con un C<rename()>, que preserva meta-información, como permisos, sellos de tiempos, información sobre inodos, etc.
 
 =head2 ¿Cómo puedo bloquear un archivo?
@@ -932,7 +932,7 @@ X<getc> X<file, reading one character at a time>
 
 Puede usar la función incorporada C<getc()> para la mayor parte de los identificadores de archivo, pero no funcionará (fácilmente) en una terminal. Para STDIN, use tanto el módulo Term::ReadKey de CPAN, o use el código de ejemplo en L<perlfunc/getc>.
 
-Si su sistema soporta la interfaz de programación portátil del sistema operativo (POSIX), puede usar el siguiente código, que notará que también desactiva el procesado con eco.
+Si su sistema soporta la interfaz de programación portable del sistema operativo (POSIX), puede usar el siguiente código, que notará que también desactiva el procesado con eco.
 
     #!/usr/bin/perl -w
     use strict;
@@ -981,7 +981,7 @@ Si su sistema soporta la interfaz de programación portátil del sistema operati
 
     END { cooked() }
 
-El módulo Term::ReadKey de CPAN puede ser más fácil de usar. Versiones recientes incluyen también soporte para sistemas no portátiles.
+El módulo Term::ReadKey de CPAN puede ser más fácil de usar. Versiones recientes incluyen también soporte para sistemas no portables.
 
     use Term::ReadKey;
     open my $tty, '<', '/dev/tty';
@@ -994,7 +994,7 @@ El módulo Term::ReadKey de CPAN puede ser más fácil de usar. Versiones recien
 
 =head2 ¿Cómo puedo decir si existe un carácter esperando en un identificador de archivo?
 
-La primera cosa que debería hacer es mirar en la extensión Term::ReadKey de CPAN. Como hemos mencionado antes, incluso tiene soporte limitado para casos no portátiles (leer como: sistemas no abiertos, cerrados, propietarios, no POSIX, no Unix, etc.) de sistemas.
+La primera cosa que debería hacer es mirar en la extensión Term::ReadKey de CPAN. Como hemos mencionado antes, incluso tiene soporte limitado para casos no portables (leer como: sistemas no abiertos, cerrados, propietarios, no POSIX, no Unix, etc.) de sistemas.
 
 También tendría que comprobar la lista de Cuestiones Frecuentemente Hechas en comp.unix.* para temas como este: la respuesta es esencialmente la misma.
 Es muy dependiente del sistema. Aquí hay una solución que funciona en sistemas BSD:
@@ -1110,12 +1110,12 @@ X<filename, DOS issues>
 Recuerde que dentro de cadenas doblemente entrecomilladas ("like\this"), la barra diagonal inversa es un carácter de escape. La lista completa está en L<perlop/Comillas y operadores de comillas>. Como es normal, no tiene un archivo llamado "c:(tab)emp(formfeed)oo" o "c:(tab)emp(formfeed)oo.exe" en su viejo sistema de archivos DOS.
 
 Use, o bien cadenas con comillas simples, o (preferiblemente) con barras diagonales.
-Ya que todas las versiones de DOS y Windows desde el MS-DOS 2.0 o así, se trata igual a los C</> y C<\> en la ruta, podría usar aquel que no choque con Perl o el I<shell> POSIX, ANSI C y C++, awk, Tcl, Java o Python, por mencionar unos pocos. Las rutas POSIX son más portátiles, también.
+Ya que todas las versiones de DOS y Windows desde el MS-DOS 2.0 o así, se trata igual a los C</> y C<\> en la ruta, podría usar aquel que no choque con Perl o el I<shell> POSIX, ANSI C y C++, awk, Tcl, Java o Python, por mencionar unos pocos. Las rutas POSIX son más portables, también.
 
 =head2 ¿Por qué glob("*.*") no obtiene todos los archivos?
 X<glob>
 
-Por que incluso en adaptaciones en sistemas no-Unix, la función glob de Perl sigue la semántica estándar de expansión Unix. Necesitará C<glob("*")> para obtener todos los archivos (no ocultos). Esto hace glob() portátil incluso en sistemas legados. Su adaptación también puede incluir funciones de expansión propietarias. Compruebe su documentación para los detalles.
+Por que incluso en adaptaciones en sistemas no-Unix, la función glob de Perl sigue la semántica estándar de expansión Unix. Necesitará C<glob("*")> para obtener todos los archivos (no ocultos). Esto hace glob() portable incluso en sistemas legados. Su adaptación también puede incluir funciones de expansión propietarias. Compruebe su documentación para los detalles.
 
 =head2 ¿Por qué Perl me permite eliminar archivos de solo lectura? ¿Por qué C<-i> sobrescribe archivos protegidos? ¿Esto no es un error de Perl?
 
@@ -1229,7 +1229,7 @@ El módulo L<File::Path> también tiene una interfaz para la vieja subrutina C<r
 
 (contribución de Shlomi Fish)
 
-Para hacer el equivalente de C<cp -R> (p.e. copie un árbol de directorios entero recursivamente) en Perl portátil, necesitará escribir algo usted mismo o encontrar un buen módulo de CPAN, como puede ser L<File::Copy::Recursive>.
+Para hacer el equivalente de C<cp -R> (p.e. copie un árbol de directorios entero recursivamente) en Perl portable, necesitará escribir algo usted mismo o encontrar un buen módulo de CPAN, como puede ser L<File::Copy::Recursive>.
 
 =head1 AUTOR Y COPYRIGHT
 

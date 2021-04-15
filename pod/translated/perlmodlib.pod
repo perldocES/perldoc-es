@@ -191,7 +191,7 @@ Restringe construcciones inseguras
 
 Predeclara nombres de subrutinas
 
-=item threads
+=item hilos
 
 Hilos basados en el intérprete Perl
 
@@ -2002,7 +2002,7 @@ Expande y contrae tabuladors como los comandos unix expand(1) y unexpand(1)
 
 Corta líneas para formar párrafos sencillos
 
-=item Thread
+=item Hilos
 
 Manipula hilos en Perl (solo para código antiguo)
 
@@ -3154,7 +3154,7 @@ Si añade un nuevo módulo a un conjunto, siga los estándares del autor origina
 
 Si desarrolla módulos para usarlo específicamente en un proyecto interno o privado, que nunca se hará publico, entonces debería asegurarse de que sus nombres no colisionarán con futuros módulos públicos. Puede realizar esto usando la categoría reservada Local::* o usando un nombre de categoría que incluya un guión bajo, como Foo_Corp::*.
 
-Para que sea portátil cada componente de un nombre de módulo debería limitarse a 11 caracteres. Si va a usarse en MS-DOS intente asegurarse de que los 8 primeros caracteres son únicos. Módulos anidados hace esto más fácil.
+Para que sea portable cada componente de un nombre de módulo debería limitarse a 11 caracteres. Si va a usarse en MS-DOS intente asegurarse de que los 8 primeros caracteres son únicos. Módulos anidados hace esto más fácil.
 
 Para una guía adicional en el nombrado de módulos, por favor consulte:
 

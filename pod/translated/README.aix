@@ -20,7 +20,7 @@ Al compilar Perl, debe utilizar un compilador ANSI C. AIX no incluye por defecto
 En la actualidad todas las versiones de IBM de los compiladores ANSI/C "xlc", "xlc_r", "cc", "cc_r" o "vac" servirán para la generación de Perl, si el compilador funciona en su sistema.
 
 Si planea enlazar Perl con cualquier módulo que requiera soporte de hilos, como DBD::Oracle, es mejor utilizar la versión _r del compilador.
-Esto no generará un Perl multihebra, si no un Perl con hilos habilitados. Vea también L<Perl multihebra> más adelante.
+Esto no generará un Perl multihilo, si no un Perl con hilos habilitados. Vea también L<Perl multihilo> más adelante.
 
 En el momento de escribir esto (2010-09), sólo los compiladores I<IBM XL C for AIX> o I<IBM XL C/C++ for AIX> son compatibles con IBM en AIX 5L/6.1/7.1.
 
@@ -81,13 +81,13 @@ Se recomienda utilizar la nueva interfaz.
 
 No debería observar ningún problema.
 
-=head2 Perl multihebra
+=head2 Perl multihilo
 
 No deberían producirse problemas con AIX 5.1 / 5.2 / 5.3 / 6.1 / 7.1.
 
-IBM usa el Perl del sistema AIX (V5.6.0 en AIX 5.1 y V5.8.2 en AIX 5.2 / 5.3 y 6.1; V5.8.8 en AIX 5.3 TL11 y AIX 6.1 TL4; V5.10.1 en AIX 7.1) para algunos I<scripts> del sistema AIX. Si cambia los enlaces en /usr/bin del Perl del sistema AIX (/usr/opt/perl5) al nuevo Perl generado entonces obtiene las mismas características que el Perl del sistema IBM AIX si se usan las opciones de multihebra.
+IBM usa el Perl del sistema AIX (V5.6.0 en AIX 5.1 y V5.8.2 en AIX 5.2 / 5.3 y 6.1; V5.8.8 en AIX 5.3 TL11 y AIX 6.1 TL4; V5.10.1 en AIX 7.1) para algunos I<scripts> del sistema AIX. Si cambia los enlaces en /usr/bin del Perl del sistema AIX (/usr/opt/perl5) al nuevo Perl generado entonces obtiene las mismas características que el Perl del sistema IBM AIX si se usan las opciones de multihilo.
 
-El Perl multihebra generado funciona también en AIX 5.1, pero la compilación del Perl de IBM (Perl v5.6.0) no es multihebra en AIX 5.1.
+El Perl multihilo generado funciona también en AIX 5.1, pero la compilación del Perl de IBM (Perl v5.6.0) no es multihilo en AIX 5.1.
 
 Perl 5.12 y superiores no son compatibles con el conjunto de archivos perl.libext de IBM.
 
@@ -113,9 +113,9 @@ Parece que existen varios problemas con esta implementación de dobles largos.
 Si Configure detecta estos problemas, desactivará el soporte para dobles largos.
 Esto puede forzarse con un explícito C<-Duselongdouble> (o C<-Dusemorebits>, que activan tanto los dobles largos y los enteros de 64 bits).  Si decide activar los dobles largos, para la mayor parte de las cosas rotas Perl implementa unos ajustes, pero el manejo de los valores especiales infinito y NaN quedan peor: por ejemplo, para infinito más cero, el resultado es NaN.
 
-=head2 Opciones recomendadas para AIX 5.1/5.2/5.3/6.1 y 7.1 (multihebra/32-bit)
+=head2 Opciones recomendadas para AIX 5.1/5.2/5.3/6.1 y 7.1 (multihilo/32-bit)
 
-Con las siguientes opciones obtendrá una versión de Perl multihebra que pasará todas las pruebas en el modo 32 bits multihebra, que es la configuración por defecto para el Perl generado que AIX trae.
+Con las siguientes opciones obtendrá una versión de Perl multihilo que pasará todas las pruebas en el modo 32 bits multihilo, que es la configuración por defecto para el Perl generado que AIX trae.
 
     rm config.sh
     ./Configure \
@@ -140,7 +140,7 @@ Con las siguientes opciones obtendrá una versión de Perl que pasa todas las pr
 
 La opción -Dprefix instalará Perl en un directorio paralelo a la instalación del Perl del sistema IBM AIX.
 
-=head2 Opciones recomendadas para AIX 5.1/5.2/5.3/6.1 y 7.1 (multihebra/64-bit)
+=head2 Opciones recomendadas para AIX 5.1/5.2/5.3/6.1 y 7.1 (multihilo/64-bit)
 
 Con las siguientes opciones obtendrá una versión de Perl que pasa todas las pruebas en modo de 64 bits.
 
@@ -350,11 +350,11 @@ Usando gcc-3.x (probado con 3.0.4, 3.1 y 3.2) funciona muy bien, al igual que el
 
 No debería observar ningún problema.
 
-=head2 Perl multihebra E<lt> 5L
+=head2 Perl multihilo E<lt> 5L
 
 Los hilos parece que funcionann bien, aunque por el momento no pasan todas las pruebas cuando los hilos se utilizan en combinación con configuraciones de 64-bit.
 
-Puede recibir un aviso cuando se hace una generación multihebra:
+Puede recibir un aviso cuando se hace una generación multihilo:
 
   "pp_sys.c", line 4640.39: 1506-280 (W) Function argument assignment 
   between types "unsigned char*" and "const void*" is not allowed.

@@ -597,7 +597,7 @@ o bien
 
 =item Paso por referencia
 
-Pase los array y hash por referencia, no por valor. Primero, porque es la única forma de pasar múltiples listas o hashes (o ambos) en una única llamada/retorno. También, porque evita la creación de una copia de todo su contenido. Aún así, esto requiere algo de juicio, porque cualquier cambio se propagará a los datos originales. Si, realmente, quiere modificar una copia, tendrá que sacrificar la memoria necesaria para crear una.
+Pase los array y hash por referencia, no por valor. Primero, porque es la única forma de pasar múltiples listas o hashes (o ambos) en una única llamada/retorno. También, porque evita la creación de una copia de todo su contenido. Aun así, esto requiere algo de juicio, porque cualquier cambio se propagará a los datos originales. Si, realmente, quiere modificar una copia, tendrá que sacrificar la memoria necesaria para crear una.
 
 =item Enlazar variables grandes a disco
 
@@ -654,7 +654,7 @@ Vea también L<http://www.cpan.org/modules/by-category/15_World_Wide_Web_HTML_HT
 
 Bórrelo. :-) Más en serio, existen un número de (mayoritariamente insatisfactorias) soluciones con niveles variables de "seguridad".
 
-Antes de nada, I<no> puede quitar los permisos de lectura, porque el código fuente debe ser leíble para que se pueda compilar e interpretar. (Aún así, esto no significa que el código fuente de un I<script> CGI sea leíble por los usuarios de la web, solo las personas con acceso al sistema de archivos).  Así que deje los permisos en el socialmente amistoso nivel de 0755.
+Antes de nada, I<no> puede quitar los permisos de lectura, porque el código fuente debe ser leíble para que se pueda compilar e interpretar. (Aun así, esto no significa que el código fuente de un I<script> CGI sea leíble por los usuarios de la web, solo las personas con acceso al sistema de archivos).  Así que deje los permisos en el socialmente amistoso nivel de 0755.
 
 Algunos personas consideran equivocadamente que eso es un problema de seguridad. Si su programa hace cosas inseguras, y confía en personas que no saben cómo se explotan esas vulnerabilidades, entonces no es seguro. A menudo es posible para cualquiera determinar la inseguridad de las cosas y explotarlas sin ver el código fuente. Seguridad por medio de la oscuridad, escondiendo el nombre de sus errores en lugar de arreglarlos es, de hecho, poca seguridad.
 

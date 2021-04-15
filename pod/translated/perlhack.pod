@@ -500,9 +500,9 @@ Es muy posible que un parche se rechace si cierra futuras vías de desarrollo.  
 
 Buenos parches (código ajustado, completo, correcto) tiene más probabilidades de entrar.  Ñapas o parches incorrectos podrían colocarse al final de la cola hasta que el calabacero tenga tiempo para arreglarlo, o podría descartarlo sin más.
 
-=head3 ¿Es la implementación lo suficientemente genérica como para que sea portátil?
+=head3 ¿Es la implementación lo suficientemente genérica como para que sea portable?
 
-Los peores parches hacen uso de características específicas del sistema.  Es altamente improbable que las adiciones no portátiles al lenguaje Perl sean aceptadas.
+Los peores parches hacen uso de características específicas del sistema.  Es altamente improbable que las adiciones no portables al lenguaje Perl sean aceptadas.
 
 =head3 ¿Se ha probado la implementación?
 
@@ -561,7 +561,7 @@ Todas las pruebas se ejecutan desde el directorio F<t/>, B<no> el directorio que
 
 Debe ser triplemente consciente sobre los problemas de la compilación cruzada.  Esto, normalmente, se basa en usar L<File::Spec>, evitando cosas como C<fork()> y C<system()> a menos que sea absolutamente necesario, y no asumir que un carácter dado tiene un valor ordinal particular (punto de código) o que su representación UTF-8 se compone de bytes particulares.
 
-Hay muchas funciones disponibles para especificar caracteres y puntos de código de forma portátil, en las pruebas.  Las funciones siempre disponibles C<utf8::unicode_to_native()> y su inversa C<utf8::native_to_unicode()> toman puntos de código y las traduce apropiadamente.  El archivo F<t/charset_tools.pl> tiene varias funciones que pueden ser útiles.  Tiene versiones de dos funciones anteriores que toman cadenas como entradas, no simples puntos de código numéricos: C<uni_to_native()> y C<native_to_uni()>.  Si tiene que mirar en los bytes individuales que conforman una cadena codificada en UTF-8, C<byte_utf8a_to_utf8n()> toma como entrada una cadena de estos bytes codificados para una plataforma ASCII, y devuelve la cadena equivalente en la plataforma nativa.  Por ejemplo, C<byte_utf8a_to_utf8n("\xC2\xA0")> devuelve la secuencia de bytes en la plataforma actual que forma el UTF-8 de C<U+00A0>, ya que C<"\xC2\xA0"> son los bytes UTF-8 en una plataforma ASCII para ese punto de código.  Esta función devuelve C<"\xC2\xA0"> en una plataforma ASCII, y C<"\x80\x41"> en una EBCDIC 1047.
+Hay muchas funciones disponibles para especificar caracteres y puntos de código de forma portable, en las pruebas.  Las funciones siempre disponibles C<utf8::unicode_to_native()> y su inversa C<utf8::native_to_unicode()> toman puntos de código y las traduce apropiadamente.  El archivo F<t/charset_tools.pl> tiene varias funciones que pueden ser útiles.  Tiene versiones de dos funciones anteriores que toman cadenas como entradas, no simples puntos de código numéricos: C<uni_to_native()> y C<native_to_uni()>.  Si tiene que mirar en los bytes individuales que conforman una cadena codificada en UTF-8, C<byte_utf8a_to_utf8n()> toma como entrada una cadena de estos bytes codificados para una plataforma ASCII, y devuelve la cadena equivalente en la plataforma nativa.  Por ejemplo, C<byte_utf8a_to_utf8n("\xC2\xA0")> devuelve la secuencia de bytes en la plataforma actual que forma el UTF-8 de C<U+00A0>, ya que C<"\xC2\xA0"> son los bytes UTF-8 en una plataforma ASCII para ese punto de código.  Esta función devuelve C<"\xC2\xA0"> en una plataforma ASCII, y C<"\x80\x41"> en una EBCDIC 1047.
 
 Pero más fácil es, si el carácter es especificable como un literal, como C<"A"> o C<"%">, para usarlo así; si no es especificable, puede usar C<\N{}>, si los efectos colaterales no son problemáticos.  Simplemente especifique todos los caracteres en hex., usando C<\N{U+ZZ}> en lugar de C<\xZZ>.  C<\N{}> es el nombre Unicode, y así siempre le da el carácter Unicode.  C<\N{U+41}> es el carácter cuyo punto de código Unicode es C<0x41>, por tanto es C<'A'> en todas las plataformas.
 Los efectos colaterales son:

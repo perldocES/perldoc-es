@@ -296,7 +296,7 @@ Ahora es mucho más exigente con la salida extra o con la que falta de los I<scr
 
 El uso de nanosleep(), si está disponible, permite la mezcla de lapsos en fracciones de segundo junto con las alarmas.
 
-=item threads
+=item hilos
 
 Varias correcciones, por ejemplo para problemas y pérdidas de memoria en join().  En algunas plataformas (como Linux) que usan glibc, el consumo mínimo de memoria de un ithread se ha reducido en varios cientos de kilobytes.
 

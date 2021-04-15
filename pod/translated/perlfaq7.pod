@@ -648,7 +648,7 @@ Esto es diferente de encontrar el paquete en que fue bendecido un objeto, que po
     use Scalar::Util qw(blessed);
     my $paquete_objeto = blessed( $objeto );
 
-Aún así, la mayor parte del tiempo, no debería preocuparse de qué paquete bendijo a un objeto, mientras que él diga que hereda de esa clase:
+Aun así, la mayor parte del tiempo, no debería preocuparse de qué paquete bendijo a un objeto, mientras que él diga que hereda de esa clase:
 
     my $es_la_clase_correcta = eval { $objeto->isa( $paquete ) }; # verdadero o falso
 

@@ -221,7 +221,7 @@ Esto es más portable que el crudo C<ioctl>, pero no tan ilustrativo:
 Hay un ejemplo de esto en L<perlfunc/crypt>. Primero, ponga la terminal en modo "no echo", y luego lea la contraseña de forma normal.
 Puede hacer esto con una función del viejo estilo C<ioctl()>, control de la terminal POSIX (vea L<POSIX> o su documentación en el libro del camello), o una llamada al programa B<stty>, con distintos grados de portabilidad.
 
-También puede hacer esto en la mayor parte de los sistemas usando el módulo L<Term::ReadKey> de CPAN, que es más fácil de usar y en teoría más portátil.
+También puede hacer esto en la mayor parte de los sistemas usando el módulo L<Term::ReadKey> de CPAN, que es más fácil de usar y en teoría más portable.
 
     use Term::ReadKey;
 
@@ -878,7 +878,7 @@ El mensaje perl sale con "Perl" delante. El bloque C<BEGIN> funciona en tiempo d
 
 Si no veo ese "Perl:", el mensaje no es de perl.
 
-Podría también saberse todos los errores perl, y aunque algunas personas quizás se lo sepan, es probable que usted no. Aún así, deberían estar en la página de manual L<perldiag>. Si allí no encuentra el error, probablemente no es un error perl.
+Podría también saberse todos los errores perl, y aunque algunas personas quizás se lo sepan, es probable que usted no. Aun así, deberían estar en la página de manual L<perldiag>. Si allí no encuentra el error, probablemente no es un error perl.
 
 Mirar por cada mensaje no es la forma más fácil, así que permita que perl lo haga por usted. Use el I<pragma> diagnostics que convierte los mensajes normales de perl en descripciones más largas sobre el tema.
 

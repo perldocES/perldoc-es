@@ -1136,7 +1136,7 @@ C<threads> ahora activará C<no warnings 'threads'>
 
 =item *
 
-Un intérprete de una hebra es ahora liberado después de un C<< $t->join() >> en lugar de después de C<undef $t>, que debería fijar un poco las pérdidas de memoria de C<ithreads>. (Arreglado por Dave Mitchell)
+Un intérprete de un hilo se libera ahora después de un C<< $t->join() >> en lugar de después de C<undef $t>, que debería fijar un poco las pérdidas de memoria de C<ithreads>. (Arreglado por Dave Mitchell)
 
 =item *
 

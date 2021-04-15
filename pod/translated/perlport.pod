@@ -6,29 +6,29 @@ perlport - Guía de portabilidad
 
 Perl se ejecuta en numerosos sistemas operativos.  Mientras que la mayor parte comparte mucho en común, también tienen sus propias características únicas.
 
-Este documento está para ayudarle a encontrar qué constituye código Perl portátil.  De esa manera, una vez que tome una decisión para escribir de forma portátil, sabe dónde estarán los límites y mantenerse dentro de ellos.
+Este documento está para ayudarle a encontrar qué constituye código Perl portable.  De esa manera, una vez que tome una decisión para escribir de forma portable, sabe dónde estarán los límites y mantenerse dentro de ellos.
 
 Hay un toma y daca entre aprovecharse de un particular tipo de ordenador y aprovecharse de un rango de ellos.
 Naturalmente, a medida que amplía su rango y se vuelve más diverso, caen los factores comunes, y usted queda con una cada vez más pequeña área de terreno común en que puede operar para cumplir con una tarea particular.  Así, cuando comienza a atacar un problema, es importante considerar bajo qué parte de la curva quiere operar.  Específicamente, debe decidir si es importante que la tarea que está codificando contempla la portabilidad generalizada, o si solo lo suficiente para tener el trabajo hecho.
 Esta es la elección más difícil de hacer.  El resto es sencillo, porque Perl proporciona muchas elecciones, cualquiera que sea la forma de aproximarse al problema.
 
-Mirándolo de otra manera, escribir código portátil es, normalmente algo que limita sus elecciones disponibles.  Naturalmente, necesita disciplina y sacrificio para hacerlo así.  El producto de la portabilidad y la conveniencia puede ser una constante.  Queda advertido.
+Mirándolo de otra manera, escribir código portable es, normalmente algo que limita sus elecciones disponibles.  Naturalmente, necesita disciplina y sacrificio para hacerlo así.  El producto de la portabilidad y la conveniencia puede ser una constante.  Queda advertido.
 
 Sea consciente de dos puntos importantes:
 
 =over 4
 
-=item No todos los programas Perl tienen que ser portátiles
+=item No todos los programas Perl tienen que ser portables
 
-No hay ninguna razón por la que no debería usar Perl como lenguaje para unir herramientas Unix, o prototipar una aplicación Macintosh, o gestionar el registro de Windows.  Si no tiene sentido ser portátil, por una razón u otra en un determinado programa, entonces no hay por qué molestarse.
+No hay ninguna razón por la que no debería usar Perl como lenguaje para unir herramientas Unix, o prototipar una aplicación Macintosh, o gestionar el registro de Windows.  Si no tiene sentido que sea portable, por una u otra razón en un determinado programa, entonces no hay por qué molestarse.
 
-=item Casi todo lo de Perl ya I<es> portátil
+=item Casi todo lo de Perl ya I<es> portable
 
-No sea necio pensando que es difícil crear código Perl portátil.  No lo es.  Perl intenta nivelar el espacio que hay entre lo que está disponible en las diferentes plataformas, y todos los medios disponibles para usar esas características.  Así casi todo el código Perl corre en cualquier máquina sin modificación.  Pero hay algunos asuntos significativos escribiendo código portátil, y este documento se dedica enteramente a esos asuntos.
+No sea necio pensando que es difícil crear código Perl portable.  No lo es.  Perl intenta nivelar el espacio que hay entre lo que está disponible en las diferentes plataformas, y todos los medios disponibles para usar esas características.  Así casi todo el código Perl corre en cualquier máquina sin modificación.  Pero hay algunos asuntos significativos escribiendo código portable, y este documento se dedica enteramente a esos asuntos.
 
 =back
 
-Aquí está la regla general: Cuando tenga que hacer una tarea que se suela hacer en un amplio rango de plataformas, piense en escribir código portátil.  De esa manera, no sacrifica en exceso la forma de elegir qué implementaciones usar, y al mismo tiempo le da a los usuarios muchas más elecciones de plataformas.  De otra manera, cuando tenga que aprovecharse de alguna característica única de una determinada plataforma, como sucede a menudo en programación de sistemas (sea para Unix, Windows, VMS, etc.), considere escribir código específico de la plataforma.
+Aquí está la regla general: Cuando tenga que hacer una tarea que se suela hacer en un amplio rango de plataformas, piense en escribir código portable.  De esa manera, no sacrifica en exceso la forma de elegir qué implementaciones usar, y al mismo tiempo le da a los usuarios muchas más elecciones de plataformas.  De otra manera, cuando tenga que aprovecharse de alguna característica única de una determinada plataforma, como sucede a menudo en programación de sistemas (sea para Unix, Windows, VMS, etc.), considere escribir código específico de la plataforma.
 
 Cuando el código se vaya a ejecutar solo en dos o tres sistemas operativos, quizás necesite considerar solo las diferencias de esos sistemas particulares.
 Lo importante es decidir dónde se ejecutará el código y deliberar su decisión.
@@ -47,12 +47,12 @@ Es justo lo que se usa como fin de línea lo que puede variar de un SO a otro.  
 Perl usa C<\n> para representar el fin de línea "lógico", donde lo que es lógico puede depender de la plataforma en uso.  En MacPerl, C<\n> siempre significa C<\015>.  En plataformas EBCDIC, C<\n> podría ser C<\025> o C<\045>.
 En Perl bajo DOS, C<\n> significa normalmente C<\012>, pero cuando se accede a un archivo en modo "texto", perl usa la capa C<:crlf> que lo traduce a (o desde) C<\015\012>, dependiendo de si está leyendo o escribiendo. Unix hace lo mismo en las tty en modo canónico.  C<\015\012> se refiere generalmente a CRLF.
 
-Para recortar los finales de línea de las líneas de texto, use C<chomp()>.  Con las opciones por defecto esa función busca por un carácter C<\n> final y lo recorta de una forma portátil.
+Para recortar los finales de línea de las líneas de texto, use C<chomp()>.  Con las opciones por defecto esa función busca por un carácter C<\n> final y lo recorta de una forma portable.
 
 Cuando trata con archivos binarios (o archivos de texto en modo binario) asegúrese de establecer explícitamente C<$/> al valor apropiado para su formato de archivo antes de usar C<chomp()>.
 
 Debido a la traducción del modo "texto", los perl en DOS tienen limitaciones al usar C<seek> y C<tell> en un archivo accedido en modo "texto".
-Aférrese a buscar (C<seek>) en posiciones que obtiene desde C<tell> (y no otros), y podrá usar libremente C<seek> y C<tell> incluso en modo "texto".  Usar C<seek> o C<tell> u otras operaciones de archivo puede que no sea portátil.  Si usa C<binmode> en un archivo, sin embargo, puede usar de forma segura C<seek> y C<tell> con valores arbitrarios.
+Aférrese a buscar (C<seek>) en posiciones que obtiene desde C<tell> (y no otros), y podrá usar libremente C<seek> y C<tell> incluso en modo "texto".  Usar C<seek> o C<tell> u otras operaciones de archivo puede que no sea portable.  Si usa C<binmode> en un archivo, sin embargo, puede usar de forma segura C<seek> y C<tell> con valores arbitrarios.
 
 Un concepto erróneo en programación de I<socket> es que siempre S<C<\n eq \012>>.  Cuando use protocolos tales como protocolos normales de Internet, C<\012> y C<\015> se deben indicar específicamente, y los valores lógicos de C<\n> y C<\r> (retorno de carro) no son fiables.
 
@@ -124,7 +124,7 @@ Pueden existir otras.  Por ejemplo, en una implementación EBCDIC tales como z/O
 
 CPU diferentes almacenan enteros y números de punto flotante en orden (llamado I<endianness>) y anchos (siendo 32 y 64 bit lo más común hoy en día) diferente.  Esto afecta a sus programas cuando intentan transferir números en formato binario de una arquitectura CPU a otra, normalmente tanto en conexiones de red "activas", como almacenando los números en un almacenamiento secundario tal como un archivo en disco o cinta.
 
-Confundir el orden de almacenamiento crea un enredo de los números.  Si un servidor I<little-endian> (Intel, VAX) almacena 0x12345678 (305419896 en decimal), un servidor I<big-endian> (Motorola, Sparc, PA) lo lee como 0x78563412 (2018915346 en decimal).  Alpha y MIPS pueden ser: Digital/Compaq utilizados (bueno, usados) en modo I<little-endian>; SGI/Cray los usa en modo I<big-endian>.  Para evitar este problema en conexiones de red (I<socket>) use los formatos de C<pack> y C<unpack> C<n> y C<N>, las distintas órdenes de "I<network>" (red).  Se garantiza que son portátiles.
+Confundir el orden de almacenamiento crea un enredo de los números.  Si un servidor I<little-endian> (Intel, VAX) almacena 0x12345678 (305419896 en decimal), un servidor I<big-endian> (Motorola, Sparc, PA) lo lee como 0x78563412 (2018915346 en decimal).  Alpha y MIPS pueden ser: Digital/Compaq utilizados (bueno, usados) en modo I<little-endian>; SGI/Cray los usa en modo I<big-endian>.  Para evitar este problema en conexiones de red (I<socket>) use los formatos de C<pack> y C<unpack> C<n> y C<N>, las distintas órdenes de "I<network>" (red).  Se garantiza que son portables.
 
 A partir de Perl 5.10.0, puede también usar los modificadores C<E<gt>> y C<E<lt>> para forzar el orden de los bytes I<big-> o I<little-endian>.  Esto es útil si quiere almacenar enteros con signo o enteros de 64 bit, por ejemplo.
 
@@ -157,7 +157,7 @@ S<Mac OS> 9 y anteriores usaban C<:> como separador de ruta en lugar de C</>.
 
 El sistema de archivos no soporta enlaces duros (C<link>) no simbólicos (C<symlink>, C<readlink>, C<lstat>).
 
-El sistema de archivos no puede soportar tiempos de acceso ni tiempos de cambio (significando que el único tiempo portátil es el tiempo de modificación), o la granularidad de un segundo de cualquiera de los tiempos (p.e. el sistema de FAT limita la granularidad a dos segundos).
+El sistema de archivos no puede soportar tiempos de acceso ni tiempos de cambio (significando que el único tiempo portable es el tiempo de modificación), o la granularidad de un segundo de cualquiera de los tiempos (p.e. el sistema de FAT limita la granularidad a dos segundos).
 
 El "tiempo de cambio de inodo" (el test de archivo C<-C>) puede ser realmente el "tiempo de creación" (que no está en Unix).
 
@@ -211,7 +211,7 @@ No use C<:> como parte de un nombre de archivo ya que muchos sistemas lo usan pa
 
 No asuma que en los nombres de ruta pueda colapsar dos barras diagonales juntas C<//> en una: algunos sistemas de archivos de red y I<clustering> tienen una semántica especial para ellos.  Permita que el sistema operativo se encargue de él.
 
-Los I<caracteres portátiles de nombre de archivo> como se define por ANSI C son
+Los I<caracteres portables de nombre de archivo> como se define por ANSI C son
 
  a b c d e f g h i j k l m n o p q r s t u v w x y z
  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
@@ -230,7 +230,7 @@ No abra el mismo archivo más de una vez para escribir, ya que algunos sistemas 
 
 No asuma que el modificar/escribir permisos en un directorio le da el derecho a agregar o borrar archivos/directorios en ese directorio.  Eso es específico del sistema de archivos: en algunos sistemas de archivos necesita escribir/modificar los permisos también (o incluso solo) en el propio archivo/directorio.  En algunos sistemas de archivos (AFS, DFS) el permiso para añadir/borrar entradas de directorio es un permiso completamente aparte.
 
-No asuma que un único C<unlink> elimina completamente el archivo: algunos sistemas de archivos (más notablemente los VMS) tienen sistemas de archivos con versiones, y C<unlink()> sólo elimina la más reciente (no elimina todas las versiones porque, por defecto, las herramientas nativas de estas plataformas sólo eliminan la versión más reciente).  El modismo portátil para eliminar todas las versiones de un archivo es
+No asuma que un único C<unlink> elimina completamente el archivo: algunos sistemas de archivos (más notablemente los VMS) tienen sistemas de archivos con versiones, y C<unlink()> sólo elimina la más reciente (no elimina todas las versiones porque, por defecto, las herramientas nativas de estas plataformas sólo eliminan la versión más reciente).  El modismo portable para eliminar todas las versiones de un archivo es
 
     1 while unlink "file";
 
@@ -250,7 +250,7 @@ No cuente con la expansión de comodines en los nombres de archivo.  Use en su l
 
 No cuente con variables de entorno por proceso, o en el directorio actual por programa.
 
-No cuente con los valores específicos de C<$!>, ni numéricos ni especialmente con las cadenas de caracteres. Los usuarios pueden cambiar sus configuraciones regionales para que los mensajes de error sean traducidos en su propio idioma.  Si puede confiar en un entorno tipo POSIX, puede usar de forma portátil los símbolos definidos por el módulo C<Errno>, como C<ENOENT>.  Y no confíe en los valores de C<$!> excepto inmediatamente después de una llamada fallida al sistema.
+No cuente con los valores específicos de C<$!>, ni numéricos ni especialmente con las cadenas de caracteres. Los usuarios pueden cambiar sus configuraciones regionales para que los mensajes de error sean traducidos en su propio idioma.  Si puede confiar en un entorno tipo POSIX, puede usar de forma portable los símbolos definidos por el módulo C<Errno>, como C<ENOENT>.  Y no confíe en los valores de C<$!> excepto inmediatamente después de una llamada fallida al sistema.
 
 =head2 Nombres de comandos contra nombres de rutas de archivo
 
@@ -300,7 +300,7 @@ Todo lo anterior puede parecer intimidante, y lo es, pero la clave es degradar g
 
 =head2 Comunicación entre procesos (IPC)
 
-En general, el no acceder directamente al sistema con el código significa que es portátil.  Eso significa, no C<system>, C<exec>, C<fork>, C<pipe>, C<``>, C<qx//>, C<open> con un C<|>, ni cualquier otra cosa que sea de valor para un I<hacker> Perl.
+En general, el no acceder directamente al sistema con el código significa que es portable.  Eso significa, no C<system>, C<exec>, C<fork>, C<pipe>, C<``>, C<qx//>, C<open> con un C<|>, ni cualquier otra cosa que sea de valor para un I<hacker> Perl.
 
 Comandos que lanzan procesos externos se soportan, generalmente en la mayor parte de las plataformas (aunque muchas de ellas no soportan ningún tipo de bifurcación -fork-).  El problema al usarlos surge desde el lugar donde se invocan.  Las herramientas externas a menudo se nombran de forma diferente en diferentes plataformas, quizás no estén disponibles en la misma posición, podrían aceptar argumentos diferentes, pueden comportarse de forma diferente, y a menudo presentar sus resultados de una forma dependiente de la plataforma.  Así, debería depender raramente de ellos para producir resultados consistentes. (Entonces, otra vez, si está llamando a I<netstat -a>, probablemente no espere ejecutarlo tanto en Unix como en CP/M).
 
@@ -309,17 +309,17 @@ Un especialmente trozo de código común de código Perl es abrir una tubería a
     open(MAIL, '|/usr/lib/sendmail -t')
 	or die "no puedo entubar con sendmail: $!";
 
-Esto es también para sistemas de programación cuando sendmail se sabe que está disponible.  Pero no está tan bien para muchos sistemas no Unix, e incluso algunos sistemas Unix que pueden no tener sendmail instalado.  Si se necesita una solución portátil, vea la diversas distribuciones en CPAN que tratan con él.  C<Mail::Mailer> y C<Mail::Send> en la distribución C<MailTools> se usan comúnmente, y proporciona diversos métodos de correo, incluyendo C<mail>, C<sendmail>, y SMTP directo (vía C<Net::SMTP>) si un agente de transferencia de correo si no está disponible.  C<Mail::Sendmail> es un módulo independiente que proporciona un sistema de correo simple e independiente de la plataforma.
+Esto es también para sistemas de programación cuando sendmail se sabe que está disponible.  Pero no está tan bien para muchos sistemas no Unix, e incluso algunos sistemas Unix que pueden no tener sendmail instalado.  Si se necesita una solución portable, vea la diversas distribuciones en CPAN que tratan con él.  C<Mail::Mailer> y C<Mail::Send> en la distribución C<MailTools> se usan comúnmente, y proporciona diversos métodos de correo, incluyendo C<mail>, C<sendmail>, y SMTP directo (vía C<Net::SMTP>) si un agente de transferencia de correo si no está disponible.  C<Mail::Sendmail> es un módulo independiente que proporciona un sistema de correo simple e independiente de la plataforma.
 
 El Unix System V IPC (C<msg*(), sem*(), shm*()>) no siquiera está disponible en todas las plataformas Unix.
 
-No use el resultado simple de empaquetar con C<pack("N", 10, 20, 30, 40)> o v-cadenas (como C<v10.20.30.40>) para representar direcciones IPv4: ambas formas simplemente empaquetan los cuatro bytes en orden red.  No está garantizado que esto sea igual a un C<in_addr> struct en lenguaje C struct (que es lo que el código I<socket> usa internamente).  Para ser portátil use las rutinas de la extensión C<Socket>, tales como C<inet_aton()>, C<inet_ntoa()> y C<sockaddr_in()>.
+No use el resultado simple de empaquetar con C<pack("N", 10, 20, 30, 40)> o v-cadenas (como C<v10.20.30.40>) para representar direcciones IPv4: ambas formas simplemente empaquetan los cuatro bytes en orden red.  No está garantizado que esto sea igual a un C<in_addr> struct en lenguaje C struct (que es lo que el código I<socket> usa internamente).  Para ser portable use las rutinas de la extensión C<Socket>, tales como C<inet_aton()>, C<inet_ntoa()> y C<sockaddr_in()>.
 
-La regla de la mano derecha del código portátil: Hágalo todo en Perl portátil, o use un módulo (que puede implementarlo internamente con código específico de la plataforma, pero exponiendo un interfaz común).
+La regla de la mano derecha del código portable: Hágalo todo en Perl portable, o use un módulo (que puede implementarlo internamente con código específico de la plataforma, pero exponiendo un interfaz común).
 
 =head2 Subrutinas externas (XS)
 
-El código XS puede, normalmente, hacer que trabaje en cualquier plataforma, pero las bibliotecas dependientes, archivos de cabecera, etc., podrían no estar disponibles o portátiles, o el propio código XS podría ser específico de la plataforma, igual que el código Perl.  Si las bibliotecas y cabeceras son portátiles, entonces es razonable asegurarse también que el código XS también lo sea.
+El código XS puede, normalmente, hacer que trabaje en cualquier plataforma, pero las bibliotecas dependientes, archivos de cabecera, etc., podrían no estar disponibles o portables, o el propio código XS podría ser específico de la plataforma, igual que el código Perl.  Si las bibliotecas y cabeceras son portables, entonces es razonable asegurarse también que el código XS también lo sea.
 
 Un tipo diferente de problemas de portabilidad surge cuando escribe código XS: la disponibilidad de un compilador de C en el sistema del usuario final.  C trae sus propios problemas de portabilidad, y escribir código XS le expondrá a algunos de ellos.  Escribir en puro Perl es la manera más fácil de conseguir la portabilidad.
 
@@ -353,8 +353,8 @@ El valor para C<$offset> en Unix será C<0>, pero en Mac OS Classic será un nú
 Asuma muy poco de todo lo relacionado sobre los conjuntos de caracteres.
 
 No asuma nada sobre los valores numéricos (C<ord>, C<chr>) de los caracteres.
-No use rangos de puntos de código explícitos (como C<\xHH-\xHH)>.  Aun así, a partir de Perl v5.22, rangos en clases de caracteres entre corchetes en patrones de expresiones regulares especificados como C<qr/[\N{U+HH}-\N{U+HH}]/> son portátiles, y a partir de Perl v5.24, los mismos rangos son portátiles en C<tr///>.
-Puede usar de forma portátil clases de caracteres simbólicos como C<[:print:]>.
+No use rangos de puntos de código explícitos (como C<\xHH-\xHH)>.  Aun así, a partir de Perl v5.22, rangos en clases de caracteres entre corchetes en patrones de expresiones regulares especificados como C<qr/[\N{U+HH}-\N{U+HH}]/> son portables, y a partir de Perl v5.24, los mismos rangos son portables en C<tr///>.
+Puede usar de forma portable clases de caracteres simbólicos como C<[:print:]>.
 
 No asuma que los caracteres alfabéticos están codificados de manera contigua (en el sentido numérico).  Puede haber intervalos vacíos.  Una codificación especial en Perl, sin embargo, garantiza que todos los subconjuntos de C<qr/[A-Z]/>, C<qr/[a-z]/> y C<qr/[0-9]/> se comportan como se espera.  C<tr///> se comporta de la misma manera para estos rangos.  En patrones, cualquier rango especificado con puntos finales usando la notación C<\N{...}> asegura la portabilidad del conjunto de caracteres, pero es un error en Perl v5.22, pero no para C<tr///>, arreglado en v5.24.
 
@@ -364,12 +364,12 @@ L<Unicode::Collate> se pueden usar para sortear todo esto.
 
 =head2 Internacionalización
 
-Si puede asumir POSIX (una suposición bastante grande), puede leer más sobre el sistema de configuración regional POSIX en L<perllocale>.  El sistema de configuración regional intenta al menos hacer las cosas un poco más portátiles, o al menos más convenientes y amigables para los usuarios no anglosajones.  El sistema afecta a los conjuntos de caracteres y codificación, y formateo de la fecha y hora, entre otras cosas.
+Si puede asumir POSIX (una suposición bastante grande), puede leer más sobre el sistema de configuración regional POSIX en L<perllocale>.  El sistema de configuración regional intenta al menos hacer las cosas un poco más portables, o al menos más convenientes y amigables para los usuarios no anglosajones.  El sistema afecta a los conjuntos de caracteres y codificación, y formateo de la fecha y hora, entre otras cosas.
 
 Si realmente quiere ser internacional, debería considerar Unicode.
 Vea L<perluniintro> y L<perlunicode> para más información.
 
-Si quiere usar bytes no ASCII (fuera de los bytes 0x00..0x7f) en el "código fuente" de su código, para ser portátil tiene que ser explícito sobre qué bytes son.  Alguien podría, por ejemplo, usar su código bajo una configuración regional UTF-8, en cuyo caso bytes nativos aleatorios podrían ser ilegales ("Malformed UTF-8 ..."). Esto significa que, por ejemplo, incrustar bytes ISO 8859-1 más allá de 0x7f en sus cadenas podrían causar problemas más tarde.  Si los bytes son bytes nativos de 8 bits, puede usar el I<pragma> C<bytes>.  Si los bytes están en una cadena (las expresiones regulares son cadenas peculiares), puede a menudo también usar C<\xHH>, o con más portabilidad, la notación C<\N{U+HH}> en lugar de incrustar los bytes directamente.  Si quiere escribir su código en UTF-8, puede usar L<utf8>.
+Si quiere usar bytes no ASCII (fuera de los bytes 0x00..0x7f) en el "código fuente" de su código, para ser portable tiene que ser explícito sobre qué bytes son.  Alguien podría, por ejemplo, usar su código bajo una configuración regional UTF-8, en cuyo caso bytes nativos aleatorios podrían ser ilegales ("Malformed UTF-8 ..."). Esto significa que, por ejemplo, incrustar bytes ISO 8859-1 más allá de 0x7f en sus cadenas podrían causar problemas más tarde.  Si los bytes son bytes nativos de 8 bits, puede usar el I<pragma> C<bytes>.  Si los bytes están en una cadena (las expresiones regulares son cadenas peculiares), puede a menudo también usar C<\xHH>, o con más portabilidad, la notación C<\N{U+HH}> en lugar de incrustar los bytes directamente.  Si quiere escribir su código en UTF-8, puede usar L<utf8>.
 
 =head2 Recurso del sistema
 
@@ -410,7 +410,7 @@ Cuidado con el "síndrome del else":
 La rama C<else> debería usarse para la realmente última y definitiva opción, no para código específico de alguna plataforma.
 
 Sea cuidadoso en las pruebas para suministrar sus módulos o programas.
-El código del módulo puede ser plenamente portátil, pero sus pruebas podrían no serlo.  Esto sucede a menudo cuando las pruebas lanzan otros procesos o llaman a programas externos para ayudarle en la comprobación, o cuando (como se ha anotado antes) las pruebas asumen ciertas cosas del sistema de archivos y rutas.  Sea cuidadoso de no depender de un estilo específico de salida para los errores, tales como cuando comprueba C<$!> después de una fallida llamada al sistema.  Usar C<$!> para ninguna otra cosa que mostrarlo como salida, es algo escaso (aun así vea el módulo C<Errno> para comprobar, razonablemente y de forma portátil por los valores de error). Algunas plataformas esperan un cierto formato de salida, y Perl en estas plataformas puede ajustarse consiguientemente.  Más específicamente, no se ancle a una I<regex> cuando compruebe un valor de error.
+El código del módulo puede ser plenamente portable, pero sus pruebas podrían no serlo.  Esto sucede a menudo cuando las pruebas lanzan otros procesos o llaman a programas externos para ayudarle en la comprobación, o cuando (como se ha anotado antes) las pruebas asumen ciertas cosas del sistema de archivos y rutas.  Sea cuidadoso de no depender de un estilo específico de salida para los errores, tales como cuando comprueba C<$!> después de una fallida llamada al sistema.  Usar C<$!> para ninguna otra cosa que mostrarlo como salida, es algo escaso (aún así vea el módulo C<Errno> para comprobar, razonablemente y de forma portable por los valores de error). Algunas plataformas esperan un cierto formato de salida, y Perl en estas plataformas puede ajustarse consiguientemente.  Más específicamente, no se ancle a una I<regex> cuando compruebe un valor de error.
 
 =head1 Testeadores CPAN
 
@@ -491,7 +491,7 @@ Aparte de llamar a cualquier programa externo, C</> funcionará bien, y probable
 
 El sistema de archivos FAT del DOS solo pueden acomodar nombres de archivo del estilo "8.3".  Estando en uso el "insensible al tamaño de caja, pero preservándolo", en los sistemas de archivos HPFS (OS/2) y NTFS (NT), deberá tener cuidado sobre el tamaño de caja devuelto por las funciones, como C<readdir>, o usado en funciones como C<open> u C<opendir>.
 
-DOS también trata a muchos nombres de archivo como especiales, tales como AUX, PRN, NUL, CON, COM1, LPT1, LPT2, etc. Desafortunadamente, algunas veces estos nombres de archivo ni siquiera funcionarán si incluye un explícito prefijo de directorio.  Es mejor evitar tales nombres de archivo si quiere que su código sea portátil a DOS y derivados.  Desgraciadamente, es difícil saber cuáles son.
+DOS también trata a muchos nombres de archivo como especiales, tales como AUX, PRN, NUL, CON, COM1, LPT1, LPT2, etc. Desafortunadamente, algunas veces estos nombres de archivo ni siquiera funcionarán si incluye un explícito prefijo de directorio.  Es mejor evitar tales nombres de archivo si quiere que su código sea portable a DOS y derivados.  Desgraciadamente, es difícil saber cuáles son.
 
 Los usuarios de estos sistemas operativos pueden también desear hacer uso de I<scripts> tales como I<pl2bat.bat> o I<pl2cmd> para poner envoltorios alrededor de sus I<scripts>.
 
@@ -529,7 +529,7 @@ Los diversos Perl de MSWin32 pueden distinguir el SO en que se ejecutan por medi
         print +('3.1','95','NT')[$os_version_info[4]],"\n";
     }
 
-Existen también C<Win32::IsWinNT()> y C<Win32::IsWin95()>; pruebe C<perldoc Win32>, y por medio de libwin32 0.19 (no parte del núcleo principal de la distribución Perl), C<Win32::GetOSName()>.  También funcionará el muy portátil C<POSIX::uname()>:
+Existen también C<Win32::IsWinNT()> y C<Win32::IsWin95()>; pruebe C<perldoc Win32>, y por medio de libwin32 0.19 (no parte del núcleo principal de la distribución Perl), C<Win32::GetOSName()>.  También funcionará el muy portable C<POSIX::uname()>:
 
     c:\> perl -MPOSIX -we "print join '|', uname"
     Windows NT|moonru|5.0|Build 2195 (Service Pack 2)|x86

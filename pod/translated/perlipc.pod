@@ -441,7 +441,7 @@ En particular, si abrió la tubería usando C<open FH, "|-">, entonces no puede 
         exit(0);
     }
 
-En el ejemplo anterior, el verdadero padre no quiere escribir al identificador de archivo ESCRITOR, y por eso lo cierra.  Aún así, ya que ESCRITOR se abrió con C<open FH, "|-">, tiene un comportamiento especial: cerrarlo llama a waitpid() (vea L<perlfunc/waitpid>), que espera a que el subproceso termine.  Si el proceso hijo termina esperando por que suceda algo en la sección marcada como "ahora hacer otra cosa", tiene un bloqueo.
+En el ejemplo anterior, el verdadero padre no quiere escribir al identificador de archivo ESCRITOR, y por eso lo cierra.  Aun así, ya que ESCRITOR se abrió con C<open FH, "|-">, tiene un comportamiento especial: cerrarlo llama a waitpid() (vea L<perlfunc/waitpid>), que espera a que el subproceso termine.  Si el proceso hijo termina esperando por que suceda algo en la sección marcada como "ahora hacer otra cosa", tiene un bloqueo.
 
 Esto también puede ser un problema con subprocesos intermedios en código más complicado, el cual llamará a waitpid() en todos los identificadores de archivo abiertos durante la destrucción global (sin un orden predecible).
 
@@ -521,7 +521,7 @@ Si olvida usar C<use warnings>, se perderá este útil mensaje de diagnóstico:
 
 Si es eso lo que realmente quiere hacer, puede usar el estándar open2() del módulo C<IPC::Open2> para capturar ambos lados.  Existe también un open3() en C<IPC::Open3> para una E/S tridireccional, y así puede capturar el STDERR de su hijo, pero al hacerlo podría requerir un incómodo bucle select() y no le permitiría usar las operaciones de entrada normal de Perl.
 
-Si mira en su código, verá que open2() usa primitivas de llamadas al sistema, de bajo nivel como pipe() y exec() para crear todas las conexiones.  A pesar de que podría ser más eficiente usar socketpair(), podría ser incluso menos portátil de lo que ya es. Las funciones open2() y open3() no es probable que funcionen en todos los sistemas excepto en un sistema Unix, o al menos en uno que sea conforme POSIX.
+Si mira en su código, verá que open2() usa primitivas de llamadas al sistema, de bajo nivel como pipe() y exec() para crear todas las conexiones.  A pesar de que podría ser más eficiente usar socketpair(), podría ser incluso menos portable de lo que ya es. Las funciones open2() y open3() no es probable que funcionen en todos los sistemas excepto en un sistema Unix, o al menos en uno que sea conforme POSIX.
 
 =for TODO
 Un momento, ¿esto es cierto?  Primero dice que socketpair() se evita por portabilidad, pero luego dice que probablemente no funcionará excepto en sistemas distintos de los Unix.  ¿Cuál de ellas es verdad?
@@ -1218,7 +1218,7 @@ Este ejemplo no incluye ningún reintento y por consecuente puede fallar al cont
 
 =head1 SysV IPC
 
-Mientras que System V IPC no se usa tan extensamente como los I<sockets>, aún así tiene algunos usos interesantes.  Sin embargo, no puede usar mmap() de SysV IPC o Berkeley para tener una variable compartida entre varios procesos.  Esto es porque Perl podría realojar su cadena cuando usted no quiere que suceda.  Para eso podría mirar por los módulos C<IPC::Shareable> o C<threads::shared>.
+Mientras que System V IPC no se usa tan extensamente como los I<sockets>, todavía tiene algunos usos interesantes.  Sin embargo, no puede usar mmap() de SysV IPC o Berkeley para tener una variable compartida entre varios procesos.  Esto es porque Perl podría realojar su cadena cuando usted no quiere que suceda.  Para eso podría mirar por los módulos C<IPC::Shareable> o C<threads::shared>.
 
 Aquí hay un pequeño ejemplo que muestra el uso de memoria compartida.
 
@@ -1335,7 +1335,7 @@ La mayor parte de estas rutinas silenciosamente, pero amablemente devuelven C<un
 
 =head1 ERRORES
 
-Todas estas rutinas crean problemas de portabilidad específicos del sistema.  Como se ha indicado en otro lugar, Perl está a merced de sus bibliotecas C para mucho de su comportamiento con el sistema.  Es probablemente más seguro asumir una semántica SysV rota para las señales y usar operaciones TCP y UDP I<socket> simples; p. e., no intente pasar descriptores de archivo abiertos sobre un I<socket> datagrama UDP si quiere que su código tenga alguna posibilidad de ser portátil.
+Todas estas rutinas crean problemas de portabilidad específicos del sistema.  Como se ha indicado en otro lugar, Perl está a merced de sus bibliotecas C para mucho de su comportamiento con el sistema.  Es probablemente más seguro asumir una semántica SysV rota para las señales y usar operaciones TCP y UDP I<socket> simples; p. e., no intente pasar descriptores de archivo abiertos sobre un I<socket> datagrama UDP si quiere que su código tenga alguna posibilidad de ser portable.
 
 =head1 AUTOR
 

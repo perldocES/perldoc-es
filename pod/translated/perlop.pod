@@ -9,7 +9,7 @@ En Perl, el operador determina qué operación se realiza, independiente del tip
 
 Esto contrasta con muchos otros lenguajes dinámicos, donde la operación se determina por el tipo del primer argumento.  También significa que Perl tiene dos versiones de algunos operadores: uno para numérico y otro para cadenas de caracteres.  Por ejemplo, S<C<$x == $y>> compara dos números por su igualdad, y S<C<$x eq $y>> comparas dos cadenas.
 
-Aun así existen unas pocas excepciones: C<x> puede ser una repetición de cadenas o repetición de lista, dependiendo del tipo del operando de la izquierda, y C<&>, C<|>, C<^> y C<~> son operaciones de bit tanto numéricas como de cadena.
+Aún así existen unas pocas excepciones: C<x> puede ser una repetición de cadenas o repetición de lista, dependiendo del tipo del operando de la izquierda, y C<&>, C<|>, C<^> y C<~> son operaciones de bit tanto numéricas como de cadena.
 
 =head2 Precedencia de operadores y asociatividad
 X<operator, precedence> X<precedence> X<associativity> X<operador, precedencia> X<precedencia> X<asociatividad>
@@ -616,7 +616,7 @@ X<//> X<operator, logical, defined-or> X<operador, lógico, defined-or>
 A pesar de que no tiene equivalente directo en C, el operador Perl C<//> está relacionado con el operador "or" del C.  De hecho, es exactamente lo mismo que C<||>, excepto que comprueba la definición del lado izquierdo en lugar de su estado de verdad.  Por lo tanto, S<C<< EXPR1 // EXPR2 >>> devuelve el valor de C<< EXPR1 >> si está definida, de lo contrario, se devuelve el valor de C<< EXPR2 >>.
 (C<< EXPR1 >> se evalúa en contexto de escalar, C<< EXPR2 >> en el propio contexto de C<< // >>).  Normalmente, este es el mismo resultado que S<C<< defined(EXPR1) ? EXPR1 : EXPR2 >>> (salvo que la forma del operador ternario se puede utilizar como un valor-izquierda, mientras que S<C<< EXPR1 // EXPR2 >>>, no).  Esto es muy útil para proporcionar valores por defecto a las variables.  Si realmente desea probar si al menos uno de los dos, C<$x> o C<$y>, están definidos, use S<C<defined($x // $y)>>.
 
-Los operadores C<||>, C<//> y C<&&> devuelven el último valor evaluado (a diferencia de los operadores del C C<||> y C<&&>, que devuelve 0 o 1).  Por lo tanto, un forma razonablemente portátil para averiguar nuestro directorio principal podría ser:
+Los operadores C<||>, C<//> y C<&&> devuelven el último valor evaluado (a diferencia de los operadores del C C<||> y C<&&>, que devuelve 0 o 1).  Por lo tanto, un forma razonablemente portable para averiguar nuestro directorio principal podría ser:
 
     $home =  $ENV{HOME}
 	  // $ENV{LOGDIR}
@@ -661,7 +661,7 @@ El binario C<".."> es el operador rango, que en realidad son dos operadores dife
 El operador rango también trabaja en las cadenas, usando el auto-incremento mágico. Vea más abajo.
 
 En contexto de escalar, C<".."> devuelve un valor booleano.  El operador es biestable, como un flip-flop, y emula el operador rango-de-línea de B<sed>, B<awk>, y diversos editores.  Cada operador C<".."> mantiene su estado booleano propio, incluso a través de llamadas a la subrutina que lo contenga.  Es falso, siempre y cuando su operando izquierdo sea falso.
-Una vez que el operando izquierdo sea verdadero, el operador rango se mantiene así hasta que el operando de la derecha sea verdadero, I<DESPUÉS> de lo cual, el operador rango se vuelve falso de nuevo.  No se vuelve falso hasta la próxima vez que el operador rango se evalúa.  El operador rango puede probar el operando de la derecha y convertirse en falso en la misma evaluación en que se hizo verdadero (como en B<awk>), pero aún así devuelve verdadero al menos una vez.  Si no quiere poner a prueba el operando derecho hasta la próxima evaluación, al igual que en B<sed>, sólo tiene que utilizar tres puntos (C<"...">) en lugar de dos.  En todos los demás aspectos, C<"..."> se comporta como C<"..">.
+Una vez que el operando izquierdo sea verdadero, el operador rango se mantiene así hasta que el operando de la derecha sea verdadero, I<DESPUÉS> de lo cual, el operador rango se vuelve falso de nuevo.  No se vuelve falso hasta la próxima vez que el operador rango se evalúa.  El operador rango puede probar el operando de la derecha y convertirse en falso en la misma evaluación en que se hizo verdadero (como en B<awk>), pero sigue devolviendo verdadero al menos una vez.  Si no quiere poner a prueba el operando derecho hasta la próxima evaluación, al igual que en B<sed>, sólo tiene que utilizar tres puntos (C<"...">) en lugar de dos.  En todos los demás aspectos, C<"..."> se comporta como C<"..">.
 
 El operando de la derecha no se evalúa mientras que el operador esté en el estado "falso", y el operando de la izquierda no se evalúa mientras que el operador se encuentre en el estado "verdadero".  La precedencia es un poco menor que || y &&.  El valor devuelto es una cadena vacía para falso, o un número de secuencia (empezando por 1) para verdadero.  El número de secuencia se reinicia para cada rango encontrado.  El número de secuencia final en un rango tiene la cadena "E0" añadida, que no afecta a su valor numérico, pero le da un apoyo para poder buscarlo si desea excluir el punto final de la secuencia.  Puede excluir el punto de partida esperando por un número de secuencia mayor que 1.
 
@@ -949,7 +949,7 @@ Operador de Desreferencia.  (Los prefijos de los operadores de desreferencia de 
 
 =item (TYPE)
 
-Operador de Forzado de tipo.
+Operador de conversión de tipo.
 
 =back
 
@@ -1027,7 +1027,7 @@ Si no hay dígitos válidos entre las llaves, el carácter generado es el carác
 
 El resultado es el carácter especificado por el número hexadecimal en el rango 0x00 a 0xFF.  Vea L</[8]> más abajo para detalles sobre el carácter.
 
-Solo están permitidos dígitos hexadecimales si van a continuación de C<\x>.  Cuando C<\x> esté seguido por menos de dos dígitos válidos, los dígitos válidos se rellenarán con ceros.  Esto significa que C<\x7> se interpretará como C<\x07>, y un único C<"\x"> se interpretará como un C<\x00>.  Salvo en el final de una cadena, con menos de dos dígitos válidos, dará lugar a una advertencia.  Tenga en cuenta que, si bien la advertencia dice que el carácter ilegal no se tiene en cuenta, sólo se ignora como parte del escapado y aún así se utiliza como el carácter siguiente en la cadena.
+Solo están permitidos dígitos hexadecimales si van a continuación de C<\x>.  Cuando C<\x> esté seguido por menos de dos dígitos válidos, los dígitos válidos se rellenarán con ceros.  Esto significa que C<\x7> se interpretará como C<\x07>, y un único C<"\x"> se interpretará como un C<\x00>.  Salvo en el final de una cadena, con menos de dos dígitos válidos, dará lugar a una advertencia.  Tenga en cuenta que, si bien la advertencia dice que el carácter ilegal no se tiene en cuenta, sólo se ignora como parte del escapado y seguirá usándose como el carácter subsecuente en la cadena.
 Por ejemplo:
 
   Original    Resultado    ¿Advertencia?

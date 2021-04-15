@@ -28,11 +28,11 @@ Esto indica que Configure se ejecuta con un I<shell> Korn roto (incluso aunque p
 
 En Tru64, Perl es capaz, automáticamente de usar archivos grandes, es decir, archivos superiores a 2 gigabytes, por lo que no es necesario la opción -Duselargefiles de Configure, como se describe en INSTALL (aunque si se pone no pasará nada).
 
-=head2 Perl multihebra en Tru64
+=head2 Perl multihilo en Tru64
 
 Si quiere usar hilos, debería primero usar el modelo de hilos de Perl 5.8.0 ejecutando Configure con -Duseithreads.
 
-Los hilos en Perl solo van a funcionar en Tru64 4.0 y nuevas distribuciones; distribuciones anteriores como 3.2 probablemente no vayan a funcionar apropiadamente con las hebras.
+Los hilos en Perl solo van a funcionar en Tru64 4.0 y nuevas distribuciones; distribuciones anteriores como 3.2 probablemente no vayan a funcionar apropiadamente con los hilos.
 
 En Tru64 V5 (al menos V5.1A, V5.1B) no puede compilar Perl con hilos con gcc porque la cabecera del sistema <pthread.h> comprueba explícitamente por ciertos compiladores de C, no siendo gcc (al menos 3.2.2) uno de ellos.  Pero el compilador de C del sistema debería funcionar bien.
 
