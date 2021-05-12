@@ -58,8 +58,8 @@ my @titulares = (					# ATENCIÓN: debe estar en minúsculas
 
 ## Acceso a Google ------------------------------------------------------------
 my $oauth2 = Net::Google::DataAPI::Auth::OAuth2->new(
-    client_id     => '48781485103-us28tj7busq85lvhh3pee40ivaiaes20.apps.googleusercontent.com',
-    client_secret => 'lLoGmmvwjCIpmf9sU',
+    client_id     => '48781485busq8lh3ee40iva.apps.googleusercontent.com',
+    client_secret => 'mvwjCIpmf9sU',
     scope         => ['http://spreadsheets.google.com/feeds/'],
 );
 
