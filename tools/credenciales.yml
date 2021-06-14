@@ -1,0 +1,9 @@
+auth:
+    class: OAuth2Client
+    client_id: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
+    client_secret: xxxxxxxxxxxxxxxxxxxxxxxx
+    token_file: thetoken
+
+timeout: 30
+
+throttle: 1
