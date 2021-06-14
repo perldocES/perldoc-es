@@ -3157,7 +3157,7 @@ La PLANTILLA es una secuencia de caracteres que dan el orden y el tipo de los va
 
     q  Un valor cuádruplo con signo (64 bit).
     Q  Un valor cuádruplo sin signo.
-         (Quads están disponibles sólo si su sistema soporta valores de 64-bit
+         (Los cuádruplos están disponibles sólo si su sistema soporta valores de 64-bit
           enteros _y_ si Perl se compiló para soportar
           aquello.  En caso contrario, lanza una excepción).
 
@@ -5202,12 +5202,12 @@ Si quiere saber acerca de las dependencias de la versión antes de empezar a eje
 
     use 5.014;  # para los modificadores hh/j/t/z/ en printf
 
-Puede averiguar si su Perl soporta quads a través de L<Config>:
+Puede averiguar si su Perl soporta cuádruplos a través de L<Config>:
 
     use Config;
     if ($Config{use64bitint} eq "define"
         || $Config{longsize} >= 8) {
-        print "¡quads divertidos!\n";
+        print "¡cuádruplos divertidos!\n";
     }
 
 Para las conversiones de punto flotante (C<e f g E F G>), se asume que los números son por lo general de punto flotante del tamaño de su plataforma (doble o doble largo), pero se puede forzar "long double" con C<q>, C<L>, o C<ll> si la plataforma es compatible con ellas.  Puede averiguar si su Perl soporta dobles a través de L<Config>:

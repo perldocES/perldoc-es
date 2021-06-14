@@ -244,3 +244,11 @@ wildcards	comodines
 casting	reconvertir
 portable	portable
 unfortunately	desafortunadamente
+notation	notación
+autovivify	autovivificar
+support	soporte
+on	activado
+proper	apropiado
+quota	cuota
+compilation	compilación
+extensions	extensiones
