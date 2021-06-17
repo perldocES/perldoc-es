@@ -12,7 +12,7 @@
 # TODO: ¿Es posible automatizar los comandos git, o seguimos a mano? Mejor a mano... de momento.
 
 # Joaquín Ferrero. 20210524
-# Última versión:  20210603
+# Última versión:  20210614
 #
 # Se supone que se debe ejecutar este programa después de haber ejecutado la orden
 # de generar los ficheros finales en el OmegaT, pero no es imprescindible.
@@ -115,6 +115,8 @@ my %archivos_traduciendo;
 my $total_segmentos = 0;
 my $total_segmentos_traducidos = 0;
 #my $min_porcen	   = 30;			# Porcentaje mínimo docs traducidos, no asignados
+my @files_changed;				# archivos que han cambiado
+
 
 foreach my $fichero (sort keys %pod_descripción_de) {
     if (exists $estadísticas{$fichero}) {
@@ -138,6 +140,7 @@ foreach my $fichero (sort keys %pod_descripción_de) {
 	    }
 
 	    say "Actualizando $fichero";
+	    push @files_changed, $fichero;
 	}
 
 	# si está completamente traducido, lo llevamos al git
@@ -170,7 +173,7 @@ foreach my $fichero (sort keys %pod_descripción_de) {
                 # Copiar a destino
 		$aviso_movido++;
 		say "Copiando $origen a $targetT";
-		$origen->copy($targetT) or die "ERROR: $!\n";		# llevar a translated/
+		$origen->copy($targetT)  or  die "ERROR: $!\n";		# llevar a translated/
 		# TODO : git add pod/translated/$fichero
 
 		# NOTE : ¿Realmente es necesario eliminar los documentos en translated/?
@@ -180,7 +183,7 @@ foreach my $fichero (sort keys %pod_descripción_de) {
 		# Ver ahora si el nuevo translated/ == reviewed/
 		$trans_md5 = -f $targetT ? md5_hex($targetT->slurp_raw) : 0;
 
-		if ($revie_md5 and $revie_md5 eq $trans_md5) {		# sí, el movido es igual
+		if ($revie_md5  and  $revie_md5 eq $trans_md5) {	# sí, el movido es igual
 		    say "Eliminar $targetT";
 		    $targetT->remove;					# borramos de translated/
 		    $aviso_movido = 0;
@@ -203,7 +206,7 @@ foreach my $fichero (sort keys %pod_descripción_de) {
 	if ($fichero !~ /delta/  and  not exists($archivos_que_no_cuentan{$fichero})  and  $estadísticas{$fichero}[1] > 0) { #  and  $porcentaje >= $min_porcen) {
 	    $archivos_traduciendo{$fichero} = $porcentaje;
 	}
-	if ( ( $fichero !~ /delta/  and  not exists($archivos_que_no_cuentan{$fichero}) )  or $porcentaje == 100) {
+	if ( ( $fichero !~ /delta/  and  not exists($archivos_que_no_cuentan{$fichero}) )  or  $porcentaje == 100) {
 	    $total_segmentos += $estadísticas{$fichero}[0];
 	    $total_segmentos_traducidos += $estadísticas{$fichero}[1];
 	}
@@ -304,11 +307,12 @@ if (!-f $target  or  -M $origen < -M $target) {
     $archivos_en_git++;
 }
 
-#if ($archivos_en_git) {
-# my $fecha = strftime("%Y.%m.%d %H.%M", localtime);
-# my $files_changed = join " ", @files_changed;
-# TODO : git commit -a -m "$perl_version $user $fecha $files_changed"
-#}
+if ($archivos_en_git) {
+    my $fecha = strftime("%Y.%m.%d %H.%M", localtime);
+    my $files_changed = join " ", @files_changed;
+    say "Archivos que han cambiado => git [$files_changed]";
+    # TODO : git commit -a -m "$PERL_VERSION $USER $fecha $files_changed"
+}
 
 ###############################################################################
 __END__
