@@ -8,7 +8,7 @@
 # -l : Lista los archivos
 #
 # Joaquín Ferrero. 20210517
-# Última versión:  20210517
+# Última versión:  20210603
 #
 use v5.28.0;
 use utf8;
