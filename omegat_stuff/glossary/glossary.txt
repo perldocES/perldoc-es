@@ -252,3 +252,8 @@ proper	apropiado
 quota	cuota
 compilation	compilación
 extensions	extensiones
+tradeoff	contrapartida
+glue	pegamento
+automatic	automática
+has	tiene
+These	Estas
