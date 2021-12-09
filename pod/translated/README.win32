@@ -477,7 +477,7 @@ Perl proporciona automáticamente soporte para archivos grandes cuando se compil
 
 =item *
 
-Empotrar Perl dentro de una aplicación 64 bit.
+Integrar Perl dentro de una aplicación 64 bit.
 
 =back
 

@@ -744,7 +744,7 @@ Pero, espere: ¿C<pack> no devuelve, simplemente, una secuencia de bytes? ¿Cóm
 
     my $ptr = unpack( 'L!', $memptr );
 
-Obviamente, esto asume que es posible transformar un puntero a un largo sin signo y viceversa que, frecuentemente, funciona, pero no debería tomarlo como una regla universal. - Ahora que tenemos el puntero, la siguiente cuestión es: ¿Cómo podemos usarlo de forma correcta? Necesitamos llamar a alguna función C que espere un puntero. Viene a la memoria la llamada del sistema read(2):
+Obviamente, esto asume que es posible convertir un puntero a un largo sin signo y viceversa que, frecuentemente, funciona, pero no debería tomarlo como una regla universal. - Ahora que tenemos el puntero, la siguiente cuestión es: ¿Cómo podemos usarlo de forma correcta? Necesitamos llamar a alguna función C que espere un puntero. Viene a la memoria la llamada del sistema read(2):
 
     ssize_t read(int fd, void *buf, size_t count);
 

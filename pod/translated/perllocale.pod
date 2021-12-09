@@ -514,7 +514,7 @@ Si tiene una sola cadena que desea comprobar por su "igualdad en la configuraci�
         print "cotejo ignora tamaño de caja\n"
             if $xfrm_cadena eq strxfrm("Cadena con Mayúsculas-Minúsculas");
 
-C<strxfrm()> toma una cadena y la traduce en una cadena transformada para su uso en una comparación carácter-por-carácter con otras cadenas transformadas durante el cotejo.  "Bajo el capó", los operadores de comparación Perl afectados por la configuración regional llaman a C<strxfrm()> para los dos operandos, y luego hacen una comparación carácter-por-carácter de las cadenas transformadas.  Al llamar a C<strxfrm()> de forma explícita y con una comparación no afectada por la configuración regional, el ejemplo intenta ahorrar una pareja de transformaciones.  Pero, en realidad, no se ahorra nada: Perl, mágicamente (vea L<perlguts/Variables mágicas>) crea la versión transformada de una cadena la primera vez que se necesita en una comparación, y a continuación, guarda esta versión para el caso de que se necesite de nuevo.  Un ejemplo reescrito de forma más fácil con C<cmp> corre igual de rápido.  Además gestiona mejor los caracteres nulos incrustados en las cadenas; si llama a C<strxfrm()> directamente, tratará el primer carácter nulo que encuentre como un terminador.  No espere que las cadenas transformadas que produce sean portables a través de los sistemas -o incluso de una revisión de su sistema operativo a la siguiente-.  En resumen, no llame a C<strxfrm()> directamente: deje que Perl lo haga por usted.
+C<strxfrm()> toma una cadena y la traduce en una cadena transformada para su uso en una comparación carácter-por-carácter con otras cadenas transformadas durante el cotejo.  "Bajo el capó", los operadores de comparación Perl afectados por la configuración regional llaman a C<strxfrm()> para los dos operandos, y luego hacen una comparación carácter-por-carácter de las cadenas transformadas.  Al llamar a C<strxfrm()> de forma explícita y con una comparación no afectada por la configuración regional, el ejemplo intenta ahorrar una pareja de transformaciones.  Pero, en realidad, no se ahorra nada: Perl, mágicamente (vea L<perlguts/Variables mágicas>) crea la versión transformada de una cadena la primera vez que se necesita en una comparación, y a continuación, guarda esta versión para el caso de que se necesite de nuevo.  Un ejemplo reescrito de forma más fácil con C<cmp> corre igual de rápido.  Además gestiona mejor los caracteres nulos integrados en las cadenas; si llama a C<strxfrm()> directamente, tratará el primer carácter nulo que encuentre como un terminador.  No espere que las cadenas transformadas que produce sean portables a través de los sistemas -o incluso de una revisión de su sistema operativo a la siguiente-.  En resumen, no llame a C<strxfrm()> directamente: deje que Perl lo haga por usted.
 
 Nota: C<use locale> no se muestra en algunos de estos ejemplos, ya que no es necesario: C<strcoll()> y C<strxfrm()> son funciones POSIX que usan las funciones C<libc> suministradas por el sistema, que siempre obedecen a la actual configuración regional de C<LC_COLLATE>.
 
@@ -714,7 +714,7 @@ Este tercer programa falla porque C<$&> está contaminado: es el resultado de un
 
 =item PERL_SKIP_LOCALE_INIT
 
-Esta variable de entorno, disponible a partir de Perl v5.20, y si se establece a cualquier valor verdadero, le indica a Perl que no use el resto de las variables de entorno en la inicialización.  De lo contrario, Perl usa lo que esté ajustado en la actual configuración regional.  Esto es particularmente útil en entornos incrustados. Vea L<perlembed/Usando Perl incrustado con configuraciones regionales POSIX>.
+Esta variable de entorno, disponible a partir de Perl v5.20, y si se establece a cualquier valor verdadero, le indica a Perl que no use el resto de las variables de entorno en la inicialización.  De lo contrario, Perl usa lo que esté ajustado en la actual configuración regional.  Esto es particularmente útil en entornos integrados. Vea L<perlembed/Usando Perl integrado con configuraciones regionales POSIX>.
 
 =item PERL_BADLANG
 
@@ -913,7 +913,7 @@ L<POSIX/isupper>, L<POSIX/isxdigit>, L<POSIX/localeconv>,
 L<POSIX/setlocale>, L<POSIX/strcoll>, L<POSIX/strftime>,
 L<POSIX/strtod>, L<POSIX/strxfrm>.
 
-Para consideraciones especiales cuando Perl se incrusta en programas C, vea L<perlembed/Usando Perl incrustado con configuraciones regionales POSIX>.
+Para consideraciones especiales cuando Perl se integra en programas C, vea L<perlembed/Usando Perl integrado con configuraciones regionales POSIX>.
 
 =head1 HISTORIA
 

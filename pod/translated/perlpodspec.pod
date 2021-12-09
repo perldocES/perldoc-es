@@ -14,7 +14,7 @@ De forma notable, cuando digo "el intérprete debería hacer Y", el intérprete 
 
 =head1 Definiciones Pod 
 
-Pod se incrusta en los archivos, típicamente en archivos de código fuente Perl, aunque puede escribir un archivo que solo contenga Pod.
+Pod se integra en los archivos, típicamente en archivos de código fuente Perl, aunque puede escribir un archivo que solo contenga Pod.
 
 Una B<línea> en un archivo consiste de cero o más caracteres que no son de nueva línea, terminado tanto en un nueva línea o el final del archivo.
 
@@ -1231,7 +1231,7 @@ Esto es inválido porque cada comando "=end" debe tener un parámetro con nombre
 
 =head1 VEA TAMBIÉN
 
-L<perlpod>, L<perlsyn/"POD: documentación empotrada">, L<podchecker>
+L<perlpod>, L<perlsyn/"POD: documentación integrada">, L<podchecker>
 
 =head1 AUTOR
 

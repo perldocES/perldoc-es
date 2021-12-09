@@ -34,7 +34,7 @@ A continuación se muestra una descripción más detallada de los modificadores.
 
 =head1 DESCRIPCIÓN
 
-B<perldoc> busca un elemento de documentación con formato .pod incluido en el árbol de instalación de perl o en un I<script> perl, y ejecuta C<groff -man | $PAGER> para mostrarlo (en HP-UX se usa además C<col -x>). Este programa se usa principalmente para consultar la documentación de los módulos de biblioteca de perl.
+B<perldoc> busca un elemento de documentación con formato .pod integrado en el árbol de instalación de perl o en un I<script> perl, y ejecuta C<groff -man | $PAGER> para mostrarlo. (en HP-UX se usa además C<col -x>). Este programa se usa principalmente para consultar la documentación de los módulos de biblioteca de perl.
 
 Es posible que también estén instaladas en el sistema páginas de manual para esos módulos, en cuyo caso es probable que desee usar simplemente el comando man(1).
 
@@ -186,7 +186,7 @@ Se consumen todos los modificadores de la variable de entorno C<PERLDOC> antes q
 Algunos valores útiles para C<PERLDOC> son C<-oterm>, C<-otext>, C<-ortf>, C<-oxml>, etc., en función de los módulos disponibles; o bien, se puede especificar exactamente la clase de formateador con C<-MPod::Perldoc::ToTerm> o similar.
 
 C<perldoc> también busca en los directorios especificados por las variables de entorno C<PERL5LIB> (o C<PERLLIB> si C<PERL5LIB> no está definida) y C<PATH>
-(esta última hace que esté disponible la documentación pod incluida en ejecutables, como C<perldoc>).
+(esta última hace que esté disponible la documentación pod integrada en ejecutables, como C<perldoc>).
 
 En directorios en los que existen C<Makefile.PL> o C<Build.PL>, C<perldoc>
 agregará C<.> y C<lib> al principio de la ruta de búsqueda. También agregará C<blib> si su cuenta no es la del superusuario.  Esto es muy útil cuando se trabaja en un directorio de compilación y se desea leer la documentación actual aunque esté instalada una versión anterior del módulo.

@@ -369,7 +369,7 @@ Se sabe que Perl se genera también ahora en Hitachi HI-UXMPP.
 
 Se sabe que Perl se genera también ahora en LynxOS.
 
-Mac OS X ahora se instala con el número de versión de Perl incrustado en los nombres de directorio de la instalación para facilitar la actualización por parte del usuario que compiló Perl, y los directorios de instalación, en general, son más estándar.
+Mac OS X ahora se instala con el número de versión de Perl integrado en los nombres de directorio de la instalación para facilitar la actualización por parte del usuario que compiló Perl, y los directorios de instalación, en general, son más estándar.
 En otras palabras, la instalación por defecto ya no rompe el Perl proporcionado por Apple.  Por otro lado, con C<Configure -Dprefix=/usr> ahora puede, realmente, cambiar el Perl suministrado por Apple (B<por favor, tenga cuidado>).
 
 Mac OS X ahora por defecto genera Perl de forma estática.  Este cambio se llevó a cabo principalmente por obtener tiempos de arranque más rápidos.  El Perl proporcionado por Apple sigue siendo enlazado de forma dinámica y compartida, y se puede habilitar el nivel de compartición de su propia generación de Perl por medio de C<Configure -Duseshrplib>.
@@ -565,7 +565,7 @@ Algo modificó los valores que se utilizaron en la iteración.  Esto no es bueno
 
 Estas noticias solamente son importantes para usted si, o escribe código XS o le gustaría saber acerca de o quiere I<hackear> las partes internas Perl (usando Devel::Peek o cualquiera de los módulos C<B::>), o como para ejecutar Perl con la opción C<-D>.
 
-Los ejemplos incluidos en L<perlembed> se han revisado para estar al día y ser consistentes: por ejemplo, el uso correcto de PERL_SYS_INIT3() y PERL_SYS_TERM().
+Los ejemplos integrados en L<perlembed> se han revisado para estar al día y ser consistentes: por ejemplo, el uso correcto de PERL_SYS_INIT3() y PERL_SYS_TERM().
 
 Una remodelación extensa del código de control (el código responsable de las variables léxicas) se ha llevado a cabo por Dave Mitchell.
 
@@ -577,7 +577,7 @@ API obsoleta en Perl 5.8.0, como sv_2pv, sv_catpvn, sv_catsv, sv_setsv, están d
 
 Ciertas API de C del núcleo de Perl, como cxinc y regatom ya no están disponibles en todo el código que esté fuera del núcleo principal de las extensiones de Perl.  Esto es intencional.  Nunca deberían haber estado disponibles con los nombres más acortados, y si su aplicación depende de ellos, debe (y avergonzarse de ello) contactar con los  perl5-porters para discutir cuáles son las API adecuadas.
 
-Ciertas API C del núcleo de Perl, como C<Perl_list> ya no están disponibles sin su prefijo C<Perl_>.  Si su módulo XS deja de funcionar debido a que algunas funciones no se pueden encontrar, en muchos casos una solución sencilla es añadir el prefijo C<Perl_> a la función y el contexto del hilo C<aTHX_> como primer argumento de la llamada a la función.  Esta también es la forma en que siempre se debería haber hecho: dejar que los formularios Perl agotasen el núcleo fue un accidente.  Para una incorporación más limpia también puede forzar esto para todas las API definiendo, en tiempo de compilación, el B<define> PERL_NO_SHORT_NAMES para cpp.
+Ciertas API C del núcleo de Perl, como C<Perl_list> ya no están disponibles sin su prefijo C<Perl_>.  Si su módulo XS deja de funcionar debido a que algunas funciones no se pueden encontrar, en muchos casos una solución sencilla es añadir el prefijo C<Perl_> a la función y el contexto del hilo C<aTHX_> como primer argumento de la llamada a la función.  Esta también es la forma en que siempre se debería haber hecho: dejar que los formularios Perl agotasen el núcleo fue un accidente.  Para una integración más limpia también puede forzar esto para todas las API definiendo, en tiempo de compilación, el B<define> PERL_NO_SHORT_NAMES para cpp.
 
 Perl_save_bool() ha sido añadido.
 

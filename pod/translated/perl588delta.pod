@@ -1489,7 +1489,7 @@ Nicholas Clark cambió la asignación del búfer de cadena de texto por lo que a
 
 El array de C<HV> de los C<HE*> es ahora asignado al correcto (y mínimo) tamaño, gracias a un nuevo cambio de Nicholas Clark. Compile con C<-DPERL_USE_LARGE_HV_ALLOC> para usar el viejo, descuidado, valor por defecto.
 
-Para XS o con fines de depuración embebida, si perl se compila con C<-DDEBUG_LEAKING_SCALARS_FORK_DUMP>, además de C<-DDEBUG_LEAKING_SCALARS> entonces un proceso hijo se crea con C<fork> justo antes de la destrucción global, y se utiliza para mostrar los valores de cualquier escalar que se encuentra y que tenga que eliminarse al final de la destrucción global. Sin esto, los escalares ya habrían liberado, de tal manera, que se haría imposible producir cualquier descarga significativa de sus contenidos.  Esta característica se implementó por el infatigable Nicholas Clark, basado en una idea de Mike Giroux.
+Para XS o con fines de depuración integrada, si perl se compila con C<-DDEBUG_LEAKING_SCALARS_FORK_DUMP>, además de C<-DDEBUG_LEAKING_SCALARS> entonces un proceso hijo se crea con C<fork> justo antes de la destrucción global, y se utiliza para mostrar los valores de cualquier escalar que se encuentra y que tenga que eliminarse al final de la destrucción global. Sin esto, los escalares ya habrían liberado, de tal manera, que se haría imposible producir cualquier descarga significativa de sus contenidos.  Esta característica se implementó por el infatigable Nicholas Clark, basado en una idea de Mike Giroux.
 
 =head1 Problemas en plataformas específicas
 

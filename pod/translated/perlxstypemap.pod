@@ -1,0 +1,476 @@
+=head1 NAME
+
+perlxstypemap - Mapa de tipos Perl XS entre C y Perl
+
+=head1 DESCRIPCIÓN
+
+Cuanto más piense sobre la interfaz entre los dos lenguajes, más se dará cuenta de que la mayoría del esfuerzo del programador se dirige en convertir entre estructuras de datos que son nativas en cualquiera de los lenguajes involucrados.  Esto supera a otros temas tales como las diferentes convenciones de llamada porque el problema de espacio es mucho mayor.
+Simplemente, hay más formas de meter datos en la memoria que formas de implementar una llamada a una función.
+
+El intento de Perl XS para solucionar esto es el concepto del mapa de tipos.
+A un nivel abstracto, un mapa de tipos Perl XS no es nada más que una receta para convertir desde una cierta estructura de datos Perl a una cierta estructura de datos C, y viceversa.  Ya que puede haber tipos C que sean muy similares a otras, para garantizar que se convierte con la misma lógica, los mapas de tipos XS se representan por un único identificador, y de aquí en adelante le llamaremos en este documento B<tipo XS>.  Puede entonces decirle al compilador XS que múltiples tipos C se mapean con el mismo mapa de tipos XS.
+
+En su código XS, el mecanismo de mapa de tipos se hará más sencillo si define un argumento con un tipo C o si usa un C<CODE:> y una sección C<OUTPUT:> junto con un tipo de retorno C de su XSUB.
+
+=head2 Anatomía de un mapa de tipos
+
+En términos más prácticos, el mapa de tipos es una colección de fragmentos de código que el compilador B<xsubpp> usará para mapear los parámetros y valores de las funciones C, a valores Perl.  El archivo del mapa de tipos consiste en tres secciones etiquetadas como C<TYPEMAP>, C<INPUT> y C<OUTPUT>.
+Se asume que una sección inicial no etiquetada es una sección C<TYPEMAP>.
+La sección INPUT le dice al compilador cómo traducir los valores Perl en variables de ciertos tipos C.  La sección OUTPUT le dice al compilador cómo traducir los valores de ciertos tipos C en valores que Perl pueda entender.  La sección TYPEMAP le dice al compilador qué fragmentos de código de INPUT y OUTPUT deberían usarse para mapear un cierto tipo C a un valor Perl.  La sección de etiquetas C<TYPEMAP>, C<INPUT> o C<OUTPUT> deben comenzar en la primera columna de una línea, y deben estar en mayúscula.
+
+Cada tipo de sección puede aparecer un número arbitrario de veces, o no aparecer en absoluto.  Por ejemplo, un mapa de tipos puede normalmente carecer de las secciones C<INPUT> y C<OUTPUT> si todo lo que necesita hacer es asociar tipos adicionales de C con tipos principales XS, como T_PTROBJ.
+Las líneas que comienzan con una almohadilla (C<#>) se consideran que son comentarios, e ignoradas en la sección C<TYPEMAP>, pero se consideran que son significativas en C<INPUT> y C<OUTPUT>. Generalmente, las líneas en blanco se ignoran.
+
+Tradicionalmente, los mapas de tipos se escriben en archivo aparte, convencionalmente llamado C<typemap> en una distribución CPAN.  Con ExtUtils::ParseXS (el compilador XS) versión 3.12 o superior que viene con perl 5.16, los mapas de tipos se pueden integrar directamente en el código XS usando una sintaxis parecida a la de un texto HERE:
+
+  TYPEMAP: <<AQUI
+  ...
+  AQUI
+
+donde C<AQUI> se puede reemplazar por otros identificadores, como en cualquier otro documento incrustado Perl.  Todos los detalles sobre el formato textual del mapa de tipos siguen siendo válidos.
+
+La sección C<TYPEMAP> debería contener una pareja de tipos, uno de C y otro XS, por línea, como se muestra a continuación.  Un ejemplo del archivo de mapa de tipos principales:
+
+  TYPEMAP
+  # todas las variantes de char* se gestiona por el mapa de tipos T_PV
+  char *          T_PV
+  const char *    T_PV
+  unsigned char * T_PV
+  ...
+
+Las secciones C<INPUT> y C<OUTPUT> tienen formatos idénticos, esto es, cada línea no sangrada inicia un nuevo mapa de entrada o salida, respectivamente.
+Un nuevo mapa de entrada o salida debe comenzar con el nombre del tipo XS a mapear, él sólo en la línea, seguido por el código que lo implementa, sangrado en las siguientes líneas. Ejemplo:
+
+  INPUT
+  T_PV
+    $var = ($type)SvPV_nolen($arg)
+  T_PTR
+    $var = INT2PTR($type,SvIV($arg))
+
+Entraremos en el significado de estas variables perleras dentro de un poco.
+
+Finalmente, aquí un ejemplo del archivo completo de mapa de tipos para mapear cadenas C del tipo C<char *> a escalares/cadenas Perl:
+
+  TYPEMAP
+  char *  T_PV
+
+  INPUT
+  T_PV
+    $var = ($type)SvPV_nolen($arg)
+
+  OUTPUT
+  T_PV
+    sv_setpv((SV*)$arg, $var);
+
+Aquí un ejemplo más complicado: suponga que quiere bendecir C<struct netconfig> en la clase C<Net::Config>.
+Una forma para hacer esto es usar subrayados (_) para separar nombres de paquetes, como a continuación:
+
+  typedef struct netconfig * Net_Config;
+
+Y entonces proporcione una entrada de mapa de tipos C<T_PTROBJ_SPECIAL> que mapee los subrayados a dos caracteres de dos puntos (::), y declare que C<Net_Config> sea de ese tipo:
+
+  TYPEMAP
+  Net_Config      T_PTROBJ_SPECIAL
+
+  INPUT
+  T_PTROBJ_SPECIAL
+    if (sv_derived_from($arg, \"${(my $ntt=$ntype)=~s/_/::/g;\$ntt}\")){
+      IV tmp = SvIV((SV*)SvRV($arg));
+      $var = INT2PTR($type, tmp);
+    }
+    else
+      croak(\"$var is not of type ${(my $ntt=$ntype)=~s/_/::/g;\$ntt}\")
+
+  OUTPUT
+  T_PTROBJ_SPECIAL
+    sv_setref_pv($arg, \"${(my $ntt=$ntype)=~s/_/::/g;\$ntt}\",
+                 (void*)$var);
+
+Las secciones INPUT y OUTPUT sustituyen al vuelo los subrayados por dobles puntos, dando el efecto deseado.  Este ejemplo demuestra algo de este poder y versatilidad de la facilidad del mapa de tipos.
+
+La macro C<INT2PTR> (definida en perl.h) convierte un entero a un puntero del tipo dado, teniendo cuidado de los posibles diferentes tamaños de enteros y punteros.  Existen también las macros C<PTR2IV>, C<PTR2UV>, C<PTR2NV>, para mapear el otro sentido, que puede ser útil en las secciones OUTPUT.
+
+=head2 El rol del archivo de mapa de tipos en su distribución
+
+El mapa de tipos por defecto en el directorio F<lib/ExtUtils> del código fuente de Perl contiene muchos tipos útiles que las extensiones Perl pueden usar.  Algunas extensiones definen mapas de tipos adicionales que se mantienen en su propio directorio.
+Estos mapas de tipos adicionales pueden referirse a mapas INPUT y OUTPUT en el mapa de tipos principal.  El compilador B<xsubpp> permitirá que el mapa de tipos de la propia extensión sobreescriba cualquier mapeo que esté en el mapa de tipos por defecto.  En vez de usar un archivo F<typemap> adicional, los mapas de tipos pueden integrarse literalmente en XS con una sintaxis de documento HERE.  Vea la documentación sobre el identificador XS C<TYPEMAP:>.
+
+Para las distribuciones CPAN, puede asumir que están disponibles los tipos XS definidos para el núcleo de perl. Adicionalmente, el mapa de tipos principal tiene tipos XS por defecto para un gran número de tipos C.  Por ejemplo, si simplemente devuelve un C<char *> desde su XSUB, el mapa de tipos principal tendrá este tipo C asociado con el tipo XS T_PV.  Esto significa que su cadena C se copiará en el contenedor PV (valor puntero) de un nuevo escalar que se devolverá desde su XSUB a Perl.
+
+Si está desarrollando una distribución CPAN utilizando XS, puede añadir su propio archivo llamado F<typemap> a la distribución.  Ese archivo puede contener mapas de tipos que tanto mapea tipos que son específicos a su código, como que sobreescribe los mapeos del archivo de mapa de tipos principal para los tipos C más comunes.
+
+=head2 Compartir mapas de tipos entre distribuciones CPAN
+
+Comenzando con ExtUtils::ParseXS versión 3.13_01 (viene con perl 5.16 y superior), es bastante fácil compartir código de mapa de tipos entre múltiples distribuciones CPAN. La idea general es compartirlo como un módulo que ofrezca una cierta API y declare los módulos dependientes como un requerimiento en tiempo de compilación e importe el mapa de tipos en el XS. Un ejemplo de tal módulo de mapa de tipos compartido en CPAN es C<ExtUtils::Typemaps::Basic>. Dos pasos para obtener los mapas de tipos del módulo disponibles en su código:
+
+=over 4
+
+=item *
+
+Declare C<ExtUtils::Typemaps::Basic> como una dependencia en tiempo de compilación en C<Makefile.PL> (use C<BUILD_REQUIRES>), o en su C<Build.PL> (use C<build_requires>).
+
+=item *
+
+Incluya la siguiente línea en la sección XS de su archivo XS: (no parta la línea)
+
+  INCLUDE_COMMAND: $^X -MExtUtils::Typemaps::Cmd
+                   -e "print embeddable_typemap(q{Basic})"
+
+=back
+
+=head2 Escribir entradas del mapa de tipos
+
+Cada entrada de mapa de tipos INPUT u OUTPUT es una cadena Perl doblemente entrecomillada que se evaluará en la presencia de ciertas variables para obtener el código C final para mapear un cierto tipo C.
+
+Esto significa que puede integrar código Perl en su código (C) de mapa de tipos usando construcciones tales como C<${ código perl que evalúa aquí a una referencia escalar }>. Un caso de uso común es generar mensajes de error que refieren a una verdadero nombre de función incluso cuando se usa la característica ALIAS XS:
+
+  ${ $ALIAS ? \q[GvNAME(CvGV(cv))] : \qq[\"$pname\"] }
+
+Para ver muchos ejemplos de mapas de tipos, refiérase al archivo de mapas de tipo principal que se puede encontrar en el árbol de código perl en F<lib/ExtUtils/typemap>.
+
+Las variables Perl que están disponibles para interpolación en los mapas de tipos son las siguientes:
+
+=over 4
+
+=item *
+
+I<$var> - el nombre de la variable de entrada o salida, por ejemplo RETVAL para valores de retorno.
+
+=item *
+
+I<$type> - El tipo C crudo del parámetro, cualquier C<:> se reemplaza con C<_>.
+p. e., para un tipo C<Foo::Bar>, I<$type> es C<Foo__Bar>
+
+=item *
+
+I<$ntype> - el tipo suministrado con C<*> reemplazado con C<Ptr>.
+p. e., para un tipo C<Foo*>, I<$ntype> es C<FooPtr>
+
+=item *
+
+I<$arg> - la entrada de pila, al que el parámetro de entrada o salida está ligado, p. e. C<ST(0)>
+
+=item *
+
+I<$argoff> - el índice del argumento dentro de la pila de argumentos.  Es decir, 0 para el primer argumento, etcétera.
+
+=item *
+
+I<$pname> - el nombre completo de la XSUB, incluyendo el nombre de C<PACKAGE>, con cualquier C<PREFIX> eliminado.  Este es el nombre no-ALIAS.
+
+=item *
+
+I<$Package> - el paquete especificado por el identificador más reciente C<PACKAGE>.
+
+=item *
+
+I<$ALIAS> - no cero si la actual XSUB tiene cualquier alias declarado con C<ALIAS>.
+
+=back
+
+=head2 Listado completo de los mapas de tipos principales
+
+Cada tipo C se representa por una entrada en el archivo de mapa de tipos que es responsable de convertir variables perl (SV, AV, HV, CV, etc.)
+a y desde ese tipo. Las siguientes secciones lista todos los tipos XS que vienen por defecto con perl.
+
+=over 4
+
+=item T_SV
+
+Esto simplemente pasa la representación C de la variable Perl (un SV*) dentro y fuera de la capa XS. Esto se puede usar si el código C quiere tratar directamente con la variable Perl.
+
+=item T_SVREF
+
+Utilizado para pasar y devolver una referencia a un SV.
+
+Note que este mapa de tipos no decrementa el contador de referencias cuando devuelve la referencia a un SV*.
+Vea también: T_SVREF_REFCOUNT_FIXED
+
+=item T_SVREF_FIXED
+
+Utilizado para pasar y devolver una referencia a un SV.
+Esta es una variante fija de T_SVREF que decrementa el contador de referencias de forma apropiada cuando devuelve una referencia a un SV*. Se incluyó en Perl 5.15.4.
+
+=item T_AVREF
+
+Desde el nivel de perl esto es una referencia a un array de perl.
+Desde el nivel de C esto es un puntero a un AV.
+
+Note que este mapa de tipos no decrementa el contador de referencias cuando devuelve un AV*. Vea también: T_AVREF_REFCOUNT_FIXED
+
+=item T_AVREF_REFCOUNT_FIXED
+
+Desde el nivel de perl esto es una referencia a un array de perl.
+Desde el nivel de C esto es un puntero a un AV. Esto es una variante fija de T_AVREF que decrementa el contador de referencias de forma apropiada cuando devuelve un AV*. Se incluyó en Perl 5.15.4.
+
+=item T_HVREF
+
+Desde el nivel de perl esto es una referencia a un hash de perl.
+Desde el nivel de C esto es un puntero a un HV.
+
+Note que este mapa de tipos no decrementa el contador de referencias cuando devuelve un HV*. Vea también: T_HVREF_REFCOUNT_FIXED
+
+=item T_HVREF_REFCOUNT_FIXED
+
+Desde el nivel de perl esto es una referencia a un hash de perl.
+Desde el nivel de C esto es un puntero a un HV. Esto es una variante fija de T_HVREF que decrementa el contador de referencias de forma apropiada cuando devuelve un HV*. Se incluyó en Perl 5.15.4.
+
+=item T_CVREF
+
+Desde el nivel de perl esto es una referencia a una subrutina perl (por ejemplo, $sub = sub { 1 };). Desde el nivel de C esto es un puntero a un CV.
+
+Note que este mapa de tipos no decrementa el contador de referencias cuando devuelve un HV*. Vea también: T_HVREF_REFCOUNT_FIXED
+
+=item T_CVREF_REFCOUNT_FIXED
+
+Desde el nivel de perl esto es una referencia a una subrutina perl (por ejemplo, $sub = sub { 1 };). Desde el nivel de C esto es un puntero a un CV.
+
+Esto es una variante fija de T_HVREF que decrementa el contador de referencias de forma apropiada cuando devuelve un HV*. Se incluyó en Perl 5.15.4.
+
+=item T_SYSRET
+
+El mapa de tipos T_SYSRET se usa para procesar valores de retorno desde las llamadas del sistema.
+Sólo es significativo cuando se pasan valores desde C a perl (no existe el concepto de pasar un valor de retorno del sistema de Perl a C).
+
+Las llamadas del sistema devuelven -1 en caso de error (establece ERRNO por la misma razón) y (normalmente) 0 en caso de éxito. Si el valor de retorno es -1 este mapa de tipos devuelve C<undef>. Si el valor de retorno no es -1, este mapa de tipos traduce un 0 (falso en perl) a "0 but true" (que es verdadero en perl) o devuelve el propio valor, para indicar que el comando tuvo éxito.
+
+El módulo L<POSIX|POSIX> hace un uso intensivo de este tipo.
+
+=item T_UV
+
+Un entero sin signo.
+
+=item T_IV
+
+Un entero con signo. Esto es una conversión al tipo de entero requerido cuando se pasa a C y convertido a un IV cuando se devuelve a Perl.
+
+=item T_INT
+
+Un entero con signo. Este mapa de tipos convierte el valor de Perl a un tipo de entero nativo (el tipo C<int> en la plataforma actual). Cuando devuelva el valor a perl se procesa de la misma forma que para T_IV.
+
+Su comportamiento es idéntico a usar un tipo C<int> en XS con T_IV.
+
+=item T_ENUM
+
+Un valor enumerado. Se utiliza para transferir un componente enumerado desde C. No hay razón para pasar un valor enumerado a C ya que se almacena como IV dentro de perl.
+
+=item T_BOOL
+
+Un tipo booleano. Esto se puede usar para pasar los valores verdadero y falso a y desde C.
+
+=item T_U_INT
+
+Esto es para enteros sin signo. Esto es equivalente a usar T_UV pero convierte explícitamente la variable al tipo C<unsigned int>.
+El tipo por defecto para C<unsigned int> es T_UV.
+
+=item T_SHORT
+
+Enteros cortos. Esto es equivalente a T_IV pero convierte lo devuelto al tipo C<short>. El mapa de tipos por defecto para C<short> es T_IV.
+
+=item T_U_SHORT
+
+Enteros cortos sin signo. Esto es equivalente a T_UV pero convierte explícitamente lo devuelto al tipo C<unsigned short>. El mapa de tipos por defecto para C<unsigned short> es T_UV.
+
+T_U_SHORT se usa para el tipo C<U16> en el mapa de tipos estándar.
+
+=item T_LONG
+
+Enteros largos. Esto es equivalente a T_IV pero convierte lo devuelto al tipo C<long>. El mapa de tipos por defecto para C<long> es T_IV.
+
+=item T_U_LONG
+
+Enteros largos sin signo. Esto es equivalente a T_UV pero convierte explícitamente lo devuelto al tipo C<unsigned long>. El mapa de tipos por defecto para C<unsigned long> es T_UV.
+
+T_U_LONG se usa para el tipo C<U32> en el mapa de tipos estándar.
+
+=item T_CHAR
+
+Caracteres individuales de 8 bit.
+
+=item T_U_CHAR
+
+Un byte sin signo.
+
+=item T_FLOAT
+
+Un número en punto flotante. Este mapa de tipos garantiza devolver una variable convertida a un C<float>.
+
+=item T_NV
+
+Un número en punto flotante Perl. Similar a T_IV y T_UV en que el tipo de retorno se convierte al tipo numérico requerido en lugar de a un tipo específico.
+
+=item T_DOUBLE
+
+Un número en punto flotante en doble precisión. Este mapa de tipos garantiza devolver una variable convertida a un C<double>.
+
+=item T_PV
+
+Una cadena (char *).
+
+=item T_PTR
+
+Una dirección de memoria (puntero). Típicamente asociado con un tipo C<void *>.
+
+=item T_PTRREF
+
+Similar a T_PTR excepto que el puntero se almacena en un escalar y la referencia al escalar se devuelve al llamador. Esto se puede usar para esconder del programador el valor real del puntero ya que normalmente no se requiere directamente desde dentro de perl.
+
+El mapa de tipos comprueba que se pasa una referencia a un escalar, de perl a XS.
+
+=item T_PTROBJ
+
+Similar a T_PTRREF excepto que la referencia es bendecida en una clase.
+Esto permite que el puntero se use como un objeto. Usado más normalmente para tratar con estructuras C. El mapa de tipos comprueba que el objeto que se pasa en la rutina XS es de la clase correcta (o parte de una subclase).
+
+El puntero se bendice en una clase que es derivada del nombre del tipo del puntero pero con todos los '*' en el nombre reemplazados con 'Ptr'.
+
+Sólo para XSUB C<DESTROY>, un T_PTROBJ se optimiza a un T_PTRREF. Esto significa que se salta la comprobación de la clase.
+
+=item T_REF_IV_REF
+
+TODAVÍA NO
+
+=item T_REF_IV_PTR
+
+Similar a T_PTROBJ en que el puntero se bendice en un objeto escalar.
+La diferencia es que cuando el objeto se devuelve a XS debe ser del tipo correcto (no está soportada la herencia) mientras que T_PTROBJ soporta herencia.
+
+El puntero se bendice en una clase que es derivada del nombre del tipo del puntero pero con todos los '*' en el nombre reemplazados con 'Ptr'.
+
+Sólo para XSUB C<DESTROY>, un T_REF_IV_PTR se optimiza a un T_PTRREF. Esto significa que se salta la comprobación de la clase.
+
+=item T_PTRDESC
+
+TODAVÍA NO
+
+=item T_REFREF
+
+Similar a T_PTRREF, excepto que el puntero que se almacena en el escalar referenciado se desreferencia y copia a la variable de salida. Esto significa que T_REFREF es a T_PTRREF como T_OPAQUE es a T_OPAQUEPTR. ¿Todo claro?
+
+Sólo la parte INPUT de esto está implementada (de Perl a XSUB) y no se conocen usuarios del núcleo de Perl o en CPAN.
+
+=item T_REFOBJ
+
+Como T_REFREF, excepto que hace una comprobación estricta de tipo (no está soportada la herencia).
+
+Sólo para XSUB C<DESTROY>, un T_REFOBJ se optimiza a un T_REFREF. Esto significa que se salta la comprobación de la clase.
+
+=item T_OPAQUEPTR
+
+Esto se puede usar para almacenar bytes en el componente cadena del SV. Aquí la representación de los datos es irrelevante a perl y los propios bytes son simplemente almacenados en el SV. Se asume que la variable C es un puntero (los bytes se copian desde esa posición de memoria).  Si el puntero apunta a algo que se representa por 8 bytes entonces esos 8 bytes se almacenan en el SV (y length() reportará un valor de 8). Esta entrada es similar a T_OPAQUE.
+
+En principio el comando unpack() se puede usar para convertir los bytes devuelta a un número (si el tipo subyacente se sabe que va a ser un número).
+
+Esta entrada se puede usar para almacenar una estructura C (el número de bytes a copiarse se calcula usando la función C C<sizeof>) y se puede usar como alternativa a T_PTRREF sin tener que preocuparse de una fuga de memoria (ya que Perl limpiará el SV).
+
+=item T_OPAQUE
+
+Esto se puede usar para almacenar datos desde tipos no-punteros en la parte cadena de un SV. Esto es similar a T_OPAQUEPTR excepto que el mapa de tipos recupera el puntero directamente en lugar de asumir de que fue suministrado. Por ejemplo, si un entero se importa en Perl usando T_OPAQUE en lugar de T_IV los bytes subyacentes representando el entero se almacenarán en el SV pero el valor entero real no estará disponible. es decir, los datos son opacos a perl.
+
+Los datos pueden recuperarse utilizando la función C<unpack> si se conoce el tipo subyacente del flujo de bytes.
+
+T_OPAQUE soporta entrada y salida de tipos sencillos.
+T_OPAQUEPTR se puede usar para pasar estos bytes de vuelta a C, si un puntero es aceptable.
+
+=item Array implícito
+
+xsubpp soporta una sintaxis especial para devolver arrays C empaquetados a perl. Si el tipo de retorno del XS se proporciona como
+
+  array(type, nelem)
+
+xsubpp copiará los contenidos de C<nelem * sizeof(type)> bytes desde RETVAL a un SV y lo meterá en la pila. Esto es sólo realmente útil si el número de elementos a devolverse es conocido en tiempo de compilación y no le importa tener una cadena de bytes en su SV.  Use T_ARRAY para meter un número de argumentos variable en la pila de retorno (no se empaquetarán como una única cadena).
+
+Esto es similar a usar T_OPAQUEPTR pero se puede usar para procesar más de un elemento.
+
+=item T_PACKED
+
+Llama a funciones de conversión suministradas por el usuario. Para C<OUTPUT> (XSUB a Perl), una función con nombre C<XS_pack_$ntype> se llama con la salida del escalar Perl, y la variable C a convertir.
+C<$ntype> es el tipo C normalizado que se va a mapear a Perl. Normalizado significa que todos los C<*> se reemplazan por la cadena C<Ptr>. Se ignora el valor de retorno de la función.
+
+Recíprocamente, para mapear C<INPUT> (Perl a XSUB), la función con nombre C<XS_unpack_$ntype> se llama con el escalar Perl de entrada como argumento y el valor de retorno se convierte al tipo C mapeado, y se asigna a la variable C de salida.
+
+Un ejemplo de función de conversión para una estructura C C<foo_t *> mapeada podría ser:
+
+  static void
+  XS_pack_foo_tPtr(SV *out, foo_t *in)
+  {
+    dTHX; /* alas, la firma no incluye pTHX_ */
+    HV* hash = newHV();
+    hv_stores(hash, "int_member", newSViv(in->int_member));
+    hv_stores(hash, "float_member", newSVnv(in->float_member));
+    /* ... */
+
+    /* mortalizar ya que la pila no tiene contador de referencias */
+    sv_setsv(out, sv_2mortal(newRV_noinc((SV*)hash)));
+  }
+
+La conversión desde Perl a C se deja como ejercicio para el lector, pero el prototipo podría ser:
+
+  static foo_t *
+  XS_unpack_foo_tPtr(SV *in);
+
+En vez de una función C real que tenga que recuperar el contexto del hilo utilizando C<dTHX>, puede definir macros del mismo nombre y evitar la sobrecarga. También, recuerde que posiblemente tenga que liberar la memoria reservada por C<XS_unpack_foo_tPtr>.
+
+=item T_PACKEDARRAY
+
+T_PACKEDARRAY es similar a T_PACKED. De hecho, el mapa de tipos C<INPUT> (Perl a XSUB) es idéntico, pero el mapa de tipos C<OUTPUT> pasa un argumento adicional a la función C<XS_pack_$ntype>. Este tercer parámetro indica el número de elementos en la salida, de modo que la función puede manejar arrays C con seguridad. La variable necesita declararse por el usuario y debe tener el nombre C<count_$ntype> donde C<$ntype> es el nombre normalizado del tipo C, como se explicó antes. La firma de la función sería para el ejemplo anterior y C<foo_t **>:
+
+  static void
+  XS_pack_foo_tPtrPtr(SV *out, foo_t *in, UV count_foo_tPtrPtr);
+
+El tipo del tercer parámetro es arbitrario según lo que el mapa de tipos indique. Él sólo tiene que estar en línea con la variable declarada.
+
+Naturalmente, a menos que sepa el número de elementos en el array C C<sometype **>, dentro de su XSUB, el valor de retorno desde C<foo_t ** XS_unpack_foo_tPtrPtr(...)> será difícil de descifrar.
+Ya que todos los detalles depende del autor XS (el usuario del mapa de tipos), hay varias soluciones, ninguna de las cuales son particularmente elegantes.
+La solución más vista es la de reservar memoria para N+1 punteros y asignar C<NULL> al N+1 para facilitar la iteración.
+
+De otra forma, en primer lugar es preferible usar un mapa de tipos personalizado para sus propósitos.
+
+=item T_DATAUNIT
+
+TODAVÍA NO
+
+=item T_CALLBACK
+
+TODAVÍA NO
+
+=item T_ARRAY
+
+Esto se usa para convertir la lista de argumentos perl a un array C y para meter los contenidos de un array C en la pila de argumentos perl.
+
+La firma habitual de llamada es
+
+  @out = array_func( @in );
+
+Cualquier número de argumentos puede ocurrir en la lista antes del array pero los arrays de entrada y salida deben ser los últimos elementos en la lista.
+
+Cuando se usa para pasar una lista perl a C el autor de XS debe proporcionar una función (con un nombre según el tipo del array pero con 'Ptr' sustituido por '*') para reservar la memoria requerida para guardar la lista. Se debería devolver un puntero. Depende del autor del XS el liberar la memoria a la salida de la función. La variable C<ix_$var> se establece al número de elementos en el nuevo array.
+
+Cuando se devuelve un array C a Perl el autor de XA debe proporcionar una variable entera llamada C<size_$var> que contiene el número de elementos en el array. Esto se usa para determinar cuántos elementos tendrían que meterse en la pila de argumentos de retorno. Esto no se requiere a la entrada ya que Perl sabe cuántos argumentos están en la pila cuando se llama a la rutina. Normalmente esta variable se llamaría C<size_RETVAL>.
+
+Además, el tipo de cada elemento se determina del tipo del array. Si el array usa el tipo C<intArray *>, xsubpp automáticamente asumirá que contiene variables del tipo C<int> y usa esa entrada de mapa de tipos para realizar la copia de cada elemento. Todos los punteros '*' y marcas 'Array' se eliminan del nombre para determinar el subtipo.
+
+=item T_STDIO
+
+Esto se usa para pasar los identificadores de archivo a y desde C utilizando estructuras C<FILE *>.
+
+=item T_INOUT
+
+Esto se usa para pasar los identificadores de archivo a y desde C utilizando estructuras C<FILE *>. El manejador de archivo puede usarse para leer y escribir. Esto corresponde al modo C<+E<lt>>; vea también T_IN y T_OUT.
+
+Vea L<perliol> para más información sobre la capa de abstracción Perl IO. Perl debe compilarse con C<-Duseperlio>.
+
+No hay ninguna comprobación para afirmar que el identificador de archivo pasado desde Perl a C se creó con el modo correcto de C<open()>.
+
+Pista: el tutorial L<perlxstut> cubre ligeramente los tipos XS T_INOUT, T_IN y T_OUT.
+
+=item T_IN
+
+Lo mismo que T_INOUT, pero el identificador de archivo que se devuelve desde C a Perl sólo puede usarse para lectura (modo C<E<lt>>).
+
+=item T_OUT
+
+Lo mismo que T_INOUT, pero el identificador de archivo que se devuelve desde C a Perl sólo puede usarse el modo de apertura C<+E<gt>>.
+
+=back
+

@@ -188,9 +188,9 @@ Se dará soporte en el futuro a I<forkear> construcciones entubadas de open().
 
 Las subrutinas externas (XSUB) que mantienen su propio estado global pueden no funcionar de forma correcta.  Tales XSUB necesitarán tanto mantener los bloqueos para proteger accesos simultáneos a datos globales desde diferentes pseudo-procesos, o mantener todo su estado en la tabla de símbolos de Perl, que se copia de forma natural cuando se llame a fork().  En el futuro, se ofrecerá un mecanismo de retrollamada que ofrezca la oportunidad de clonar su estado.
 
-=item Interprete incrustado en una aplicación mayor
+=item Interprete integrado en una aplicación mayor
 
-La emulación de fork() puede no ejecutarse como se espera cuando se ejecuta en una aplicación que incruste un intérprete Perl y llame a la API de Perl que pueda evaluar partes de código Perl.  Esto enraíza en el hecho que la emulación solo tiene conocimiento sobre las estructuras de datos propias del intérprete de Perl y no sabe nada el estado de la aplicación que la contiene.  Por ejemplo, cualquier estado almacenado por la pila de llamadas de la propia aplicación está fuera de su alcance.
+La emulación de fork() puede no ejecutarse como se espera cuando se ejecuta en una aplicación que integre un intérprete Perl y llame a la API de Perl que pueda evaluar partes de código Perl.  Esto enraíza en el hecho que la emulación solo tiene conocimiento sobre las estructuras de datos propias del intérprete de Perl y no sabe nada el estado de la aplicación que la contiene.  Por ejemplo, cualquier estado almacenado por la pila de llamadas de la propia aplicación está fuera de su alcance.
 
 =item Seguridad de los hilos en las extensiones
 

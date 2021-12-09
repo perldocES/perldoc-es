@@ -21,9 +21,9 @@ Naturalmente, uno podría escribir tal código de unión directamente en C. Sin 
 
 El lenguaje XS nos permite describir el mapeo entre cómo se usa la rutina C, y cómo se usa la correspondiente rutina Perl.  También permite la creación de rutinas Perl rutinas que se traducen directamente a código C y que no se relacionan con una función C preexistente.  En casos en que coincide la interfaz C con la interfaz Perl, la declaración XSUB es casi idéntica a una declaración de una función C (al estilo K&R).  En tales circunstancias, existe otra herramienta llamada C<h2xs> que es capaz de traducir un archivo de cabecera C en el correspondiente archivo XS que proporcionará el pegamento a las funciones/macros descritas en el archivo de cabecera.
 
-El compilador XS se llama B<xsubpp>.  Este compilador crea las construcciones necesarias para permitirle a un XSUB que manipule valores Perl, y crea el pegamento necesario para permitirle a Perl llamar a XSUB.  El compilador usa B<typemaps> para determinar cómo mapear parámetros de función C y valores de salida a valores Perl, y al revés.  El typemap por defecto (que viene con Perl) gestiona muchos tipos comunes de C.  Un typemap suplementario también puede ser necesario para gestionar cualesquiera estructuras y tipos especiales y para la biblioteca enlazada. Para más información sobre typemaps, vea L<perlxstypemap>.
+El compilador XS se llama B<xsubpp>.  Este compilador crea las construcciones necesarias para permitirle a un XSUB que manipule valores Perl, y crea el pegamento necesario para permitirle a Perl llamar a XSUB.  El compilador usa B<typemaps> para determinar cómo mapear parámetros de función C y valores de salida a valores Perl, y al revés.  El mapa de tipos por defecto (que viene con Perl) gestiona muchos tipos comunes de C.  Un mapa de tipos suplementario también puede ser necesario para gestionar cualesquiera estructuras y tipos especiales y para la biblioteca enlazada. Para más información sobre typemaps, vea L<perlxstypemap>.
 
-Un archivo en formato XS empieza con una sección en lenguaje C que va hasta la primera directiva C<MODULE =Z<>>.  Otras directivas XS y definiciones XSUB pueden seguir a esta línea.  EL "lenguaje" usado en esta parte del archivo es normalmente se conoce como lenguaje XS.  B<xsubpp> reconoce y se salta POD (vea L<perlpod>) tanto en C como en secciones del lenguaje XS, que permite al archivo XS contener documentación embebida.
+Un archivo en formato XS empieza con una sección en lenguaje C que va hasta la primera directiva C<MODULE =Z<>>.  Otras directivas XS y definiciones XSUB pueden seguir a esta línea.  EL "lenguaje" usado en esta parte del archivo es normalmente se conoce como lenguaje XS.  B<xsubpp> reconoce y se salta POD (vea L<perlpod>) tanto en C como en secciones del lenguaje XS, que permite al archivo XS contener documentación integrada.
 
 Vea L<perlxstut> por un tutorial sobre todo el proceso de creación de la extensión.
 
@@ -141,7 +141,7 @@ Una sección XSUB continúa hasta que se encuentre otra palabra clave inicio de 
 
 La pila de argumentos Perl se usa para almacenar los valores que se envían como parámetros a la XSUB y almacenar el valor/es de retorno de la XSUB.  En realidad todas las funciones Perl (incluyendo las no XSUB) mantienen todos sus valores en esta pila, al mismo tiempo, cada uno limitado a su propio rango de posiciones en la pila.  En este documento la primera posición en la pila que pertenece a la función activa se referirá como posición 0 para esa función.
 
-Las XSUB refieren a sus argumentos en la pila con la macro B<ST(x)>, donde I<x> refiere a una posición en esta parte de la pila de la XSUB.  La posición 0 para esa función será conocida para la XSUB como ST(0).  Los parámetros de entrada a la XSUB y los valores de salida devueltos siempre comienzan en ST(0).  Para muchos casos sencillos el compilador B<xsubpp> generará el código necesario para manejar la pila de argumentos incrustando fragmentos de código encontrados en los mapas de tipos.  En casos más complejos el programador debe suministrar el código.
+Las XSUB refieren a sus argumentos en la pila con la macro B<ST(x)>, donde I<x> refiere a una posición en esta parte de la pila de la XSUB.  La posición 0 para esa función será conocida para la XSUB como ST(0).  Los parámetros de entrada a la XSUB y los valores de salida devueltos siempre comienzan en ST(0).  Para muchos casos sencillos el compilador B<xsubpp> generará el código necesario para manejar la pila de argumentos incrustando fragmentos de código integrados en los mapas de tipos.  En casos más complejos el programador debe suministrar el código.
 
 =head2 La variable RETVAL
 
@@ -343,9 +343,9 @@ Esta función usa la variable timep solo como una variable de salida y no le pre
 
 =head2 La palabra clave TYPEMAP:
 
-A partir de Perl 5.16, puede incrustar mapas de tipos en su contigo XS en lugar de o añadido al mapa de tipos en un archivo separado.  Múltiples de tales mapas de tipos incrustados se procesarán en orden de aparición en el código XS e igual a los archivos locales de mapas de tipos toman precedencia sobre el mapa de tipos por defecto; los mapas de tipos incrustados pueden sobrescribir las definiciones anteriores de estancias de TYPEMAP, INPUT y OUTPUT.  La sintaxis para los mapas de tipos incrustados es
+A partir de Perl 5.16, puede integrar mapas de tipos en su contigo XS en lugar de o añadido al mapa de tipos en un archivo separado.  Múltiples de tales mapas de tipos integrados se procesarán en orden de aparición en el código XS e igual a los archivos locales de mapas de tipos toman precedencia sobre el mapa de tipos por defecto; los mapas de tipos integrados pueden sobrescribir las definiciones anteriores de estancias de TYPEMAP, INPUT y OUTPUT.  La sintaxis para los mapas de tipos integrados es
 
-      TYPEMAP: <<HERE
+      TYPEMAP: <<AQUI
       ... su código de mapa de tipos aquí ...
       AQUI
 
@@ -1238,7 +1238,7 @@ Los destructores en XS se pueden crear especificando una función XSUB cuyo nomb
 
      struct netconfig *getnetconfigent(const char *netid);
 
-Un C<typedef> se creará para C<struct netconfig>.  El objeto Perl se bendecirá en una clase que coincida con el nombre del tipo C, con la marca C<Ptr> añadida, y el nombre no debería contener espacios si va a ser un nombre de paquete Perl.  El destructor se colocará en una clase correspondiente a la clase del objeto y la palabra clave PREFIX se usará para recortar el nombre a la palabra DESTROY tal como Perl esperaría.
+Un C<typedef> se creará para C<struct netconfig>.  El objeto Perl se bendecirá en una clase que coincida con el nombre del tipo C, con la marca C<Ptr> añadida, y el nombre no debería contener espacios integrados si va a ser un nombre de paquete Perl.  El destructor se colocará en una clase correspondiente a la clase del objeto y la palabra clave PREFIX se usará para recortar el nombre a la palabra DESTROY tal como Perl esperaría.
 
      typedef struct netconfig Netconfig;
 

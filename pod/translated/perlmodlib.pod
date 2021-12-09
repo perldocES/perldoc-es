@@ -708,7 +708,7 @@ Genera código C para las constantes de los módulos XS.
 
 =item ExtUtils::Embed
 
-Utilidades para incrustar Perl en aplicaciones C/C++
+Utilidades para integrar Perl en aplicaciones C/C++
 
 =item ExtUtils::Install
 
@@ -1684,7 +1684,7 @@ Convierte datos POD a texto ASCII con secuencias de escapes de formateo
 
 =item Pod::Usage
 
-Imprime un mensaje de uso a partir de la documentación pod incrustada
+Imprime un mensaje de uso a partir de la documentación pod integrada
 
 =item SDBM_File
 

@@ -697,7 +697,7 @@ Un clase que implementa un identificador de archivo enlazado debería definir lo
 
 Cuando se enlaza STDERR, se llamará a su método PRINT para sacar advertencias y mensajes de errores.  Esta característica se desactiva temporalmente durante la llamada, que significa que puede usar C<warn()> dentro de PRINT sin iniciar un bucle recursivo.  Y al igual que los identificadores de C<__WARN__> y C<__DIE__>, se llama al método PRINT de STDERR para informar de errores de interpretación, así que se aplican los problemas mencionados bajo L<perlvar/%SIG>.
 
-Todo esto es especialmente útil cuando se incrusta perl en algún otro programa, donde la salida hacia STDOUT y STDERR se pueden redireccionar de alguno forma especial.  Vea nvi y el módulo Apache para más ejemplos.
+Todo esto es especialmente útil cuando se integra perl en algún otro programa, donde la salida hacia STDOUT y STDERR se pueden redireccionar de alguno forma especial.  Vea nvi y el módulo Apache para más ejemplos.
 
 Cuando enlace un identificador, el primer argumento a C<tie> debe comenzar con un asterisco.  Así que, si está intentando enlazar STDOUT, use C<*STDOUT>.  Si lo ha asignado a una variable escalar, digamos C<$handle>, use C<*$handle>.
 C<tie $handle> enlaza la variable escalar C<$handle>, no el identificador que está dentro de él.

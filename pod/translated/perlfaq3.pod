@@ -129,7 +129,7 @@ Esta sección de las preguntas más frecuentes ofrece respuestas a preguntas rel
 
 =item L<perlguts> - Introducción a la API Perl
 
-=item L<perlembed> - cómo incrustar perl en su programa C
+=item L<perlembed> - cómo integrar perl en su programa C
 
 =back
 
@@ -451,7 +451,7 @@ son editores de texto para OS X que reconocen Perl ( L<http://www.barebones.com/
 
 =head2 ¿Dónde puedo obtener macros de Perl para vi?
 
-Para una completa versión del archivo de configuración para vi de Tom Christiansen, vea L<http://www.cpan.org/authors/id/T/TO/TOMC/scripts/toms.exrc.gz> , el archivo estándar para personalizar los emuladores de vi. El archivo se ejecuta mejor con nvi, la versión actual de vi distinta de Berkeley, que se puede compilar adicionalmente con un intérprete Perl empotrado. Vea L<http://www.cpan.org/src/misc/>.
+Para una completa versión del archivo de configuración para vi de Tom Christiansen, vea L<http://www.cpan.org/authors/id/T/TO/TOMC/scripts/toms.exrc.gz> , el archivo estándar para personalizar los emuladores de vi. El archivo se ejecuta mejor con nvi, la versión actual de vi distinta de Berkeley, que se puede compilar adicionalmente con un intérprete Perl integrado. Vea L<http://www.cpan.org/src/misc/>.
 
 =head2 ¿Dónde puedo obtener perl-mode o cperl-mode para emacs?
 X<emacs>
@@ -640,7 +640,7 @@ Aparte de las medidas normales ya descritas sobre cómo hacer los programas Perl
 
 Existen tres formas conocidas de evitar esa sobrecarga. Una solución implica ejecutar el servidor de HTTP Apache (disponible en L<http://www.apache.org/> ) tanto como con los módulos mod_perl o mod_fastcgi.
 
-Con mod_perl y el módulo Apache::Registry (distribuido con mod_perl), httpd se ejecutará con un intérprete de Perl embutido que pre-compila su I<script> y luego lo ejecuta en el mismo espacio sin hacer un I<fork>. La extensión Apache también le da a Perl acceso a la API interna del servidor, así que los módulos escritos en Perl pueden hacer lo mismo que cualquier otro módulo escrito en C. Para más información sobre mod_perl, vea L<http://perl.apache.org/>
+Con mod_perl y el módulo Apache::Registry (distribuido con mod_perl), httpd se ejecutará con un intérprete de Perl integrado que pre-compila su I<script> y luego lo ejecuta en el mismo espacio sin hacer un I<fork>. La extensión Apache también le da a Perl acceso a la API interna del servidor, así que los módulos escritos en Perl pueden hacer lo mismo que cualquier otro módulo escrito en C. Para más información sobre mod_perl, vea L<http://perl.apache.org/>
 
 Con el módulo FCGI (de CPAN) y el módulo mod_fastcgi (disponible desde L<http://www.fastcgi.com/> ) cada uno de sus programas Perl se convierte en un proceso demonio CGI permanente.
 
@@ -776,7 +776,7 @@ y siga con L<perlxs>, L<xsubpp> y L<perlguts>. Si desea llamar código Perl desd
 
 Podría no necesitar toda la potencia de XS. El módulo Inline::C le permite poner código C directamente en su código Perl. Gestiona toda la magia para hacer que funcione. Seguirá necesitando aprender al menos un poco de la API de Perl pero no tendrá que meterse con la complejidad de los archivos XS.
 
-=head2 He leído perlembed, perlguts, etc., pero no puedo incrustar perl en mi programa en C. ¿Qué estoy haciendo mal?
+=head2 He leído perlembed, perlguts, etc., pero no puedo integrar perl en mi programa en C. ¿Qué estoy haciendo mal?
 
 Descargue el kit ExtUtils::Embed desde CPAN y ejecute `make test'. Si la prueba pasa, lea de nuevo los pod. Y de nuevo, otra vez. Si falla, vea L<perlbug> y envíe un informe de fallo con la salida de C<make test TEST_VERBOSE=1> junto con C<perl -V>.
 

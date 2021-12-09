@@ -567,8 +567,8 @@ Dentro de su bloque, puede usar un C<;> antes de la elipsis denotar que C<{ ... 
 
 Nota: Algunas personas se refieren coloquialmente a este trozo de caracteres de puntuación como un "blablablá" o "tres puntos seguidos", pero su verdadero nombre es en realidad elipsis.
 
-=head2 POD: Documentación embebida
-X<POD> X<documentación> X<documentación>
+=head2 POD: Documentación integrada
+X<POD> X<documentación>
 
 Perl tiene un mecanismo para entremezclar documentación y código fuente.
 Mientras que él espera el comienzo de una nueva instrucción, si el compilador encuentra una línea que comienza con un signo de igual y una palabra, como esta:

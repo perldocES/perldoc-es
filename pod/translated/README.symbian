@@ -9,7 +9,7 @@ perlsymbian - Perl versión 5 en el sistema operativo Symbian
 
 Este documento describe varias características del sistema operativo Symbian que afectarán a cómo Perl versión 5 (de ahora en adelante sólo Perl) se compila y/o ejecuta.
 
-B<NOTE: esta adaptación (hasta la 0.4.1) no compila en el entorno gráfico del S.O. Symbian; en lugar de eso aparece como una DLL Symbian>. La DLL incluye una clase en C++ llamada CPerlBase, que uno pueda (derivar, y) entonces, usar para incrustar Perl en sus aplicaciones; vea F<symbian/README>.
+B<NOTE: esta adaptación (hasta la 0.4.1) no compila en el entorno gráfico del S.O. Symbian; en lugar de eso aparece como una DLL Symbian>. La DLL incluye una clase en C++ llamada CPerlBase, que uno pueda (derivar, y) entonces, usar para integrar Perl en sus aplicaciones; vea F<symbian/README>.
 
 La adaptación básica de Perl a Symbian solo implementa la funcionalidad básica de POSIX; no implementa ningún enlace para Perl de ningún Symbian posterior o Serie 60, Serie 80 o UIQ.
 
@@ -166,7 +166,7 @@ por favor, ignórelo ya que no es nada serio (el proceso de compilación renombr
 
 =head2 PerlApp
 
-La aplicación PerlApp demuestra cómo incrustar los intérpretes Perl en una aplicación Symbian.  El elemento "Time" del menú ejecuta el siguiente código Perl: C<print "Ejecutar en ", $^O, "\n", scalar localtime>, el "Oneliner" le permite escribir un código Perl, y el "Run" abre un selector de archivos para seleccionar un archivo Perl para ejecutarlo.
+La aplicación PerlApp demuestra cómo integrar los intérpretes Perl en una aplicación Symbian.  El elemento "Time" del menú ejecuta el siguiente código Perl: C<print "Ejecutar en ", $^O, "\n", scalar localtime>, el "Oneliner" le permite escribir un código Perl, y el "Run" abre un selector de archivos para seleccionar un archivo Perl para ejecutarlo.
 
 PerlApp también se inicia cuando el "reconocedor Perl" (también incluido e instalado) detecta un archivo Perl activado desde el GUI, y ofrece la posibilidad de instalarlo bajo \Perl (si el archivo Perl está en la bandeja de entrada de la aplicación de mensajería) o ejecutarlo (si el archivo Perl está bajo \Perl).
 

@@ -1345,7 +1345,7 @@ Pruebas de la interacción de expresiones regulares e hilos.
 
 =item t/op/regexp_qr_embed_thr.t
 
-Pruebas de la interacción de patrones con C<qr//> embebido e hilos.
+Pruebas de la interacción de patrones con C<qr//> integrados e hilos.
 
 =item t/op/regexp_unicode_prop.t
 

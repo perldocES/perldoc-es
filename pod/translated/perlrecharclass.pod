@@ -786,7 +786,7 @@ coincide con cosas en mayúscula.  Puede evitar sorpresas poniendo los component
  my $thai_or_lao = qr/(?[ \p{Thai} + \p{Lao} ])/;
  my $minuscula = qr/(?[ \p{Lower} + \p{Digit} ])/;
 
-Cuando éstas se incrustan en otro patrón, no cambia con lo que coinciden, sin importar los paréntesis o qué modificadores están en activo en el patrón exterior.
+Cuando éstas se integran en otro patrón, no cambia con lo que coinciden, sin importar los paréntesis o qué modificadores están en activo en el patrón exterior.
 
 Debido a la manera en que Perl interpreta las cosas, sus paréntesis y corchetes pueden necesitar estar balanceados, incluso los que estén en los comentarios.  Si encuentra un buen ejemplo, por favor, mándelo a C<perlbug@perl.org>, para que podamos tener un ejemplo concreto para esta página de manual.
 

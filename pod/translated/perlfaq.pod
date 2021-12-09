@@ -302,7 +302,7 @@ Esta sección de las preguntas más frecuentes ofrece respuestas a preguntas rel
 
 =item *
 
-He leído perlembed, perlguts, etc., pero no puedo incrustar perl en mi programa en C. ¿Qué estoy haciendo mal?
+He leído perlembed, perlguts, etc., pero no puedo integrar perl en mi programa en C. ¿Qué estoy haciendo mal?
 
 =item *
 

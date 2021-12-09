@@ -104,7 +104,7 @@ Para ello no tiene que saber cómo funciona XS.
 F<xsubpp> es un compilador que permite convertir código XS de Perl en código C.
 Lo suelen ejecutar los archivos makefile generados por L<ExtUtils::MakeMaker>.
 
-F<xsubpp> compila el código XS y genera código C; para ello, incrusta las construcciones necesarias para que las funciones C puedan manipular valores Perl y agregar el código necesario para que Perl pueda acceder a esas funciones.
+F<xsubpp> compila el código XS y genera código C; para ello, integra las construcciones necesarias para que las funciones C puedan manipular valores Perl y agregar el código necesario para que Perl pueda acceder a esas funciones.
 
 =item L<prove>
 

@@ -363,7 +363,7 @@ El nombre del archivo es Mytest.c:
 	    XSRETURN_EMPTY;
 	}
 
-Note las dos líneas comentadas con "XXXXX".  Si comprueba la primera parte del archivo de mapa de tipos (o sección), verá que los dobles son del tipo T_DOUBLE.  En la parte INPUT del mapa de tipos, un argumento que es T_DOUBLE se asigna a la variable arg llamando a la rutina SvNV sobre algo, luego reconvertirlo a doble, y luego asignarlo a la variable arg.  De forma similar, en la sección OUTPUT, una vez que arg tiene su valor final, se pasa a la función sv_setnv que lo devuelve a la subrutina llamante.  Estas dos funciones se explican en L<perlguts>; hablaremos más tarde sobre lo que significa "ST(0)" en la sección sobre la pila de argumentos.
+Note las dos líneas comentadas con "XXXXX".  Si comprueba la primera parte del archivo de mapa de tipos (o sección), verá que los dobles son del tipo T_DOUBLE.  En la parte INPUT del mapa de tipos, un argumento que es T_DOUBLE se asigna a la variable arg llamando a la rutina SvNV sobre algo, luego convertirlo a doble, y luego asignarlo a la variable arg.  De forma similar, en la sección OUTPUT, una vez que arg tiene su valor final, se pasa a la función sv_setnv que lo devuelve a la subrutina llamante.  Estas dos funciones se explican en L<perlguts>; hablaremos más tarde sobre lo que significa "ST(0)" en la sección sobre la pila de argumentos.
 
 =head2 Advertencia sobre los argumentos de salida
 
@@ -523,7 +523,7 @@ El archivo .xs de L<"EXAMPLE 4"> contiene algunos elementos nuevos.  Para entend
 
 	MODULE = Mytest2		PACKAGE = Mytest2
 
-Cualquier cosa antes de esta línea es código C normal que describe qué cabeceras incluir, y define algunas funciones útiles.  No se realizan traducciones en esta parte, aparte de la documentación POD incrustada (vea L<perlpod>) que va tal cual en la salida C generada.
+Cualquier cosa antes de esta línea es código C normal que describe qué cabeceras incluir, y define algunas funciones útiles.  No se realizan traducciones en esta parte, aparte de la documentación POD integrada (vea L<perlpod>) que va tal cual en la salida C generada.
 
 Cualquier cosa después de esta línea es la descripción de las funciones XSUB.
 Estas descripciones las traduce B<xsubpp> a código C que implementa estas funciones usando las convenciones de llamada Perl, y que hace a estas funciones visibles al intérprete Perl.
@@ -671,7 +671,7 @@ Si son cargadas automáticamente cuando se carga la propia extensión o si son c
 =head2 Documentar su extensión
 
 No existe, absolutamente, ninguna excusa para no documentar su extensión.
-La documentación reside en el archivo .pm.  Este archivo se ejecutará con pod2man, y la documentación empotrada se convertirá a un formato de página de manual, y luego colocada en el directorio blib.  Se copiará al directorio de páginas de manual de Perl cuando se instale la extensión.
+La documentación reside en el archivo .pm.  Este archivo se ejecutará con pod2man, y la documentación integrada se convertirá a un formato de página de manual, y luego colocada en el directorio blib.  Se copiará al directorio de páginas de manual de Perl cuando se instale la extensión.
 
 Puede esparcir la documentación y el código Perl dentro del archivo .pm.
 De hecho, si quiere usar la autocarga de métodos, debe hacer esto, tal y como explica el comentario dentro del archivo .pm.
@@ -857,7 +857,7 @@ Sólo estamos realizando una operación hash en esta función, que es almacenar 
 
 =item *
 
-Para crear una referencia, usamos la función C<newRV>.  Note en este caso (y muchos otros) puede encajar un AV* o un HV* a un tipo SV*.  Esto le permite tomar referencias a arrays, hashes y escalares con la misma función.  Recíprocamente, la función C<SvRV> siempre devuelve un SV*, que puede necesitar ajustarse al tipo apropiado si es cualquier cosa distinta de un escalar (comprobado con C<SvTYPE>).
+Para crear una referencia, usamos la función C<newRV>.  Note en este caso (y muchos otros) puede convertir un AV* o un HV* a un tipo SV*.  Esto le permite tomar referencias a arrays, hashes y escalares con la misma función.  Recíprocamente, la función C<SvRV> siempre devuelve un SV*, que puede necesitar convertirse al tipo apropiado si es cualquier cosa distinta de un escalar (comprobado con C<SvTYPE>).
 
 =item *
 

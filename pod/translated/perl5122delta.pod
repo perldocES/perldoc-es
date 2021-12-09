@@ -152,7 +152,7 @@ Perl ahora se salta las pruebas setuid de C<File::Copy> en particiones que él d
 
 =item *
 
-Se ha arreglado un posible segfault en el typemap por defecto de C<T_PRTOBJ>.
+Se ha arreglado un posible fallo de segmentación en el mapa de tipo por defecto de C<T_PRTOBJ>.
 
 =item *
 

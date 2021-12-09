@@ -1247,7 +1247,7 @@ Se pueden escapar los caracteres de control con C<\c>, así que se puede buscar 
 
 No escapa a C<$> o C<@>, así que las variables siguen sustituyéndose.
 
-C<\Q>, C<\L>, C<\l>, C<\U>, C<\u> y C<\E> son, de hecho, parte de una sintaxis de doble entrecomillamiento, y no parte de la propia sintaxis I<regex>.  Funcionarán si aparecen en una expresión regular incrustadas directamente en un programa, pero no cuando están contenidas en una cadena que se interpola en un patrón.
+C<\Q>, C<\L>, C<\l>, C<\U>, C<\u> y C<\E> son, de hecho, parte de una sintaxis de doble entrecomillamiento, y no parte de la propia sintaxis I<regex>.  Funcionarán si aparecen en una expresión regular integradas directamente en un programa, pero no cuando están contenidas en una cadena que se interpola en un patrón.
 
 Las I<regex> Perl pueden gestionar más que el conjunto de caracteres ASCII.  Perl soporta I<Unicode>, un estándar para representar alfabetos de, virtualmente, todos los lenguajes del mundo, y un almacén de símbolos.
 for representing the alphabets from virtually all of the world's written
@@ -1406,17 +1406,17 @@ Algunas veces es más ventajoso construir un patrón desde la I<entrada> que ana
 
 En vez de intentar hacer coincidir la entrada contra las palabras clave, hacemos coincidir el conjunto combinado de palabras clave contra la entrada.  El patrón de coincidencia en la operación S<C<$kwds =~ /\b($cmd\w*)/g>> hace varias cosas al mismo tiempo. Se asegura que el comando indicado comienza donde comienza una palabra clave (C<\b>). Tolera abreviaciones debido el añadido C<\w*>. Nos dice el número de coincidencias (C<scalar @coincidencias>) y todas las palabras clave que fueron encontradas.  Difícilmente podrías pedir más.
 
-=head2 Incrustar comentarios y modificadores en una expresión regular
+=head2 Integrar comentarios y modificadores en una expresión regular
 
 Comenzando con esta sección, discutiremos el conjunto de I<patrones extendidos> de Perl.  Son extensiones a la sintaxis tradicional de expresiones regulares que ofrece nuevas y poderosas herramientas para la coincidencia de patrones.  Ya hemos visto extensiones en la forma de construcciones mínimas de coincidencia C<??>, C<*?>, C<+?>, C<{n,m}?> y C<{n,}?>.  La mayor parte de las extensiones que hay a continuación tienen la forma C<(?car...)>, donde C<car> es un carácter que determina el tipo de la extensión.
 
-La primera extensión es un comentario incrustado C<(?#texto)>.  Esto incrusta un comentario en la expresión regular sin afectar a su significado.  El comentario no debería tener ningún paréntesis de cierre, en el texto.  Un ejemplo es
+La primera extensión es un comentario integrado C<(?#texto)>.  Esto integra un comentario en la expresión regular sin afectar a su significado.  El comentario no debería tener ningún paréntesis de cierre, en el texto.  Un ejemplo es
 
     /(?# Coincide con un entero:)[+-]?\d+/;
 
 Este estilo de comentar se ha superado de largo por el sistema de comentarios de forma libre ofrecido por el modificador C<//x>.
 
-La mayor parte de los modificadores, como C<//i>, C<//m>, C<//s> y C<//x> (o cualquier otra combinación de los mismos) pueden incrustarse en una I<regex> usando C<(?i)>, C<(?m)>, C<(?s)> y C<(?x)>.  Por ejemplo,
+La mayor parte de los modificadores, como C<//i>, C<//m>, C<//s> y C<//x> (o cualquier otra combinación de los mismos) pueden integrarse en una I<regex> usando C<(?i)>, C<(?m)>, C<(?s)> y C<(?x)>.  Por ejemplo,
 
     /(?i)yes/;  # coincide con 'yes' sin importar el tamaño de caja
     /yes/i;     # lo mismo
@@ -1426,7 +1426,7 @@ La mayor parte de los modificadores, como C<//i>, C<//m>, C<//s> y C<//x> (o cua
          )
     /x;
 
-Los modificadores incrustados pueden tener dos importantes ventajas sobre los modificadores usuales.  Los modificadores incrustados permiten aplicar un conjunto personalizado de modificadores a I<cada> patrón de la I<regex>.  Esto está muy bien para hacer coincidir un array de I<regex> que tengan diferentes modificadores:
+Los modificadores integrados pueden tener dos importantes ventajas sobre los modificadores usuales.  Los modificadores integrados permiten aplicar un conjunto personalizado de modificadores a I<cada> patrón de la I<regex>.  Esto está muy bien para hacer coincidir un array de I<regex> que tengan diferentes modificadores:
 
     $patron[0] = '(?i)doctor';
     $patron[1] = 'Johnson';
@@ -1437,13 +1437,13 @@ Los modificadores incrustados pueden tener dos importantes ventajas sobre los mo
         }
     }
 
-La segunda ventaja es que los modificadores incrustados (excepto C<//p>, que modifica la I<regex> entera) solo afectan a la I<regex> dentro del grupo en que el modificador incrustado está contenido.  Así que el agrupar se puede usar para localizar los efectos de los modificadores:
+La segunda ventaja es que los modificadores integrados (excepto C<//p>, que modifica la I<regex> entera) solo afectan a la I<regex> dentro del grupo en que el modificador integrado está contenido.  Así que el agrupar se puede usar para localizar los efectos de los modificadores:
 
     /Respuesta: ((?i)yes)/;  # coincide con 'Respuesta: yes', 'Respuesta: YES', etc.
 
-Los modificadores incrustados también pueden desactivar cualquier otro modificador activo, usando p.e., C<(?-i)>.  Los modificadores también pueden combinarse en una sola expresión, p.e., C<(?s-i)> activa el modo de solo una línea y desactiva la coincidencia de insensibilidad al tamaño de caja.
+Los modificadores integrados también pueden desactivar cualquier otro modificador activo, usando p.e., C<(?-i)>.  Los modificadores también pueden combinarse en una sola expresión, p.e., C<(?s-i)> activa el modo de solo una línea y desactiva la coincidencia de insensibilidad al tamaño de caja.
 
-Los modificadores incrustados también pueden añadirse a grupos de no captura.
+Los modificadores integrados también pueden añadirse a grupos de no captura.
 C<(?i-m:regex)> es una agrupación de no captura que coincide la C<regex> independientemente al tamaño de caja y desactiva el modo multilínea.
 
 
@@ -1743,7 +1743,7 @@ que muestra que los espacios siguen siendo posibles en las partes de código. No
 
 Perl 5.10 presentó un número de verbos de control con la pretensión de proveer de un control detallado sobre los procesos de vuelta atrás, influyendo directamente en el motor de I<regex> y suministrando técnicas de monitorización.  Como todas estas características de este grupo son experimentales y sujetas a cambio o eliminación en futuras versiones de Perl, se aconseja al lector interesado que se refiera a L<perlre/"Verbos especiales de control de vuelta atrás"> para ver una descripción más detallada.
 
-Lo que sigue es solo un ejemplo, ilustrando el verbo de control C<(*FAIL)>, que se puede abreviar como C<(*F)>. Si se inserta en una I<regex> causará su fallo, justo como si hubiese ocurrido una falla de coincidencia entre el patrón y la cadena. El procesamiento de la I<regex> continúa después como si hubiese ocurrido un fallo "normal", por lo que, por ejemplo, se intentará la siguiente posición en la cadena u otra alternativa. Ya que fallar una coincidencia no preserva los grupos de captura o produce resultados, puede ser necesario usar esto en combinación con código incrustado.
+Lo que sigue es solo un ejemplo, ilustrando el verbo de control C<(*FAIL)>, que se puede abreviar como C<(*F)>. Si se inserta en una I<regex> causará su fallo, justo como si hubiese ocurrido una falla de coincidencia entre el patrón y la cadena. El procesamiento de la I<regex> continúa después como si hubiese ocurrido un fallo "normal", por lo que, por ejemplo, se intentará la siguiente posición en la cadena u otra alternativa. Ya que fallar una coincidencia no preserva los grupos de captura o produce resultados, puede ser necesario usar esto en combinación con código integrado.
 
    %contador = ();
    "supercalifragilisticoexpialidoso" =~
@@ -1843,7 +1843,7 @@ Luego se ejecuta la coincidencia y el resto de las líneas describen el proceso:
 
 Cada paso es de la forma S<C<< n <x> <y> >>>, siendo C<< <x> >> la parte de la cadena que coincide y C<< <y> >> la parte que aún no lo ha hecho.  El S<C<< |  1:  STAR >>> le dice a Perl está en la línea número 1 de la lista compilada.  Consulte L<perldebguts/"Depurando expresiones regulares"> para verlo de forma más detallada.
 
-Un método alternativo de depuración de I<regex> es el de incrustar sentencias C<print>
+Un método alternativo de depuración de I<regex> es el de integrar sentencias C<print>
 dentro de la I<regex>.  Esto ofrece un registro paso a paso de la vuelta atrás en una alternancia:
 
     "that this" =~ m@(?{print "Comienza en la posición ", pos, "\n";})

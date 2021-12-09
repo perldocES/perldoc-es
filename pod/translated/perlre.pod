@@ -109,7 +109,7 @@ L<perlop/"s/PATTERN/REPLACEMENT/msixpodualngcer">, son:
 
 =back
 
-En la documentación se suele hacer referencia a los modificadores de expresiones regulares como "el modificador C</x>" (p. ej.), aunque el delimitador en cuestión puede no ser una barra diagonal.  Estos modificadores C</imsxadlup> también se pueden incrustar dentro de la propia expresión regular mediante la construcción C<(?...)>. Vea L</Patrones extendidos> más abajo.
+En la documentación se suele hacer referencia a los modificadores de expresiones regulares como "el modificador C</x>" (p. ej.), aunque el delimitador en cuestión puede no ser una barra diagonal.  Estos modificadores C</imsxadlup> también se pueden integrar dentro de la propia expresión regular mediante la construcción C<(?...)>. Vea L</Patrones extendidos> más abajo.
 
 =head3 Detalles de algunos modificadores
 
@@ -321,7 +321,7 @@ X<\> X<^> X<.> X<$> X<|> X<(> X<()> X<[> X<[]>
     ()	Agrupación
     []	Clase de caracteres entre corchetes
 
-De manera predeterminada se garantiza que el carácter C<"^"> detecte sólo el principio de la cadena, el carácter C<"$"> sólo el final (o la posición anterior al carácter de nueva línea al final) y Perl hará determinadas optimizaciones suponiendo que la cadena contiene una sola línea.  Los caracteres de nueva línea incrustados dentro de la cadena no se pueden detectar con C<"^"> o C<"$">.  Sin embargo, puede que desee tratar a la cadena como un búfer de varias líneas, de modo que C<"^"> coincida después de cualquier carácter de nueva línea que haya en la cadena (excepto si dicho carácter es el último en la cadena), y C<"$"> coincida delante de cualquier carácter de nueva línea.  A costa de una ligera sobrecarga, puede hacer esto mediante el modificador /m en el patrón del operador de detección de coincidencias de patrones.  (En los programas antiguos se hacía esto por medio del ajuste de C<$*>, pero esta opción se eliminó en perl 5.10).
+De manera predeterminada se garantiza que el carácter C<"^"> detecte sólo el principio de la cadena, el carácter C<"$"> sólo el final (o la posición anterior al carácter de nueva línea al final) y Perl hará determinadas optimizaciones suponiendo que la cadena contiene una sola línea.  Los caracteres de nueva línea integrados dentro de la cadena no se pueden detectar con C<"^"> o C<"$">.  Sin embargo, puede que desee tratar a la cadena como un búfer de varias líneas, de modo que C<"^"> coincida después de cualquier carácter de nueva línea que haya en la cadena (excepto si dicho carácter es el último en la cadena), y C<"$"> coincida delante de cualquier carácter de nueva línea.  A costa de una ligera sobrecarga, puede hacer esto mediante el modificador /m en el patrón del operador de detección de coincidencias de patrones.  (En los programas antiguos se hacía esto por medio del ajuste de C<$*>, pero esta opción se eliminó en perl 5.10).
 X<^> X<$> X</m>
 
 Para simplificar la sustitución de varias líneas, el carácter C<"."> no coincide con un carácter de nueva línea a menos que utilice el modificador C</s>, que indica a Perl que suponga que la cadena es una sola línea, aunque no lo sea.
@@ -678,7 +678,7 @@ Vea en L</E<sol>x> otra forma de tener comentarios en los patrones.
 =item C<(?^alupimnsx)>
 X<(?)> X<(?^)>
 
-Uno o más modificadores de detección de coincidencias de patrón incrustados, que han de ser activados (o desactivados, si van precedidos de C<"-">) para el resto del patrón o el resto del grupo de patrones que lo contiene (si existe).
+Uno o más modificadores de detección de coincidencias de patrón integrados, que se han de activar (o desactivar, si se preceden de C<"-">) para el resto del patrón o el resto del grupo de patrones que lo contiene (si existe).
 
 Esto es especialmente útil para los patrones dinámicos, como los que se leen desde un archivo de configuración, se reciben como un argumento o se especifican en alguna tabla.  Considere el caso en el que algunos patrones distinguen mayúsculas de minúsculas mientras otros no: los que no distinguen mayúsculas de minúsculas solo tienen que incluir C<(?i)> al principio del patrón.  Por ejemplo:
 
@@ -867,9 +867,9 @@ B<NOTA:> para facilitar las cosas a los programadores con experiencia de uso de 
 =item C<(?{ código })>
 X<(?{})> X<regex, code in> X<regexp, code in> X<regular expression, code in> X<regex, código interior> X<regexp, código interior> X<expresión regular, código interior>
 
-B<ADVERTENCIA:> Usar esta característica de forma segura requiere que entienda sus limitaciones.  El código ejecutado que tenga efectos secundarios puede no funcionar de forma idéntica de una versión a otra debido al efecto de futuras optimizaciones del motor de expresiones regulares.  Para más información sobre esto, vea L</Frecuencia de ejecución de código incrustado>.
+B<ADVERTENCIA:> Usar esta característica de forma segura requiere que entienda sus limitaciones.  El código ejecutado que tenga efectos secundarios puede no funcionar de forma idéntica de una versión a otra debido al efecto de futuras optimizaciones del motor de expresiones regulares.  Para más información sobre esto, vea L</Frecuencia de ejecución de código integrado>.
 
-Esta aserción de ancho cero ejecuta código Perl incrustado.  Siempre devuelve éxito, y su valor de retorno se guarda en C<$^R>.
+Esta aserción de ancho cero ejecuta código Perl integrado.  Siempre devuelve éxito, y su valor de retorno se guarda en C<$^R>.
 
 En patrones literales, el código se analiza al mismo tiempo que el código que le rodea. Mientras tanto, dentro del patrón, el control se pasa temporalmente al intérprete de perl, hasta que se encuentre la llave que cierra el código de forma lógica. Esto es similar a la forma en que se gestiona una expresión de índice de array en una cadena literal, por ejemplo
 
@@ -954,7 +954,7 @@ Note que la variable especial C<$^N> es particularmente útil con bloques de có
 =item C<(??{ código })>
 X<(??{})> X<regex, postponed> X<regexp, postponed> X<regular expression, postponed> X<regex, pospuesta> X<regexp, pospuesta> X<expresión regular, pospuesta>
 
-B<ADVERTENCIA:> Usar esta característica de forma segura requiere que entienda sus limitaciones.  El código que se ejecuta que tenga efectos secundarios puede no funcionar de forma idéntica de una versión a otra debido al efecto de futuras optimizaciones del motor de expresiones regulares.  Para más información sobre esto, vea L</Frecuencia de ejecución de código incrustado>.
+B<ADVERTENCIA:> Usar esta característica de forma segura requiere que entienda sus limitaciones.  El código que se ejecuta que tenga efectos secundarios puede no funcionar de forma idéntica de una versión a otra debido al efecto de futuras optimizaciones del motor de expresiones regulares.  Para más información sobre esto, vea L</Frecuencia de ejecución de código integrado>.
 
 Esta es una subexpresión regular "pospuesta".  Se comporta I<exactamente> de la misma manera que el bloque de código C<(?{ code })> descrito antes, excepto que su valor de retorno, en lugar de asignarse a C<$^R>, se trata como un patrón, compilado si es una cadena (o usado tal cual si es un objeto qr//), y luego se le hace coincidir como si se hubiera insertado, ocupando el mismo espacio que esta construcción.
 
@@ -1030,7 +1030,7 @@ debe generar la siguiente salida:
 
 Si no hay ningún grupo de captura correspondiente definido, se producirá un error irrecuperable.  Realizar un proceso recursivo más de 50 veces sin consumir ninguna cadena de entrada generará un error irrecuperable.  La profundidad máxima está compilada en perl, por lo que su modificación requiere una compilación personalizada.
 
-A continuación se muestra cómo el uso de la indexación negativa puede facilitar la incrustación de patrones recursivos dentro de una construcción C<qr//> para su uso posterior:
+A continuación se muestra cómo el uso de la indexación negativa puede facilitar la integración de patrones recursivos dentro de una construcción C<qr//> para su uso posterior:
 
     my $parentesis = qr/(\((?:[^()]++|(?-1))*+\))/;
     if (/foo $parentesis \s+ \+ \s+ bar $parentesis/x) {
@@ -1748,7 +1748,7 @@ Como se documenta en L<overload>, esta conversión funcionará solo en las parte
     $re = rxpersonal::convertir $re;
     /\Y|$re\Y|/;
 
-=head2 Frecuencia de ejecución de código incrustado
+=head2 Frecuencia de ejecución de código integrado
 
 No están especificadas las reglas exactas de cómo a menudo (??{}) y (?{}) se ejecutan en un patrón.  En el caso de una coincidencia exitosa, puede asumir que se ejecutará en el orden de izquierda a derecha, el número apropiado de veces, en la parte coincidente del patrón, así como en cualquier otro meta-patrón.  No está indicado específicamente cómo las rutas no coincidentes y los fallos de coincidencia afectan el número de veces que el patrón se ejecuta, y puede variar dependiendo de qué optimizaciones se puedan aplicar al patrón y es muy posible que cambie de versión en versión.
 
@@ -1764,7 +1764,7 @@ En el caso de una construcción de alternancia como la siguiente:
 
 puede asumir que la entrada "ac" sacará "ac", y que "abc" sólo sacará "c".
 
-Cuando se cuantifica código incrustado, las coincidencias exitosas llamarán el código una vez por cada iteración de coincidencia del cuantificador.  Por ejemplo:
+Cuando se cuantifica código integrado, las coincidencias exitosas llamarán el código una vez por cada iteración de coincidencia del cuantificador.  Por ejemplo:
 
   "good" =~ /g(?:o(?{print "o"}))*d/;
 

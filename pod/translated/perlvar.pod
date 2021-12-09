@@ -137,7 +137,7 @@ El número de proceso de Perl ejecutando este I<script>.  A pesar de que I<puede
 
 Nota para los usuarios de Linux Debian GNU/kFreeBSD: Antes de Perl v5.16.0, perl podría emular la semántica POSIX en sistemas Linux usando LinuxThreads, una implementación parcial de POSIX Threads que desde entonces ha sido reemplazada por la I<Native POSIX Thread Library> (NPTL).
 
-LinuxThreads es ahora obsoleto en Linux, y cachear C<getpid()> de esta manera hace incrustar perl innecesariamente complejo (debido a que tendrá que actualizar manualmente el valor de $$), así que ahora C<$$> y C<getppid()> siempre devolverán los mismos valores que la biblioteca C subyacente.
+LinuxThreads es ahora obsoleto en Linux, y cachear C<getpid()> de esta manera hace integrar perl innecesariamente complejo (debido a que tendrá que actualizar manualmente el valor de $$), así que ahora C<$$> y C<getppid()> siempre devolverán los mismos valores que la biblioteca C subyacente.
 
 Sistemas Debian GNU/kFreeBSD también usan LinuxThreads hasta la distribución 6.0 (inclusive), pero después se trasladó a la semántica de hilos de FreeBSD, que es parecida a la POSIX.
 

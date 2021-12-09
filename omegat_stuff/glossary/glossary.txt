@@ -257,3 +257,10 @@ glue	pegamento
 automatic	automática
 has	tiene
 These	Estas
+boolean	booleano
+casts	convierte
+unsigned	sin signo
+typemap	mapa de tipos
+array	array
+handle	manejador
+embedded	integrado

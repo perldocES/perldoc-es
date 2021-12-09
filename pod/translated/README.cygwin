@@ -129,7 +129,7 @@ Indefinir este símbolo desactiva la abstracción PerlIO.  PerlIO está ahora po
 
 =item * C<-Dusemultiplicity>
 
-Se requiere multiplicidad cuando se incrusta Perl en un programa C y se usa más de una instancia del intérprete.  Solo se requiere cuando compile un perl sin soporte de hilos con C<-Uuseithreads>.
+Se requiere multiplicidad cuando se integra Perl en un programa C y se usa más de una instancia del intérprete.  Solo se requiere cuando compile un perl sin soporte de hilos con C<-Uuseithreads>.
 
 =item * C<-Uuse64bitint>
 

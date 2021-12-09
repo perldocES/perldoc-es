@@ -377,7 +377,7 @@ Imprime el valor de una o más opciones.
 X<debugger command, o> X<comando del depurador, o>
 
 Establece el valor de una o más opciones.  Si el valor tiene un espacio en blanco interno, tendrá que entrecomillarse.  Por ejemplo, podría establecer C<o pager="less -MQeicsNfr"> para llamar a B<less> con esas opciones específicas.
-Puede usar tanto comillas simples como dobles, pero si lo hace, debe escapar cualquier instancia interna de la misma clase que la comilla con la que empezó, así como escapar cualquier escape que preceda de forma inmediata a esa comilla pero que no signifique que esté escapando la propia comilla.  En otras palabras, sigue las reglas de entrecomillado simple independientemente del tipo de comilla; por ejemplo: C<o option='this isn\'t bad'> o C<o option="She said, \"Isn't
+Puede usar tanto comillas simples como dobles, pero si lo hace, debe escapar cualquier instancia integrada de la misma clase que la comilla con la que empezó, así como escapar cualquier escape que preceda de forma inmediata a esa comilla pero que no signifique que esté escapando la propia comilla.  En otras palabras, sigue las reglas de entrecomillado simple independientemente del tipo de comilla; por ejemplo: C<o option='this isn\'t bad'> o C<o option="She said, \"Isn't
 it?\"">.
 
 Por razones históricas, C<=value> es opcional, pero por defecto es 1 solo cuando es seguro hacerlo -es decir, principalmente para opciones booleanas-.  Siempre es mejor asignar un valor específico usando C<=>.

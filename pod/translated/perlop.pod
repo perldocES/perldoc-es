@@ -1217,7 +1217,7 @@ Opciones (especificado por los siguientes modificadores) son:
     d   Usa el conjunto de caracteres Unicode o nativo, como en 5.12 y anteriores
     n   Modo de no captura. Impide que () establezca $1, $2, etc...
 
-Si un patrón precompilado se incrusta en un patrón más grande entonces los efectos de C<"msixpluadn"> se propagarán apropiadamente.  El efecto del modificador C</o> no se propaga; se limita a los patrones que lo utilicen de forma explícita.
+Si un patrón precompilado se integra en un patrón más grande entonces los efectos de C<"msixpluadn"> se propagarán apropiadamente.  El efecto del modificador C</o> no se propaga; se limita a los patrones que lo utilicen de forma explícita.
 
 Los últimos cuatro modificadores enumerados anteriormente, agregados en Perl 5.14, controlan las reglas del juego de caracteres, pero C</a> es el único que querrá especificar explícitamente; los otros tres se seleccionan automáticamente por medio de diversos pragmas.
 
@@ -1258,7 +1258,7 @@ desea que el patrón use los valores iniciales de las variables, independienteme
 
 =item 3
 
-Si el patrón contiene código incrustado, como lo siguiente:
+Si el patrón contiene código integrado, como lo siguiente:
 
     use re 'eval';
     $codigo = 'foo(?{ $x })';
@@ -1498,7 +1498,7 @@ Ejemplos:
     # Solo palabras con capitulares en los últimos 30 caracteres
     substr($str, -30) =~ s/\b(\p{Alpha}+)\b/\u\L$1/g;
 
-    # Esto expandirá cualquier variable escalar incrustada
+    # Esto expandirá cualquier variable escalar integrada
     # (incluyendo léxicas) en $_ : Primero $1 se interpola
     # al nombre de la variable, y entonces, se evalúa
     s/(\$\w+)/$1/eeg;
@@ -1636,7 +1636,7 @@ Vea L</"Operadores E/S"> para más discusiones sobre esto.
 =item C<qw/I<CADENA>/>
 X<qw> X<quote, list> X<quote, words> X<entrecomillado, lista> X<entrecomillado, palabras>
 
-Evalúa a una lista de palabras extraídas de I<CADENA>, utilizando los espacios en blanco intermedios como delimitadores de palabras.  Puede ser entendida como equivalente a:
+Evalúa a una lista de palabras extraídas de I<CADENA>, utilizando los espacios en blanco integrados como delimitadores de palabras.  Puede ser entendida como equivalente a:
 
     split(" ", q/CADENA/);
 
@@ -1790,7 +1790,7 @@ Esta es la única forma de entrecomillar en Perl donde no es necesario preocupar
 
 =item Comillas invertidas
 
-El contenido del documento incrustado se trata como si la cadena estuviera incrustada entre comillas invertidas.  Así, el contenido se interpola como si estuviera entrecomillado doble y luego ejecutado a través del I<shell>, devolviendo los resultados de la ejecución.
+El contenido del documento incrustado se trata como si la cadena estuviera integrada entre comillas invertidas.  Así, el contenido se interpola como si estuviera entrecomillado doble y luego ejecutado a través del I<shell>, devolviendo los resultados de la ejecución.
 
        print << `EOC`; # ejecuta comando y obtén resultados
     echo Hola, qué tal
@@ -1904,7 +1904,7 @@ o:
      /x
 
 no forman expresiones legales de entrecomillado.   La parte entrecomillada termina en la primera C<"> y C</>, y el resto pasa a ser un error de sintaxis.
-Debido a que a la barra diagonal que terminaba C<m//> le seguía un C<SPACE>, el ejemplo anterior no es C<m//x>, sino más bien C<m//>, sin el modificador C</x>.  Así que el C<#> incrustado se interpreta como un C<#> literal.
+Debido a que a la barra diagonal que terminaba C<m//> le seguía un C<SPACE>, el ejemplo anterior no es C<m//x>, sino más bien C<m//>, sin el modificador C</x>.  Así que el C<#> integrado se interpreta como un C<#> literal.
 
 Tampoco se presta atención a C<\c\> (sintaxis multicarácter de control) durante esta búsqueda.  Así, el segundo C<\> en C<qq/\c\/> se interpreta como una parte de C<\/>, y el siguiente C</> no se reconoce como un delimitador.
 En su lugar, utilice C<\034> o C<\x1c> al final de la construcción entrecomillada.
@@ -2160,7 +2160,7 @@ salvo que la expansión realmente se hace internamente usando la extensión est�
 
     chmod 0644, <*.c>;
 
-Una expansión evalúa sus argumentos (incorporados) sólo cuando está iniciando una nueva lista.  Todos los valores deben leerse antes de empezar de nuevo.  En contexto de lista, esto no es importante, ya que, de todos modos, los obtiene automáticamente.  Sin embargo, en contexto escalar el operador devuelve el siguiente valor cada vez que se le llama, o C<undef> cuando la lista se ha agotado.  Al igual que cuando un identificador de archivo lee, un C<defined> se genera cuando la expansión se produce en la parte de prueba de un C<while>, porque una expansión legal así lo devuelve (por ejemplo, un archivo llamado F<0>), o de otra manera, terminaría el bucle.  Una vez más, C<undef> sólo se devuelve una vez.  Así que si está esperando un único valor de una expansión, es mucho mejor escribir
+Una expansión evalúa sus argumentos (integrados) sólo cuando está iniciando una nueva lista.  Todos los valores deben leerse antes de empezar de nuevo.  En contexto de lista, esto no es importante, ya que, de todos modos, los obtiene automáticamente.  Sin embargo, en contexto escalar el operador devuelve el siguiente valor cada vez que se le llama, o C<undef> cuando la lista se ha agotado.  Al igual que cuando un identificador de archivo lee, un C<defined> se genera cuando la expansión se produce en la parte de prueba de un C<while>, porque una expansión legal así lo devuelve (por ejemplo, un archivo llamado F<0>), o de otra manera, terminaría el bucle.  Una vez más, C<undef> sólo se devuelve una vez.  Así que si está esperando un único valor de una expansión, es mucho mejor escribir
 
     ($archivo) = <loquesea*>;
 

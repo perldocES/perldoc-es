@@ -226,7 +226,7 @@ No existe el cuantificador C<{,n}>. Esto se interpreta como una cadena literal.
    (?'nombre'...)      Captura con nombre
    (?P<nombre>...)     Captura con nombre (sintaxis python)
    (?[...])          Clase de carácter entre corchetes extendida
-   (?{ código })     Código incrustado, el valor devuelto se almacena en $^R
+   (?{ código })     Código integrado, el valor devuelto se almacena en $^R
    (??{ código })    Regex dinámica, el valor devuelto se usa como una regex
    (?N)              Búsqueda recursiva en el subpatrón número N
    (?-N), (?+N)      Búsqueda recursiva en el siguiente/anterior subpatrón N-ésimo

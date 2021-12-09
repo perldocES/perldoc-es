@@ -122,7 +122,7 @@ hacer otros acuerdos de distribución con el Titular del Copyright.
 
 =item 5.
 
-Usted puede cobrar una cuota razonable por las copias por cualquier distribución de este Paquete.  Usted puede reclamar un canon decidido por usted para el soporte de este Paquete.  Usted no puede cobrar una cuota por el Paquete mismo.  Sin embargo, usted puede distribuir este Paquete en conjunto con otros programas (posiblemente comerciales) como parte de una mayor (posiblemente comercial) distribución de software siempre y cuando no haga publicidad de este Paquete como si fuera un producto suyo.  Usted puede integrar el intérprete de este Paquete dentro de un ejecutable suyo (mediante montaje o linkado); esto se entenderá como una mera forma de agregación, siempre que la Versión Estándar completa del intérprete esté empotrada.
+Usted puede cobrar una cuota razonable por las copias por cualquier distribución de este Paquete.  Usted puede reclamar un canon decidido por usted para el soporte de este Paquete.  Usted no puede cobrar una cuota por el Paquete mismo.  Sin embargo, usted puede distribuir este Paquete en conjunto con otros programas (posiblemente comerciales) como parte de una mayor (posiblemente comercial) distribución de software siempre y cuando no haga publicidad de este Paquete como si fuera un producto suyo.  Usted puede integrar el intérprete de este Paquete dentro de un ejecutable suyo (mediante montaje o enlazado); esto se entenderá como una mera forma de agregación, siempre que la Versión Estándar completa del intérprete esté integrada.
 
 =item 6.
 

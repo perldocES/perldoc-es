@@ -582,7 +582,7 @@ Use L<Text::Wrap> (parte de la distribución estándar de Perl):
     use Text::Wrap;
     print wrap("\t", '  ', @parrafos);
 
-Los párrafos que ofrezca a L<Text::Wrap> no deberían contener caracteres de nueva línea. L<Text::Wrap> no justifica las líneas (relleno por la derecha).
+Los párrafos que proporcione a L<Text::Wrap> no deberían contener caracteres de nueva línea integrados. L<Text::Wrap> no justifica las líneas (relleno por la derecha).
 
 O use el módulo de CPAN L<Text::Autoformat>. El formateo de archivos se puede hacer fácilmente creando un alias de I<shell>, como este:
 
@@ -735,11 +735,11 @@ En esta expresión regular, la alternativa coincide tanto al principio como al f
         print "$_\n";
     }
 
-Para una cadena multilínea, puede aplicar la expresión regular a cada línea lógica en la cadena añadiendo el modificador C</m> (por "multilínea"). Con el modificador C</m>, el C<$> coincide I<antes> del carácter de nueva línea, así que no lo elimina. Este patrón sigue eliminando el carácter de nueva línea al final de la cadena:
+Para una cadena multilínea, puede aplicar la expresión regular a cada línea lógica en la cadena añadiendo el modificador C</m> (por "multilínea"). Con el modificador C</m>, el C<$> coincide I<antes> del carácter de nueva línea integrado, así que no lo elimina. Este patrón sigue eliminando el carácter de nueva línea al final de la cadena:
 
     $cadena =~ s/^\s+|\s+$//gm;
 
-Recuerde que desaparecerán las líneas que consisten completamente en espacio en blanco, ya que la primera parte de la alternativa puede coincidir con toda la cadena y reemplazarla con nada. Si necesita mantener las líneas en blanco, tiene que hacer un poco más de trabajo. En lugar de coincidir con cualquier espacio en blanco (ya que incluye el carácter de nueva línea), simplemente busque por otro espacio en blanco:
+Recuerde que desaparecerán las líneas que consisten completamente en espacio en blanco, ya que la primera parte de la alternativa puede coincidir con toda la cadena y reemplazarla con nada. Si necesita mantener las líneas en blanco integradas, tiene que hacer un poco más de trabajo. En lugar de coincidir con cualquier espacio en blanco (ya que incluye el carácter de nueva línea), simplemente busque por otro espacio en blanco:
 
     $cadena =~ s/^[\t\f ]+|[\t\f ]+$//mg;
 

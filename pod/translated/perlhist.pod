@@ -16,7 +16,7 @@ Resumen de la historia de Perl, por Larry Wall:
    Presentación de Perl 1 al mundo, y cambio de /\(...\|...\)/ a
        /(...|...)/.  \(Dan Faigin aún no me lo ha perdonado. :-\)
    En Perl 2 se incluyó el paquete de expresiones regulares de Henry Spencer.
-   En Perl 3 se ofreció la capacidad de procesar datos binarios (valores nulos incrustados).
+   En Perl 3 se ofreció la capacidad de procesar datos binarios (valores nulos integrados).
    Perl 4 llegó con la publicación de la primera edición del Libro del Camello.  En realidad,  solo
        cambiamos los números de versión para que el libro pudiera hacer referencia a la versión 4.000.
    En Perl 5 se incluyó todo lo demás, incluida la capacidad

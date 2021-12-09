@@ -347,11 +347,11 @@ Algunos de los valores que esta propiedad puede tener son:
     Valor       Significado
 
     L           Left-to-Right (de izquierda a derecha)
-    LRE         Left-to-Right Embedding (de izquierda a derecha, incrustando)
+    LRE         Left-to-Right Embedding (de izquierda a derecha, integrando)
     LRO         Left-to-Right Override (de izquierda a derecha, sobreescribiendo)
     R           Right-to-Left (derecha a izquierda)
     AL          Arabic Letter (letra arábiga)
-    RLE         Right-to-Left Embedding (de derecha a izquierda, incrustando)
+    RLE         Right-to-Left Embedding (de derecha a izquierda, integrando)
     RLO         Right-to-Left Override (de derecha a izquierda, sobreescribiendo)
     PDF         Pop Directional Format (devuelve el formato direccional)
     EN          European Number (número europeo)

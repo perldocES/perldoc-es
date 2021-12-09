@@ -37,7 +37,7 @@ Pasado implícitamente a través de la entrada estándar.  Esto sólo funciona s
 
 =back
 
-Con los métodos 2 y 3, Perl inicia el análisis del archivo de entrada desde el comienzo, a menos que haya especificado una opción B<-x>, en cuyo caso escanea por la primera línea que comience por C<#!> y contenga la palabra "perl", y arrancará desde allí.  Esto es útil para ejecutar un programa incorporado en un correo grande.  (En este caso se indicará el final del programa, utilizando el I<token> C<__END__>).
+Con los métodos 2 y 3, Perl inicia el análisis del archivo de entrada desde el comienzo, a menos que haya especificado una opción B<-x>, en cuyo caso escanea por la primera línea que comience por C<#!> y contenga la palabra "perl", y arrancará desde allí.  Esto es útil para ejecutar un programa integrado en un correo grande.  (En este caso se indicará el final del programa, utilizando el I<token> C<__END__>).
 
 La línea C<#!> es siempre examinada para buscar las opciones mientras la línea está siendo analizada.  Por lo tanto, si está en una máquina que sólo permite un argumento con la línea C<#!>, o peor aún, ni siquiera reconoce la línea C<#!>, todavía puede obtener un comportamiento consistente de las opciones independientemente de cómo Perl se haya invocado, incluso si B<-x> fue utilizado para encontrar el inicio del programa.
 
@@ -548,7 +548,7 @@ Este ejemplo funciona en muchas plataformas que tienen un I<shell> compatible co
 	    if $ejecutando_bajo_algun_shell;
 
 El sistema ignora la primera línea y alimenta el programa a F</bin/sh>, el cual procede a probar a ejecutar el programa Perl como un guión de I<shell>.
-El I<shell> ejecuta la segunda línea como un comando I<shell> normal, y así arranca el intérprete Perl.  En algunos sistemas, $0 no siempre contiene la ruta completa, por lo que B<-S> le dice a Perl que busque el programa, si es necesario.  Después de localizar el programa, Perl analiza las líneas y las ignora porque la variable $ejecutando_bajo_algun_shell no es verdadera.  Si el programa se interpretará por csh, tendrá que reemplazar C<${1+"$@"}> por C<$*>, incluso aunque esto no interprete los espacios incrustados (y cosas así) en la lista de argumentos.  Para poner en marcha I<sh> en lugar de I<csh>, algunos sistemas pueden tener que reemplazar la línea C<#!> con una línea que contenga sólo un carácter de dos puntos, que será amablemente ignorado por Perl.  Otros sistemas no controlan nada de esto, y necesitan de una enrevesada construcción que funcione tanto en I<csh>, como I<sh> o Perl, tales como la siguiente:
+El I<shell> ejecuta la segunda línea como un comando I<shell> normal, y así arranca el intérprete Perl.  En algunos sistemas, $0 no siempre contiene la ruta completa, por lo que B<-S> le dice a Perl que busque el programa, si es necesario.  Después de localizar el programa, Perl analiza las líneas y las ignora porque la variable $ejecutando_bajo_algun_shell no es verdadera.  Si el programa se interpretará por csh, tendrá que reemplazar C<${1+"$@"}> por C<$*>, incluso aunque esto no interprete los espacios integrados (y cosas así) en la lista de argumentos.  Para poner en marcha I<sh> en lugar de I<csh>, algunos sistemas pueden tener que reemplazar la línea C<#!> con una línea que contenga sólo un carácter de dos puntos, que será amablemente ignorado por Perl.  Otros sistemas no controlan nada de esto, y necesitan de una enrevesada construcción que funcione tanto en I<csh>, como I<sh> o Perl, tales como la siguiente:
 
 	eval '(exit $?0)' && eval 'exec perl -wS $0 ${1+"$@"}'
 	& eval 'exec /usr/bin/perl -wS $0 $argv:q'
@@ -649,7 +649,7 @@ X<-x>
 
 =item B<-x>I<directorio>
 
-le dice a Perl que el programa está incrustado en un pedazo más grande de texto, sin ninguna relación con él, como por ejemplo, en un mensaje de correo electrónico.  La basura inicial será descartada hasta la primera línea que comience con C<#!> y contenga la cadena "perl".  Se aplicará cualquier opción significativa de esa línea.
+le dice a Perl que el programa está integrado en un pedazo más grande de texto, sin ninguna relación con él, como por ejemplo, en un mensaje de correo electrónico.  La basura inicial será descartada hasta la primera línea que comience con C<#!> y contenga la cadena "perl".  Se aplicará cualquier opción significativa de esa línea.
 
 Todas las referencias a números de línea en el programa (avisos, errores, ...)
 se tratan como si la línea C<#!> fuera la primera.
