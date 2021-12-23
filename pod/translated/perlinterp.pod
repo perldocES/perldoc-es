@@ -51,11 +51,11 @@ Ahora pasamos a Perl las opciones de la línea de comandos, y le decimos que arr
 
  exitstatus = perl_parse(mi_perl, xs_init, argc, argv, (char **)NULL);
  if (!exitstatus)
-     perl_run(mi_perl);
+     perl_run(my_perl);
 
  exitstatus = perl_destruct(mi_perl);
 
- perl_free(mi_perl);
+ perl_free(my_perl);
 
 C<perl_parse> es, realmente, un envoltorio alrededor de C<S_parse_body>, tal como se define en F<perl.c>, que procesa las opciones de la línea de comandos, inicializa cualquier módulo estáticamente enlazado con XS, abre el programa y llama a C<yyparse> para interpretarlo.
 

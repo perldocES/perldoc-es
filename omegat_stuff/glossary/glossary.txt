@@ -264,3 +264,14 @@ typemap	mapa de tipos
 array	array
 handle	manejador
 embedded	integrado
+namespace	espacio de nombres
+growth	crecimiento
+outrageous	escandaloso
+size	tamaño
+digit	dígito
+traditionally	tradicionalmente
+applications	aplicaciones
+running	ejecución
+runtime	tiempo de ejecución
+segfault	fallo de segmentación
+squeaky clean	absolutamente limpio
