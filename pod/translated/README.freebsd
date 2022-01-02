@@ -23,5 +23,5 @@ En estos casos, perl vuelve al comportamiento anterior (utilizar el valor argv[0
 Nicholas Clark <nick@ccl4.org>, con aportaciones de Slaven Rezic
 y Tim Bunce.
 
-Para notificar errores, actualizaciones o sugerencias, utilice la dirección F<perlbug@perl.org>.
+Para notificar errores, actualizaciones o sugerencias, utilice la dirección F<perlbug@perl.org>
 

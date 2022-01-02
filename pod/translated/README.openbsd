@@ -16,5 +16,5 @@ Si Perl está configurado para usar ithreads, las llamadas a biblioteca reentran
 
 Steve Peters <steve@fisharerojo.org>
 
-Para notificar errores, actualizaciones o sugerencias, utilice la dirección F<perlbug@perl.org>.
+Para notificar errores, actualizaciones o sugerencias, utilice la dirección F<perlbug@perl.org>
 
