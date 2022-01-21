@@ -1451,7 +1451,7 @@ Las opciones son como las de C<m//> con la adición de las específicas opciones
     r	Devuelve la sustitución y deja la cadena original
         intacta.
 
-Cualquier delimitador distinto del espacio en blanco puede sustituir a las barras diagonales.  Añadir un espacio después de la C<s> cuando se utilice un carácter permitido en identificadores.  Si se utilizan comillas simples, no se realiza ninguna interpretación en la cadena de reemplazo (sin embargo, el modificador C</e> reemplaza a ésta).  Note que Perl trata las comillas simples invertidas como delimitadores normales; el texto de reemplazo no se evalúa como un comando.
+Cualquier delimitador distinto del espacio en blanco puede sustituir a las barras diagonales.  Añadir un espacio después de la C<s> cuando se utilice un carácter permitido en identificadores.  Si se utilizan comillas simples, no se realiza ninguna interpretación en la cadena de reemplazo (sin embargo, el modificador C</e> reemplaza a ésta).  Note que Perl trata las comillas simples inversas como delimitadores normales; el texto de reemplazo no se evalúa como un comando.
 Si el I<PATRÓN> está delimitado por paréntesis, corchetes o llaves, el I<REEMPLAZO> tiene su propio par de delimitadores, que puede o no estar encerrado entre los mismos delimitadores; por ejemplo, C<s(foo)(bar)> o C<< s<foo>/bar/ >>.  Un C</e> hará que la parte de reemplazo sea tratada como una verdadera expresión Perl y evaluada ahí y en ese mismo momento.  Será, sin embargo, comprobada la sintaxis en tiempo de compilación.  Un segundo modificador C<e> hará que la parte de reemplazo sea C<eval>uada antes de la ejecución como una expresión Perl.
 
 Ejemplos:
@@ -1569,7 +1569,7 @@ X<qx> X<`> X<``> X<backtick> X<comilla invertida>
 
 Una cadena que es (posiblemente) interpolada y entonces ejecutada como un comando del sistema con F</bin/sh> o su equivalente.  Los comodines del intérprete, tuberías y redirecciones se respetarán.  Todo lo que salga por la salida estándar del comando se devuelve; la salida estándar de error no se verá afectada.  En contexto escalar, se devuelve como una sola cadena de caracteres (con, posiblemente, múltiples líneas dentro), o C<undef> si el comando ha fallado.  En contexto de lista, devuelve una lista de líneas (según haya definido líneas con C<$/> o C<$INPUT_RECORD_SEPARATOR>), o una lista vacía si el comando ha fallado.
 
-Como las comillas invertidas no afectan a la salida de error estándar, use la sintaxis del I<shell> del descriptor de archivos (asumiendo que el I<shell> soporte esto) si es que quiere tenerlo en cuenta.
+Como las comillas inversas no afectan a la salida de error estándar, use la sintaxis del I<shell> del descriptor de archivos (asumiendo que el I<shell> soporte esto) si es que quiere tenerlo en cuenta.
 Para capturar el STDOUT y STDERR del comando, juntos:
 
     $salida = `comando 2>&1`;
@@ -1605,7 +1605,7 @@ Usando comillas simples como delimitadores impide la interpolación del doble en
     $shell_info = qx'ps $$';            # es el $$ del nuevo shell
 
 El cómo se evalúa esta cadena está sujeto enteramente al intérprete de comandos de su sistema.  En la mayoría de plataformas, tendrá que proteger los metacaracteres de I<shell>, si quiere que sean tratados de forma literal.  Esto en la práctica es difícil de hacer, como que no está claro cómo escapar qué caracteres.
-Vea L<perlsec> para un ejemplo seguro y limpio de un C<fork()> y C<exec()> manual para emular comillas invertidas de forma segura.
+Vea L<perlsec> para un ejemplo seguro y limpio de un C<fork()> y C<exec()> manual para emular comillas inversas de forma segura.
 
 En algunas plataformas (especialmente las de tipo DOS), el I<shell> quizás no pueda ser capaz de tratar con los comandos de múltiples líneas, así que poner saltos de línea quizás no le permita obtener lo que quiere.  Quizás sea capaz de evaluar múltiples comandos en una sola línea, separándoles con el carácter separador de comandos, si el I<shell> lo soporta (por ejemplo, C<;> en muchos I<shell> Unix, y C<&> en el I<shell> C<cmd> de Windows NT).
 
@@ -1614,10 +1614,10 @@ Perl intentará vaciar todos los archivos abiertos para salida antes de iniciar 
 Tenga en cuenta que algunos I<shell> de comandos pueden imponer restricciones a la longitud de la línea de comandos.  Debe asegurarse de que sus cadenas de texto no superan ese límite después de cualquier interpolación necesaria.  Vea las notas específicas de la plataforma para obtener más detalles acerca de su entorno particular.
 
 Usando este operador puede dar lugar a programas que son difíciles de portar, porque el I<shell> de comandos varía entre sistemas, y de hecho no pueden estar presentes en todos.  Como ejemplo, el comando C<type> en el I<shell> POSIX es muy diferente del comando C<type> en DOS.
-Eso no significa que deba evitar las comillas invertidas cuando sea la forma correcta de hacer algo.  Perl fue creado para ser un lenguaje pegamento, y una de las cosas que aglutina, son los comandos.
+Eso no significa que deba evitar las comillas inversas cuando sea la forma correcta de hacer algo.  Perl fue creado para ser un lenguaje pegamento, y una de las cosas que aglutina, son los comandos.
 Sólo entienda en lo que se está metiendo.
 
-Como C<system>, las comillas invertidas ponen el código de salida del proceso hijo en C<$?>.
+Como C<system>, las comillas inversas ponen el código de salida del proceso hijo en C<$?>.
 Si desea inspeccionar manualmente el error, puede comprobar todas las posibles causas del error mediante la inspección de C<$?>, de esta manera:
 
     if ($? == -1) {

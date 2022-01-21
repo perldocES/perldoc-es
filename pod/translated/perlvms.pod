@@ -1,0 +1,598 @@
+=head1 NAME
+
+perlvms - VMS - Documentación específica para Perl
+
+=head1 DESCRIPCIÓN
+
+Reunidas abajo están las notas que describen detalles del comportamiento de Perl 5 en VMS.  Son un suplemento a la documentación regular de Perl 5, así que nos centramos en las formas en que Perl 5 funciona de forma diferente bajo VMS con respecto a Unix, y en las interacciones entre Perl y el resto del sistema operativo.  No intentamos duplicar las descripciones completas de las características de Perl de la documentación principal de Perl, que se puede encontrar en el subdirectorio F<[.pod]> de la distribución Perl.
+
+Esperamos que estas notas le salvará de la confusión y pérdida de sueño cuando escriba I<scripts> Perl en VMS.  Si encuentra que hemos omitido algo que crea que debería aparecer aquí, por favor no dude en dejarnos una nota en vmsperl@perl.org
+
+=head1 Instalación
+
+Las instrucciones para compilar e instalar Perl 5 se puede encontrar en el archivo F<README.vms> en el directorio principal del código fuente de la distribución Perl.
+
+=head1 Organización de las imágenes Perl
+
+=head2 Imágenes principales
+
+Durante el proceso de compilado, se producen tres imágenes Perl.
+F<Miniperl.Exe> es una imagen ejecutable que contiene toda la funcionalidad básica de Perl, pero que no puede aprovecharse de las extensiones Perl XS y tiene una lista fija de posiciones de las bibliotecas para cargar módulos escritos en Perl.  Se usa extensivamente para compilar y probar Perl y diversas extensiones, pero no se instala.
+
+La mayoría del Perl completo reside en la imagen compartible F<PerlShr.Exe>, que proporciona un núcleo al que la imagen del ejecutable Perl y todas las extensiones Perl se enlazan. Se localiza generalmente a través del nombre lógico F<PERLSHR>.  Mientras que es posible poner la imagen en F<SYS$SHARE> para hacer que se puede cargar, no se recomienda. Y mientras que puede desear el instalar la imagen por razones de rendimiento, no debería instalarla con privilegios; si lo hace, el resultado no será lo esperado ya que los privilegios de la imagen se desactivan durante el arranque de Perl.
+
+Finalmente, F<Perl.Exe> es una imagen ejecutable que contiene la entrada principal para Perl, así como algún código de inicialización.  Debería colocarse en un directorio público, y hacerlo ejecutable para todos.
+Para correr Perl con argumentos en línea de comandos, debería definir un comando externo para invocar esta imagen.
+
+=head2 Extensiones Perl
+
+Las extensiones Perl son paquetes que proporcionan código XS y Perl para añadir nuevas funcionalidades a perl.  (XS es un meta-lenguaje que simplifica la escritura de código C que interactúa con Perl; vea L<perlxs> para más detalles).  El código Perl para una extensión se trata igual que cualquier otro módulo de biblioteca; se hace disponible a su I<script> a través de la apropiada sentencia C<use> o C<require>, y normalmente define un paquete Perl que contenga la extensión.
+
+La porción de la extensión proporcionada por el código XS se puede conectar al resto de Perl de dos formas.  En la configuración B<static>, el código objeto para la extensión se enlaza directamente en F<PerlShr.Exe>, y se inicializa si se invoca a Perl.  En la configuración B<dynamic>, el código máquina de la extensión se coloca en una imagen compartible, que el DynaLoader de Perl mapea cuando la extensión se usa (C<use>) o requiere (C<require>) en su I<script>.  Esto le permite mantener la extensión como una entidad separada, al coste de mantener el seguimiento de la imagen compartible adicional.  La mayor parte de las extensiones se pueden establecer como estáticas o dinámicas.
+
+El código fuente de una extensión normalmente reside en su propio directorio.  Generalmente se proporcionan al menos tres archivos: I<Extshortname>F<.xs> (donde I<Extshortname> es la parte del nombre de la extensión siguiendo al último C<::>), conteniendo el código XS; I<Extshortname>F<.pm>, el módulo de biblioteca Perl para la extensión; y F<Makefile.PL>, un I<script> Perl que usa los módulos de biblioteca C<MakeMaker> suministrados con Perl para generar un archivo F<Descrip.MMS> para la extensión.
+
+=head2 Instalar extensiones estáticas
+
+Ya que las extensiones estáticas se incorporan directamente en F<PerlShr.Exe>, tendrá que recompilar Perl para incorporar una nueva extensión.  Debería editar el F<Descrip.MMS> principal o el F<Makefile> que usa para compilar Perl, añadiendo el nombre de la extensión a la macro C<ext>, y el archivo objeto de la extensión a la macro C<extobj>.
+También necesitará compilar el archivo objeto de la extensión, bien añadiendo las dependencias al F<Descrip.MMS> principal, o usando un F<Descrip.MMS> aparte, para la extensión.  Entonces, recompile F<PerlShr.Exe> para incorporar el nuevo código.
+
+Finalmente, necesitará copiar el módulo de biblioteca de la extensión Perl al subdirectorio F<[.>I<Extname>F<]> bajo uno de los directorios en C<@INC>, donde I<Extname> es el nombre de la extensión, con todos los C<::> reemplazados por C<.> (p. e., el módulo de biblioteca para la extensión Foo::Bar se copiaría al subdirectorio F<[.Foo.Bar]>).
+
+=head2 Instalar extensiones dinámicas
+
+En general, el kit distribuido para una extensión Perl incluye un archivo con nombre Makefile.PL, que es un programa Perl que se usa para crear un archivo F<Descrip.MMS> que se puede usar para compilar e instalar los archivos requeridos por la extensión.  El kit debería desempaquetarse en un árbol de directorio que B<no> esté bajo el directorio del código fuente de Perl, y el procedimiento para compilar la extensión es, simplemente,
+
+    $ perl Makefile.PL  ! Crea Descrip.MMS
+    $ mmk               ! Compilar los archivo necesarios
+    $ mmk test          ! Ejecuta el código de pruebas, si se suministra
+    $ mmk install       ! Instalar en el árbol público de Perl
+
+El soporte VMS para este proceso en la distribución actual de Perl es suficiente para manejar la mayor parte de las extensiones.  (Vea la documentación de MakeMaker para más detalles sobre las opciones de instalación de las extensiones).
+
+=over 4
+
+=item *
+
+El subdirectorio F<[.Lib.Auto.>I<Arch>I<$PVers>I<Extname>F<]> de uno de los directorios en C<@INC> (donde I<PVers> es la versión del Perl que esté utilizando, como se indica en C<$]>, con el '.' convertido a '_'), o
+
+=item *
+
+uno de los directorios en C<@INC>, o
+
+=item *
+
+un directorio con las extensiones de módulos de bibliotecas se pasa al DynaLoader cuando se lo pide a la imagen compartible, o
+
+=item *
+
+F<Sys$Share> o F<Sys$Library>.
+
+=back
+
+Si la imagen compartible no está en ninguno de esos lugares, necesitará definir un nombre lógico I<Extshortname>, donde I<Extshortname> es la parte del nombre de la extensión después del último C<::>, que traduce a la especificación completa de archivo de la imagen compartible.
+
+=head1 Especificaciones de archivo
+
+=head1 Sintaxis
+
+Hemos intentado hacer que Perl sea consciente tanto del estilo de especificaciones de archivo VMS como Unix cuando sea posible.  Puede usar cualquier estilo, o ambos, en la línea de comandos en los I<scripts>, pero no puede combinar los dos estilos dentro de una única especificación de archivo.  El Perl de VMS interpreta los nombres de ruta Unix de la misma manera que CRTL (es decir, el primer componente de una ruta absoluta se lee como el nombre del dispositivo para la especificación de archivo VMS).  Existen un conjunto de funciones proporcionadas en el paquete C<VMS::Filespec> para una conversión entre la sintaxis VMS y Unix; su documentación proporciona más detalles.
+
+Hemos intentado minimizar la dependencia de los módulos de biblioteca Perl sobre la sintaxis Unix, pero puede encontrar que algunos de ellos, así como algunos I<scripts> escritos para sistemas Unix, requerirán que use sintaxis Unix, ya que asumirán que '/' es el separador de directorio, etc. Si encuentra instancias de esto en la propia distribución Perl, por favor háganoslo saber, para que intentemos arreglarlo.
+
+También cuando trabaje en programas Perl sobre VMS, si necesita una sintaxis en un formato de sistema operativo específico, entonces necesita comprobar la apropiada característica lógica DECC$, o llamar a una rutina de conversión para forzarlo a ese formato.
+
+La característica de nombre lógico DECC$FILENAME_UNIX_REPORT modifica el comportamiento tradicional de Perl en la conversión de formato de archivo de Unix a VMS para seguir las reglas de gestión de carácter extendido esperados ahora por el CRTL.  Específicamente, cuando esta característica está activa, el C<./.../> en una ruta Unix se traduce a C<[.^.^.^.]> en lugar del tradicional C<[...]> del VMS.  Para ser compatible con lo que espera MakeMaker, si una ruta VMS no se puede trasladar a una ruta Unix, se pasa sin cambios, así que C<unixify("[...]")> devolverá C<[...]>.
+
+Existen diversos casos ambiguos donde una rutina de conversión no puede determinar si dado un nombre de archivo está en formato Unix o VMS, ya que ambas especificaciones de archivo VMS y Unix pueden tener caracteres en ellos que podrían tomarse erróneamente como delimitadores sintácticos del otro tipo. Algunos nombres de ruta simplemente no se pueden usar en un modo que permita la presencia de cualquier tipo de nombre de ruta.  Perl tenderá a asumir que un nombre de archivo ambiguo está en formato Unix.
+
+Permitir "." como un delimitador de versión es, simplemente, incompatible con la determinación de si un nombre de ruta está en formato VMS o en formato Unix con la sintaxis extendida de archivo.  No hay forma de saber si "perl-5.8.6" es un "perl-5.8.6" Unix o un "perl-5.8;6" VMS cuando se pasa a unixify() o vmsify().
+
+El nombre lógico DECC$FILENAME_UNIX_REPORT controla cómo Perl interpreta los nombres de archivo para ampliarlo para que Perl use CRTL internamente para muchos propósitos, e intentar seguir las convenciones CRTL para reportar nombres de archivo.  La característica DECC$FILENAME_UNIX_ONLY difiere en que espera que todos los nombres de archivo que se pasan a C en tiempo de ejecución estén realmente en formato Unix.  Esta característica aún no está soportada en Perl ya que Perl usa internamente especificaciones de archivo tradicionales de OpenVMS y en la prueba I<harness>, y aún no está claro si este modo será útil y usable.  La característica con nombre lógico DECC$POSIX_COMPLIANT_PATHNAMES es nuevo con el "RMS Symbolic Link SDK" e incluido con OpenVMS v8.3, pero aún no está soportado en Perl.
+
+=head2 Tamaño de caja en nombres de archivo
+
+Perl activa por defecto DECC$EFS_CASE_PRESERVE and DECC$ARGV_PARSE_STYLE.  Note que lo último sólo toma efecto cuando se establece interpretación extendida en el proceso que Perl está ejecutando.  Cuando estas características se desactivan explícitamente en el entorno o el CRTL no los soporta, Perl sigue el comportamiento tradicional de CRTL de pasar a minúscula los argumentos de la línea de comandos y devolver las especificaciones de archivo sólo en minúsculas.
+
+I<Nota> Es muy fácil quedarse atrapado usando una mezcla de otros programas, utilidades externas, y I<scripts> Perl que están en diversos estados de capacidad de manejar la preservación de tamaño de caja.  Por ejemplo, un archivo creado por una versión más vieja de una utilidad de archivado o una utilidad de compilación tales como MMK o MMS puede generar un nombre de archivo en mayúsculas incluso en un volumen ODS-5.  Si este nombre de archivo, más tarde, se recupera por parte de un I<script> o módulo Perl en un entorno que preserve el tamaño de caja, ese nombre de archivo en mayúsculas puede no coincidir con las expectativas del tamaño de caja mezclado o en minúsculas, del código Perl.  Su mejor apuesta es seguir una aproximación todo-o-nada para la preservación del tamaño de caja: o no lo use en absoluto, o asegúrese de que toda su paquete de herramientas y entorno de aplicación lo soporta y usa.
+
+OpenVMS Alpha v7.3-1  superiores y todas las versiones de OpenVMS I64 soportan sensibilidad al tamaño de caja como una opción de proceso (vea C<SET PROCESS/CASE_LOOKUP=SENSITIVE>). Perl no soporta actualmente la sensibilidad al tamaño de caja en VMS, pero puede que en el futuro, así que los programas Perl deberían usar el método C<< File::Spec->case_tolerant >> para determinar el estado, y no la variable C<$^O>.
+
+=head2 Enlaces simbólicos
+
+Cuando compile un volumen ODS-5 con enlaces simbólicos activados, Perl por defecto soporta enlaces simbólicos cuando el soporte requerido esté disponible en el sistema de archivos y el CRTL (generalmente 64-bit OpenVMS v8.3 y superiores). 
+Hay un número de limitaciones y problemas a los que prestar atención cuando se trabaja con enlaces simbólicos en VMS.  Más notablemente, el destino de un enlace simbólico válido debe expresarse como una ruta estilo Unix y debe existir en un volumen visible desde su raíz POSIX (vea el comando C<SHOW ROOT> en la ayuda DCL).  Para más detalles sobre capacidades y requerimientos de los enlaces simbólicos, vea el capítulo 12 del manual CRTL que viene con OpenVMS v8.3 y superiores.
+
+=head2 Expansión de comodines
+
+Se permiten especificaciones de archivo con comodines tanto en la línea de comandos y dentro de expansiones Perl (p. e. C<E<lt>*.cE<gt>>).  Si la espec. de archivo con comodines usa la sintaxis VMS, las resultantes espec. de archivo seguirán la sintaxis VMS; si se pasa una espec. de archivo estilo Unix, se devolverán espec. de archivo estilo Unix.
+Similar al comportamiento de expansión de comodines para un shell Unix, uno puede escapar comodines en línea de comandos con entrecomillado doble C<"> alrededor de la línea de comandos con argumentos del programa perl.  Sin embargo, a causa de la eliminación de los caracteres C<"> llevada a cabo por la gestión C de argumentos necesitará escapar una construcción tal como esta (en un directorio que contiene los archivos F<PERL.C>, F<PERL.EXE>, F<PERL.H>, and F<PERL.OBJ>):
+
+    $ perl -e "print join(' ',@ARGV)" perl.*
+    perl.c perl.exe perl.h perl.obj
+
+en la siguiente manera triplemente entrecomillada:
+
+    $ perl -e "print join(' ',@ARGV)" """perl.*"""
+    perl.*
+
+En ambos casos, la línea de comandos con argumentos o en llamadas a C<glob()> se realiza la expansión de comodines VMS. (La expansión de comodines estilo csh está disponible si usa C<File::Glob::glob>).
+Si la espec. de archivo con comodines contiene una espec. de dispositivo o directorio, entonces las espec. de archivo resultantes también contendrá un dispositivo y directorio; de lo contrario, el dispositivo y directorio se eliminarán.  La resultante espec. de archivo estilo VMS contendrá un dispositivo y directorio completos, mientras que las espec. resultantes estilo Unix sólo contendrá tanto de la ruta del directorio como se presentó en la espec. de archivo de entrada.  Por ejemplo, si el directorio por defecto es Perl_Root:[000000], la expansión de C<[.t]*.*> devolverá espec. de archivo como "perl_root:[t]base.dir", mientras que la expansión de C<t/*/*> devolverá espec. de archivo como "t/base.dir".  (Esto se hace así para coincidir con el comportamiento de la expansión de comodines realizada por los shell Unix). 
+
+Similarmente, la espec. de archivo resultante contendrá la versión de archivo sólo si al menos una estaba presente en la espec. de archivo de entrada.
+
+
+=head2 Tuberías
+
+Se soportan tuberías de entrada y salida a identificadores de archivo Perl; se pasa el "nombre de archivo" a lib$spawn() para una ejecución asíncrona.  Debería prestar atención para cerrar cualquier tubería que haya abierto en un I<script> Perl, para que no deje ningún subproceso "huérfano" cuando Perl termine. 
+
+También puede usar comillas invertidas para invocar un subproceso DCL, cuya salida se usa como el valor de retorno de la expresión.  La cadena entre las comillas invertidas se gestiona como si fuera el argumento al operador C<system> (vea más abajo).  En este caso, Perl esperará a que se complete el subproceso antes de continuar. 
+
+El buzón (MBX) que perl puede crear para comunicarse con una tubería tiene por defecto un búfer de tamaño 8192 en sistemas 64 bit, y 512 en VAX.  El tamaño por defecto del búfer es ajustable por medio del nombre lógico PERL_MBX_SIZE, que proporciona un valor entre 128 y el parámetro SYSGEN, MAXBUF inclusive.  Por ejemplo, para establecer el tamaño de buzón a 32767 use C<$ENV{'PERL_MBX_SIZE'} = 32767;> y entonces abra y use la tubería creada. 
+Una alternativa sería emitir el comando:
+
+    $ Define PERL_MBX_SIZE 32767
+
+antes de ejecutar su amplio registro de su programa entubado.  Un valor más grande puede mejorar las prestaciones a expensas de la cuota BYTLM UAF.
+
+=head1 PERL5LIB y PERLLIB
+
+Los nombres lógicos PERL5LIB y PERLLIB funcionan como está documentado en L<perl>, excepto que el elemento separador es '|' en lugar de ':'.  Las especificaciones de directorio pueden usar tanto la sintaxis VMS como Unix.
+
+=head1 El depurador Perl bifurcado
+
+El depurador Perl bifurcado coloca los comandos y salida del depurador en una ventana de terminal X-11 aparte, para que así los comandos y la salida de múltiples procesos no salgan mezclados.
+
+Perl en VMS soporta la emulación del depurador bifurcado cuando Perl está corriendo en un sistema VMS que tenga instalado soporte para X11.
+
+Para usar el depurador bifurcado, necesita tener establecida la pantalla por defecto a un Servidor X-11 y algunas variables de entorno establecidas a lo que Unix espera.
+
+El depurador bifurcado requiere que la variable de entorno C<TERM> sea C<xterm>, y que exista la variable de entorno C<DISPLAY>.  C<xterm> debe estar en minúsculas.
+
+  $define TERM "xterm"
+
+  $define DISPLAY "hostname:0.0"
+
+Actualmente, se ignora el valor de C<DISPLAY>.  Se recomienda que se establezca al nombre del servidor de la pantalla, el servidor y la pantalla en notación Unix.  En el futuro, Perl podrá establecer el valor de DISPLAY en lugar de usar la pantalla por defecto.
+
+Podría ser útil usar siempre el depurador bifurcado para que la E/S de ese I<script> esté separado de la E/S del depurador.  Puede forzar a que el depurador se bifurque asignando un valor al nombre lógico <PERLDB_PIDS> que no sea un número de identificación de proceso.
+
+  $define PERLDB_PIDS XXXX
+
+
+=head1 PERL_VMS_EXCEPTION_DEBUG
+
+Al definir PERL_VMS_EXCEPTION_DEBUG como "ENABLE" hará que se invoque al depurador de VMS si ocurre una excepción fatal que no se gestiona de otra forma.  El propósito de esto es permitir la depuración de problemas internos de Perl que podrían provocar tal condición.
+
+Esto le permite al programador mirar en la pila y variables de ejecución para encontrar la causa de la excepción.  Ya que el depurador se invocó por el intérprete Perl que está a punto de hacer una salida fatal, normalmente no es práctico continuar la ejecución en modo depuración.
+
+Arrancar Perl en el depurador VMS puede cambiar el perfil de ejecución del programa de una forma que tales problemas se reproduzcan.
+
+La función C<kill> se puede usar para probar esta funcionalidad desde dentro del programa.
+
+En el estilo típico de VMS, sólo la primera letra del valor de este nombre lógico se comprueba normalmente en un modo insensible al tamaño de caja, y se considera activado si el valor es "T","1" o "E".
+
+Este nombre lógico debe definirse antes de que Perl arranque.
+
+=head1 Línea de comandos
+
+=head2 Redirección y ejecución en segundo plano de la E/S
+
+Perl para VMS soporta la redirección de entrada y salida en la línea de comandos, usando un subconjunto de la sintaxis de la shell Bourne:
+
+=over 4
+
+=item *
+
+C<E<lt>archivo> lee stdin desde C<archivo>,
+
+=item *
+
+C<E<gt>archivo> escribe stdout a C<archivo>,
+
+=item *
+
+C<E<gt>E<gt>archivo> añade stdout al C<archivo>,
+
+=item *
+
+C<2E<gt>archivo> escribe stderr al C<archivo>,
+
+=item *
+
+C<2E<gt>E<gt>archivo> añade stderr al C<archivo>, y
+
+=item *
+
+C<< 2>&1 >> redirige stderr al stdout.
+
+=back
+
+Además, la salida puede entubarse a un subproceso, usando el carácter '|'.  Cualquier cosa después del carácter en la línea de comandos se pasa a un subproceso para su ejecución; el subproceso toma la salida de Perl como su entrada.
+
+Finalmente, si la línea de comandos termina en '&', el comando entero se ejecuta en segundo plano como un subproceso asíncrono.
+
+=head2 Opciones en línea de comandos
+
+Las siguientes opciones de línea de comandos se comporta de forma diferente bajo VMS que describe en L<perlrun>.  Note también que para pasar opciones en mayúsculas a Perl, necesita encerrarlos entre comillas dobles en la línea de comandos, ya que CRTL pasa a minúsculas todas las cadenas no entrecomilladas.
+
+En las nuevas versiones de 64 bit de OpenVMS, un proceso de establecimiento ahora controla si se necesita el entrecomillado para preservar el tamaño de caja de los argumentos de la línea de comandos.
+
+=over 4
+
+=item -i
+
+Si está presente la opción C<-i> pero no proporciona una extensión para una copia de seguridad, entonces la edición in situ crea una nueva versión de un archivo; la copia existente no se borra.  (Note que si se proporciona una extensión, un archivo existente se renombra al archivo de copia de seguridad, como ocurre en otros sistemas operativos, así que no queda como una versión anterior con el nombre de archivo original).
+
+=item -S
+
+Si la opción C<"-S"> o C<-"S"> está presente I<y> el nombre del I<script> no contiene un directorio, entonces Perl traduce el nombre lógico DCL$PATH a una lista de búsqueda, usando cada traducción como un directorio en donde buscar el I<script>.  Además, si no se especifica un tipo de archivo, Perl busca en cada directorio por un archivo que coincida con el nombre especificado, con uno de tipo vacío, uno de tipo F<.pl>, y uno de tipo F<.com>, en ese orden.
+
+=item -u
+
+La opción C<-u> hace que se invoque el depurador de VMS después de que se compile el programa Perl, pero antes de que corra.  No crea un archivo de volcado de núcleo.
+
+=back
+
+=head1 Funciones Perl
+
+En el momento en que se revisó por última vez este documento, las siguientes funciones Perl se implementaron en la adaptación Perl en VMS (las funciones marcadas con * se detallan a continuación con más detalle):
+
+    pruebas de archivo*, abs, alarm, atan, comillas invertidas*, binmode*, bless,
+    caller, chdir, chmod, chown, chomp, chop, chr,
+    close, closedir, cos, crypt*, defined, delete, die, do, dump*, 
+    each, endgrent, endpwent, eof, eval, exec*, exists, exit, exp, 
+    fileno, flock  getc, getgrent*, getgrgid*, getgrnam, getlogin,
+    getppid, getpwent*, getpwnam*, getpwuid*, glob, gmtime*, goto,
+    grep, hex, ioctl, import, index, int, join, keys, kill*,
+    last, lc, lcfirst, lchown*, length, link*, local, localtime, log,
+    lstat, m//, map, mkdir, my, next, no, oct, open, opendir, ord,
+    pack, pipe, pop, pos, print, printf, push, q//, qq//, qw//,
+    qx//*, quotemeta, rand, read, readdir, readlink*, redo, ref,
+    rename, require, reset, return, reverse, rewinddir, rindex,
+    rmdir, s///, scalar, seek, seekdir, select(interno),
+    select (llamada del sistema)*, setgrent, setpwent, shift, sin, sleep,
+    socketpair, sort, splice, split, sprintf, sqrt, srand, stat,
+    study, substr, symlink*, sysread, system*, syswrite, tell,
+    telldir, tie, time, times*, tr///, uc, ucfirst, umask,
+    undef, unlink*, unpack, untie, unshift, use, utime*,
+    values, vec, wait, waitpid*, wantarray, warn, write, y///
+
+Las siguientes funciones no se implementaron en la adaptación de VMS, y llamarlas produce un error fatal (normalmente) o un comportamiento indefinido (pocas veces, esperamos):
+
+    chroot, dbmclose, dbmopen, fork*, getpgrp, getpriority,  
+    msgctl, msgget, msgsend, msgrcv, semctl,
+    semget, semop, setpgrp, setpriority, shmctl, shmget,
+    shmread, shmwrite, syscall
+
+Las siguientes funciones están disponibles en los Perl compilados con Dec C 5.2 o superior y ejecutando VMS 7.0 o superior:
+
+    truncate
+
+Las siguientes funciones están disponibles en los Perl compilados en VMS 7.2 o superior:
+
+    fcntl (sin bloqueo)
+
+Las siguientes funciones pueden estar o no implementadas, dependiendo del tipo de soporte para I<socket> que haya compilado en su copia de Perl:
+
+    accept, bind, connect, getpeername,
+    gethostbyname, getnetbyname, getprotobyname,
+    getservbyname, gethostbyaddr, getnetbyaddr,
+    getprotobynumber, getservbyport, gethostent,
+    getnetent, getprotoent, getservent, sethostent,
+    setnetent, setprotoent, setservent, endhostent,
+    endnetent, endprotoent, endservent, getsockname,
+    getsockopt, listen, recv, select(llamada del sistema)*,
+    send, setsockopt, shutdown, socket
+
+La siguiente función está disponible en los Perl compilados en 64 bit OpenVMS v8.2 con los enlaces duros activados en un disco formateado como ODS-5.  El soporte para CRTL está, en principio, disponible a partir de OpenVMS v7.3-1, y un mejor soporte de la configuración podría detectarlo.
+
+    link
+
+Las siguientes funciones están disponibles en Perl compilados en 64 bit OpenVMS v8.2 y siguientes.  El soporte para CRTL está, en principio, disponible a partir de OpenVMS v7.3-2, y un mejor soporte de la configuración podría detectarlo.
+
+   getgrgid, getgrnam, getpwnam, getpwuid,
+   setgrent, ttyname
+
+Las siguientes funciones están disponibles en Perl compilados en 64 bit OpenVMS v8.2 y siguientes.  
+
+   statvfs, socketpair
+
+=over 4
+
+=item Pruebas de archivo
+
+Las pruebas C<-b>, C<-B>, C<-c>, C<-C>, C<-d>, C<-e>, C<-f>, C<-o>, C<-M>, C<-s>, C<-S>, C<-t>, C<-T> y C<-z> funcionan como se indica.  Los valores de retorno para C<-r>, C<-w> y C<-x> le indican si puede acceder al archivo; esto puede no reflejar las protecciones de archivo basadas en UIC.  Ya que no difieren el real y el efectivo UIC bajo VMS, C<-O>, C<-R>, C<-W> y C<-X> son equivalentes a C<-o>, C<-r>, C<-w> y C<-x>.
+De modo parecido, muchos otras pruebas, incluyendo C<-A>, C<-g>, C<-k>, C<-l>, C<-p> y C<-u>, no son particularmente significativas bajo VMS, y los valores devueltos por estas pruebas reflejan lo que la rutina C<stat()> de CRTL hace en los bits equivalentes del campo st_mode.  Finalmente, C<-d> devuelve verdadero si se pasa una especificación de dispositivo sin un directorio explícito (por ejemplo, C<DUA1:>), igual que si se pasa un directorio.
+
+Existen la característica de los nombres lógicos DECC Y los atributos de volumen ODS-5 que también controlan qué valores se devuelven para los campos de fecha.
+
+Nota: Algunos sitios han reportado problemas cuando se usa las pruebas de acceso a archivos (C<-r>, C<-w> y C<-x>) en archivos que se acceden a través de los DFS de DEC.
+Específicamente, ya que DFS actualmente no proporciona acceso al archivo de cabecera extendido de los archivos en volúmenes remotos, intenta examinar el fallo ACL, y las pruebas de archivo devolverán falso, con C<$!> indicando que el archivo no existe.  Puede usar C<stat> en estos archivos, ya que sólo comprueba la protección basada en UIC, y luego manualmente comprueba los bits apropiados, como se define el F<stat.h> de su compilador C, en el valor de modo que devuelve, si necesita una aproximación a las protecciones del archivo.
+
+=item comillas invertidas
+
+Las comillas invertidas crea un subproceso, y le pasa la cadena entrecomillada para ejecutarlo como un comando DCL.  Ya que el subproceso se crea directamente por medio de C<lib$spawn()>, se puede especificar cualquier cadena válida de comando DCL.
+
+=item binmode IDENTIFICADOR_ARCHIVO
+
+El operador C<binmode> intentará asegurar que no ocurre la traducción del control de carro a la entrada o salida de este identificador de archivo.
+Ya que esto implica reabrir el archivo y luego restaurar su indicador de posición de archivo, si esta función devuelve FALSO, el identificador de archivo subyacente puede ya no apuntar a un archivo abierto, o puede apuntar a una posición en el archivo diferente de el de antes de llamar a C<binmode>.
+
+Note que C<binmode> no es, generalmente, necesario cuando se usan identificadores de archivo normales; se proporciona para que pueda controlar la E/S a archivos estructurados en registros cuando sea necesario.  También puede usar la función C<vmsfopen> en la extensión VMS::Stdio para obtener un control más fino de E/S para archivos y dispositivos con diferentes estructuras de registro.
+
+=item crypt TEXTOPLANO, USUARIO
+
+El operador C<crypt> usa el servicio del sistema C<sys$hash_password> para generar la representación de hash de TEXTOPLANO.
+Si USUARIO es un nombre de usuario válido, el algoritmo y valores de sal se toman del registro UAF del usuario.  Si no, entonces se usa el algoritmo preferido y un valor de sal de 0.  El valor de la cuádruple palabra cifrada se devuelve como una cadena de 8 caracteres.
+
+El valor devuelto por C<crypt> se puede comparar contra la contraseña cifrada en el UAF devuelta por las funciones C<getpw*>, para autenticar a los usuarios.  Si va a hacer esto, recuerde que la contraseña cifrada en el UAF se generó usando las cadenas en mayúsculas del nombre de usuario y la contraseña; tendrá que poner en mayúsculas los argumentos a C<crypt> para asegurarse de que obtendrá el valor apropiado:
+
+    sub validad_contrasena {
+        my($usuario,$contrasena) = @_;
+        my($pwdhash);
+        if ( !($pwdhash = (getpwnam($usuario))[1]) ||
+               $pwdhash ne crypt("\U$contrasena","\U$usuario") ) {
+            alerta_intruso($nombre);
+        }
+        return 1;
+    }
+
+
+=item die
+
+C<die> forzará a que el valor de estado de salida nativo VMS sea un código SS$_ABORT si los valores de estado, ni $! o $? son los únicos que causarían que el estado nativo se interprete como si VMS lo clasifica como de severidad SEVERE_ERROR para el manejo de errores DCL.
+
+Cuando está activo C<PERL_VMS_POSIX_EXIT> (vea L</"$?"> más abajo), el valor nativo de salida VMS será el de C<$!> o C<$?> o C<$^E> o el valor Unix 255 codificado de una forma que el valor original se puede decodificar por otros programas escritos en C, incluyendo Perl y el paquete GNV.  Igual que el comportamiento normal de C<die> de un no-VMS, si el C<$!> o C<$?> no son cero, uno de esos valores será codificado en un valor nativo de estado en VMS.  Si ambos valores de estado Unix son 0, y el valor C<$^E> está en uno de severidad ERROR o SEVERE_ERROR, entonces el valor de C<$^E> se utilizará como el código de salida.
+Si no se aplica nada de lo anterior, se codificará el valor Unix 255 en un valor nativo VMS de estado de salida.
+
+Por favor, note la diferencia significativa en el comportamiento de C<die> en el modo C<PERL_VMS_POSIX_EXIT>, en donde no se fuerza un estado VMS SEVERE_ERROR a la salida.  Los valores de salida Unix del 2 al 255 se codificarán en valores de estado VMS con niveles de severidad de SUCCESS.  El valor de salida de Unix 1 se codificará en un valor de estado VMS con un nivel de severidad de ERROR.  Esto es para ser compatible con cómo la biblioteca C de VMS codifica estos valores.
+
+El nivel de severidad mínima establecida por C<die> en modo C<PERL_VMS_POSIX_EXIT> se puede cambiar para que sea ERROR o superior dependiendo de los resultados de las pruebas y revisiones futuras.
+
+Vea L</"$?"> para una descripción de la codificación del valor Unix para producir un estado nativo VMS que lo contenga.
+
+=item dump
+
+En lugar de provocar que Perl aborte y vuelque el núcleo, el operador C<dump> invoca el depurador VMS.  Si continúa para ejecutar el programa Perl bajo el depurador, el control se transferirá a la etiqueta especificada como argumento a C<dump>, o si no se especificó etiqueta, de regreso al comienzo del programa.  Todos los demás estados del programa (p. e., valores de variables, identificadores de archivos abiertos) no resultan afectados por la llamada a C<dump>.
+
+=item exec LISTA
+
+Una llamada a C<exec> hará que Perl salga e invoque al comando proporcionado como un argumento a C<exec>, por medio de C<lib$do_command>.  Si el argumento comienza con '@' o '$' (distinto de ser parte de un especificador de archivo), entonces se ejecuta como un comando DCL.  De lo contrario, el primer token en la línea de comando se trata como el especificador de archivo de una imagen a ejecutar, y se hace un intento para invocarlo (usando F<.Exe> y el proceso por defecto para expandir la espec. de arch.) y pasa el resto de argumentos de C<exec> como parámetros.  Si el token no tiene tipo de archivo, y coincide con un archivo con tipo nulo, entonces se hace un intento para determinar si el archivo es una imagen ejecutable que debería invocarse usando C<MCR> o un archivo de texto que debería pasarse a DCL como un procedimiento de comando.
+
+=item fork
+
+Mientras que en principio el operador C<fork> podría implementarse por medio de la rutina C<vfork()> de CRTL (y con las mismas severas limitaciones), y mientras hay algún soporte interno para conseguirlo, la implementación nunca se ha completado, haciendo que actualmente C<fork> no esté disponible.  Se espera a un verdadero C<fork()> en el sistema en futuras versiones de VMS, y puede estar disponible un pseudo fork basado en hebras del intérprete en una futura versión de Perl en VMS (vea L<perlfork>).  Mientras tanto, use C<system>, comillas invertidas, o identificadores de archivo entubados para crear subprocesos.
+
+=item getpwent
+
+=item getpwnam
+
+=item getpwuid
+
+Estos operadores obtienen la información descrita en L<perlfunc>, si tiene los privilegios necesarios para recuperar la información del usuario indicado por medio de C<sys$getuai>.  Si no, entonces sólo se devuelven los elementos de C<$name>, C<$uid> y C<$gid>.  El elemento C<$dir> contiene el directorio de entrada en la sintaxis VMS, mientras que el elemento C<$comment> contiene el directorio de entrada en la sintaxis Unix. El elemento C<$gcos> contiene el campo propietario del registro UAF.  El elemento C<$quota> no se usa.
+
+=item gmtime
+
+El operador C<gmtime> funcionará correctamente si tiene una rutina C<gmtime()> CRTL funcional, o si el nombre lógico SYS$TIMEZONE_DIFFERENTIAL está definido como el número de segundos que se deben añadir a UTC para obtener la hora local.  (Este nombre lógico se define automáticamente si está ejecutando una versión de VMS con soporte UTC incorporado).  Si no se cumple ninguno de estos casos, se imprime un mensaje de advertencia, y se devuelve C<undef>.
+
+=item kill
+
+En la mayor parte de los casos, C<kill> se implementa a través del servicio del sistema, no documentado, C<$SIGPRC>, que tiene la misma secuencia de llamada que C<$FORCEX>, pero lanza una excepción en el proceso objetivo en lugar de forzarle a que llame a C<$EXIT>.  En general, C<kill> sigue el comportamiento de la función C<kill()> de CRTL, pero a diferencia de esa función, se puede llamar desde el interior de un gestor de señales.  También, a diferencia de C<kill> de algunas versiones de CRTL, el C<kill> de Perl comprueba la validez de la señal pasada y devuelve un error en lugar de intentar mandar una señal irreconocible.
+
+También, los valores de señal negativos no hacen nada especial bajo VMS; simplemente se convierten al correspondiente valor positivo.
+
+=item qx//
+
+Vea la entrada anterior sobre C<comillas invertidas>.
+
+=item select (llamada del sistema)
+
+Si Perl no se compiló con soporte para I<socket>, la versión de la llamada del sistema de C<select> no está disponible en absoluto.  Si está presente el soporte para I<socket>, entonces la versión de la llamada del sistema C<select> funciona sólo para los descriptores de archivo adjuntos a los I<sockets>.  No proporcionará información sobre archivos y tuberías normales, ya que la rutina C<select()> de CRTL no proporciona esta funcionalidad.
+
+=item stat EXPR
+
+Ya que VMS sigue la pista de los archivos de acuerdo a un esquema diferente de el de Unix, no es realmente posible representar el ID del archivo en los campos C<st_dev> y C<st_ino> de una C<struct stat>.  Perl intenta lo mejor, a pesar de todo, y los valores que usa son bastante improbables que sean el mismo para dos archivos diferentes.  No podemos garantizarlo, así que, I<caveat scriptor> (cuídate del escritor).
+
+=item system LISTA
+
+El operador C<system> crea un subproceso, y pasa sus argumentos al subproceso para ejecutarse como un comando DCL.  
+Ya que el subproceso se crea directamente por medio de C<lib$spawn()>, se puede especificar cualquier cadena válida de comando DCL.  Si la cadena comienza con '@', se trata como un comando DCL, incondicionalmente.  De lo contrario, si el primer I<token> contiene un carácter utilizado como un delimitador en una especificación de archivo (p. e., C<:> o C<]>), se hace un intento de expandirlo usando el tipo por defecto de F<.Exe> y el nombre del proceso, y si tiene éxito, se invoca el archivo resultante por medio de C<MCR>. Esto le permite invocar una imagen directamente simplemente pasando la especificación de archivo a C<system>, un frecuente modismo Unix.  Si el I<token> no tiene tipo de archivo, y coincide con un archivo con tipo nulo, entonces se hace un intento para determinar si el archivo es una imagen ejecutable que debería invocarse usando C<MCR> o un archivo de texto que debería pasarse a DCL como un procedimiento de comando.
+
+Si la LISTA consiste en una cadena vacía, C<system> crea un subproceso DCL interactivo, de la misma forma que escribir B<SPAWN> en el I<prompt> DCL.
+
+Perl espera a que se complete el subproceso antes de continuar la ejecución del proceso actual.  Como se describe en L<perlfunc>, el valor de retorno de C<system> es un "estado" falso que sigue la semántica POSIX a menos que el I<pragma> C<use vmsish 'status'> esté activo; vea la descripción de C<$?> en este documento para más detalles.  
+
+=item time
+
+El valor devuelto por C<time> es la diferencia en segundos desde el 01-JAN-1970 00:00:00 (igual que la rutina time() de CRTL), para hacerle más fácil al código que viene del mundo POSIX/Unix.
+
+=item times
+
+El array devuelto por el operador C<times> se divide de acuerdo a las mismas reglas que la rutina C<times()> de CRTL.  
+Por eso, los elementos de "system time" siempre será 0, ya que no hay diferencia entre "user time" y "system time" bajo VMS, y el tiempo acumulado por un subproceso puede o no aparecer en el campo "child time", dependiendo de si C<times()> monitoriza los subprocesos de forma separada.  Note especialmente que el VAXCRTL (al menos) monitoriza sólo los subprocesos creados con C<fork()> y C<exec()>; no acumulará los tiempos de los subprocesos creados por tuberías, C<system()> o comillas invertidas.
+
+=item unlink LISTA
+
+C<unlink> eliminará la versión más alta de un único archivo; para eliminar todas las versiones, necesita decir
+
+    1 while unlink LISTA;
+
+Puede necesitar hacer este cambio a los I<scripts> escritos para un sistema Unix que espera que después de una llamada a C<unlink>, ya no existirán más archivos con los nombres pasados a C<unlink>.
+(Nota: Esto se puede cambiar en tiempo de compilación; si usa C<use Config> y C<$Config{'d_unlink_all_versions'}> está C<define>, entonces C<unlink> eliminará todas las versiones de un archivo en la primera llamada.
+
+C<unlink> eliminará un archivo haciendo todo lo posible, incluso si requiere cambiar la protección de archivo (aunque no intentará cambiar la protección del directorio padre).  Puede decir si tiene acceso explícito para eliminar un archivo usando el operador C<VMS::Filespec::candelete>.  Por ejemplo, para eliminar sólo los archivos a los que sólo tiene acceso para eliminar, podría hacer algo como
+
+    sub safe_unlink {
+        my($archivo,$num);
+        foreach $archivo (@_) {
+            next unless VMS::Filespec::candelete($archivo);
+            $num += unlink $archivo;
+        }
+        $num;
+    }
+
+(o simplemente usar C<VMS::Stdio::remove>, si ha instalado la extensión VMS::Stdio distribuida con Perl). Si C<unlink> tiene que cambiar la protección de archivo para eliminar el archivo, y lo interrumpe en mitad del proceso, el archivo puede quedar intacto, pero con un ACL cambiado que permite acceder a eliminarlo.
+
+Este comportamiento de C<unlink> es para ser compatible con el de POSIX y el no tradicional de VMS.
+
+=item utime LISTA
+
+Este operador cambia sólo el tiempo de modificación del archivo (fecha de revisión VMS) en volúmenes ODS-2 y volúmenes ODS-5 sin acceso activado a las fechas. En volúmenes ODS-5 con acceso activado a las fechas, el verdadero tiempo de acceso es modificado.
+
+=item waitpid PID,INDICADORES
+
+Si el PID es un subproceso comenzado por un C<open()> entubado (vea L<open>), C<waitpid> esperará por ese subproceso, y devuelve su valor de estado final en C<$?>.  Si PID es un subproceso creado de alguna otra forma (p. e. creado con SPAWN antes de que se invoque Perl), C<waitpid> simplemente, comprobará una vez por segundo si se completó el proceso, y regresará cuando lo esté.  (Si PID especifica un proceso que no es subproceso del proceso actual, e invocó Perl con la opción C<-w>, se emitirá una advertencia).
+
+Regresa PID en caso de éxito, -1 en caso de error.  El argumento INDICADORES se ignora en todos los casos.
+
+=back
+
+=head1 Variables Perl
+
+La siguiente información específica de VMS se aplica a las indicadas variables "especiales" Perl, añadida a la información general en L<perlvar>.  Donde exista un conflicto, esta información toma precedencia.
+
+=over 4
+
+=item %ENV 
+
+La operación del array C<%ENV> depende de la traducción del nombre lógico F<PERL_ENV_TABLES>.  Si se define, debería ser una lista de búsqueda, en que cada elemento especifica una ubicación para los elementos de C<%ENV>.  Si le dice a Perl que lea o establezca el elemento C<$ENV{>I<nombre>C<}>, entonces Perl usa las traducciones de F<PERL_ENV_TABLES> como sigue:
+
+=over 4
+
+=item CRTL_ENV
+
+Esta cadena le dice a Perl que consulte el array C<environ>, interno de CRTL de pares clave-valor, usando I<nombre> como la clave.  En la mayor parte de los casos, contiene sólo unas pocas claves, pero si se invoca Perl por media de la función C C<exec[lv]e()>, como es el caso para algunas aplicaciones Perl embebidas o cuando corre bajo una shell tales como GNV bash, el array C<environ> puede quedar poblado por el programa llamante.
+
+=item CLISYM_[LOCAL]
+
+Una cadena que comienza con C<CLISYM_> le indica a Perl que consulte la tabla de símbolos de CLI, usando I<nombre> como el nombre del símbolo.  Cuando se lee un elemento desde C<%ENV>, primero se escanea la tabla de símbolos, seguido de la tabla global de símbolos.  Los caracteres que siguen a C<CLISYM_> son significativos cuando es establece o quita un elemento de C<%ENV>: si la cadena completa es C<CLISYM_LOCAL>, el cambio se hace en la tabla local de símbolos; de lo contrario se cambia la tabla global de símbolos.
+
+=item Cualquier otra cadena
+
+Si un elemento de F<PERL_ENV_TABLES> traduce a cualquier otra cadena, esa cadena se usa como el nombre de una tabla lógica, que se consulta usando I<nombre> como el nombre lógico.  Se usa el orden normal de búsqueda de modos de acceso.
+
+=back
+
+F<PERL_ENV_TABLES> se traduce una vez que arranca Perl; cualquier cambio que haga mientras está corriendo Perl no afectara al comportamiento de C<%ENV>.
+Si no está definida F<PERL_ENV_TABLES>, entonces Perl, por omisión, primero consulta las tablas de nombre lógico especificadas por F<LNM$FILE_DEV>, y luego el array C<environ> de CRTL.  El orden por omisión es invertido cuando se define el nombre lógico F<GNV$UNIX_SHELL>, como cuando se ejecuta bajo GNV bash.
+
+Para operaciones en entradas %ENV basadas en nombres lógicos o símbolos DCL, la cadena clave se trata como si estuviera enteramente en mayúsculas, sin preocuparse del tamaño de caja especificado en la expresión Perl. Las entradas en %ENV basadas en el array environ de CRTL preserva el tamaño de caja de la cadena clave cuando se almacena, y las búsquedas son sensibles al tamaño de caja.
+
+Cuando se lee un elemento de C<%ENV>, las posiciones a los que apunta F<PERL_ENV_TABLES> se comprueban por orden, y se devuelve el valor obtenido de la primera búsqueda.  Si el nombre del elemento de C<%ENV> contiene un punto y coma, se eliminan éste y cualquier carácter después de él.  Se ignoran cuando se consultan el array C<environ> CRTL o la tabla de símbolos CLI.
+Sin embargo, el nombre se busca en una tabla de nombre lógico, el sufijo después del punto y coma se trata como el índice de traducción que se usará para la búsqueda.   Esto le permite buscar por valores sucesivos en listas de búsqueda de nombres lógicos.  Por ejemplo, si escribe:
+
+   $  Define STORY  once,upon,a,time,there,was
+   $  perl -e "for ($i = 0; $i <= 6; $i++) " -
+   _$ -e "{ print $ENV{'story;'.$i},' '}"
+
+Perl imprimirá C<ONCE UPON A TIME THERE WAS>, asumiendo, naturalmente, que F<PERL_ENV_TABLES> se ha establecido, de tal manera que se encuentre el nombre lógico C<story>, en lugar del símbolo CLI o elemento C<environ> de CRTL con el mismo nombre.
+
+Cuando se establece un elemento de C<%ENV> a una cadena definida, la correspondiente definición se realiza en la posición a la que apunte la primera traducción de F<PERL_ENV_TABLES>.  Si esto provoca que se cree un nombre lógico, se define en modo supervisor.
+(Lo mismo ocurre si se definió un nombre lógico ya existente en modo ejecutivo o kernel; un nombre lógico existente en modo usuario o supervisor se reinicia al nuevo valor).  Si el valor es una cadena vacía, la traducción del nombre lógico se define como un único carácter C<NUL> (ASCII C<\0>), ya que un nombre lógico no se puede traducir a una cadena de longitud cero.  (Esta restricción no aplica a los símbolos CLI o valores C<environ> de CRTL; se establecen a la cadena vacía).
+
+Cuando se establece un elemento de C<%ENV> a C<undef>, el elemento se busca como si se fuese a leer, y si se encuentra, se borra.  (Un elemento "borrado" del array C<environ> de CRTL se establece a la cadena vacía).  Tiene un efecto similar usar C<delete> para eliminarlo desde C<%ENV>, pero después de que se elimine el elemento, se realiza otro intento para buscar el elemento, así que un nombre lógico interno o un nombre en otra posición reemplazará el nombre lógico recién borrado. En cualquier caso, sólo se altera el primer valor encontrado al buscar por PERL_ENV_TABLES.  No es posible en el presente definir una lista de búsqueda de nombres lógicos por medio de %ENV.
+
+El elemento C<$ENV{DEFAULT}> es especial: cuando se le lee, devuelve el valor actual del dispositivo y directorio por defecto, y cuando se le establece, los reinicia, sin importar la definición de F<PERL_ENV_TABLES>.
+No se puede limpiar o borrar; los intentos de hacerlo se ignoran silenciosamente.
+
+Note que si quiere pasar cualquiera de los elementos del array local C environ a un subproceso que no se inició por fork/exec, o no está ejecutando un programa C, puede "promocionarlos" a nombres lógicos en el proceso actual, que entonces todos los subprocesos lo heredarán, diciendo
+
+    foreach my $key (qw[claves locales C que quiere promocionar]) {
+        my $temp = $ENV{$key}; # leer desde el array local C
+        $ENV{$key} = $temp;    # y lo define como nombre lógico
+    }
+
+(No puede decir C<$ENV{$key} = $ENV{$key}>, ya que el optimizador de Perl es lo suficientemente inteligente como para omitir la expresión).
+
+No intente limpiar C<%ENV> diciendo C<%ENV = ();>, lanzará un error fatal.  Esto es equivalente a hacer lo siguiente desde DCL:
+
+    DELETE/LOGICAL *
+
+Puede imaginar cómo de malas podrían ser las cosas si, por ejemplo, se eliminaran los nombres lógicos SYS$MANAGER o SYS$SYSTEM.
+
+Actualmente, la primera vez que itere sobre %ENV usando C<keys> o C<values>, incurrirá un tiempo de penalización a medida que se vayan leyendo los nombres lógicos, para poblar plenamente %ENV.
+Las subsecuentes iteraciones no releerán los nombres lógicos, así que no serán tan lentos, pero no reflejarán ningún cambio a las tablas de nombres lógicos provocadas por otros programas.
+
+No necesita ser prudente con los nombres lógicos que representan a los archivos de los procesos permanentes, tales como C<SYS$INPUT> y C<SYS$OUTPUT>.
+Las traducciones para estos nombres lógicos se preceden con un valor binario de dos bytes (0x1B 0x00) que necesitan quitarse si quiere usarlo. (En versiones anteriores de Perl no era posible obtener los valores de estos nombres lógicos, ya que el byte nulo actuaba como marcador de fin-de-cadena).
+
+=item $!
+
+La función strerror() de CRTL devuelve el valor de cadena de C<$!>, así que incluirá el mensaje VMS para los errores específicos de VMS.  El valor numérico de C<$!> es el valor de C<errno>, excepto si errno es EVMSERR, en cuyo caso C<$!> contiene el valor de vaxc$errno.  Establecer C<$!> siempre establece errno al valor especificado.  Si este valor es EVMSERR, también establece vaxc$errno a 4 (NONAME-F-NOMSG), así que el valor de cadena de C<$!> no reflejará el mensaje de error VMS antes de que estableciera C<$!>.
+
+=item $^E
+
+Esta variable proporciona acceso directo a los valores de estado VMS en vaxc$errno, que a menudo son más específicos que los mensajes de error genéricos estilo Unix de C<$!>.  Su valor numérico es el valor de vaxc$errno, y su valor de cadena es la correspondiente cadena de mensaje VMS, recuperado por sys$getmsg().
+Establecer C<$^E> pone vaxc$errno al valor especificado.
+
+Mientras que Perl intenta mantener actualizado el valor de vaxc$errno al actual, si errno no es EVMSERR, quizás no sea de la operación actual.
+
+=item $?
+
+El "valor de estado" devuelto en C<$?> se sintetiza desde el estado de salida real del subproceso de una manera que se aproxima a la semántica POSIX de wait(5), para permitir a los programas Perl probar de forma portable la finalización exitosa del subproceso.  Los 8 bits más bajos de C<$?> son siempre 0 bajo VMS, ya que el estado de terminación de un proceso puede o no haber sido generado por una excepción.
+
+Los siguientes 8 bits contiene el estado de terminación del programa.
+
+Si el proceso hijo sigue la convención de los programas C compilados con la macro _POSIX_EXIT establecida, el valor de estado contendrá el valor actual de 0 a 255 devuelto por ese programa en una salida normal.
+
+Con la macro _POSIX_EXIT establecida, el valor de salida de cero se representa como un estado nativo VMS de 1, y los valores Unix de 2 a 255 se codifican por la ecuación:
+
+   VMS_status = 0x35a000 + (valor_unix * 8) + 1.
+
+Y en el caso especial del valor Unix 1, la codificación es:
+
+   VMS_status = 0x35a000 + 8 + 2 + 0x10000000.
+
+Para otros estados de terminación, se usa la porción de severidad del estado de salida del subproceso: si la severidad fue exitosa o informativa, estos bits son todos 0; si la severidad era advertencia, contienen un valor de 1; si la severidad era un error o error fatal, contienen los bits reales de la severidad, el cual resulta ser un valor de 2 para error y 4 para severe_error.
+Fatal es otro término para el estado de severe_error.
+
+Como resultado, C<$?> siempre será cero si el estado de salida del subproceso indicaba un completado exitoso, y no-cero si ocurrió una advertencia o error o si ejecutó un programa con los valores _POSIX_EXIT codificados y estableció un estado.
+
+¿Cómo puede decir la diferencia entre un estado no-cero que es el resultado de un estado de error nativo VMS o un estado Unix codificado?
+No puede a menos que mire en el valor ${^CHILD_ERROR_NATIVE}.
+El valor ${^CHILD_ERROR_NATIVE} devuelve el valor de estado VMS real y comprueba los bits de severidad. Si los bits de severidad son iguales a 1, entonces si el valor numérico de C<$?> está entre 2 y 255 o 0, entonces C<$?> refleja con precisión un valor devuelto desde la aplicación Unix.
+Si C<$?> es 1, y los bits de severidad indican un error(2) VMS, entonces C<$?> proviene de un valor de salida de la aplicación Unix.
+
+En la práctica, los I<scripts> Perl que llaman a programas que devuelven tipos de valores de estado de salida _POSIX_EXIT esperarán por estos valores, y los programas que llaman a programas VMS tradicionales esperarán por el comportamiento anterior o sólo comprobar por un estado no-cero.
+
+Y el éxito siempre es el valor 0 en todos los comportamientos.
+
+Cuando el estado de terminación VMS de un hijo es un error, internamente el valor de C<$!> se establecerá al valor errno Unix más cercano a ese error, para que los I<scripts> Perl que comprueban los mensajes de error verán el estilo esperado de mensaje de error en lugar de un mensaje VMS.
+
+Recíprocamente, cuando se establece C<$?> en un bloque END, se realiza un intento para convertir el valor POSIX en un estado nativo inteligible para el sistema operativo al salir de Perl.  Lo que se cuece de todo esto es establecer C<$?> a cero resulta en el valor de éxito genérico SS$_NORMAL, y establecer C<$?> a un valor no-cero resulta en un estado de fallo genérico SS$_ABORT.  Vea también L<perlport/exit>.
+
+Cuando el nombre lógico C<PERL_VMS_POSIX_EXIT> está definido como "ENABLE", establecer C<$?> causará que el nuevo valor se codifique en C<$^E> así que tanto los valores de estado de salida originales del padre o hijo 
+ de 0 a 255 se pueden recuperar automáticamente por los programas C que esperan un comportamiento _POSIX_EXIT.  Si tanto el valor de salida de un padre o hijo son no-cero, entonces se asumirá que es realmente un valor de estado nativo VMS que hay que pasar.  El valor especial 0xFFFF es casi un NOOP ya que causará que el estado VMS nativo actual en la biblioteca C se convierta en el estado VMS nativo Perl, y se maneja de esta manera como si se supiera que no es un valor de estado VMS nativo válido.
+Se recomienda que se usen sólo los valores en el rango de números de estado para padres e hijos Unix, de 0 a 255.
+
+El I<pragma> C<use vmsish 'status'> hace que C<$?> refleje el estado de salida VMS real en lugar de la emulación por defecto del estado POSIX descrito antes.  Este I<pragma> también desactiva la conversión de valores no-cero a SS$_ABORT cuando se establece C<$?> en un bloque END (pero cero se seguirá convirtiendo a SS$_NORMAL).
+
+No use el I<pragma> C<use vmsish 'status'> con C<PERL_VMS_POSIX_EXIT> activado, ya que hay veces que piden acciones conflictivas y la consecuencia de ignorar este consejo estará indefinido para permitir futuras mejoras en la gestión de la salida POSIX.
+
+En general, con C<PERL_VMS_POSIX_EXIT> activado, estará disponible información más detallada en el estado de salida para los I<scripts> DCL u otras herramientas nativas VMS, y proporcionará la información esperada para los programas Posix.  No se ha dejado por defecto para preservar la retrocompatibilidad.
+
+N.B. Establecer C<DECC$FILENAME_UNIX_REPORT> activa implícitamente C<PERL_VMS_POSIX_EXIT>.
+
+=item $|
+
+Establecer C<$|> para un flujo de E/S causa que los datos se vacíen todos al disco en cada escritura (es decir, no delegar en los búferes RMS subyacentes para cada archivo).  En otras palabras, es equivalente a llamar a fflush() y fsync() desde C.
+
+=back
+
+=head1 Diferencias específicas de VMS con los módulos estándares
+
+=head2 SDBM_File
+
+SDBM_File trabaja correctamente en VMS. Tiene, sin embargo, una pequeña diferencia. El directorio de archivos de base de datos tiene una extensión F<.sdbm_dir> en lugar de una extensión F<.dir>. Los archivos F<.dir> son archivos de directorio del sistema de archivos VMS, y usarlos para otros propósitos podría causar problemas inaceptables.
+
+=head1 Fecha de revisión
+
+Por favor vea el repositorio git para el histórico de revisiones.
+
+=head1 AUTOR
+
+Charles Bailey  bailey@cor.newman.upenn.edu
+Craig Berry  craigberry@mac.com
+Dan Sugalski  dan@sidhe.org
+John Malmberg wb8tyw@qsl.net

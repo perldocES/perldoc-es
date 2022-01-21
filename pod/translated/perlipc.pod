@@ -291,7 +291,7 @@ Si está seguro de que un programa en particular es un script Perl que espera no
 
 y no importa con qué shell se le llame, el programa Perl leerá del archivo F<f1>, el proceso F<cmd1>, la entrada estándar (F<archivotemporal> en este caso), el archivo F<f2>, el comando F<cmd2> y, finalmente, el archivo F<f3>.  Muy ingenioso, ¿eh?
 
-Podría notar que podría usar las comillas inversas para conseguir el mismo efecto de abrir una tubería en modo lectura:
+Podría notar que podría usar las comillas invertidas para conseguir el mismo efecto de abrir una tubería en modo lectura:
 
     print grep { !/^(tcp|udp)/ } `netstat -an 2>&1`;
     die "error con netstat ($?)" if $?;
@@ -377,7 +377,7 @@ Otro interesante aproximación a IPC es hacer que un simple programa se conviert
         exit(0);                # ¡¡no olvide esto!!
     }
 
-Otro uso común para esta construcción es cuando necesita ejecutar algo sin la interferencia del shell.  Con system(), es inmediato, pero no puede usar una tubería o comillas inversas de forma segura.
+Otro uso común para esta construcción es cuando necesita ejecutar algo sin la interferencia del shell.  Con system(), es inmediato, pero no puede usar una tubería o comillas invertidas de forma segura.
 Esto es porque no hay forma de impedir al shell que vea sus argumentos.   En lugar de eso, use control a bajo nivel para llamar a exec() directamente.
 
 Aquí hay una forma segura de abrir en lectura con comillas inversas o tubería abierta:
@@ -473,7 +473,7 @@ Para solventar esto, debe usar manualmente pipe(), fork() y la forma de open() q
     }
 
 Desde Perl 5.8.0, también puede usar la forma de lista de C<open> para tuberías.
-Esto es lo preferido cuando desea evitar que el shell interprete metacaracteres que podrían estar en su línea de comando.
+Esto es lo preferido cuando desea evitar que el shell interprete metacaracteres que podrían estar en su línea de comandos.
 
 Así, por ejemplo, en lugar de usar:
 

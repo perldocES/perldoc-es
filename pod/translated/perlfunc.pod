@@ -1196,7 +1196,7 @@ X<dump> X<core> X<undump> X<volcado> X<núcleo>
 
 =for Pod::Functions create an immediate core dump
 
-Esta función provoca un volcado inmediato del núcleo de ejecución.  Ver también la opción de línea de comando B<-u> en L<perlrun>, que hace lo mismo.
+Esta función provoca un volcado inmediato del núcleo de ejecución.  Ver también la opción de línea de comandos B<-u> en L<perlrun>, que hace lo mismo.
 Principalmente esto se utiliza en conjunción con el programa B<undump> (no suministrado) para convertir tu volcado del núcleo en un binario ejecutable después de haber inicializado todas las variables al comienzo del programa.  Cuando se ejecuta el nuevo binario, comenzará ejecutando un C<goto ETIQUETA> (con todas las restricciones que L<C<goto>|/goto ETIQUETA> padece).
 Piense en él como un goto entre un volcado del núcleo y una reencarnación.
 Si se omite C<ETIQUETA>, reinicia el programa desde el principio.  La forma C<dump EXPR>, disponible a partir de Perl 5.18.0, permite que un nombre sea computado en tiempo de ejecución o, de lo contrario, es idéntico a C<dump LABEL>.
@@ -1952,7 +1952,7 @@ Estas rutinas son las mismas que sus homólogas en la biblioteca del sistema.  E
 
 (Si la entrada no existe, el valor de retorno es un único valor verdadero, sin significado).
 
-El significado exacto del campo $gcos varía pero usualmente contiene el nombre real del usuario (como opuesto al nombre de login) y otra información perteneciente al usuario.  Tenga cuidado, sin embargo, que en muchos sistemas los usuarios son capaces de cambiar esta información y por eso no puede confiarse y por eso el $gcos queda contaminado (ver L<perlsec>).  La $contrasena y el $shell, la contraseña codificada del usuario y el I<shell> del login, están también contaminados, por la misma razón.
+El significado exacto del campo $gcos varía pero usualmente contiene el nombre real del usuario (como opuesto al nombre de login) y otra información perteneciente al usuario.  Tenga cuidado, sin embargo, que en muchos sistemas los usuarios son capaces de cambiar esta información y por eso no puede confiarse y por eso el $gcos queda contaminado (ver L<perlsec>).  La $contrasena y el $shell, la contraseña cifrada del usuario y el I<shell> del login, están también contaminados, por la misma razón.
 
 En contexto escalar, obtiene el nombre, a menos que la función fuera localizar por nombre, en cuyo caso obtendrá la otra cosa, cualquiera que sea.
 (Si la entrada no existe obtendrá el valor indefinido).  Por ejemplo:
@@ -2859,7 +2859,7 @@ Ejemplos generales:
  open(my $dbase, "+<dbase.mine")          # lo mismo
      or die "No puedo abrir 'dbase.mine' para actualizar: $!";
 
- open(my $articulo_fh, "-|", "caesar <$articulo")  # decodificar el artículo
+ open(my $articulo_fh, "-|", "caesar <$articulo")  # descifrar
                                                  # artículo
      or die "No puedo iniciar caesar: $!";
 
@@ -4899,7 +4899,7 @@ Como un caso especial para L<C<split>|/split E<sol>PATRÓNE<sol>,EXPR,LÍMITE>, 
 
 Si PATRÓN es C</^/>, entonces se trata como si estuviera presente el L<modificador multilínea|perlreref/OPERADORES> (C</^/m>), ya que de lo contrario no serviría de mucho.
 
-Como otro caso especial, L<C<split>|/split E<sol>PATRÓNE<sol>,EXPR,LÍMITE> emula el comportamiento predeterminado de la herramienta de línea de comando B<awk> cuando el PATRÓN se omite o es una I<cadena literal> compuesta de un único carácter de espacio (tal como S<C<' '>> o S<C<"\x20">>, pero no, por ejemplo, S<C</ />>).  En este caso, cualquier espacio en blanco que rodee a EXPR se elimina antes de que ocurra la división, y el PATRÓN se trata como si fuera C</\s+/>; en particular, esto significa que I<cualquier> espacio en blanco contiguo (no sólo un carácter de espacio) se utiliza como separador.  Sin embargo, este tratamiento especial puede evitarse especificando el patrón S<C</ />> en lugar de la cadena S<C<" ">>, permitiendo así que sólo un único carácter de espacio sea el separador.  En versiones anteriores de Perl, este caso especial estuvo restringido al uso de un sencillo S<C<" ">> como el argumento de patrón para split; en Perl 5.18.0 y siguientes, este caso especial se activa por cualquier expresión que evalúe a la cadena de caracteres S<C<" ">>.
+Como otro caso especial, L<C<split>|/split E<sol>PATRÓNE<sol>,EXPR,LÍMITE> emula el comportamiento predeterminado de la herramienta de línea de comandos B<awk> cuando el PATRÓN se omite o es una I<cadena literal> compuesta de un único carácter de espacio (tal como S<C<' '>> o S<C<"\x20">>, pero no, por ejemplo, S<C</ />>).  En este caso, cualquier espacio en blanco que rodee a EXPR se elimina antes de que ocurra la división, y el PATRÓN se trata como si fuera C</\s+/>; en particular, esto significa que I<cualquier> espacio en blanco contiguo (no sólo un carácter de espacio) se utiliza como separador.  Sin embargo, este tratamiento especial puede evitarse especificando el patrón S<C</ />> en lugar de la cadena S<C<" ">>, permitiendo así que sólo un único carácter de espacio sea el separador.  En versiones anteriores de Perl, este caso especial estuvo restringido al uso de un sencillo S<C<" ">> como el argumento de patrón para split; en Perl 5.18.0 y siguientes, este caso especial se activa por cualquier expresión que evalúe a la cadena de caracteres S<C<" ">>.
 
 Si se omite, el PATRÓN por defecto es un único espacio, S<C<" ">>, lo que provoca el comportamiento de la emulación I<awk> descrita anteriormente.
 

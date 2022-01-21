@@ -683,7 +683,7 @@ El primer programa, que ignora su configuración regional, no se ejecutará: un 
         open(F, ">$archivo_salida_contaminado")
             or warn "Falló la apertura de $archivo_salida_contaminado: $!\n";
 
-Se puede obligar a que el programa haga un "lavado" del valor contaminado llevándolo a través de una expresión regular: el segundo ejemplo -que todavía ignora la información de la configuración regional- se ejecuta, creando el archivo con el nombre indicado en su línea de comando, si lo puede hacer.
+Se puede obligar a que el programa haga un "lavado" del valor contaminado llevándolo a través de una expresión regular: el segundo ejemplo -que todavía ignora la información de la configuración regional- se ejecuta, creando el archivo con el nombre indicado en su línea de comandos, si lo puede hacer.
 
         #/usr/local/bin/perl -T
 

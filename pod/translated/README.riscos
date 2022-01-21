@@ -25,7 +25,7 @@ Luego, en el código fuente para compilarse de forma cruzada:
 
 Seleccione el archivo de pistas para riscos. Suele ser suficiente tomar el valor por defecto para las respuestas del resto de las preguntas.
 
-Tenga en cuenta que, si desea ejecutar Configure de forma no interactiva (ver el documento INSTALL para más detalles), a su sugerencia de seleccionar el archivo correcto, tendrá que proporcionar el argumento -Dhintfile=riscos en la línea de comando para Configure.
+Tenga en cuenta que, si desea ejecutar Configure de forma no interactiva (ver el documento INSTALL para más detalles), a su sugerencia de seleccionar el archivo correcto, tendrá que proporcionar el argumento -Dhintfile=riscos en la línea de comandos para Configure.
 
 =item 3.
 

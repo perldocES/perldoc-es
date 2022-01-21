@@ -647,7 +647,7 @@ Se llama de la misma manera que cualquier otro método, con el objeto como prime
 Si su método C<DESTROY> genera un error, se omitirá.
 No se enviará a C<STDERR> y no hará que el programa finalice. Sin embargo, si el destructor se ejecuta dentro de un bloque C<eval {}>, el error cambiará el valor de C<$@>.
 
-Como los métodos C<DESTROY> pueden llamarse en cualquier momento, debe localizar cualquier variable global que pueda actualizarse mediante C<DESTROY>. En particular, si usa C<eval {}> debería localizar C<$@>, y si usa C<system> o comillas invertidas, debería localizar C<$?>.
+Como los métodos C<DESTROY> pueden llamarse en cualquier momento, debe localizar cualquier variable global que pueda actualizarse mediante C<DESTROY>. En particular, si usa C<eval {}> debería localizar C<$@>, y si usa C<system> o comillas inversas, debería localizar C<$?>.
 
 Si define C<AUTOLOAD> en la clase, Perl llamará a su método C<AUTOLOAD> para controlar el método C<DESTROY>. Puede evitar este comportamiento definiendo un método C<DESTROY> vacío, como hicimos en el ejemplo de carga automática.
 También puede comprobar el valor de C<$AUTOLOAD> y volver sin hacer nada cuando se realice la llamada para controlar C<DESTROY>.

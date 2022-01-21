@@ -1103,7 +1103,7 @@ Esta sección del documento cubre cuestiones sobre la interacción con el sistem
 
 =item *
 
-¿Cómo decodifico archivos de contraseñas codificadas?
+¿Cómo decodifico archivos de contraseñas cifradas?
 
 =item *
 
@@ -1167,11 +1167,11 @@ Esta sección del documento cubre cuestiones sobre la interacción con el sistem
 
 =item *
 
-¿Qué tiene de malo usar las comillas inversas en un contexto vacío?
+¿Qué tiene de malo usar las comillas invertidas en un contexto vacío?
 
 =item *
 
-¿Cómo puedo llamar a las comillas inversas sin que lo procese el I<shell>?
+¿Cómo puedo llamar a las comillas invertidas sin que lo procese el I<shell>?
 
 =item *
 

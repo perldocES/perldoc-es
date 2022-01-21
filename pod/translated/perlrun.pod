@@ -227,7 +227,7 @@ La variable mágica de solo lectura C<${^UNICODE}> refleja el valor numérico de
 (En Perl anteriores a 5.8.1, la opción B<-C> solo era una opción solo Win32 que activaba el uso de las "wide system call" de la API de Win32 relativo a la codificación Unicode.
 Esta característica, sin embargo, y en la práctica, no era usada, por lo que esta opción ha sido "reciclada").
 
-B<Nota:> Desde perl 5.10.1, si la opción B<-C> es usada en la línea C<#!>, también debe especificarse en la línea de comando, debido a que los flujos estándares se inicializan en ese punto, en la ejecución del intérprete perl.
+B<Nota:> Desde perl 5.10.1, si la opción B<-C> es usada en la línea C<#!>, también debe especificarse en la línea de comandos, debido a que los flujos estándares se inicializan en ese punto, en la ejecución del intérprete perl.
 También puede usar binmode() para establecer la codificación de un flujo de E/S.
 
 =item B<-c>
@@ -309,7 +309,7 @@ Si solo está intentando imprimir cada línea del código Perl que está ejecuta
 
 Vea L<perldebug> para más detalles y variaciones.
 
-=item B<-e> I<línea de comando>
+=item B<-e> I<línea de comandos>
 X<-e>
 
 puede usarse para entrar un programa de una línea.  Si se indica B<-e>, Perl no mirará por un nombre de archivo en la lista de argumentos.  Se pueden indicar múltiples comandos B<-e> para generar un I<script> multilínea.  Asegúrese de usar caracteres de punto y coma tal y como haría con un programa normal.
@@ -525,7 +525,7 @@ Los bloques C<BEGIN> y C<END> pueden usarse para capturar el control antes de o 
 =item B<-s>
 X<-s>
 
-habilita un rudimentario análisis de opciones en la línea de comando después del nombre de programa pero antes de cualquier argumento de nombre de archivo (o antes de un argumento B<-->).  Cualquier opción encontrada allí es eliminada de @ARGV y se pone en la correspondiente variable del programa Perl.  El programa siguiente imprime "1" si el programa se invoca con una opción B<-xyz>, y "abc" si se invoca con B<-xyz=abc>.
+habilita un rudimentario análisis de opciones en la línea de comandos después del nombre de programa pero antes de cualquier argumento de nombre de archivo (o antes de un argumento B<-->).  Cualquier opción encontrada allí es eliminada de @ARGV y se pone en la correspondiente variable del programa Perl.  El programa siguiente imprime "1" si el programa se invoca con una opción B<-xyz>, y "abc" si se invoca con B<-xyz=abc>.
 
     #!/usr/bin/perl -s
     if ($xyz) { print "$xyz\n" }

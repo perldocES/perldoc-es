@@ -151,13 +151,13 @@ Perl considera que las definiciones regionales son poco fiables porque contienen
 =head2 Opciones en la línea "#!"
 
 Cuando hace que un I<script> sea ejecutable, para hacerlo utilizable como un comando, el sistema pasará las opciones a perl que estén en la #!
-línea.  Perl comprueba que cualquier opción desde la línea de comando pasados a un I<script> setuid
+línea.  Perl comprueba que cualquier opción desde la línea de comandos pasados a un I<script> setuid
 (o setgid) coinciden de hecho con los indicados en la #! línea.  Algunos Unix y entornos parecidos imponen un límite de una opción en la #!
 línea, así que necesitará usar algo como C<-wU> en lugar de C<-w -U> bajo tales sistemas.  (Este problema debería aparecer solamente en Unix y entornos parecidos que soporten #! y I<scripts> setuid o setgid).
 
 =head2 Modo contaminación y @INC
 
-Cuando el modo contaminación (C<-T>) está en activo, el directorio "." se quita de C<@INC>, y Perl ignora las variables de entorno C<PERL5LIB> y C<PERLLIB>.  Puede seguir ajustando C<@INC> desde el exterior del programa usando la opción de línea de comando C<-I> tal como se explica L<perlrun>.  Se ignoran las dos variables de entorno porque están ocultas, y un usuario ejecutando el programa podría no ser consciente de que están establecidas, mientras que la opción C<-I> es claramente visible y, por lo tanto, permitida.
+Cuando el modo contaminación (C<-T>) está en activo, el directorio "." se quita de C<@INC>, y Perl ignora las variables de entorno C<PERL5LIB> y C<PERLLIB>.  Puede seguir ajustando C<@INC> desde el exterior del programa usando la opción de línea de comandos C<-I> tal como se explica L<perlrun>.  Se ignoran las dos variables de entorno porque están ocultas, y un usuario ejecutando el programa podría no ser consciente de que están establecidas, mientras que la opción C<-I> es claramente visible y, por lo tanto, permitida.
 
 Otra forma de modificar C<@INC> sin modificar el programa es usando el I<pragma> C<lib>, por ejemplo:
 
@@ -186,7 +186,7 @@ Perl no llama al I<shell> para expandir los comodines cuando pasa listas explíc
 Perl proporciona una forma razonablemente segura para abrir un archivo o tubería desde un programa setuid o setgid: simplemente cree un proceso hijo con privilegios reducidos, quien hará el trabajo sucio por usted.  Primero, haga un fork de un hijo usando la sintaxis especial C<open> que conecte el padre y el hijo por medio de una tubería.  Ahora el hijo reinicia su ID de grupo y cualesquiera otros atributos de proceso, como variables de entorno, umask, directorios de trabajo actuales, dejándolos en sus valores originales o valores seguros conocidos.  Entonces, el proceso hijo, que ya no tiene ningún permiso especial, hace el C<open> u otra llamada del sistema.
 Finalmente, el hijo pasa los datos que ha gestionado al padre.  Ya que el archivo o tubería se abrió en el hijo mientras se ejecuta con un privilegio más bajo que el padre, no se le puede burlar para que haga algo que no deba.
 
-Aquí hay una manera de ejecutar comillas inversas de una forma razonablemente segura.  Note cómo el C<exec> no se llama con una cadena que el I<shell> podría expandir.  Esto es de lejos la mejor forma de llamar algo que estuviera sujeto a los escapes del I<shell>: nunca llamar al I<shell>.  
+Aquí hay una manera de ejecutar comillas invertidas de una forma razonablemente segura.  Note cómo el C<exec> no se llama con una cadena que el I<shell> podría expandir.  Esto es de lejos la mejor forma de llamar algo que estuviera sujeto a los escapes del I<shell>: nunca llamar al I<shell>.  
 
         use English;
         die "No puedo hacer fork: $!" unless defined($pid = open(KID, "-|"));
@@ -249,8 +249,8 @@ Antes de nada, I<no> puede quitar los permisos de lectura, porque el código fue
 
 Algunos personas consideran equivocadamente que eso es un problema de seguridad.  Si su programa hace cosas inseguras, y confía en personas que no saben cómo explotar esas vulnerabilidades, entonces no es seguro.  A menudo es posible para cualquiera determinar la inseguridad de las cosas y explotarlas sin ver el código fuente.  Seguridad por medio de la oscuridad, escondiendo el nombre de sus errores en lugar de arreglarlos es, de hecho, poca seguridad.
 
-Puede intentar usar codificación por medio de filtros de código fuente (Filter::* en CPAN, o Filter::Util::Call y Filter::Simple desde Perl 5.8).
-Pero los intrusos podrían ser capaces de descodificarlo.  Puede intentar usar el compilador e intérprete de I<bytecode> descrito más abajo, pero los intrusos podrían ser capaces de descompilarlo.  Puede intentar usar un compilador de código nativo descrito más abajo, pero los intrusos podrían ser capaces de desensamblarlo.  Todo esto aporta varios grados de dificultad para las personas que esperan obtener su código, pero, definitivamente, ninguna de ellas lo puede encubrir (esto es para todos los lenguajes, no solo Perl).
+Puede intentar usar el cifrado por medio de filtros de código fuente (Filter::* en CPAN, o Filter::Util::Call y Filter::Simple desde Perl 5.8).
+Pero los intrusos podrían ser capaces de descifrarlo.  Puede intentar usar el compilador e intérprete de I<bytecode> descrito más abajo, pero los intrusos podrían ser capaces de descompilarlo.  Puede intentar usar un compilador de código nativo descrito más abajo, pero los intrusos podrían ser capaces de desensamblarlo.  Todo esto aporta varios grados de dificultad para las personas que esperan obtener su código, pero, definitivamente, ninguna de ellas lo puede encubrir (esto es para todos los lenguajes, no solo Perl).
 
 Si está preocupado porque haya gente que quiera aprovecharse de su código, entonces hay que subrayar que no hay nada que le dé una seguridad legal salvo una licencia restrictiva.  Licencie su software y sazónelo con declaraciones amenazantes como "Esto es un software propietario inédito de XYZ Corp.
 El acceso a él no le da permiso para usarlo, bla, bla, bla". Debería ver a un abogado para asegurarse que la redacción de su licencia sea completamente legal.

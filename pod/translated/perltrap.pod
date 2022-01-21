@@ -290,7 +290,7 @@ El operador comilla inversa no traduce el valor de retorno, a diferencia de B<cs
 
 =item *
 
-Los I<shell> (especialmente B<csh>) hacen diversos niveles de sustitución en cada línea de comando.  Perl hace sustitución en solo ciertas construcciones, como las comillas dobles, comillas inversas, ángulos, y patrones de búsqueda.
+Los I<shell> (especialmente B<csh>) hacen diversos niveles de sustitución en cada línea de comandos.  Perl hace sustitución en solo ciertas construcciones, como las comillas dobles, comillas invertidas, ángulos, y patrones de búsqueda.
 
 =item *
 

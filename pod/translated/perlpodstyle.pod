@@ -46,7 +46,7 @@ Para un módulo, aquí es donde reside, generalmente, la documentación de los i
 
 =item OPCIONES (en inglés, OPTIONS)
 
-Descripción detallada de cada opción de línea de comando que se puede pasar al programa.  Debería separarse de la descripción para que pueda usarse por parte de interpretadores como L<Pod::Usage>.  Esto se presenta, normalmente, como una lista, con cada opción marcada con un C<=item>.  El texto específico de la opción tendría que estar dentro de un BE<lt>E<gt>.  Cualquier valor que tome la opción tendría que estar dentro de un IE<lt>E<gt>.  Por ejemplo, la sección para la opción B<--sección>=I<extensión> aparecerá como:
+Descripción detallada de cada opción de línea de comandos que se puede pasar al programa.  Debería separarse de la descripción para que pueda usarse por parte de interpretadores como L<Pod::Usage>.  Esto se presenta, normalmente, como una lista, con cada opción marcada con un C<=item>.  El texto específico de la opción tendría que estar dentro de un BE<lt>E<gt>.  Cualquier valor que tome la opción tendría que estar dentro de un IE<lt>E<gt>.  Por ejemplo, la sección para la opción B<--sección>=I<extensión> aparecerá como:
 
     =item B<--sección>=I<extensión>
 

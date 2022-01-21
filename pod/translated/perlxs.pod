@@ -831,7 +831,7 @@ Esta palabra clave puede usarse en cualquier momento después de la primera pala
 
 =head2 La palabra clave VERSIONCHECK:
 
-La palabra clave VERSIONCHECK: corresponde a las opciones C<-versioncheck> y C<-noversioncheck> de B<xsubpp>.  Esta palabra clave reescribe las opciones de la línea de comando.  La comprobación de versiones está, por defecto, activada.  Cuando la comprobación de versiones está activada, el módulo XS intentará verificar que su versión coincide con la versión del módulo PM.
+La palabra clave VERSIONCHECK: corresponde a las opciones C<-versioncheck> y C<-noversioncheck> de B<xsubpp>.  Esta palabra clave reescribe las opciones de la línea de comandos.  La comprobación de versiones está, por defecto, activada.  Cuando la comprobación de versiones está activada, el módulo XS intentará verificar que su versión coincide con la versión del módulo PM.
 
 Para activar la comprobación de versiones:
 
@@ -845,7 +845,7 @@ Note que si la versión del módulo PM es un NV (un número en punto flotante), 
 
 =head2 La palabra clave PROTOTYPES:
 
-La palabra clave PROTOTYPES: corresponde a las opciones C<-prototypes> y C<-noprototypes> de B<xsubpp>.  Esta palabra clave reescribe las opciones de la línea de comando.
+La palabra clave PROTOTYPES: corresponde a las opciones C<-prototypes> y C<-noprototypes> de B<xsubpp>.  Esta palabra clave reescribe las opciones de la línea de comandos.
 Los prototipos están, por defecto, desactivados.  Cuando los prototipos están activadas, XSUB proporcionará los prototipos Perl.  Esta palabra clave puede usarse múltiples veces en un módulo XS para activar y desactivar prototipos para diferentes partes del módulo.
 Note que B<xsubpp> le espetará si no activa o desactiva explícitamente los prototipos, con:
 
