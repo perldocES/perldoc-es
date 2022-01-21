@@ -7,7 +7,7 @@ perlfilter - Filtros de código fuente
 En este artículo se describe una característica de Perl poco conocida, denominada 
 I<filtros de código fuente>. Los filtros de código fuente modifican el texto de programa de un módulo antes de que Perl lo vea, de la misma manera que un preprocesador de C modifica el texto del código fuente de un programa C antes de que el compilador lo vea. En este artículo encontrará más información acerca de los filtros de código fuente, su funcionamiento y cómo programar su propio filtro.
 
-El propósito original de los filtros de código fuente era el permitirle codificar su programa fuente para impedir la piratería casual. Esto no es todo lo que pueden hacer, algo que pronto aprenderá. Pero primero, lo básico.
+El propósito original de los filtros de código fuente era el permitirle cifrar su programa fuente para impedir la piratería casual. Esto no es todo lo que pueden hacer, algo que pronto aprenderá. Pero primero, lo básico.
 
 =head1 CONCEPTOS BÁSICOS
 
@@ -128,16 +128,16 @@ No trataré los dos primeros con mucho detalle, así que los dejaré aparcados p
 
 La primera de las tres técnicas disponibles consiste en programar el filtro completamente en C. El módulo externo que se crea se comunica directamente con los enganches de filtro de código fuente suministrados por Perl.
 
-La ventaja de esta técnica es que ofrece control total de la implementación del filtro. La gran desventaja es que la mayor complejidad que implica programar el filtro (no solo hay que comprender cómo funcionan los enganches de filtro de código fuente, sino que también hay que tener un conocimiento sólido de los componentes internos de Perl. Esto supone un gran esfuerzo que se justifica en casos como el desarrollo de un codificador de código fuente. El filtro C<decrypt> (que descodifica el código fuente antes de que Perl lo interprete) incluido con la distribución del filtro de código fuente es un ejemplo de un filtro en C (vea Filtros de decodificación, más abajo).
+La ventaja de esta técnica es que ofrece control total de la implementación del filtro. La gran desventaja es que la mayor complejidad que implica programar el filtro (no solo hay que comprender cómo funcionan los enganches de filtro de código fuente, sino que también hay que tener un conocimiento sólido de los componentes internos de Perl. Esto supone un gran esfuerzo que se justifica en casos como el desarrollo de un descifrado de código fuente. El filtro C<decrypt> (que descifra el código fuente antes de que Perl lo interprete) incluido con la distribución del filtro de código fuente es un ejemplo de un filtro en C (vea Filtros de descifrado, más abajo).
 
 
 =over 5
 
-=item B<Filtros de decodificación>
+=item B<Filtros de descifrado>
 
-Todos los filtros de decodificación trabajan con el principio de "seguridad a través de la oscuridad". Sin importar de cómo escriba un filtro de decodificación y cómo de fuerte sea su algoritmo de codificación, cualquiera con suficiente determinación puede recuperar el código fuente original. La razón es muy simple: una vez que el filtro de decodificación ha decodificado el código fuente a su forma original, almacenará fragmentos de él en la memoria del ordenador a medida de que Perl lo interprete. El fuente podría estar solamente en memoria por un corto período de tiempo, pero cualquiera que tenga un depurador, habilidad, y montones de paciencia puede, eventualmente, reconstruir su programa.
+Todos los filtros de descifrado trabajan con el principio de "seguridad a través de la oscuridad". Sin importar de cómo escriba un filtro de descifrado y cómo de fuerte sea su algoritmo de descifrado, cualquiera con suficiente determinación puede recuperar el código fuente original. La razón es muy simple: una vez que el filtro ha descifrado el código fuente a su forma original, almacenará fragmentos de él en la memoria del ordenador a medida de que Perl lo interprete. El fuente podría estar solamente en memoria por un corto período de tiempo, pero cualquiera que tenga un depurador, habilidad, y montones de paciencia puede, eventualmente, reconstruir su programa.
 
-Dicho esto, hay un número de pasos que se pueden tomar para hacer la vida más difícil para el I<cracker> potencial. Lo más importante: Escriba su filtro de decodificación en C y enlace estáticamente el módulo de decodificación en el binario Perl. Para otros trucos para hacer la vida más difícil al potencial I<cracker>, vea el archivo I<decrypt.pm> en la distribución de filtros.
+Dicho esto, hay un número de pasos que se pueden tomar para hacer la vida más difícil para el I<cracker> potencial. Lo más importante: Escriba su filtro de descifrado en C y enlace estáticamente el módulo de descifrado en el binario Perl. Para otros trucos para hacer la vida más difícil al potencial I<cracker>, vea el archivo I<decrypt.pm> en la distribución de filtros.
 
 =back
 
@@ -164,7 +164,7 @@ Si el crear subprocesos es costoso en su sistema, podría querer considerar una 
 
 La opción más fácil y portable disponible para crear su propio filtro de código fuente es escribirlo completamente en Perl. Para distinguirlo de las dos técnicas anteriores, lo llamaré un filtro de código fuente Perl.
 
-Para ayudar a entender cómo escribir un filtro de código fuente Perl necesitamos un ejemplo para estudiarlo. Aquí hay un filtro de código fuente completo que realiza la decodificación rot13. (Rot13 es un esquema de codificación muy simple utilizado en mensajes Usenet para esconder contenidos de mensajes ofensivos. Mueve cada letra hacia adelante trece posiciones, así que la A se convierte en N, B en O, y la Z en M).
+Para ayudar a entender cómo escribir un filtro de código fuente Perl necesitamos un ejemplo para estudiarlo. Aquí hay un filtro de código fuente completo que realiza la decodificación rot13. (Rot13 es un esquema de cifrado muy simple utilizado en mensajes Usenet para esconder contenidos de mensajes ofensivos. Mueve cada letra hacia adelante trece posiciones, así que la A se convierte en N, B en O, y la Z en M).
 
 
    package Rot13;
@@ -222,7 +222,7 @@ Para hacer uso del filtro rot13 necesitamos alguna manera de codificar el códig
     unlink $in;
     rename $out, $in;
 
-Si codificamos esto con C<mkrot13>:
+Si ciframos esto con C<mkrot13>:
 
     print " hello fred \n";
 
@@ -379,7 +379,7 @@ Finalmente, si le interesa un reto real, puede escribir un completo preprocesado
 =head1 LIMITACIONES
 
 Los filtros de código fuente solo funcionan a nivel de cadena de texto, así que está muy limitado en su habilidad de cambiar el código fuente al vuelo. No puede detectar comentarios, cadenas entrecomilladas, documentos incrustados... No es un reemplazo para un intérprete real.
-El único uso estable para los filtros de código fuente son la codificación, compresión o la carga de bytes, para trasladar código binario a código fuente.
+El único uso estable para los filtros de código fuente son el cifrado, compresión o la carga de bytes, para trasladar código binario a código fuente.
 
 Vea por ejemplo las limitaciones en L<Switch>, que usa filtros de código, y así, no funciona dentro de una cadena en un eval, con la presencia de I<regexes> con caracteres de nueva línea integrados que estén especificados con unos simples delimitadores C</.../> y que no tengan un modificador C<//x>, son indistinguibles de un trozo de código que comience con el operador de división C</>. Como solución temporal debe usar C<m/.../> o C<m?...?> para esos patrones. También, la presencia de I<regexes> especificado con delimitadores C<?...?> pueden causar errores misteriosos. La solución temporal es usar en su lugar C<m?...?>.  Vea L<http://search.cpan.org/perldoc?Switch#LIMITATIONS>
 

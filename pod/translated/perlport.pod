@@ -185,7 +185,7 @@ Esto es especialmente notable en I<scripts> como Makefile y baterías de pruebas
 
 También el uso de C<File::Basename> de la distribución estándar, que divide una ruta en partes (nombre del archivo, ruta completa del directorio, y sufijo del archivo).
 
-Incluso cuando esté en una única plataforma (si llama a Unix una única plataforma), recuerde no contar con la existencia o los contenidos de archivos o directorios específicos del sistema, como F</etc/passwd>, F</etc/sendmail.conf>, F</etc/resolv.conf> o incluso F</tmp/>.  Por ejemplo, F</etc/passwd> puede existir pero no contener las contraseñas codificadas, porque el sistema está usando alguna forma de seguridad mejorada.
+Incluso cuando esté en una única plataforma (si llama a Unix una única plataforma), recuerde no contar con la existencia o los contenidos de archivos o directorios específicos del sistema, como F</etc/passwd>, F</etc/sendmail.conf>, F</etc/resolv.conf> o incluso F</tmp/>.  Por ejemplo, F</etc/passwd> puede existir pero no contener las contraseñas cifradas, porque el sistema está usando alguna forma de seguridad mejorada.
 O puede que no contenga todas las cuentas, porque el sistema está usando NIS.
 Si el código necesita confiar en tal archivo, incluya una descripción del archivo y su formato en la documentación del código, y luego hacerle más sencillo para el usuario el modificar la posición por defecto del archivo.
 
@@ -714,7 +714,7 @@ Por ello, en I<scripts> Perl OS/390 y VM/ESA se pueden ejecutar con una cabecera
     print "¡Hola desde Perl!\n";
 
 OS/390 soportará el truco I<shebang> C<#!> en la distribución 2.8 y siguientes.
-Las llamadas a C<system> y comillas inversas pueden usar la sintaxis shell POSIX en todos los sistemas S/390.
+Las llamadas a C<system> y comillas invertidas pueden usar la sintaxis shell POSIX en todos los sistemas S/390.
 
 En el AS/400, si PERL5 está en su lista de bibliotecas, puede necesitar envolver sus I<scripts> Perl en un procedimiento CL para invocarlos así:
 
@@ -722,7 +722,7 @@ En el AS/400, si PERL5 está en su lista de bibliotecas, puede necesitar envolve
       CALL PGM(PERL5/PERL) PARM('/QOpenSys/hello.pl')
     ENDPGM
 
-Esto invocará el I<script> Perl F<hello.pl> en la raíz del sistema de archivo QOpenSys.  En las llamadas AS/400 a C<system> o comillas inversas deben usar la sintaxis CL.
+Esto invocará el I<script> Perl F<hello.pl> en la raíz del sistema de archivo QOpenSys.  En las llamadas AS/400 a C<system> o comillas invertidas deben usar la sintaxis CL.
 
 En estas plataformas, tener en mente que el conjunto de caracteres EBCDIC puede tener un efecto sobre lo que sucede con algunas funciones Perl (tales como C<chr>, C<pack>, C<print>, C<printf>, C<ord>, C<sort>, C<sprintf>, C<unpack>), así como manejo de bits con constantes ASCII usando operadores como C<^>, C<&> y C<|>, sin mencionar el trato con los interfaces I<socket> a ordenadores ASCII (vea L<"Newlines">).
 

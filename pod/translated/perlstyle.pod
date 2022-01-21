@@ -134,7 +134,7 @@ No tenga miedo de usar etiquetas en bucles; mejoran la legibilidad y permiten es
 
 =item *
 
-Evite usar C<grep()> (o C<map()>) o `acentos graves` en un contexto nulo (es decir, desechando los valores de retorno).  Estas funciones devuelven valores, por lo que debe usarlos.  Como alternativa, use un bucle C<foreach()> o la función C<system()>.
+Evite usar C<grep()> (o C<map()>) o `comillas invertidas` en un contexto nulo (es decir, desechando los valores de retorno).  Estas funciones devuelven valores, por lo que debe usarlos.  Como alternativa, use un bucle C<foreach()> o la función C<system()>.
 
 =item *
 

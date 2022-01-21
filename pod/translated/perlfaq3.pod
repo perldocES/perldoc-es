@@ -658,7 +658,7 @@ Antes de nada, I<no> puede quitar los permisos de lectura, porque el código fue
 
 Algunos personas consideran equivocadamente que eso es un problema de seguridad. Si su programa hace cosas inseguras, y confía en personas que no saben cómo se explotan esas vulnerabilidades, entonces no es seguro. A menudo es posible para cualquiera determinar la inseguridad de las cosas y explotarlas sin ver el código fuente. Seguridad por medio de la oscuridad, escondiendo el nombre de sus errores en lugar de arreglarlos es, de hecho, poca seguridad.
 
-Puede intentar usar la codificación del código por medio de filtros (A partir de Perl 5.8 los módulos Filter::Simple y Filter::Util::Call están incluidos en la distribución estándar), pero cualquier programador decente será capaz de decodificarlo. Puede intentar usar el compilador e intérprete de código byte descrito más abajo en L<perlfaq3>, pero los curiosos serían capaces de decompilarlo. Puede intentar usar un compilador de código nativo descrito más abajo, pero los intrusos podrían ser capaces de desensamblarlo. Todo esto aporta varios grados de dificultad para las personas que esperan obtener su código, pero, definitivamente, ninguna de ellas lo puede encubrir (esto es para todos los lenguajes, no solo Perl).
+Puede intentar usar el cifrado del código por medio de filtros (A partir de Perl 5.8 los módulos Filter::Simple y Filter::Util::Call están incluidos en la distribución estándar), pero cualquier programador decente será capaz de descifrarlo. Puede intentar usar el compilador e intérprete de código byte descrito más abajo en L<perlfaq3>, pero los curiosos serían capaces de decompilarlo. Puede intentar usar un compilador de código nativo descrito más abajo, pero los intrusos podrían ser capaces de desensamblarlo. Todo esto aporta varios grados de dificultad para las personas que esperan obtener su código, pero, definitivamente, ninguna de ellas lo puede encubrir (esto es para todos los lenguajes, no solo Perl).
 
 Es muy fácil recuperar el código fuente de los programas Perl. Simplemente, ejecute su programa con el intérprete perl y use los módulos de la jerarquía B::. El módulo B::Deparse debería ser capaz de derrotar la mayor parte de los intentos de esconder el código fuente. De nuevo, esto no es algo único de Perl.
 
@@ -749,7 +749,7 @@ El problema es que ninguno de estos ejemplos son fiables: dependen del intérpre
 
 En Mac, depende del entorno que se use. El I<shell> MacPerl, o MPW, se parece mucho a los I<shell> de Unix en su soporte de las distintas variantes de escapado, excepto que hace un uso libre de los caracteres no ASCII de Mac como caracteres de control.
 
-Usar qq(), q() y qx() en lugar de "comillas dobles", 'comillas simples' y `comillas inversas`, puede hacer más sencilla escribir I<scripts> de una línea.
+Usar qq(), q() y qx() en lugar de "comillas dobles", 'comillas simples' y `comillas invertidas`, puede hacer más sencilla escribir I<scripts> de una línea.
 
 No existe una solución general para todo esto. Es un completo enredo.
 

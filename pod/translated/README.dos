@@ -140,7 +140,7 @@ Cuando compilo mi F<perl.exe>, usa algo como esto:
 
         configure.bat -des
 
-Puede encontrar más información sobre las opciones de línea de comando de Configure en el archivo F<INSTALL>.
+Puede encontrar más información sobre las opciones de línea de comandos de Configure en el archivo F<INSTALL>.
 
 Cuando termina el I<script>, y quiere cambiar algunos de los valores en el archivo generado F<config.sh>, entonces ejecute
 

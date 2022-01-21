@@ -277,3 +277,17 @@ segfault	fallo de segmentación
 squeaky clean	absolutamente limpio
 later	última
 utilities	utilidades
+subdirectory	subdirectorio
+delimiter	delimitador
+specifications	especificaciones
+lower case	minúscula
+volume	volumen
+asynchronous	asíncrona
+backticks	comillas invertidas
+subprocess	subproceso
+forked	bifurcado
+case	tamaño de caja
+protection	protección
+encrypted	codificada
+encryption	encriptación
+repository	repositorio

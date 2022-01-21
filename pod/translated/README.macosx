@@ -41,7 +41,7 @@ Primero, exporte la ruta al SDK en el entorno de compilación:
 
  export SDK=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
 
-Por favor, asegúrese que la versión SDK (p.e. los números correctos antes de '.sdk') coincide con los de su sistema (en este caso, Mac OS X 10.8 "Mountain Lion"), ya que es posible tener instalado más de un SDK. También, asegúrese de que la ruta existe en su sistema, y si no es así, por favor, asegúrese que el SDK se ha instalado adecuadamente, como viene en el paquete 'Herramientas de línea de comando' mencionada antes. Finalmente, si tiene un Mac OS X más viejo (10.6 "Snow Leopard" y anterior) ejecutando Xcode 4.2 o inferior, la ruta SDK podría ser algo como C<'/Developer/SDKs/MacOSX10.3.9.sdk'>.
+Por favor, asegúrese que la versión SDK (p.e. los números correctos antes de '.sdk') coincide con los de su sistema (en este caso, Mac OS X 10.8 "Mountain Lion"), ya que es posible tener instalado más de un SDK. También, asegúrese de que la ruta existe en su sistema, y si no es así, por favor, asegúrese que el SDK se ha instalado adecuadamente, como viene en el paquete 'Herramientas de línea de comandos' mencionada antes. Finalmente, si tiene un Mac OS X más viejo (10.6 "Snow Leopard" y anterior) ejecutando Xcode 4.2 o inferior, la ruta SDK podría ser algo como C<'/Developer/SDKs/MacOSX10.3.9.sdk'>.
 
 Puede usar el SDK exportando algunas variables adicionales a las de configuración de Perl 'ccflags' y '..flags':
 

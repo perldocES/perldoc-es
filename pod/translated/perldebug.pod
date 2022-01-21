@@ -835,7 +835,7 @@ y entonces reiniciar el depurador usando el comando C<R> (si es posible).  Uno p
 
 =head2 Personalización del depurador
 
-El depurador, probablemente, contiene suficientes enganches de configuración que nunca tendrá que modificarlo por sí mismo.  Puede cambiar el comportamiento del depurador desde dentro del propio depurador usando el comando C<o>, desde la línea de comando por medio de la variable de entorno C<PERLDB_OPTS>, y desde archivos de personalización.
+El depurador, probablemente, contiene suficientes enganches de configuración que nunca tendrá que modificarlo por sí mismo.  Puede cambiar el comportamiento del depurador desde dentro del propio depurador usando el comando C<o>, desde la línea de comandos por medio de la variable de entorno C<PERLDB_OPTS>, y desde archivos de personalización.
 
 Puede hacer alguna personalización estableciendo un archivo F<.perldb>, que contiene código de inicialización.  Por ejemplo, podría hacer unos alias como estos (el último es que la gente esperaría que existiese):
 

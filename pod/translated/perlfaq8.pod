@@ -188,7 +188,7 @@ En Windows, puede usar el módulo L<Win32::Console>. Después de crear un objeto
 
     print $clear_screen;
 
-Si tiene un programa en línea de comandos que hace el trabajo, puede llamarlo con las comillas inversas para capturar cualquier salida suya, así que puede usarlo más tarde:
+Si tiene un programa en línea de comandos que hace el trabajo, puede llamarlo con las comillas invertidas para capturar cualquier salida suya, así que puede usarlo más tarde:
 
     my $clear_string = `clear`;
 
@@ -294,11 +294,11 @@ Mientras intentaba leer desde su busca, el notorio Jamie Zawinski C<< <jwz@netsc
         }
     }
 
-=head2 ¿Cómo decodifico archivos de contraseñas codificadas?
+=head2 ¿Cómo decodifico archivos de contraseñas cifradas?
 
 Usted se gasta montones y montones de dinero en hardware dedicado, pero es de esto de lo que realmente quiere hablar.
 
-En serio, no puede si se trata de archivos de contraseñas Unix. El sistema de contraseñas Unix emplea codificación de un único sentido. Es más como I<hashing> que codificación. Lo mejor que puede hacer es comprobar si otra cosa se codifica a la misma cadena. No puede obtener la cadena original a partir de un hash. Programas como Crack puede, por la fuerza (e inteligentemente) intentar adivinar las contraseñas, pero no garantiza (no puede) un éxito rápido.
+En serio, no puede si se trata de archivos de contraseñas Unix. El sistema de contraseñas Unix emplea cifrado de un único sentido. Es más como un I<hashing> que un cifrado. Lo mejor que puede hacer es comprobar si otra cosa se cifra a la misma cadena. No puede obtener la cadena original a partir de un hash. Programas como Crack puede, por la fuerza (e inteligentemente) intentar adivinar las contraseñas, pero no garantiza (no puede) un éxito rápido.
 
 Si le preocupa que los usuarios seleccionen malas contraseñas, debe comprobarlo proactivamente cuando intenten cambiar sus contraseñas (modificando L<passwd(1)>, por ejemplo).
 
@@ -461,7 +461,7 @@ También puede usar el módulo L<IPC::Open3> (parte de la distribución estánda
 
 =head2 ¿Por qué no puedo obtener la salida de un comando con system()?
 
-Está confundiendo el propósito de C<system()> y las comillas inversas (``). C<system()> ejecuta un comando y devuelve la información del estado de la salida (como un valor de 16 bit: los 7 bit más bajos son la señal que provocó que el proceso muriese, si fuere el caso, y los 8 bit más altos es el valor real de la salida). Las comillas inversas (``) ejecutan un comando y devuelven lo que se envía a STDOUT.
+Está confundiendo el propósito de C<system()> y las comillas invertidas (``). C<system()> ejecuta un comando y devuelve la información del estado de la salida (como un valor de 16 bit: los 7 bit más bajos son la señal que provocó que el proceso muriese, si fuere el caso, y los 8 bit más altos es el valor real de la salida). Las comillas invertidas (``) ejecutan un comando y devuelven lo que se envía a STDOUT.
 
     my $exit_status   = system("mail-users");
     my $output_string = `ls`;
@@ -471,11 +471,11 @@ Está confundiendo el propósito de C<system()> y las comillas inversas (``). C<
 Existen tres formas básicas de ejecutar comandos externos:
 
     system $cmd;        # utilizando system()
-    my $output = `$cmd`;        # utilizando comillas inversas (``)
+    my $output = `$cmd`;        # utilizando comillas invertidas (``)
     open (my $pipe_fh, "$cmd |");    # utilizando open()
 
 Con C<system()>, tanto STDOUT como STDERR irán al mismo sitio como el STDOUT y el STDERR del I<script>, a menos que el comando C<system()> los redirija.
-Comillas inversas y C<open()> leen B<solo> el STDOUT de su comando.
+Comillas invertidas y C<open()> leen B<solo> el STDOUT de su comando.
 
 También puede usar la función C<open3()> de L<IPC::Open3>. Benjamin Goldberg proporciona algún código de ejemplo:
 
@@ -555,29 +555,29 @@ Esto no funciona:
     open(STDERR, ">&STDOUT");
     $todalasalida = `cmd args`;  # stderr se sigue escapando
 
-Esto falla porque el C<open()> hace que STDERR vaya a donde STDOUT está yendo en el momento del C<open()>. Las comillas inversas hacen que STDOUT vaya a una cadena, pero no cambia STDERR (que sigue yendo al anterior STDOUT).
+Esto falla porque el C<open()> hace que STDERR vaya a donde STDOUT está yendo en el momento del C<open()>. Las comillas invertidas hacen que STDOUT vaya a una cadena, pero no cambia STDERR (que sigue yendo al anterior STDOUT).
 
-Note que I<debe> usar la sintaxis de redirección con comillas inversas del I<shell> Bourne (C<sh(1)>), ¡no de la C<csh(1)>!  Detalles sobre por qué C<system()> de Perl y las comillas inversas y las aperturas de tuberías usan el I<shell> Bourne están en el artículo F<versus/csh.whynot> en la colección "I<Far More Than You Ever Wanted To Know>" en L<http://www.cpan.org/misc/olddoc/FMTEYEWTK.tgz> . Para capturar el STDOUT y STDERR del comando, juntos:
+Note que I<debe> usar la sintaxis de redirección con comillas invertidas del I<shell> Bourne (C<sh(1)>), ¡no de la C<csh(1)>!  Detalles sobre por qué C<system()> de Perl y las comillas inversas y las aperturas de tuberías usan el I<shell> Bourne están en el artículo F<versus/csh.whynot> en la colección "I<Far More Than You Ever Wanted To Know>" en L<http://www.cpan.org/misc/olddoc/FMTEYEWTK.tgz> . Para capturar el STDOUT y STDERR del comando, juntos:
 
-    $salida = `cmd 2>&1`;                       # tanto con comillas inversas
+    $salida = `cmd 2>&1`;                       # tanto con comillas invertidas
     $pid = open(PH, "cmd 2>&1 |");              # como con una apertura de una tubería
     while (<PH>) { }                            #    y leer
 
 Para capturar el STDOUT de un comando pero descartar su STDERR:
 
-    $salida = `cmd 2>/dev/null`;                # tanto con comillas inversas
+    $salida = `cmd 2>/dev/null`;                # tanto con comillas invertidas
     $pid = open(PH, "cmd 2>/dev/null |");       # como con una apertura de una tubería
     while (<PH>) { }                            #    y leer
 
 Para capturar el STDERR de un comando pero descartar su STDOUT:
 
-    $salida = `cmd 2>&1 1>/dev/null`;           # tanto con comillas inversas
+    $salida = `cmd 2>&1 1>/dev/null`;           # tanto con comillas invertidas
     $pid = open(PH, "cmd 2>&1 1>/dev/null |");  # como con una apertura de una tubería
     while (<PH>) { }                            #    y leer
 
 Intercambiar el STDOUT y STDERR de un comando para capturar el STDERR pero dejando que su STDOUT salga por el anterior STDERR:
 
-    $salida = `cmd 3>&1 1>&2 2>&3 3>&-`;        # tanto con comillas inversas
+    $salida = `cmd 3>&1 1>&2 2>&3 3>&-`;        # tanto con comillas invertidas
     $pid = open(PH, "cmd 3>&1 1>&2 2>&3 3>&-|");# como con una apertura de una tubería
     while (<PH>) { }                            #    y leer
 
@@ -598,11 +598,11 @@ Si el segundo argumento a un C<open()> entubado contiene metacaracteres I<shell>
 
 Si no existen metacaracteres I<shell> en el argumento de C<open()>, Perl ejecuta el comando directamente, sin usar el I<shell>, y puede informar correctamente si el comando se inició.
 
-=head2 ¿Qué tiene de malo usar las comillas inversas en un contexto vacío?
+=head2 ¿Qué tiene de malo usar las comillas invertidas en un contexto vacío?
 
-Estrictamente hablando, nada. Estilísticamente hablando, no es una buena manera de escribir código mantenible. Perl tiene diversos operadores para ejecutar comandos externos. Las comillas inversas son uno de ellos; recolectan la salida del comando para usarse en su programa. La función C<system> es otro; no hace eso.
+Estrictamente hablando, nada. Estilísticamente hablando, no es una buena manera de escribir código mantenible. Perl tiene diversos operadores para ejecutar comandos externos. Las comillas invertidas son uno de ellos; recolectan la salida del comando para usarse en su programa. La función C<system> es otro; no hace eso.
 
-Escribir comillas inversas en su programa manda un claro mensaje a los lectores de su código de que quiere recolectar la salida del comando.
+Escribir comillas invertidas en su programa manda un claro mensaje a los lectores de su código de que quiere recolectar la salida del comando.
 ¿Por qué mandar un mensaje claro que no es verdad?
 
 Considere esta línea:
@@ -620,9 +620,9 @@ este código podría y probablemente debería escribirse como
 
 que sacará la salida del comando cat a medida de que se genera, en lugar de esperar a que el programa termine de imprimir. También comprueba el valor de retorno.
 
-C<system> también proporciona control directo sobre si toma lugar el procesado de los comodines del I<shell>, mientras que eso no ocurre con las comillas inversas.
+C<system> también proporciona control directo sobre si toma lugar el procesado de los comodines del I<shell>, mientras que eso no ocurre con las comillas invertidas.
 
-=head2 ¿Cómo puedo llamar a las comillas inversas sin que lo procese el I<shell>?
+=head2 ¿Cómo puedo llamar a las comillas invertidas sin que lo procese el I<shell>?
 
 Es un poco delicado. No puede, simplemente escribir el comando así:
 
@@ -712,7 +712,7 @@ Hubo una vez, que existía una biblioteca llamada F<chat2.pl> (parte de la distr
 
 Ante todo, tenga en cuenta que si está haciendo esto por razones de seguridad (para evitar ver las contraseñas de la gente, por ejemplo) entonces debería reescribir su programa para que la información crítica nunca se proporcione como argumento. Esconder los argumentos no hará que su programa sea completamente seguro.
 
-Para alterar realmente la parte visible de la línea de comando, puede asignar a la variable $0 como se documenta en L<perlvar>. Aún así, esto no funcionará en todos los sistemas operativos. Programas demonio como sendmail modifican su estado, así:
+Para alterar realmente la parte visible de la línea de comandos, puede asignar a la variable $0 como se documenta en L<perlvar>. Aún así, esto no funcionará en todos los sistemas operativos. Programas demonio como sendmail modifican su estado, así:
 
     $0 = "orcus [accepting connections]";
 
