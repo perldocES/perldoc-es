@@ -1,0 +1,1991 @@
+Puede leer este archivo en cualquier editor de texto (verá algunos caracteres extraños, pero puede ignorarlos). Está escrito en formato POD (ver la página de manual perlpod) que está específicamente diseñado para ser legible de forma sencilla.
+
+=head1 NAME
+
+perlos2 - Perl bajo OS/2, DOS, Win0.3*, Win0.95 y WinNT.
+
+=head1 SINOPSIS
+
+Puede leer este documento en los siguientes formatos:
+
+	man perlos2
+	view perl perlos2
+	explorer perlos2.html
+	info perlos2
+
+por listar algunos (no todos estarán disponibles simultáneamente), o puede leerse I<tal cual>: tanto como F<README.os2>, o F<pod/perlos2.pod>.
+
+Para leer la versión de F<.INF> de la documentación (B<muy> recomendado) aparte de OS/2, necesita un lector de IBM (puede estar disponible en sitios ftp de IBM (?)  (¿alguien tiene una URL?)) o empaquetado con PC DOS 7.0 y el Visual Age C++ 3.5 de IBM.
+
+Una copia de un visor Win* está contenido en el paquete "I<Just add OS/2 Warp>"
+
+  ftp://ftp.software.ibm.com/ps/products/os2/tools/jaow/jaow.zip
+
+en F<?:\JUST_ADD\view.exe>. Esto nos proporciona también un acceso a los doc. F<.INF> de EMX (el formulario de texto está disponible en F</emx/doc> en la distribución de EMX).  Existe también un visor diferente de nombre xview.
+
+Note que si tiene instalados F<lynx.exe> o F<netscape.exe>, puede seguir los enlaces WWW de este documento en formato F<.INF>. Si tiene los doc. EMX instalados correctamente, puede seguir los enlaces de biblioteca (necesita tener funcionando C<view emxbook> estableciendo la variable de entorno C<EMXBOOK> como se describe en los doc. EMX).
+
+=cut
+
+Contenidos (esto puede estar un poco obsoleto)
+ 
+ perlos2 - Perl bajo OS/2, DOS, Win0.3*, Win0.95 y WinNT.
+
+      NOMBRE
+      SINOPSIS
+      DESCRIPCIÓN
+	 -  Objetivo
+	 -  Otros SO
+	 -  Requisitos previos
+	 -  Iniciar programas Perl bajo OS/2 (y DOS, y...)
+	 -  Iniciar programas OS/2 (y DOS) bajo Perl
+      Cuestiones frecuentemente hechas
+	 -  "Esto no funciona"
+	 -  No puedo ejecutar programas externos
+	 -  No puedo empotrar perl en mi programa, o usar perl.dll desde el mío
+	 -  `` y el open de tubería no funciona bajo DOS.
+	 -  No puedo iniciar find.exe "patrón" archivo
+      INSTALACIÓN
+	 -  Instalación binaria automática
+	 -  Instalación binaria manual
+	 -  Advertencia
+      Acceso a la documentación
+	 -  Archivo .INF de OS/2
+	 -  Texto plano
+	 -  Páginas de manual
+	 -  HTML
+	 -  Archivos de GNU info
+	 -  Archivos PDF
+	 -  Docs. LaTeX
+      COMPILACIÓN
+	 -  El relato breve
+	 -  Requisitos previos
+	 -  Obtener el código fuente de perl
+	 -  Aplicación de las revisiones
+	 -  Edición manual
+	 -  Compilación
+	 -  Comprobación
+	 -  Instalar el perl compilado
+	 -  Compilación estilo a.out
+      P+F sobre compilación
+	 -  Algunos / devienen en \ en pdksh.
+	 -  'errno' - externo sin resolver
+	 -  Problemas con tr o sed
+	 -  Algún problema (olvidé cuál ;-)
+	 -  Biblioteca ... no encontrada
+	 -  Fallo de segmentación en make
+	 -  Fallo de pruebas de op/sprintf
+      Características (o no) específicas de la adaptación OS/2
+	 -  setpriority, getpriority
+	 -  system()
+	 -  extproc en la primera línea
+	 -  Módulos adicionales:
+	 -  Métodos de precompilación:
+	 -  Variables de precompilación:
+	 -  Características no presentes
+	 -  Modificaciones
+	 -  Identificar DLL
+	 -  Gestión centralizada de recursos
+      Sabores Perl
+	 -  perl.exe
+	 -  perl_.exe
+	 -  perl__.exe
+	 -  perl___.exe
+	 -  ¿Por qué los nombres extraños?
+	 -  ¿Por qué enlazado dinámico?
+	 -  ¿Por qué la compilación quimérica?
+      ENTORNO
+	 -  PERLLIB_PREFIX
+	 -  PERL_BADLANG
+	 -  PERL_BADFREE
+	 -  PERL_SH_DIR
+	 -  USE_PERL_FLOCK
+	 -  TMP o TEMP
+      Evolución
+	 -  Identificadores de archivo en modo texto
+	 -  Prioridades
+	 -  Remezclado de nombre en las DLL: pre 5.6.2
+	 -  Remezclado de nombre en las DLL: 5.6.2 y siguientes
+	 -  Generación del reenviador DLL
+	 -  Hebrado
+	 -  Llamada a programas externos
+	 -  Asignación de memoria
+	 -  Hebras
+      ERRORES
+      AUTOR
+      VEA TAMBIÉN
+
+=head1 DESCRIPCIÓN
+
+=head2 Objetivo
+
+El objetivo es hacer que OS/2 una de las plataformas mejor soportadas para usar/compilar/desarrollar Perl y I<Aplicaciones Perl>, así como hacer que Perl sea el mejor lenguaje para usar bajo OS/2. El objetivo secundario es intentar hacer este trabajo también bajo DOS y Win* (pero no B<demasiado> duro).
+
+El estado actual está muy cercano a este objetivo. Limitaciones conocidas:
+
+=over 5
+
+=item *
+
+Algunos programas *nix usan un montón de fork(); principalmente con los sabores más útiles de perl para OS/2 (hay muchas compilaciones simultáneas) que están soportadas; pero algunos sabores no lo soportan (por ejemplo, cuando Perl se llama desde dentro de REXX).  Usar fork() después de usar (I<use>) las extensiones cargadas dinámicamente no funcionará con I<muy> viejas versiones de EMX.
+
+=item *
+
+Necesita un ejecutable perl F<perl__.exe> aparte (vea L</perl__.exe>) si quiere usar código PM en su aplicación (como hacen Perl/Tk o módulos Perl OpenGL) sin tener presente una ventana en modo texto.
+
+También es posible mientras use el F<perl.exe> estándar desde una ventana en modo texto. He visto casos en que esto provoca degradación de la estabilidad del sistema.
+Usar F<perl__.exe> evita tal degradación.
+
+=item *
+
+No hay una forma sencilla de acceder a los objetos WPS. La única forma que conozco es por medio de las extensiones C<OS2::REXX> y C<SOM> (vea L<OS2::REXX>, L<SOM>).
+Aun así, no tenemos acceso cómodo a métodos de Object-REXX. (¿Es realmente posible? No conozco API de Object-REXX).  La extensión C<SOM> (actualmente en texto alfanumérico) puede eliminar eventualmente esta limitación; sin embargo, debido al hecho de que DII no está soportado por el módulo C<SOM>, usar C<SOM> no es conveniente como a uno le gustaría.
+
+=back
+
+Por favor, mantenga esta lista actualizada informándome sobre otros temas.
+
+=head2 Otros SO
+
+Ya que la adaptación de perl en OS/2 usa un notable entorno EMX, puede ejecutar (y compilar extensiones, y -posiblemente- compilarse a sí mismo) bajo cualquier entorno que pueda ejecutar EMX. La lista actual son DOS, DOS-inside-OS/2, Win0.3*, Win0.95 y WinNT. De todos los sabores perl, sólo uno funciona. Vea L<"perl_.exe">.
+
+Note que no todas las características de Perl están disponibles bajo estos entornos. Esto depende de las características que el I<extender> -más probablemente RSX- decide implementar.
+
+Vea L</Prerrequisitos>.
+
+=head2 Prerrequisitos
+
+=over 6
+
+=item EMX
+
+Se requiere EMX en tiempo de ejecución (puede sustituirse por RSX). Note que es posible hacer que F<perl_.exe> se ejecute bajo DOS sin ningún soporte externo, enlazándole F<emx.exe>/F<rsx.exe>; vea C<emxbind>. Note que, bajo DOS, para obtener los mejores resultados debería usar RSX en tiempo de ejecución, que tiene muchas más funciones disponibles (como C<fork>, C<popen> y así). De hecho, se requiere RSX si no VCPI no está presente. Note que RSX requiere DPMI.  ¡Cuidado, se sabe que muchas implementaciones de DPMI están llenas de errores!
+
+Sólo está soportado el último modo de tiempo de ejecución, actualmente C<0.9d fix 03>. Perl se puede ejecutar bajo versiones anteriores de EMX, pero no está probado.
+
+Puede obtener diferentes partes de EMX desde, digamos
+
+  ftp://crydee.sai.msu.ru/pub/comp/os/os2/leo/gnu/emx+gcc/
+  http://hobbes.nmsu.edu/h-browse.php?dir=/pub/os2/dev/emx/v0.9d/
+
+El componente en tiempo de ejecución debería tener el nombre F<emxrt.zip>.
+
+B<NOTA>. Cuando use F<emx.exe>/F<rsx.exe>, es suficiente tenerlos en su ruta de acceso. No necesita especificarlos explícitamente (aunque esto
+
+  emx perl_.exe -de 0
+
+también servirá).
+
+=item RSX
+
+Para ejecutar Perl en plataformas DPMI necesita el modo en tiempo de ejecución de RSX. Esto se necesita bajo DOS-inside-OS/2, Win0.3*, Win0.95 y WinNT (vea L<"Otros SO">). RSX no funcionará sólo con VCPI, como lo haría EMX; requiere DMPI.
+
+Con tener RSX y el último F<sh.exe> uno obtiene un entorno B<*nix> completamente funcional bajo DOS, es decir, C<fork>, C<``> y el C<open> con tubería funciona. De hecho, MakeMaker funciona (para compilación estática), así que puede tener un entorno de desarrollo Perl bajo DOS. 
+
+Puede obtener RSX desde, digamos
+
+  http://cd.textfiles.com/hobbesos29804/disk1/EMX09C/
+  ftp://crydee.sai.msu.ru/pub/comp/os/os2/leo/gnu/emx+gcc/contrib/
+
+Contactar con el autor en C<rainer@mathematik.uni-bielefeld.de>.
+
+El último F<sh.exe> con enganches DOS está disponible en
+
+  http://www.ilyaz.org/software/os2/
+
+como F<sh_dos.zip> o bajo nombres similares que empiezan con C<sh>, C<pdksh>, etc.
+
+=item HPFS
+
+A Perl no le preocupa los sistemas de archivos, pero la biblioteca perl contiene muchos archivos con nombres largos, así que para instalarlo necesita un sistema de archivo que soporte nombres largos de archivo.
+
+Note que si no planea compilar el propio perl, puede ser posible engañar EMX para truncar los nombres de archivo. Esto no está soportado, lea los docs. EMX para ver cómo hacerlo.
+
+=item pdksh
+
+Para iniciar programas externos con complicadas líneas de comando (como con tuberías en medio, y/o entrecomillando argumentos), Perl usa un shell externo. Con la adaptación EMX tal shell debería nombrarse F<sh.exe>, y localizada tanto en las posiciones puestas fijas durante la compilación (normalmente F<F:/bin>), o en una posición configurable (vea L<"PERL_SH_DIR">).
+
+Para mejores resultados use pdksh de EMX. El binario estándar (5.2.14 o siguientes) corre también bajo DOS (con L</RSX>); vea
+
+  http://www.ilyaz.org/software/os2/
+
+=back
+
+=head2 Iniciando programas Perl bajo OS/2 (y DOS, y...)
+
+Inicie su programa Perl F<foo.pl> con argumentos C<arg1 arg2 arg3> de la misma manera como en cualquier otra plataforma, así
+
+	perl foo.pl arg1 arg2 arg3
+
+Si quiere especificar opciones perl C<-my_opts> al propio perl (no a su programa), use
+
+	perl -my_opts foo.pl arg1 arg2 arg3
+
+Alternativamente, si usa el shell OS/2, como CMD o 4os2, ponga lo siguiente al principio de su I<script>:
+
+	extproc perl -S -my_opts
+
+renombre su programa a F<foo.cmd>, e inícielo escribiendo
+
+	foo arg1 arg2 arg3
+
+Note que debido a las estúpidas limitaciones de OS/2, la ruta de acceso del I<script> perl no está disponible cuando usa C<extproc>, por ello está forzado a usar la opción perl C<-S>, y su I<script> debería estar en el C<PATH>. Como nota positiva, si conoce una ruta de acceso completa a su I<script>, puede seguir iniciándolo con 
+
+	perl ../../blah/foo.cmd arg1 arg2 arg3
+
+(Note que el argumento C<-my_opts> es tenido en cuenta por la línea C<extproc> en su I<script>, vea L<C<extproc> en la primera línea>).
+
+Para entender lo que I<magic> hace más arriba, lea los docs. perl sobre la opción C<-S>; vea L<perlrun>, y cmdref sobre C<extproc>:
+
+	view perl perlrun
+	man perlrun
+	view cmdref extproc
+	help extproc
+
+el método que prefiera.
+
+Existen infinitas posibilidades para usar I<extensiones ejecutables> de 4os2, I<asociaciones> de WPS y así... Sin embargo, si usa un shell *nix (como F<sh.exe> suministrado en la distribución binaria), necesita seguir la sintaxis especificada en L<perlrun/"Opciones de comando">.
+
+Note que la opción B<-S> soporta I<scripts> con las extensiones F<.cmd>, F<.btm>, F<.bat>, adicionales a F<.pl>.
+
+=head2 Iniciando programas OS/2 (y DOS) bajo Perl
+
+Esto es para lo que se usa system() (vea L<perlfunc/system>), C<``> (vea L<perlop/"Operadores E/S">), y I<open entubado> (vea L<perlfunc/open>). (Evite exec() (vea L<perlfunc/exec>) a menos que sepa que lo que hace).
+
+Note, sin embargo, que para usar algunos de estos operadores necesita tener instalado un shell con sintaxis sh (vea L<"Pdksh">, L<"Cuestiones frecuentemente hechas">), y perl debería ser capaz de encontrarlo (vea L<"PERL_SH_DIR">).
+
+Los casos en que se usa la shell son:
+
+=over
+
+=item 1
+
+system() (vea L<perlfunc/system>) y exec() (vea L<perlfunc/exec>) de un sólo argumento con redirección o metacaracteres shell;
+
+=item 2
+
+Open entubado (vea L<perlfunc/open>) con el comando que contiene redirección o metacaracteres shell;
+
+=item 3
+
+Comillas invertidas C<``> (vea L<perlop/"Operadores E/S">) con el comando que contiene redirección o metacaracteres shell;
+
+=item 4
+
+Si el ejecutable que se llama por system()/exec()/tubería-open()/C<``> es un I<script> con la línea "mágica" C<#!> o línea C<extproc> que especifica shell;
+
+=item 5
+
+Si el ejecutable que se llama por system()/exec()/tubería-open()/C<``> es un I<script> sin la línea "mágica", y C<$ENV{EXECSHELL}> está establecido al shell;
+
+=item 6
+
+Si el ejecutable que se llama por system()/exec()/tubería-open()/C<``> no se encuentra (¿este comentario no está obsoleto?);
+
+=item 7
+
+Para expansiones (vea L<perlfunc/glob>, L<perlop/"Operadores E/S">) (¿obsoleto? Perl usa hoy en día expansiones embebidas...).
+
+=back
+
+Por el bien de la velocidad para un caso común, en los algoritmos anteriores las barras diagonales inversas en el nombre de comando no se consideran metacaracteres shell.
+
+Perl inicia los I<scripts> que comienzan con I<cookies> C<extproc> o C<#!> directamente, sin intervención del shell.  Perl usa el mismo algoritmo para buscar el ejecutable como F<pdksh>: si la ruta de acceso en la línea C<#!> no funciona, y contiene C</>, entonces se ignora la parte de directorio del ejecutable, y el ejecutable se busca en F<.> y en C<PATH>.  Para encontrar argumentos para estos I<scripts>, Perl usa un algoritmo diferente que F<pdksh>: se reconocen hasta 3 argumentos, y se quita el espacio en blanco final.
+
+Si un I<script> no contiene tal galleta, entonces para evitar llamar a F<sh.exe>, Perl usa el mismo algoritmo que F<pdksh>: si se establece C<$ENV{EXECSHELL}>, se proporciona el I<script> como el primer argumento a este comando; si no lo está, entonces se usa C<$ENV{COMSPEC} /c> (o una pista fija si se establece C<$ENV{COMSPEC}>).
+
+Cuando inicie I<scripts> directamente, Perl usa exactamente el mismo algoritmo que para la búsqueda del I<script> proporcionado por la opción de línea de comando B<-S>: mirará en el directorio actual, y luego en los componentes de C<$ENV{PATH}> usando el siguiente orden de extensiones añadidas: no extensión, F<.cmd>, F<.btm>, F<.bat> y F<.pl>.
+
+Note que Perl empezará a mirar por I<scripts> sólo si OS/2 no puede iniciar la aplicación especificada, entonces C<system 'blah'> no mirará por un I<script> si existe un archivo ejecutable F<blah.exe> I<en cualquier parte> del C<PATH>.  En otras palabras, esencialmente se busca por C<PATH> dos veces: una para un ejecutable por el SO, y luego por I<scripts> Perl.
+
+Note también que los archivos ejecutables en OS/2 pueden tener una extensión arbitraria, pero F<.exe> se añadirá automáticamente si en el nombre no tiene un punto.  La alternativa es tan simple como esto: ya que F<blah.> y F<blah> denotan el mismo archivo (al menos en los sistemas de archivos FAT y HPFS), para iniciar un ejecutable que reside en F<n:/bin/blah> (sin extensión) proporciona un argumento C<n:/bin/blah.> (punto añadido) al system().
+
+Perl iniciará programas PM desde el proceso Perl VIO (=modo texto) en una sesión PM separada; lo opuesto no es cierto: cuando inicie un programa no-PM desde un proceso Perl PM, Perl no lo correrá en una sesión aparte.  Si se desea una sesión separada, o bien, asegúrese de que se usará la shell -igual que en C<system 'cmd /c myprog'>-, o bien iniciarlo con argumentos opcionales a system() documentados en el módulo C<OS2::Process>.  Esto está considerado como una característica adicional.
+
+=head1 Cuestiones frecuentemente hechas
+
+=head2 "Esto no funciona"
+
+Distribuciones binarias Perl vienen con un I<script> F<testperl.cmd> que intenta detectar problemas comunes con instalaciones mal configuradas.  Hay una posibilidad bastante alta de que descubra qué paso de la instalación ha descuidado.  C<;-)>
+
+=head2 No puedo ejecutar programas externos
+
+=over 4
+
+=item *
+
+¿Ejecuta programas con la opción C<-w>? Vea L<Iniciar OSE<sol>2 (y DOS) bajo Perl>.
+
+=item *
+
+¿Intenta ejecutar comandos de shell I<internos>, como C<`copy a b`> (interno para F<cmd.exe>), o C<`glob a*b`> (interno para ksh)? Necesita especificar explícitamente su shell, como C<`cmd /c copy a b`>, ya que Perl no puede deducir qué comandos son internos para su shell.
+
+=back
+
+=head2 No puedo empotrar perl en mi programa, o usar perl.dll desde el mío 
+
+=over 4
+
+=item ¿Su programa está compilado como EMX con C<-Zmt -Zcrtdll>?
+
+Bien, hoy en día la DLL de Perl tendría que ser utilizable también desde un programa compilado de forma diferente... Si puede ejecutar código Perl desde I<scripts> REXX (vea L<OS2::REXX>), entonces hay algún otro aspecto de interacción que se pasan por alto por el código hackeado para soportar programas compilados de forma diferente.
+
+Si todo falla, necesita compilar sólo una DLL para perl. Contacte conmigo, lo hice una vez. Los I<sockets> no funcionarán, como muchas otras cosas.
+
+=item ¿Utiliza L<ExtUtils::Embed>?
+
+Hace algún tiempo tuve informes de que no funcionaba.  Hoy en día se comprueba en el paquete de pruebas Perl, así que filtre el subdirectorio F<./t> del árbol de compilación (así como los archivos F<*.t> en el subdirectorio F<./lib>) para ver cómo se debería hacer de forma "correcta".
+
+=back
+
+=head2 C<``> y el C<open> de tubería no funciona bajo DOS.
+
+Esto puede ser una variante del L<"No puedo ejecutar programas externos">, o un problema más profundo. Básicamente: I<necesita> RSX (vea L</Prerrequisitos>) para que funcionen estos comandos, y puede necesitar una adaptación de F<sh.exe> que entienda argumentos de comando. Una de tales adaptaciones se lista en L</Prerrequisitos> bajo RSX. No olvide también establecer la variable C<L<"PERL_SH_DIR">>.
+
+Se requiere DPMI para RSX.
+
+=head2 No puedo iniciar C<find.exe "patrón" archivo>
+
+La idea completa de la "API C estándar para arrancar aplicaciones" es que las formas C<foo> y C<"foo"> de los argumentos del programa son completamente intercambiables.  F<find> rompe este paradigma;
+
+  find "patrón" archivo
+  find patrón archivo
+
+no son equivalentes; F<find> no se puede iniciar directamente usando la API anterior.  Necesita una manera de rodear las dobles comillas en alguna otra construcción de entrecomillado, teniendo entre ellas, necesariamente, un shell extra no-Unix.
+
+Use una de
+
+  system 'cmd', '/c', 'find "patrón" archivo';
+  `cmd /c 'find "patrón" archivo'`
+
+Esto arrancaría F<find.exe> por medio de F<cmd.exe> por medio de C<sh.exe> por medio de C<perl.exe>, pero esto es el precio que hay que pagar si quiere usar un programa no normativo.
+
+=head1 INSTALACIÓN
+
+=head2 Instalación binaria automática
+
+La forma más conveniente de instalar una distribución binaria de perl es por medio del instalador perl F<install.exe>. Sólo siga las instrucciones, y el 99 % de los lamentos en la instalación, se irán. 
+
+Note sin embargo, que necesita tener F<unzip.exe> en su ruta de acceso, y el entorno EMX I<corriendo>. Lo último significa que si justo ha instalado EMX, y hace todos los cambios necesarios a F<Config.sys>, necesita hacer antes un reinicio del sistema. Compruebe el entorno de ejecución de EMX ejecutando
+
+	emxrev
+
+El instalador binario crea una carpeta en su escritorio con algunos objetos útiles.  Si necesita cambiar algunos aspectos del trabajo del instalador binario, es libre de editar el archivo F<Perl.pkg>.  Esto puede ser útil si, por ejemplo, necesita correr el instalador muchas veces y no quiere hacer muchos cambios de forma interactiva con el GUI.
+
+B<Cosas que la instalación binaria automática no tiene en cuenta:>
+
+=over 15
+
+=item C<PERL_BADLANG>
+
+puede ser necesario si cambia su página de códigos I<después> de la instalación de perl, y el nuevo valor no está soportado por EMX. Vea L<"PERL_BADLANG">.
+
+=item C<PERL_BADFREE>
+
+vea L<"PERL_BADFREE">.
+
+=item F<Config.pm>
+
+Este archivo reside en algún lugar profundo en la posición donde instaló su biblioteca perl, encuéntrelo con 
+
+  perl -MConfig -le "print $INC{'Config.pm'}"
+
+Mientras que los valores más importantes en este archivo I<se> actualizan por parte del instalador binario, algunos de ellos pueden necesitar editarse manualmente. No sé qué datos son, así que manténgame informado si encuentra alguno.  Además, es posible que los cambios manuales a la versión instalada deban ir acompañados de una edición de este archivo.
+
+=back
+
+B<NOTA>. Debido a un error tipográfico, el instalador binario de 5.00305 instalaría una variable C<PERL_SHPATH> en F<Config.sys>. Por favor, elimine esta variable y ponga en su lugar C<L</PERL_SH_DIR>>.
+
+=head2 Instalación binaria manual
+
+A partir de la versión 5.00305, la distribución binaria perl de OS/2 se divide en 11 componentes. Desafortunadamente, para habilitar la instalación configurable binaria, las rutas de archivo en los archivos zip no son absolutas, pero relativo a algún directorio.
+
+Tenga en cuenta que la extracción con las rutas almacenadas sigue siendo necesaria (predeterminado con unzip, especifique C<-d> para pkunzip). Sin embargo, necesita saber dónde extraer los archivos. También necesita cambiar entradas manualmente en F<Config.sys> para reflexionar dónde puso los archivos. Tenga en cuenta que si tiene un descompresor primitivo (como C<pkunzip> ), es posible que reciba muchas advertencias/errores mientras descomprime. Actualice a C<(w)unzip>.
+
+A continuación se muestra qué hacer para reproducir la configuración en mi máquina.  En F<VIEW.EXE> puedes ahora presionar C<Ctrl-Insert>, y cortar y pegar desde el archivo resultante, creado en el directorio desde el que arrancó F<VIEW.EXE>.
+
+Para cada componente, mencionamos las variables de entorno relacionadas con cada directorio de instalación.  O bien elija directorios para emparejar con sus valores de las variables, o cree/anexe a variables para tener en cuenta los directorios.
+
+=over 3
+
+=item Perl VIO y ejecutables PM (enlazados dinámicamente)
+
+  unzip perl_exc.zip *.exe *.ico -d f:/emx.add/bin
+  unzip perl_exc.zip *.dll -d f:/emx.add/dll
+
+(tiene los directorios con C<*.exe> en PATH, y C<*.dll> en LIBPATH);
+
+=item Perl_ VIO ejecutable (enlazado estáticamente)
+
+  unzip perl_aou.zip -d f:/emx.add/bin
+
+(tiene el directorio en PATH);
+
+=item Ejecutables para las utilidades Perl
+
+  unzip perl_utl.zip -d f:/emx.add/bin
+
+(tiene el directorio en PATH);
+
+=item Biblioteca Perl principal
+
+  unzip perl_mlb.zip -d f:/perllib/lib
+
+Si este directorio es exactamente igual al prefijo que se compiló en F<perl.exe>, no necesita cambiar nada. Sin embargo, para que perl encuentre la biblioteca si usa una ruta diferente, necesita establecer C<PERLLIB_PREFIX> en F<Config.sys>; vea L<"PERLLIB_PREFIX">.
+
+=item Módulos adicionales Perl
+
+  unzip perl_ste.zip -d f:/perllib/lib/site_perl/5.24.0/
+
+Se aplica el mismo comentario anterior.  Además, si este directorio no es uno de los directorios en @INC (e @INC está influido por C<PERLLIB_PREFIX>), necesita poner este directorio y subdirectorio F<./os2> en las variables C<PERLLIB> o C<PERL5LIB>. No use C<PERL5LIB> a menos que ya lo tenga establecido. Vea L<perl/"ENTORNO">.
+
+B<[¡Compruebe si este directorio de extracción sigue siendo aplicable con la estructura del nuevo directorio!]>
+
+=item Herramientas para compilar módulos Perl
+
+  unzip perl_blb.zip -d f:/perllib/lib
+
+El mismo comentario que para F<perl_ste.zip>.
+
+=item Páginas de manual para Perl y utilidades
+
+  unzip perl_man.zip -d f:/perllib/man
+
+Este directorio debería estar mejor en C<MANPATH>. Necesita tener un funcional F<man> para acceder a estos archivos.
+
+=item Páginas de manual para módulos Perl
+
+  unzip perl_mam.zip -d f:/perllib/man
+
+Este directorio debería estar mejor en C<MANPATH>. Necesita tener un funcional F<man> para acceder a estos archivos.
+
+=item Código fuente para la documentación Perl
+
+  unzip perl_pod.zip -d f:/perllib/lib
+
+Esto lo usa el programa C<perldoc> (vea L<perldoc>), y se puede usar para generar la documentación en HTML visible por los navegadores WWW, y documentación en zillones de otros formatos: C<info>, C<LaTeX>, C<Acrobat>, C<FrameMaker> y así.  [Use programas como F<pod2latex>, etc.]
+
+=item Manual Perl en formato F<.INF>
+
+  unzip perl_inf.zip -d d:/os2/book
+
+Este directorio debería estar mejor en C<BOOKSHELF>.
+
+=item Pdksh
+
+  unzip perl_sh.zip -d f:/bin
+
+Esto lo usa perl para ejecutar comandos externos que requiere explícitamente un shell, como los comandos que usan I<redirección> y I<metacaracteres shell>. También se usa en lugar de un F</bin/sh> explícito.
+
+Establezca C<PERL_SH_DIR> (vea L<"PERL_SH_DIR">) si mueve F<sh.exe> desde la posición anterior.
+
+B<Nota:> Quizás sea posible usar algún otro shell compatible con sh (no probado).
+
+=back
+
+Después de que instale los componentes que necesita y actualice el correspondiente F<Config.sys>, necesita editar manualmente F<Config.pm>. Este archivo reside en algún lugar profundo en la posición donde instaló su biblioteca perl, encuéntrelo con
+
+  perl -MConfig -le "print $INC{'Config.pm'}"
+
+Necesita corregir todas las entradas que se parezcan a ruta de acceso (actualmente comienzan con C<f:/>).
+
+=head2 B<Advertencia>
+
+La instalación automática y manual de perl deja rutas precompiladas dentro de los ejecutables perl. Mientras que estas rutas son sobrescribibles (vea L<"PERLLIB_PREFIX">, L<"PERL_SH_DIR">), algunas personas pueden preferir la edición binaria de las rutas dentro de los ejecutables/DLL.
+
+=head1 Acceso a la documentación
+
+Dependiendo de cómo compile/instale perl puede tener (o quizás idéntica) la documentación Perl en los siguientes formatos:
+
+=head2 Archivo F<.INF> de OS/2
+
+Muy probablemente el formato más conveniente. Bajo OS/2 véalo como
+
+  view perl
+  view perl perlfunc
+  view perl less
+  view perl ExtUtils::MakeMaker
+
+(actualmente los dos últimos pueden referirse a una posición incorrecta, pero esto puede mejorar pronto). Bajo Win* vea L<"SYNOPSIS">.
+
+Si quiere usted mismo compilar los documentos, y tiene I<OS/2 toolkit>, ejecute
+
+	pod2ipf > perl.ipf
+
+en el directorio F</perllib/lib/pod>, entonces
+
+	ipfc /inf perl.ipf
+
+(Espere un montón de errores durante ambos pasos). Ahora muévalo a la ruta de su BOOKSHELF.
+
+=head2 Texto plano
+
+Si tiene documentación perl en formato fuente, utilidades perl instaladas, y el GNU groff instalada, puede usar 
+
+	perldoc perlfunc
+	perldoc less
+	perldoc ExtUtils::MakeMaker
+
+para acceder a la documentación perl en formato texto (note que puede obtener mejores resultados usando las páginas de manual de perl).
+
+De otra forma, intente ejecutar pod2text en los archivos F<.pod>.
+
+=head2 Páginas de manual
+
+Si tiene instalado F<man> en su sistema, e instaló las páginas de manual de perl, use algo como esto:
+
+	man perlfunc
+	man 3 less
+	man ExtUtils.MakeMaker
+
+para acceder a la documentación de los diferentes componentes de Perl. Empiece con
+
+	man perl
+
+Note que el punto (F<.>) se usa como un separador de paquete para la documentación de paquetes, y como es normal, algunas veces necesita proporcionar la sección -el C<3> anterior- para evitar quedar ensombrecido por la I<página de manual de less(1)>.
+
+Asegúrese de que el directorio B<por encima> del directorio con páginas de manual está en su C<MANPATH>, como esto
+
+  set MANPATH=c:/man;f:/perllib/man
+
+para páginas de manual Perl en C<f:/perllib/man/man1/>, etc.
+
+=head2 HTML
+
+Si dispone de algún navegador WWW, e instaló la documentación Perl en formato fuente, y utilidades Perl, puede compilar los docs. en HTML. Cambie al directorio con los archivos F<.pod>, y haga algo como esto
+
+	cd f:/perllib/lib/pod
+	pod2html
+
+Después de esto puede dirigir su navegador al archivo F<perl.html> en este directorio, y continúe con la lectura de docs., como esto
+
+	explore file:///f:/perllib/lib/pod/perl.html
+
+De otra forma puede obtener estos docs. precompilados desde CPAN.
+
+=head2 Archivos GNU C<info>
+
+Usuarios de Emacs lo apreciarían mucho, especialmente con el modo C<CPerl> cargado. Necesita obtener el último C<pod2texi> desde C<CPAN>, o de otra forma, la precompilación de las páginas info.
+
+=head2 Archivos F<PDF>
+
+para C<Acrobat> están disponibles en CPAN (pueden ser para una versión ligeramente más vieja de perl).
+
+=head2 Docs. C<LaTeX>
+
+se pueden construir usando C<pod2latex>.
+
+=head1 COMPILACIÓN
+
+Aquí discutimos cómo compilar Perl bajo OS/2.
+
+=head2 El relato breve
+
+Asuma que usted es un adaptador ocasional, así que seguro que están presentes todas las herramientas necesarias en su sistema, y sabe cómo obtener la distribución de código fuente de Perl.  Descomprímalo, entre al directorio extraído, y
+
+  gnupatch -p0 < os2\diff.configure
+  sh Configure -des -D prefix=f:/perllib
+  make
+  make test
+  make install
+  make aout_test
+  make aout_install
+
+Esto pone los ejecutables en f:/perllib/bin.  Muévalos manualmente al C<PATH>, mueva manualmente el F<perl*.dll> compilado a C<LIBPATH> (aquí, para Perl DLL, F<*> no significa nada como suma de control hexadecimal), y ejecute
+
+  make installcmd INSTALLCMDDIR=d:/ir/on/path
+
+Asumiendo que los archivos C<man> se pusieron en la posición apropiada, esto completa la instalación de un sistema mínimo de Perl.  (La distribución binaria contiene también un montón de módulos adicionales, y la documentación en formato INF).
+
+Lo que sigue es una guía detallada a través de estos pasos.
+
+=head2 Prerrequisitos
+
+Necesita tener el último entorno de desarrollo EMX, el paquete completo GNU tool (gawk renombrado a awk, y GNU F<find.exe> en la ruta por delante del F<find.exe> del OS/2, lo mismo con F<sort.exe>; para comprobarlo use
+
+  find --version
+  sort --version
+
+). Necesita la última versión de F<pdksh>, instalada como F<sh.exe>.
+
+Compruebe que tiene instaladas las bibliotecas y cabeceras B<BSD>, y -opcionalmente- las cabeceras y bibliotecas Berkeley DB, y crypt.
+
+Posibles posiciones para obtener los archivos:
+
+
+  ftp://ftp.uni-heidelberg.de/pub/os2/unix/
+  http://hobbes.nmsu.edu/h-browse.php?dir=/pub/os2
+  http://cd.textfiles.com/hobbesos29804/disk1/DEV32/
+  http://cd.textfiles.com/hobbesos29804/disk1/EMX09C/
+
+Se ha reportado que los siguientes archivos contienen suficientes útiles para compilar perl: F<gnufutil.zip>, F<gnusutil.zip>, F<gnututil.zip>, F<gnused.zip>, F<gnupatch.zip>, F<gnuawk.zip>, F<gnumake.zip>, F<gnugrep.zip>, F<bsddev.zip> y F<ksh527rt.zip> (o una versión superior).  Note que se sabe que todas estas utilidades están disponibles desde LEO:
+
+  ftp://crydee.sai.msu.ru/pub/comp/os/os2/leo/gnu/
+
+Note también que el F<db.lib> y F<db.a> desde la distribución EMX no son convenientes para una compilación multihilo (incluso sabores de hilo único de Perl usan C RTL multihilo, por compatibilidad con XFree86-OS/2). Obtenga el correcto desde
+
+  http://www.ilyaz.org/software/os2/db_mt.zip
+
+Si ya tiene instalada I<exactamente la misma versión de Perl>, asegúrese de que se no esté ejecutando ninguna copia o Perl.  Los últimos pasos de la compilación puede fallar ya que se puede encontrar una versión más vieja de F<perl.dll> cargada en memoria.  Ejecutar C<make test> no tiene sentido, ya que la prueba está probando una compilación anterior de perl (esta situación se detecta e informa por parte de la prueba F<os2/os2_base.t>).  No olvide quitar C<PERL_EMXLOAD_SEC> del entorno.
+
+También asegúrese que tiene el directorio F</tmp> en el dispositivo actual, y el directorio F<.> en su C<LIBPATH>. Uno puede intentar corregir la última condición con
+
+  set BEGINLIBPATH .\.
+
+si usa algo como F<CMD.EXE> o las últimas versiones de F<4os2.exe>.  (El kernel de OS/2 ignora el BEGINLIBPATH establecido a sólo C<.>).
+
+Asegúrese que su gcc es compatible con el enlazado C<-Zomf>: ejecute el I<script> C<omflibs> en el directorio F</emx/lib>.
+
+Compruebe que está instalado link386. Viene como estándar con OS/2, pero puede no estar instalado debido a la personalización. Si al escribir
+
+  link386
+
+le muestra que no lo tiene, haga I<Selective install>, y elija C<Link object modules> en I<Optional system utilities/More>. Si entra en el prompt del link386, pulse C<Ctrl-C> para salir.
+
+=head2 Obtener el código fuente de perl
+
+Necesita recuperar el último código fuente de perl (incluyendo las versiones de desarrollo). Probablemente está localizado en 
+
+  http://www.cpan.org/src/
+  http://www.cpan.org/src/unsupported
+
+Si no, puede necesitar excavar en los índices para encontrarlo en el directorio del mantenedor actual.
+
+Un ciclo rápido de las versiones de desarrollo puede, de vez en cuando, romper la compilación de OS/2; mirando en 
+
+  http://www.cpan.org/ports/os2/
+
+puede indicar la última publicación que lanzó públicamente el mantenedor. Note que el lanzamiento puede incluir algunos parches adicionales para aplicarlos al código fuente actual de perl.
+
+Extráigalo con algo así
+
+  tar vzxf perl5.00409.tar.gz
+
+Puede ver un mensaje sobre errores mientras extrae F<Configure>. Esto es porque hay un conflicto con un archivo de nombre similar a F<configure>.
+
+Cambie el directorio de extracción.
+
+=head2 Aplicación de las revisiones
+
+Necesita aplicar los parches en F<./os2/diff.*> como esto:
+
+  gnupatch -p0 < os2\diff.configure
+
+Puede también necesitar aplicar los parches suministrados con la distribución binaria de perl.  También tiene sentido mirar en la lista de correo de los perl5-porters por los últimos parches relacionados con OS/2 (vea L<http://www.xray.mpe.mpg.de/mailing-lists/perl5-porters/>).  Tales parches normalmente contienen las cadenas C</os2/> y C<patch>, así que tiene sentido buscar por estas cadenas.
+
+=head2 Edición manual
+
+Puede mirar en el archivo F<./hints/os2.sh> y corregir cualquier cosa que encuentre que esté mal. Espero que ya no sea necesario.
+
+=head2 Ejecutar make
+
+  sh Configure -des -D prefix=f:/perllib
+
+C<prefix> significa: dónde instalar la biblioteca perl resultante. Proporcionando el prefijo correcto puede evitar el tener que especificar C<PERLLIB_PREFIX>; vea L<"PERLLIB_PREFIX">.
+
+I<Ignore el mensaje sobre que falta C<ln>, y sobre la opción C<-c> a tr>. Lo último es más probable que esté arreglado; si lo ve y puede trazar de dónde viene la última advertencia espuria, por favor, infórmeme.
+
+Ahora
+
+  make
+
+En algún momento la compilación puede morir, reportando una I<falta de coincidencia de versión> o I<incapaz de ejecutar F<perl>>.  Esto significa que no tiene F<.> en su LIBPATH, así que F<perl.exe> no puede encontrar la necesaria F<perl67B2.dll> (trate esos dígitos hex. como ruido).  Después de que esto se arregle, la compilación debería terminar sin alborotos.
+
+=head2 Pruebas
+
+Ahora ejecute
+
+  make test
+
+Todas las pruebas deberían tener éxito (obviando algunas de ellas).  Si tiene la misma versión instalada de Perl, es crucial que tenga C<.> al principio en su LIBPATH (o en BEGINLIBPATH), de lo contrario sus tests se probarán con la versión errónea de Perl.
+
+Algunas pruebas pueden generar mensajes extra similares a
+
+=over 4
+
+=item Un montón de C<bad free>
+
+en pruebas de bases de datos en relativos a Berkeley DB. I<Esto ya debería estar arreglado>. Si persiste, puede desactivar esta advertencia; vea L<"PERL_BADFREE">.
+
+=item Proceso terminado por SIGTERM/SIGINT
+
+Este es un mensaje estándar emitido por las aplicaciones OS/2. Las aplicaciones *nix mueren en silencio. Esto está considerado como una característica adicional. Puede desactivar esto fácilmente con los apropiados manejadores de señal. 
+
+Sin embargo, el motor de pruebas desangra estos mensajes a la pantalla en momentos inesperados. Dos mensajes de este tipo I<deberían> estar presente durante las pruebas.
+
+=back
+
+Para obtener informes de prueba más precisos, llame al
+
+  perl t/harness
+
+El informe con el F<io/pipe.t> que falla puede verse así:
+
+ Failed Test  Status Wstat Total Fail  Failed  List of failed
+ ------------------------------------------------------------
+ io/pipe.t                    12    1   8.33%  9
+ 7 tests skipped, plus 56 subtests skipped.
+ Failed 1/195 test scripts, 99.49% okay. 1/6542 subtests failed,
+    99.98% okay.
+
+Las razones de las pruebas omitidas más importantes son:
+
+=over 8
+
+=item F<op/fs.t>
+
+=over 4
+
+=item Z<>18
+
+Comprueba C<atime> y C<mtime> de  C<stat()>. Desafortunadamente, HPFS proporciona una granularidad de sólo 2 seg. (¿por compatibilidad con FAT?).
+
+=item Z<>25
+
+Comprueba C<truncate()> en un identificador de archivo recién abierto para escritura; No sé por qué esto debería o no debería funcionar.
+
+=back
+
+=item F<op/stat.t>
+
+Comprueba C<stat()>. Pruebas:
+
+=over 4
+
+=item 4
+
+Comprueba C<atime> y C<mtime> de  C<stat()>. Desafortunadamente, HPFS proporciona una granularidad de sólo 2 seg. (¿por compatibilidad con FAT?).
+
+=back
+
+=back
+
+=head2 Instalar el perl compilado
+
+Si aún no ha movido C<perl*.dll> en LIBPATH, hágalo ahora.
+
+Ejecutar
+
+  make install
+
+Pondrá los archivos generados en las ubicaciones necesarias. Ponga manualmente F<perl.exe>, F<perl__.exe> y F<perl___.exe> en una ubicación en su PATH, F<perl.dll> a una ubicación en su LIBPATH.
+
+Ejecutar
+
+  make installcmd INSTALLCMDDIR=d:/ir/on/path
+
+para convertir las utilidades perl a archivos F<.cmd> y ponerlos en PATH. Debe colocar manualmente las utilidades F<.EXE> en la ruta. Están instaladas en C<$prefix/bin>, donde C<$prefix> es lo que le indicó a F<Configure>; vea L</Compilar>.
+
+Si usa C<man>, mueva los directorios F<*/man/> instalados a su C<MANPATH>, o modifique C<MANPATH> para que coincida con la ubicación.  (Uno podría haber evitado esto proporcionando una opción C<manpath> correcta a F<./Configure>, o editar F<./config.sh> entre la configuración y los pasos de make).
+
+=head2 Compilación estilo C<a.out>
+
+Proceda como antes, pero haga F<perl_.exe> (vea L<"perl_.exe">) con
+
+  make perl_
+
+pruebe e instale con
+
+  make aout_test
+  make aout_install
+
+Ponga manualmente F<perl_.exe> en una ubicación en su PATH.
+
+B<Nota:> El proceso de compilación para C<perl_> I<no conoce> todos las dependencias, por lo que debe asegurarse de que todo esté actualizado, es decir, haciendo
+
+  make perl_dll
+
+primero.
+
+=head1 Compilar una distribución binaria
+
+[Esta sección proporciona solo una breve descripción...]
+
+La compilación debe proceder de manera diferente dependiendo de si la versión de perl que instala ya está presente y se usa en su sistema, o es una nueva versión que aún no se ha usado.  La siguiente descripción asume que la versión es nueva, por lo que la instalación de sus archivos DLL y F<.pm> no interrumpirá el funcionamiento de su sistema incluso si algunos pasos intermedios aún no están funcionando completamente.
+
+Los otros casos requieren procedimientos un poco más complicados.  Abajo suponemos que la versión actual de Perl es C<5.8.2>, por lo que los ejecutables son nombrados en consecuencia.
+
+=over
+
+=item 1.
+
+Cree y pruebe completamente la distribución de Perl.  Asegúrese de que no haya pruebas fallando con los objetivos C<test> y C<aout_test>; corregir los errores en Perl y el conjunto de pruebas de Perl detectado por estas pruebas.  Asegúrese de que el make del objetivo C<all_test> corre tan limpio como sea posible.  Compruebe que F<os2/perlrexx.cmd> funciona bien.
+
+=item 2.
+
+Instale completamente Perl, incluido el objetivo C<installcmd>.  Copie las DLL generadas a C<LIBPATH>; copie los ejecutables de Perl numerados (como en F<perl5.8.2.exe>) a C<PATH>; copie C<perl_.exe> a C<PATH> como C<perl_5.8.2.exe>.  Piense si necesita compatibilidad de las DLL con versiones anteriores.  En la mayoría de los casos no es necesario instalarlos; pero en algún momento esto puede simplificar los siguientes pasos.
+
+=item 3.
+
+Asegúrese de que C<CPAN.pm> puede descargar archivos desde CPAN.  Si no, es posible que necesite instalar manualmente C<Net::FTP>.
+
+=item 4.
+
+Instale el paquete C<Bundle::OS2_default>
+
+ perl5.8.2 -MCPAN -e "install Bundle::OS2_default" < nul |& tee 00cpan_i_1
+
+Esto puede tardar un par de horas en un procesador de 1 GHz (cuando se ejecuta por primera vez).
+Y esto no debería ser necesariamente un procedimiento fluido.  Algunos módulos pueden no especificar las dependencias requeridas, por lo que es posible que sea necesario repetir este procedimiento varias veces hasta que los resultados se estabilicen.
+
+ perl5.8.2 -MCPAN -e "install Bundle::OS2_default" < nul |& tee 00cpan_i_2
+ perl5.8.2 -MCPAN -e "install Bundle::OS2_default" < nul |& tee 00cpan_i_3
+
+Incluso después de que se estabilicen, algunas pruebas pueden fallar.
+
+Solucione tantos errores descubiertos como sea posible.  Documente todos los errores que no son arreglados, y todas los fallos con razones desconocidas.  Inspeccione los registros producidos F<00cpan_i_1> para encontrar pruebas omitidas sospechosamente y otros eventos sospechosos.
+
+Tenga en cuenta que la I<instalación> de algunos módulos también pueden fallar: por ejemplo, las DLL a actualizar pueden estar ya cargadas por F<CPAN.pm>.  Inspeccione los registros de C<install> (en el ejemplo anterior F<00cpan_i_1>, etc.) en busca de errores e instalar cosas manualmente, como en
+
+  cd $CPANHOME/.cpan/build/Digest-MD5-2.31
+  make install
+
+Algunas distribuciones pueden fallar en algunas pruebas, pero es posible que desee instalarlas de todos modos (como antes, o a través del comando C<force install> de C<CPAN.pm> en modo shell).
+
+Dado que este procedimiento puede tardar bastante tiempo en completarse, tiene sentido "congelar" su configuración de CPAN deshabilitando las actualizaciones periódicas de la copia local del índice CPAN: establecer C<index_expire> a un gran valor (yo uso 365), y luego guarde la configuración
+
+  CPAN> o conf index_expire 365
+  CPAN> o conf commit
+
+Restablezca el valor predeterminado C<1> cuando haya terminado.
+
+=item 5.
+
+Cuando esté satisfecho con los resultados, vuelva a ejecutar el objetivo C<installcmd>.  Ahora puede copiar C<perl5.8.2.exe> a C<perl.exe> e instale la otra compilación de ejecutables OMF: C<perl__.exe>, etc. Están listos para ser utilizados.
+
+=item 6.
+
+Cambie al directorio C<./pod> del árbol de compilación, descargue el logotipo de Perl F<CamelGrayBig.BMP>, y corra
+
+  ( perl2ipf > perl.ipf ) |& tee 00ipf
+  ipfc /INF perl.ipf |& tee 00inf
+
+Esto produce el libro con los docs. Perl en línea C<perl.INF>.  Instalar en la ruta C<BOOKSHELF>.
+
+=item 7.
+
+Ahora es el momento de compilar el ejecutable enlazado estáticamente F<perl_.exe> el cual incluye módulos recién instalados a través de C<Bundle::OS2_default>.  Hacer pruebas a través de C<CPAN.pm> va a ser terriblemente lento, ya que vincula estáticamente un nuevo ejecutable por extensión XS.
+
+Aquí hay una posible solución: cree un F<Makefile.PL> de nivel superior en F<$CPANHOME/.cpan/build/> cuyo contenido es (comparar con L<Compilar ejecutables con una colección personalizada de extensiones cargadas estáticamente>)
+
+  use ExtUtils::MakeMaker;
+  WriteMakefile NAME => 'dummy';
+
+ejecute esto es
+
+  perl_5.8.2.exe Makefile.PL <nul |& tee 00aout_c1
+  make -k all test <nul |& 00aout_t1
+
+Una vez más, este procedimiento no debería ser absolutamente sencillo.  Algunos C<Makefile.PL> en los subdirectorios puede tener errores y no se ejecutaría como I<scripts> "hijos".  La interdependencia de los módulos puede sorprenderle; sin embargo, dado que los módulos que no son XS ya están instalados, los requisitos previos de la mayoría de los módulos tienen una muy buena oportunidad de estar presentes.
+
+Si descubre algunas fallas, mueva los directorios de los módulos problemáticos a una ubicación diferente; si estos módulos no son módulos XS, simplemente puede ignorarles: ya están instalados; los módulos restantes, XS, que necesita instalar manualmente uno por uno.
+
+Después de cada eliminación, debe volver a ejecutar el proceso C<Makefile.PL>/C<make>; por lo general este procedimiento converge pronto.  (Pero asegúrese de convertir todas las bibliotecas C externas necesarias del formato F<.lib> al formato F<.a>: ejecute uno de estos
+
+  emxaout foo.lib
+  emximp -o foo.a foo.lib
+
+que sea apropiado).  Además, asegúrese de que las DLL para bibliotecas externas se pueden usar con ejecutables compilados sin las opciones C<-Zmtd>.
+
+Cuando esté seguro de que sólo unos pocos subdirectorios conducen a fallas, es posible que desee agregar la opción C<-j4> a C<make> para acelerar el saltar esos subdirectorios cuando haya terminado la compilación.
+
+Cuando esté satisfecho con los resultados de las pruebas, instale las bibliotecas de compilación C para extensiones:
+
+  make install |& tee 00aout_i
+
+Ahora puede cambiar el nombre del archivo F<./perl.exe> generado durante la última fase a F<perl_5.8.2.exe>; colóquelo en C<PATH>; si hay interdependencia entre algunos módulos XS, es posible que deba repetir el bucle C<test>/C<install> con este nuevo ejecutable y algunos módulos excluidos -hasta que el procedimiento converja-.
+
+Ahora tiene todas las bibliotecas F<.a> necesarias para estos módulos Perl en los lugares donde el compilador de Perl pueda encontrarlo.  Use el compilador de perl: cambie a un directorio vacío, cree un "ficticio" F<Makefile.PL> otra vez, y corra
+
+  perl_5.8.2.exe Makefile.PL |& tee 00c
+  make perl		     |& tee 00p
+
+Esto debería crear un ejecutable F<./perl.exe> con todas las extensiones incorporadas cargadas estáticamente.  Compare los archivos generados F<perlmain.c> para asegurarse de que durante las iteraciones el número de extensiones cargadas solo aumenta.
+Renombre F<./perl.exe> a F<perl_5.8.2.exe> en C<PATH>.
+
+Cuando converge, obtiene un variante funcional de F<perl_5.8.2.exe>; cópielo a C<perl_.exe>.  Ha terminado con la generación de la instalación local de Perl.
+
+=item 8.
+
+Asegúrese de que los módulos instalados estén realmente en la ubicación del nuevo Perl, y no se heredan de las entradas de @INC proporcionadas de versiones anteriores de Perl: establezca C<PERLLIB_582_PREFIX> para redirigir la nueva versión de Perl a una nueva ubicación, y copie los archivos instalados a esta nueva ubicación.  Vuelva a hacer las pruebas para asegurarse de que las versiones de los módulos heredados de versiones anteriores de Perl no son necesarios.
+
+En realidad, la salida del registro de L<pod2ipf(1)> durante el paso 6 da una muy detallada información sobre qué módulos se cargan desde qué lugar; así que puede usarlo como una herramienta de verificación adicional.
+
+Compruebe que algunos archivos temporales no se incluyeron en el árbol de instalación de Perl.
+Ejecute algo como esto:
+
+  pfind . -f "!(/\.(pm|pl|ix|al|h|a|lib|txt|pod|imp|bs|dll|ld|bs|inc|xbm|yml|cgi|uu|e2x|skip|packlist|eg|cfg|html|pub|enc|all|ini|po|pot)$/i or /^\w+$/") | less
+
+en el árbol de instalación (tanto el superior como en F<sitelib>).
+
+Comprima todas las DLL con F<lxlite>.  El pequeño F<.exe> se puede comprimir con C</c:max> (el error solo aparece cuando hay una reparación en los últimos 6 bytes de una página (?); dado que los diminutos ejecutables son mucho más pequeños que una página, el error no golpeará).  No comprima C<perl_.exe>: no funcionará bajo DOS.
+
+=item 9.
+
+Ahora puede generar la distribución binaria.  Esto se hace ejecutando la prueba de la distribución CPAN C<OS2::SoftInstaller>.  Ajuste el archivo F<test.pl> para adaptarlo a la versión actual de Perl.  Consiguientemente no olvide empaquetar las necesarias DLL externas.  Incluya la descripción de los errores y el paquete de pruebas que no puede arreglar.  Incluya las versiones pequeñas de pila de los ejecutables Perl del directorio de compilación Perl.
+
+Incluya F<perl5.def> para que las personas puedan reenlazar la DLL de perl preservando la compatibilidad binaria, o pueda crear DLL compatibles.  Incluya los archivos de diff (C<diff -pu old new>) de los arreglos que hizo de modo que las personas puedan recompilar su versión.  Incluya F<perl5.map> de modo que uno pueda usar depuración remota.
+
+=item 10.
+
+Comparta lo que hizo con otras personas.  Relax.  Disfrute de las frutas en su trabajo.
+
+=item 11.
+
+Prepárese para las gracias, reportes de errores, correos de odio y spam que lleguen como resultado del paso anterior.  ¡Ninguna buena acción quedará impune!
+
+=back
+
+=head1 Compilando archivos F<.EXE> personalizados
+
+Los ejecutables Perl se pueden recompilar en cualquier momento.  Además, uno puede usar el interfaz I<embebido> (vea L<perlembed>) para hacer ejecutables muy personalizados.
+
+=head2 Hacer ejecutables con una colección personalizada de extensiones cargados estáticamente
+
+Es un poco más fácil hacerlo mientras I<decrece> la lista de extensiones cargadas estáticamente.  Discutimos este caso solamente aquí.
+
+=over
+
+=item 1.
+
+Cambie a un directorio vacío, y cree el siguiente C<Makefile.PL>:
+
+  use ExtUtils::MakeMaker;
+  WriteMakefile NAME => 'dummy';
+
+=item 2.
+
+Ejecútele con el sabor de Perl (F<perl.exe> o F<perl_.exe>) que quiera recompilar.
+
+  perl_ Makefile.PL
+
+=item 3.
+
+Solicite crear un nuevo Perl ejecutable:
+
+  make perl
+
+(puede necesitar añadir manualmente C<PERLTYPE=-DPERL_CORE> a esta línea de comando en algunas versiones de Perl; el síntoma es que la expansión en línea de comandos no funciona en shells OS/2 con el nuevo ejecutable compilado; compruebe con
+
+  .\perl.exe -wle "print for @ARGV" *
+
+).
+
+=item 4.
+
+El paso anterior creó F<perlmain.c> que contiene una lista de las llamadas newXS() cerca del final.  Quitar llamadas innecesarias, y rearrancar
+
+  make perl
+
+producirá un ejecutable personalizado.
+
+=back
+
+=head2 Crear ejecutables con rutas de acceso personalizadas
+
+El ejecutable perl por defecto es suficientemente flexible para soportar la mayor parte de los usos.
+Sin embargo, uno puede querer algo aún más flexible; por ejemplo, uno puede querer encontrar DLL Perl en relación con la ubicación del archivo EXE; o uno puede querer ignorar el entorno al configurar el parche de búsqueda de la biblioteca Perl, etc.
+
+Si se encuentra cómodo con la interfaz I<embebida> (vea L<perlembed>), semejantes cosas son fáciles de hacer repitiendo los pasos descritos en L<Compilar ejecutables con una colección personalizada de extensiones cargadas estáticamente>, y haciendo ediciones más completas a main() de F<perlmain.c>.  La gente con pocas ganas de entender Perl puede, simplemente, cambiar el nombre de main(), y hacer la necesarias modificaciones en un main() personalizado que llama a la función renombrada en el momento apropiado.
+
+Sin embargo, existe una tercera forma: perl DLL exporta la función main() y varias retrollamadas para personalizar la ruta de búsqueda.  A continuación se muestra un ejemplo completo de un "cargador Perl" que
+
+=over
+
+=item 1.
+
+Busca Perl DLL en el directorio C<$exedir/../dll>;
+
+=item 2.
+
+Antepone el directorio anterior a C<BEGINLIBPATH>;
+
+=item 3.
+
+Falla si la DLL de Perl que se encuentra a través de C<BEGINLIBPATH> es diferente de lo que se cargó en el paso 1; por ejemplo, otro proceso podría haberlo cargado desde C<LIBPATH> o de un valor diferente de C<BEGINLIBPATH>.  En estos casos se necesita modificar la configuración del sistema para que este otro proceso tampoco se ejecute, o cargue la DLL desde C<BEGINLIBPATH> con C<LIBPATHSTRICT=T> (disponible con kernels después de septiembre de 2000).
+
+=item 4.
+
+Carga la biblioteca Perl desde C<$exedir/../dll/lib/>.
+
+=item 5.
+
+Utiliza el shell Bourne de C<$exedir/../dll/sh/ksh.exe>.
+
+=back
+
+Para obtener los mejores resultados, compile el archivo C a continuación con las mismas opciones que Perl DLL.  Sin embargo, muchas funciones funcionarán incluso si el ejecutable no está& una aplicación EMX, por ejemplo, si se compila con
+
+  gcc -Wall -DDOSISH -DOS2=1 -O2 -s -Zomf -Zsys perl-starter.c \
+    -DPERL_DLL_BASENAME=\"perl312F\" -Zstack 8192 -Zlinker /PM:VIO
+
+Aquí hay un archivo C de ejemplo:
+
+ #define INCL_DOS
+ #define INCL_NOPM
+ /* Son necesarios para compilar si os2.h incluye os2tk.h, no
+  * os2emx.h */
+ #define INCL_DOSPROCESS
+ #include <os2.h>
+
+ #include "EXTERN.h"
+ #define PERL_IN_MINIPERLMAIN_C
+ #include "perl.h"
+
+ static char *me;
+ HMODULE handle;
+
+ static void
+ die_with(char *msg1, char *msg2, char *msg3, char *msg4)
+ {
+    ULONG c;
+    char *s = " error: ";
+
+    DosWrite(2, me, strlen(me), &c);
+    DosWrite(2, s, strlen(s), &c);
+    DosWrite(2, msg1, strlen(msg1), &c);
+    DosWrite(2, msg2, strlen(msg2), &c);
+    DosWrite(2, msg3, strlen(msg3), &c);
+    DosWrite(2, msg4, strlen(msg4), &c);
+    DosWrite(2, "\r\n", 2, &c);
+    exit(255);
+ }
+
+ typedef ULONG (*fill_extLibpath_t)(int type,
+                                    char *pre,
+                                    char *post,
+                                    int replace,
+                                    char *msg);
+ typedef int (*main_t)(int type, char *argv[], char *env[]);
+ typedef int (*handler_t)(void* data, int which);
+
+ #ifndef PERL_DLL_BASENAME
+ #  define PERL_DLL_BASENAME "perl"
+ #endif
+
+ static HMODULE
+ load_perl_dll(char *basename)
+ {
+     char buf[300], fail[260];
+     STRLEN l, dirl;
+     fill_extLibpath_t f;
+     ULONG rc_fullname;
+     HMODULE handle, handle1;
+
+     if (_execname(buf, sizeof(buf) - 13) != 0)
+         die_with("Can't find full path: ", strerror(errno), "", "");
+     /* XXXX Fill 'me' with new value */
+     l = strlen(buf);
+     while (l && buf[l-1] != '/' && buf[l-1] != '\\')
+         l--;
+     dirl = l - 1;
+     strcpy(buf + l, basename);
+     l += strlen(basename);
+     strcpy(buf + l, ".dll");
+     if ( (rc_fullname = DosLoadModule(fail, sizeof fail, buf, &handle))
+                                                                    != 0
+          && DosLoadModule(fail, sizeof fail, basename, &handle) != 0 )
+         die_with("Can't load DLL ", buf, "", "");
+     if (rc_fullname)
+         return handle;    /* was loaded with short name; all is fine */
+     if (DosQueryProcAddr(handle, 0, "fill_extLibpath", (PFN*)&f))
+         die_with(buf,
+                  ": DLL exports no symbol ",
+                  "fill_extLibpath",
+                  "");
+     buf[dirl] = 0;
+     if (f(0 /*BEGINLIBPATH*/, buf /* prepend */, NULL /* append */,
+           0 /* keep old value */, me))
+         die_with(me, ": prepending BEGINLIBPATH", "", "");
+     if (DosLoadModule(fail, sizeof fail, basename, &handle1) != 0)
+         die_with(me,
+                  ": finding perl DLL again via BEGINLIBPATH",
+                  "",
+                  "");
+     buf[dirl] = '\\';
+     if (handle1 != handle) {
+         if (DosQueryModuleName(handle1, sizeof(fail), fail))
+             strcpy(fail, "???");
+         die_with(buf,
+                  ":\n\tperl DLL via BEGINLIBPATH is different: \n\t",
+                  fail,
+                  "\n\tYou may need to manipulate global BEGINLIBPATH"
+                     " and LIBPATHSTRICT"
+                     "\n\tso that the other copy is loaded via"
+                     BEGINLIBPATH.");
+     }
+     return handle;
+ }
+
+ int
+ main(int argc, char **argv, char **env)
+ {
+     main_t f;
+     handler_t h;
+
+     me = argv[0];
+     /**/
+     handle = load_perl_dll(PERL_DLL_BASENAME);
+
+     if (DosQueryProcAddr(handle,
+                          0,
+                          "Perl_OS2_handler_install",
+                          (PFN*)&h))
+         die_with(PERL_DLL_BASENAME,
+                  ": DLL exports no symbol ",
+                  "Perl_OS2_handler_install",
+                  "");
+     if ( !h((void *)"~installprefix", Perlos2_handler_perllib_from)
+          || !h((void *)"~dll", Perlos2_handler_perllib_to)
+          || !h((void *)"~dll/sh/ksh.exe", Perlos2_handler_perl_sh) )
+         die_with(PERL_DLL_BASENAME,
+                  ": Can't install @INC manglers",
+                  "",
+                  "");
+     if (DosQueryProcAddr(handle, 0, "dll_perlmain", (PFN*)&f))
+         die_with(PERL_DLL_BASENAME,
+                  ": DLL exports no symbol ",
+                  "dll_perlmain",
+                  "");
+     return f(argc, argv, env);
+ }
+
+=head1 P+F sobre compilación
+
+=head2 Algunas C</> se vuelven C<\> en pdksh.
+
+Tiene un pdksh muy viejo. Vea L</Prerequisitos>.
+
+=head2 C<'errno'> - externo no resuelto
+
+No tiene un F<db.lib> seguro MT. Vea L</Prerequisitos>.
+
+=head2 Problemas con tr o sed
+
+reportado con versión muy vieja de tr y sed.
+
+=head2 Algún problema (olvidé cuál ;-)
+
+Tiene una versión más vieja de F<perl.dll> en su LIBPATH, que rompe la compilación de extensiones.
+
+=head2 Biblioteca ... no encontrada
+
+No ejecutó C<omflibs>. Vea L</Prerequisitos>.
+
+=head2 Fallo de segmentación en make
+
+Usa una vieja versión de GNU make. Vea L</Prerequisitos>.
+
+=head2 Fallo de pruebas de op/sprintf
+
+Esto puede resultar de un error en el sprintf emx que se arregló en 0.9d fix 03.
+
+=head1 Características (o no) específicas de la adaptación OS/2
+
+=head2 C<setpriority>, C<getpriority>
+
+Note que estas funciones son compatibles con *nix, no con las viejas adaptaciones de '94 - 95. Las prioridades son absolutas, va desde 32 a -95, más bajo más rápido. 0 es la prioridad por omisión.
+
+B<ADVERTENCIA>.  Llamar a C<getpriority> en un proceso inexistente podría bloquear el sistema antes del Warp3 fixpak22.  A partir de Warp3, Perl usará una alternativa: aborta getpriority() si el proceso no está presente.
+Esto no es posible en versiones más vieja C<2.*>, y sin embargo tiene una condición de carrera.
+
+=head2 C<system()>
+
+Forma multiargumento de C<system()> permite un argumento numérico adicional. El significado de este argumento se describe en L<OS2::Process>.
+
+Al encontrar un programa para ejecutar, Perl primero le pide al sistema operativo que busque ejecutables en C<PATH> (OS/2 agrega la extensión F<.exe> si no hay extensión presente).
+Si no lo encuentra, busca por un script con posibles extensiones agregadas en este orden: sin extensión, F<.cmd>, F<.btm>, F<.bat>, F<.pl>.  Si lo encuentra, Perl comprueba el inicio del archivo en busca de cadenas mágicas C<"#!"> y C<"extproc ">.  Si lo encuentra, Perl usa el resto de la primera línea como el comienzo de la línea de comando para ejecutar este I<script>.  La única manipulación realizada en la primera línea es la extracción de argumentos (actualmente hasta 3), e ignorando la parte de la ruta del nombre del "intérprete" si no se encuentra utilizando la ruta completa.
+
+Por ejemplo, C<system 'foo', 'bar', 'baz'> puede llevar a Perl a encontrar F<C:/emx/bin/foo.cmd> siendo la primera línea
+
+ extproc /bin/bash    -x   -c
+
+Si no se encuentra F</bin/bash.exe>, entonces Perl mira por un ejecutable F<bash.exe> en C<PATH>.  Si se encuentra F<C:/emx.add/bin/bash.exe>, entonces el anterior system() se traduce a
+
+  system qw(C:/emx.add/bin/bash.exe -x -c C:/emx/bin/foo.cmd bar baz)
+
+Se realiza una traducción adicional: en lugar de F</bin/sh> Perl usa la carcasa cableada o personalizada (ver C<L<"PERL_SH_DIR">>).
+
+La búsqueda anterior de "intérprete" es recursiva: si F<bash> ejecutable no se encuentra, pero F<bash.btm> se encuentra, Perl investigará su primera línea, etc.
+El único límite fijo en la profundidad de recursión es implícito: hay un límite de 4 sobre el número de argumentos adicionales insertados antes de los argumentos reales dado al system().  En particular, si no se especifican argumentos adicionales en las primeras líneas "mágicas", entonces el límite de profundidad es 4.
+
+Si Perl encuentra que el ejecutable encontrado es de tipo PM cuando la sesión actual no lo es, comenzará el nuevo proceso en una sesión separada del tipo necesario.  Llame por medio de C<OS2::Process> para desactivar esta magia.
+
+B<ADVERTENCIA>.  Debido a la lógica descrita, necesita especificar explícitamente la extensión F<.com>, si fuera necesario.  Además, si se solicita el ejecutable F<perl5.6.1>, Perl no buscará F<perl5.6.1.exe>.
+[Esto puede cambiar en el futuro].
+
+=head2 C<extproc> en la primera línea
+
+Si los primeros caracteres de un script Perl son C<"extproc ">, esta línea se trata como uns línea C<#!>, por lo tanto, se procesan todos los indicadores en esta línea (dos veces si el I<script> se inició por medio de cmd.exe).  Vea L<perlrun/DESCRIPCIÓN>.
+
+=head2 Módulos adicionales:
+
+L<OS2::Process>, L<OS2::DLL>, L<OS2::REXX>, L<OS2::PrfDB>, L<OS2::ExtAttr>. Estos módulos proporcionan acceso a argumentos numéricos adicionales para C<system> y a la información sobre el proceso en ejecución, a las DLL que tienen funciones con firma REXX y al tiempo de ejecución de REXX, a Bases de datos OS/2 en formato F<.INI> y Atributos extendidos.
+
+Dos extensiones adicionales por Andreas Kaiser, C<OS2::UPM>, y C<OS2::FTP>, están incluidos en C<ILYAZ> directorio, reflejado en CPAN.
+También hay disponibles otras extensiones relacionadas con OS/2.
+
+=head2 Métodos incluidos:
+
+=over 4
+
+=item C<File::Copy::syscopy>
+
+utilizada por C<File::Copy::copy>, vea L<File::Copy>.
+
+=item C<DynaLoader::mod2fname>
+
+utilizada por C<DynaLoader> para la manipulación de nombres DLL.
+
+=item  C<Cwd::current_drive()>
+
+Auto explicativo.
+
+=item  C<Cwd::sys_chdir(nombre)>
+
+deja la unidad como está.
+
+=item  C<Cwd::change_drive(nombre)>
+
+cambia la unidad "actual".
+
+=item  C<Cwd::sys_is_absolute(nombre)>
+
+significa que tiene la letra de unidad y is_rooted.
+
+=item  C<Cwd::sys_is_rooted(nombre)>
+
+significa que tiene un C<[/\\]> inicial (quizás después de una letra: de unidad).
+
+=item  C<Cwd::sys_is_relative(nombre)>
+
+significa cambios con el dir. actual.
+
+=item  C<Cwd::sys_cwd(nombre)>
+
+Interfaz a cwd desde EMX. Utilizado por C<Cwd::cwd>.
+
+=item  C<Cwd::sys_abspath(nombre, dir)>
+
+Una real, real odiosa función a implementar. Devuelve el nombre absoluto de archivo que podría tener C<nombre> si CWD fuera C<dir>.  C<Dir> es por defecto al dir. actual.
+
+=item  C<Cwd::extLibpath([tipo])>
+
+Obtiene el valor actual de la ruta de búsqueda de biblioteca extendida. Si C<tipo> está presente y es positivo, trabaja con C<END_LIBPATH>; si negativo, trabaja con C<LIBPATHSTRICT>, de lo contrario con C<BEGIN_LIBPATH>. 
+
+=item  C<Cwd::extLibpath_set( ruta [, tipo ] )>
+
+Establece el valor actual de la ruta de búsqueda de biblioteca extendida. Si C<tipo> está presente y es positivo, trabaja con C<END_LIBPATH>; si negativo, trabaja con C<LIBPATHSTRICT>, de lo contrario con C<BEGIN_LIBPATH>.
+
+=item C<OS2::Error(do_harderror,do_exception)>
+
+Devuelve C<undef> si aún no se ha llamado, de lo contrario, el bit 1 se establece si en la llamada anterior se habilitó do_harderror, bit 2 se establece si en la llamada anterior se habilitó do_exception.
+
+Esta función habilita/deshabilita las ventanas emergentes de error asociadas con errores de hardware (Disco no listo, etc.) y excepciones de software.
+
+No conozco ninguna forma de averiguar el estado de las ventanas emergentes I<antes de> la primera llamada a esta función.
+
+=item C<OS2::Errors2Drive(drive)>
+
+Devuelve C<undef> si aún no se ha llamado, de lo contrario devuelve falso si hay errores que no se solicitaron que se escribieran a disco duro, o la letra de la unidad si se solicitó.
+
+Esta función puede redirigir las ventanas emergentes de error asociadas con errores de hardware (Disco no listo, etc.) y las excepciones de software al archivo POPUPLOG.OS2 en el directorio raíz de la unidad especificada.  Anula OS2::Error() especificada por programas individuales.  Dado el argumento undef deshabilitará la redirección.
+
+Tiene efecto global, persiste después de que se cierra la aplicación.
+
+No conozco ninguna forma de averiguar el estado de la redirección de las ventanas emergentes al disco I<antes de> la primera llamada a esta función.
+
+=item OS2::SysInfo()
+
+Devuelve un hash con información del sistema. Las claves del hash son
+
+	MAX_PATH_LENGTH, MAX_TEXT_SESSIONS, MAX_PM_SESSIONS,
+	MAX_VDM_SESSIONS, BOOT_DRIVE, DYN_PRI_VARIATION,
+	MAX_WAIT, MIN_SLICE, MAX_SLICE, PAGE_SIZE,
+	VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION,
+	MS_COUNT, TIME_LOW, TIME_HIGH, TOTPHYSMEM, TOTRESMEM,
+	TOTAVAILMEM, MAXPRMEM, MAXSHMEM, TIMER_INTERVAL,
+	MAX_COMP_LENGTH, FOREGROUND_FS_SESSION,
+	FOREGROUND_PROCESS
+
+=item OS2::BootDrive()
+
+Devuelve una letra sin carácter de dos puntos.
+
+=item C<OS2::MorphPM(serve)>, C<OS2::UnMorphPM(serve)>
+
+Transforma la aplicación actual en una aplicación PM y regresa.
+El argumento verdadero significa que se va a servir un bucle real de mensaje.
+OS2::MorphPM() devuelve el identificador de la cola de mensajes PM como un número entero.
+
+Vea L<"Gestión centralizada de recursos"> para obtener más detalles.
+
+=item C<OS2::Serve_Messages(force)>
+
+Recuperación falsa a demanda de mensajes PM pendientes.  Si C<force> es falso, no enviará mensajes si se sabe que está presente un bucle real de mensaje.  Devuelve el número de mensajes recuperados.
+
+Muere con "QUITing..." si se obtuvo el mensaje WM_QUIT.
+
+=item C<OS2::Process_Messages(force [, cnt])>
+
+Recuperación de mensajes PM hasta la creación/destrucción de la ventana.  
+Si C<force> es falso, no enviará mensajes si se sabe que está presente un bucle real de mensaje.
+
+Devuelve el cambio en el número de ventanas.  Si se proporciona C<cnt>, se incrementa por el número de mensajes recuperados.
+
+Muere con "QUITing..." si se obtuvo el mensaje WM_QUIT.
+
+=item C<OS2::_control87(new,mask)>
+
+lo mismo que L<_control87(3)> de EMX.  Toma números enteros como argumentos, devuelve la palabra de control del coprocesador anterior como un número entero.  Solo los bits en C<new> que estén presentes en C<mask> se modifican en la palabra de control.
+
+=item OS2::get_control87()
+
+obtiene la palabra de control del coprocesador como un número entero.
+
+=item C<OS2::set_control87_em(new=MCW_EM,mask=MCW_EM)>
+
+La variante de OS2::_control87() con los valores ideales por defecto para el manejo de máscara de excepción: si no hay C<mask>, solo usa una parte de la máscara de excepción de C<new>.  Si no hay C<new>, deshabilita todas las excepciones de punto flotante.
+
+Vea L<"Características no presentes"> para los detalles.
+
+=item C<OS2::DLLname([how [, \&xsub]])>
+
+Proporciona información sobre la DLL de Perl o la DLL que contiene la función C enlazada por C<&xsub>.  El significado de C<how> es: predeterminado (2): nombre completo; 0: identificador; 1: nombre del módulo.
+
+=back
+
+(Tenga en cuenta que algunos de estos se pueden mover a diferentes bibliotecas -eventualmente-).
+
+
+=head2 Variables de precompilación:
+
+=over 4
+
+=item $OS2::emx_rev
+
+el valor numérico es el mismo que _emx_rev de EMX, un valor de cadena es el mismo que _emx_vprt (similar a C<0.9c>).
+
+=item $OS2::emx_env
+
+lo mismo que _emx_env de EMX, un número similar a 0x8001.
+
+=item $OS2::os_ver
+
+un número C<OS_MAJOR + 0.001 * OS_MINOR>.
+
+=item $OS2::is_aout
+
+verdadero si la biblioteca Perl se compiló en formato AOUT.
+
+=item $OS2::can_fork
+
+verdadero si el ejecutable actual es un ejecutable EMX AOUT, y así Perl puede bifurcar.  No use esto, use la prueba portable para $Config::Config{dfork}.
+
+=item $OS2::nsyserror
+
+Esta variable (por defecto es 1) controla si forzar a que los contenidos de $^E empiecen con un id parecido a C<SYS0003>.  Si se establece en 0, entonces el valor de cadena de $^E es lo que está disponible en el archivo de mensajes de OS/2.  (Algunos mensajes en este archivo tienen antepuesta una id como C<SYS0003>, otros no).
+
+=back
+
+=head2 Características no presentes
+
+=over 4
+
+=item *
+
+Ya que L<flock(3)> está presente en EMX, pero no es funcional, perl la emula.  Para desactivar las emulaciones, establezca la variables de entorno C<USE_PERL_FLOCK=0>.
+
+=item *
+
+Aquí está la lista de cosas que pueden estar "rotas" en EMX (desde la doc. EMX):
+
+=over 4
+
+=item *
+
+Las funciones L<recvmsg(3)>, L<sendmsg(3)> y L<socketpair(3)> no están implementadas.
+
+=item *
+
+L<sock_init(3)> no se requiere y no está implementada.
+
+=item *
+
+L<flock(3)> aún no está implementada (función ficticia).  (Perl tiene una alternativa).
+
+=item *
+
+L<kill(3)>:  No está implementado el tratamiento especial de los PID=0, PID=1 y PID=-1.
+
+=item *
+
+L<waitpid(3)>:
+
+      WUNTRACED
+	      No se ha implementado.
+      waitpid() no se ha implementado para los valores negativos de PID.
+
+=back
+
+Note que C<kill -9> no funciona con la versión actual de EMX.
+
+=item *
+
+Vea L<"identificadores de archivo en modo texto">.
+
+=item *
+
+I<sockets> en el dominio Unix en OS/2 viven en un pseudo sistema de archivos C</sockets/...>.
+Para evitar un fallo al crear un I<socket> con un nombre de una forma diferente, C<"/socket/"> se antepone al nombre del I<socket> (a menos que realmente comience con él).
+
+Esto puede ocasionar problemas más adelante en caso de que se acceda al I<socket> a través de llamadas "habituales" al sistema de archivos usando el nombre "inicial".
+
+=item *
+
+Aparentemente, IBM usó un compilador (¿por un período de tiempo alrededor del año 95?) que cambia la máscara FP derecha e izquierda.  Esto I<no es> malo para los programas IBM, pero se usó el mismo compilador para DLL que se usan con aplicaciones de propósito general.  Cuando se utilizan estas DLL, no es predecible el estado de los identificadores de punto flotante en la aplicación.
+
+Lo que es mucho peor, algunas DLL cambian las banderas de coma flotante cuando están en _DLLInitTerm() (por ejemplo, F<TCP32IP>).  Esto significa que incluso si usted no I<llama> a ninguna función en la DLL, solo el acto de cargar la DLL restablecerá sus banderas  Lo que es peor, se utilizó el mismo compilador para compilar algunos enganches DLL.
+Dado que los enganches DLL se ejecutan en el contexto de I<todas> las aplicaciones en el sistema, esto significa una completa imprevisibilidad de indicadores de punto flotante en los sistemas que usan tales enganches DLL.  Por ejemplo, F<GAMESRVR.DLL> de origen B<DIVE> cambia los identificadores de punto flotante en cada escritura al TTY de unas aplicaciones VIO (modo de texto en ventana).
+
+Algunas otras situaciones (no completamente depuradas) cuando los indicadores de FP cambian incluyen algunos controladores de vídeo (?) y algunas operaciones relacionadas con la creación de las ventanas.
+Las personas que codifican B<OpenGL> pueden tener más experiencia sobre esto.
+
+Perl se usa generalmente en la situación en la que todas las excepciones de punto flotante se ignoran, como está por defecto en EMX.  Si no se ignoran, algunos programas benignos de Perl obtendrían una C<SIGFPE> y moriría de una muerte horrible.
+
+Para eludir esto, Perl usa dos trucos.  Ayudan contra I<un> solo tipo de daño: los indicadores de FP cambiaron al cargar una DLL.
+
+Uno de los trucos es deshabilitar las excepciones de punto flotante en el inicio de Perl (como es el predeterminado con EMX).  Esto solo ayuda con las DLL vinculadas en tiempo de compilación cambiando los indicadores antes de que main() tuviera la oportunidad de ser llamado.
+
+El otro truco es restaurar los indicadores de FP después de una llamada a dlopen().  Esto ayuda contra daños similares causados por DLL _DLLInitTerm() en tiempo de ejecución.  Actualmente no se proporciona ninguna forma de desactivar estos trucos.
+
+=back
+
+=head2 Modificaciones
+
+Perl modifica algunas llamadas de biblioteca C estándar de las siguientes maneras:
+
+=over 9
+
+=item C<popen>
+
+C<my_popen> usa F<sh.exe> si se requiere shell, ver L<"PERL_SH_DIR">.
+
+=item C<tmpnam>
+
+se crea usando C<TMP> o la variable de entorno C<TEMP>, a través de C<tempnam>.
+
+=item C<tmpfile>
+
+Si el directorio actual no es escribible, el archivo se crea usando un C<tmpnam> modificado, por lo que puede haber una condición de carrera.
+
+=item C<ctermid>
+
+una implementación ficticia.
+
+=item C<stat>
+
+C<os2_stat> casos especiales F</dev/tty> y F</dev/con>.
+
+=item C<mkdir>, C<rmdir>
+
+estas funciones EMX no funcionan si la ruta contiene un C</> final.
+Perl contiene una alternativa para esto.
+
+=item C<flock>
+
+Ya que L<flock(3)> está presente en EMX, pero no es funcional, perl la emula.  Para desactivar las emulaciones, establezca la variables de entorno C<USE_PERL_FLOCK=0>.
+
+=back
+
+=head2 Identificar DLL
+
+Todas las DLL creadas con las versiones actuales de Perl tienen cadenas de ID que identifican al nombre de la extensión, su versión y la versión de Perl necesario para esta DLL.  Ejecute C<bldlevel DLL-name> para encontrar esta función.
+
+=head2 Gestión centralizada de recursos
+
+Dado que para llamar a ciertas API de OS/2, es necesario tener un subsistema C<Win> correctamente inicializado, las extensiones específicas de OS/2 pueden requerir obtener C<HAB> y C<HMQ>.  Si una extensión lo hiciera por sí sola, otra extensión podría falla al inicializar.
+
+Perl proporciona una gestión centralizada de estos recursos:
+
+=over
+
+=item C<HAB>
+
+Para obtener el HAB, la extensión debe llamar a C<hab = perl_hab_GET()> en C. Después de hacer esta llamada, C<hab> se puede acceder como C<Perl_hab>.  No es necesario liberar el HAB después de usarlo.
+
+Si por alguna razón F<perl.h> no se puede incluir, utilice
+
+  extern int Perl_hab_GET(void);
+
+instead.
+
+=item C<HMQ>
+
+Hay dos casos:
+
+=over
+
+=item *
+
+la extensión necesita una C<HMQ> solo porque alguna API no funcionará de otra manera.
+Use C<serve = 0> a continuación.
+
+=item *
+
+la extensión necesita una C<HMQ> ya que quiere participar en un bucle de eventos PM.
+Use C<serve = 1> a continuación.
+
+=back
+
+Para obtener una C<HMQ>, la extensión debe llamar a C<hmq = perl_hmq_GET(serve)> en C. Después de realizar esta llamada, C<hmq> se puede acceder como C<Perl_hmq>.
+
+Para indicarle a Perl que HMQ ya no es necesario, llame a C<perl_hmq_UNSET(serve)>.  El proceso de Perl se transformará/desmorfará automáticamente hacia/desde un proceso de PM si se necesita/no se necesita HMQ.  Perl automáticamente activará/desactivará el mensaje C<WM_QUIT> durante el apagado si la cola de mensajes está servida/no servida.
+
+B<NOTA>.  Si durante un apagado hay una cola de mensajes que no se deshabilitó WM_QUIT, y que no procesó el mensaje WM_QUIT recibido, el apagado se cancelará automáticamente.  No llame a C<perl_hmq_GET(1)> a menos que vaya a procesar los mensajes de forma ordenada.
+
+=item Tratamiento de errores informados por OS/2 API
+
+Hay dos convenciones principales (es útil llamarlas C<Dos*> y C<Win*>, aunque esta parte de la firma de la función no siempre está determinado por el nombre de la API) de informar de las condiciones de error de la API de OS/2.  La mayor parte de las API C<Dos*> informan del código de error como resultado de la llamada (entonces 0 significa éxito y hay muchos tipos de errores).
+La mayor parte de la API C<Win*> informa de éxito/fallo a través del resultado C<TRUE>/C<FALSE>; para encontrar el motivo de la falla se debe llamar a la API WinGetLastError().
+
+Algunos puntos de entrada C<Win*> también sobrecargan un valor de retorno "significativo" con el indicador de error; tener un valor de retorno 0 indica un error.
+Sin embargo, algunos otros puntos de entrada C<Win*> sobrecargan las cosas aún más, y el valor de retorno 0 puede significar una llamada exitosa que devuelve un valor válido 0, así como una condición de error; en el caso de un valor de retorno 0 uno debe llamar a la API WinGetLastError() para distinguir entre una llamada exitosa de otra que falle.
+
+Por convención, todas las llamadas a la API de OS/2 deben indicar sus fallas reiniciando $^E.  Todas las funciones accesibles de Perl que llaman a la API de OS/2 se pueden dividir en dos clases: algunas mueren (die()) cuando una API se encuentra un error, otras informan del error a través del retorno de un valor falso (por supuesto, esto no se refiere a las funciones accesibles de Perl que I<esperan> una falla de la llamada a la API de OS/2, con algunas soluciones codificadas).
+
+Obviamente, en la situación del último tipo de la firma de una API OS/2, debe ser más conveniente para los usuarios si la falla está indicada por die(): no es necesario comprobar $^E para saber que algo salió mal.  Sin embargo, si esta solución no es deseable por alguna razón, el código en cuestión debería restablecer $^E a 0 antes de hacer esta llamada a la API de OS/2, de modo que la persona que llama a esta función Perl accesible tiene la oportunidad de distinguir un valor de retorno éxito-pero-0 desde un fracaso.  (Se puede devolver undef como una forma alternativa de informar de un error).
+
+Las macros para simplificar este tipo de propagación de errores son
+
+=over
+
+=item C<CheckOSError(expr)>
+
+Devuelve verdadero en caso de error, establece $^E.  Espera C<expr()> sea una llamada API del estilo C<Dos*>.
+
+=item C<CheckWinError(expr)>
+
+Devuelve verdadero en caso de error, establece $^E.  Espera C<expr()> sea una llamada API del estilo C<Win*>.
+
+=item C<SaveWinError(expr)>
+
+Devuelve C<expr>, establece $^E desde WinGetLastError() si C<expr> es falso.
+
+=item C<SaveCroakWinError(expr,die,name1,name2)>
+
+Devuelve C<expr>, establece $^E desde WinGetLastError() si C<expr> es falso, y muere (die()) si C<die> y $^E son verdaderas.  El mensaje para morir son las cadenas concatenadas C<name1> y C<name2>, separadas por C<": "> desde el contenido de $^E.
+
+=item C<WinError_2_Perl_rc>
+
+Establece C<Perl_rc> al valor de retorno de WinGetLastError().
+
+=item C<FillWinError>
+
+Establece C<Perl_rc> al valor de retorno de WinGetLastError(), y establece $^E al valor correspondiente.
+
+=item C<FillOSError(rc)>
+
+Establece C<Perl_rc> a C<rc> y establece $^E en el valor correspondiente.
+
+=back
+
+=item Cargar DLL y ordinales en DLL
+
+Algunas DLL solo están presentes en algunas versiones de OS/2, o en algunas configuraciones de OS/2.  Algunos puntos de entrada exportados solo están presentes en DLL empaquetados con algunas versiones de OS/2.  Si estas DLL y los puntos de entrada se vincularon directamente para un ejecutable/DLL de Perl o desde una extensión Perl, este binario funcionaría solo con las versiones/configuraciones especificadas.  Incluso si estos puntos de entrada no fueran necesarios, la I<carga> del ejecutable (o DLL) podría fallar.
+
+Por ejemplo, muchas API útiles más nuevas no están presentes en OS/2 v2; muchas API relacionadas con PM requieren DLL que no estén disponibles en la configuración de arranque desde disquete.
+
+Para hacer que estas llamadas fallen I<sólo cuando se ejecuten las llamadas>, uno debería llamar a estas API por medio de un enlazado dinámico con la API.  Hay un subsistema en Perl para simplificar este tipo de llamadas.  Un gran número de puntos de entrada se proporcionan disponibles para dicha vinculación (ver C<entries_ordinals>; y también C<PMWIN_entries> en F<os2ish.h>).  Estos ordinales se pueden acceder a través de las API:
+
+ CallORD(), DeclFuncByORD(), DeclVoidFuncByORD(),
+ DeclOSFuncByORD(), DeclWinFuncByORD(), AssignFuncPByORD(),
+ DeclWinFuncByORD_CACHE(), DeclWinFuncByORD_CACHE_survive(),
+ DeclWinFuncByORD_CACHE_resetError_survive(),
+ DeclWinFunc_CACHE(), DeclWinFunc_CACHE_resetError(),
+ DeclWinFunc_CACHE_survive(), DeclWinFunc_CACHE_resetError_survive()
+
+Consulte los archivos de encabezado y el código C en el archivo relacionado con los módulos suministrados con OS/2 para obtener detalles sobre el uso de estas funciones.
+
+Algunas de estas funciones también combinan la semántica de carga dinámica con la semántica de propagación de errores discutida anteriormente.
+
+=back
+
+=head1 Sabores Perl
+
+Debido a la idiosincrasia de OS/2, uno no puede tener todos los huevos en la misma cesta (aunque el entorno EMX se esfuerza por superar estas limitaciones, por lo que la situación puede mejorar de alguna manera). Hay 4 ejecutables para Perl proporcionados por la distribución:
+
+=head2 F<perl.exe>
+
+El principal caballo de batalla. Este es un ejecutable de quimera: se compila como un ejecutable estilo C<a.out>, pero está vinculado con una biblioteca F<perl.dll> dinámica estilo C<omf> y con CRT DLL dinámico. Este ejecutable es una aplicación VIO.
+
+Puede cargar extensiones dinámicas de perl y puede hacer fork().
+
+B<Nota.> Recuerde que fork() se necesita para abrir una tubería por sí mismo.
+
+=head2 F<perl_.exe>
+
+Este es un ejecutable estáticamente enlazado estilo C<a.out>. No puede cargar extensiones dinámicas de Perl. El ejecutable suministrado en distribuciones binarias tiene muchas extensiones precompiladas, por lo que la restricción anterior es importante solo si usa extensiones personalizadas. Este ejecutable es una aplicación VIO.
+
+I<Este es el único ejecutable que no requiere OS/2>. Los amigos bloqueados en mundo C<M$> apreciaría el hecho de que este ejecutable corre bajo DOS, Win0.3*, Win0.95 y WinNT con un extensor apropiado. Vea L<"Otros SO">.
+
+=head2 F<perl__.exe>
+
+Este es el mismo ejecutable que F<perl___.exe>, pero es una solicitud PM. 
+
+B<Nota.> Por lo general (a menos que se redirija explícitamente durante el inicio) STDIN, STDERR y STDOUT de una aplicación PM se redirigen a F<nul>. Sin embargo, es posible que los I<vea> si arranca C<perl__.exe> de un programa PM que emula una ventana de la consola, como I<Shell mode> de Emacs o EPM. Así que I<es posible> usar el depurador de Perl (ver L<perldebug>) para depurar su aplicación PM (pero tenga cuidado con los bloqueos del bucle de mensajes; esto no funciona si tiene una cola de mensajes para servir, a menos que enganche el servicio en la función getc() del depurador).
+
+Otra forma de ver la salida de un programa PM es ejecutarlo como
+
+  pm_prog args 2>&1 | cat -
+
+con una shell I<diferente> de F<cmd.exe>, para que no cree un enlace entre una sesión VIO y la sesión de C<pm_porg>.  (Tal enlace cierra la ventana VIO).  Por ejemplo, esto funciona con F<sh.exe>, ¡o con Perl!
+
+  open P, 'pm_prog args 2>&1 |' or die;
+  print while <P>;
+
+El sabor F<perl__.exe> es necesario si desea iniciar su programa sin una ventana VIO presente, pero no aislado (C<detach>) (ejecutar C<help detach> para más información).
+Muy útil para extensiones que usan PM, como C<Perl/Tk> o C<OpenGL>.
+
+Tenga en cuenta también que las diferencias entre los ejecutables PM y VIO están solo en el comportamiento I<por defecto>.  Uno puede empezar I<cualquier> ejecutable en I<cualquier> tipo de sesión usando los indicadores C</fs>, C</pm> o C</win> del comando C<start> (de F<CMD.EXE> o shell similar).  Alternativamente, uno puede usar el primer argumento numérico de la función de Perl C<system> (vea L<OS2::Process>).
+
+=head2 F<perl___.exe>
+
+Este es un ejecutable estilo C<omf> que está vinculado dinámicamente a F<perl.dll> y CRT DLL. No conozco ninguna ventaja de este ejecutable sobre C<perl.exe>, pero no puede bifurcar (fork()) en absoluto. Bueno, una ventaja es que el proceso de compilación no es tan complicado como con C<perl.exe>.
+
+Es una aplicación VIO.
+
+=head2 ¿Por qué los nombres extraños?
+
+Dado que Perl procesa la línea C<#!> (ver 
+L<perlrun/DESCRIPCIÓN>, L<perlrun/Indicadores de comando>, L<perldiag/"No Perl script found in input">), debería saber cuándo un programa I<es un Perl>. Hay alguna convención de nomenclatura que permite a Perl distinguir las líneas correctas de las incorrectas. Los nombres anteriores son casi los únicos nombres permitidos por esta convención que no contienen dígitos (que tienen una semántica absolutamente diferente).
+
+=head2 ¿Por qué enlazado dinámico?
+
+Bueno, tener varios ejecutables vinculados dinámicamente a la misma enorme biblioteca tiene sus ventajas, pero esto no justificaría el trabajo adicional para hacerlo compilar. La razón es lo complicado-para-los-desarrolladores pero el enlace dinámico "duro" muy rápido y conveniente-para-los-usuarios utilizado por OS/2.
+
+Hay dos características distintivas del modelo vinculación dinámica de OS/2: primero, todas las referencias a funciones externas se resuelven en el momento de la compilación; en segundo lugar, no hay una corrección en tiempo de ejecución de las DLL después de que se cargan en la memoria.
+La primera característica es una enorme ventaja sobre otros modelos: evita entrar en conflicto cuando varias DLL utilizadas por una aplicación exportan entradas con el mismo nombre.  En tales casos, "otros" modelos de vinculación dinámica simplemente eligen entre estos dos puntos de entrada usando algún criterio aleatorio (con predecibles desastres como resultado).  Pero es la segunda característica la que requiere la compilación de F<perl.dll>.
+
+Las tablas de direcciones de las DLL se parchean una sola vez, cuando están cargadas. Se garantiza que las direcciones de los puntos de entrada en las DLL serán lo mismo para todos los programas que usan la misma DLL.  Esto elimina la corrección de tiempo de ejecución: una vez que se carga DLL, su código es de solo lectura.
+
+Si bien esto permite algunas ventajas de rendimiento (¿significativas?), hace la vida mucho más difícil para los desarrolladores, ya que el esquema anterior hace imposible para que una DLL se "vincule" a un símbolo en el archivo F<.EXE>.  De hecho, esto necesitaría una DLL para tener diferentes tablas de reubicaciones para el (diferentes) ejecutables que utilizan esta DLL.
+
+Sin embargo, una extensión de Perl cargada dinámicamente se ve obligada a utilizar algunos símbolos del ejecutable perl, por ejemplo, para saber cómo encontrar los argumentos a las funciones: los argumentos viven en la pila de evaluación interna de perl. La solución es poner el código principal del intérprete en una DLL, y crea el archivo F<.EXE> que simplemente se carga esta DLL en la memoria y proporciona argumentos de comando.  La extensión DLL no puede enlazar a símbolos en F<.EXE>, pero no tiene problemas para enlazar a los símbolos en la F<.DLL>.
+
+esto aumenta I<enormemente> el tiempo de carga de la aplicación (así como la complejidad de la compilación). Dado que el intérprete está en una DLL, el CRTL básicamente también está obligado a residir en una DLL (de lo contrario las extensiones no podrían usar CRT).  Hay algunas ventajas si utiliza diferentes tipos de perl, como ejecutar F<perl.exe> y F<perl__.exe> simultáneamente: comparten la memoria de F<perl.dll>.
+
+B<NOTA>.  Hay un efecto adicional que hace que las DLL sean más derrochadoras: Los archivos DLL se cargan en la región de la memoria compartida, que es un recurso escaso dada la barrera de 512 MB de la memoria virtual OS/2 "estándar".  El código de los archivos F<.EXE> también se comparten por todos los procesos que usan el particular F<.EXE>, pero se "comparten en el espacio de direcciones privadas del proceso"; esto es posible porque la dirección en la que se cargan las diferentes secciones del archivo F<.EXE> se deciden en tiempo de compilación, por lo que todos los procesos tienen estas secciones cargadas en las mismas direcciones, y no se necesita un ajuste de los enlaces internos dentro de F<.EXE>.
+
+Dado que las DLL pueden cargarse en tiempo de ejecución, para tener el mismo mecanismo para las DLL, uno necesita tener el rango de direcciones de I<cualquiera de las DLL cargadas> en el sistema para estar disponible I<en todos los procesos> que aún no cargaron una determinada DLL.  Esta es la razón por la que las DLL se asignan a la región de memoria compartida.
+
+=head2 ¿Por qué la compilación quimérica?
+
+El entorno EMX actual no permite archivos DLL compilados con formato Unixesco C<a.out> para exportar símbolos para datos (o al menos algunos tipos de datos). Esto obliga a una compilación estilo C<omf> de F<perl.dll>.
+
+El entorno EMX actual no permite archivos F<.EXE> compilados en formato C<omf> para fork(). fork() es necesario para exactamente tres operaciones Perl:
+
+=over 4
+
+=item *
+
+fork() explícito en el I<script>, 
+
+=item *
+
+C<open FH, "|-">
+
+=item *
+
+C<open FH, "-|">, en otras palabras, abriendo las tuberías por sí mismo.
+
+=back
+
+Si bien estas operaciones no son cuestiones de vida o muerte, son necesarias para un montón de I<script> útiles. Esto obliga a una compilación de F<perl.exe> estilo C<a.out>.
+
+
+=head1 ENTORNO
+
+Aquí enumeramos las variables de entorno con OS/2 -y DOS- y Win* específicos, o son más importantes en OS/2 que en otros sistemas operativos.
+
+=head2 C<PERLLIB_PREFIX>
+
+Específico para adaptaciones EMX. Deberían tener la forma
+
+  path1;path2
+
+o bien
+
+  path1 path2
+
+Si el comienzo de alguna ruta precompilada coincide con F<path1>, se sustituye con F<path2>.
+
+Debería usarse si la biblioteca perl se mueve desde la ubicación predeterminada en preferencia a C<PERL(5)LIB>, ya que esto no dejaría entradas erróneas en @INC.  Por ejemplo, si la versión compilada de perl busca por @INC en F<f:/perllib/lib> y desea instalar la biblioteca en F<h:/opt/gnu>, hacer
+
+  set PERLLIB_PREFIX=f:/perllib/lib;h:/opt/gnu
+
+Esto hará que Perl se precompile con el @INC a
+
+  f:/perllib/lib/5.00553/os2
+  f:/perllib/lib/5.00553
+  f:/perllib/lib/site_perl/5.00553/os2
+  f:/perllib/lib/site_perl/5.00553
+  .
+
+para usar el siguiente @INC:
+
+  h:/opt/gnu/5.00553/os2
+  h:/opt/gnu/5.00553
+  h:/opt/gnu/site_perl/5.00553/os2
+  h:/opt/gnu/site_perl/5.00553
+  .
+
+=head2 C<PERL_BADLANG>
+
+Si es 0, perl ignora el error de setlocale(). Puede ser útil con algunos I<locale> extraños.
+
+=head2 C<PERL_BADFREE>
+
+Si es 0, Perl no advertiría de un caso de free() injustificado. Con perl más viejos esto podría ser útil junto con el módulo DB_File, que tenía errores cuando se vinculaba dinámicamente y compilado para OMF.
+
+No debe establecerse con Perl más recientes, ya que esto puede ocultar algunos errores I<reales>.
+
+=head2 C<PERL_SH_DIR>
+
+Específico para adaptaciones EMX. Proporciona la parte del directorio de la ubicación para F<sh.exe>.
+
+=head2 C<USE_PERL_FLOCK>
+
+Específico para adaptaciones EMX. Ya que L<flock(3)> está presente en EMX, pero no es funcional, perl la emula.  Para desactivar las emulaciones, establezca la variables de entorno C<USE_PERL_FLOCK=0>.
+
+=head2 C<TMP> o C<TEMP>
+
+Específico para adaptaciones EMX. Se utiliza como lugar de almacenamiento de archivos temporales.
+
+=head1 Evolución
+
+Aquí enumeramos los principales cambios que podrían sorprenderle.
+
+=head2 Identificadores de archivo en modo texto
+
+A partir de la versión 5.8, Perl utiliza una capa de traducción integrada para los archivos en modo texto.  Esto reemplaza la eficiente capa EMX bien probada por algún código que debería caracterizarse mejor como un "truco rápido".
+
+Además de posibles errores y la incapacidad de seguir los cambios en la política de traducción con interruptores de encendido/apagado de traducción TERMIO, esto introduce un cambio incompatible grave: antes de sysread() en los identificadores de archivos en modo texto pasarían por la capa de traducción, ahora no lo haría.
+
+=head2 Prioridades
+
+C<setpriority> y C<getpriority> no son compatibles con las adaptaciones anteriores de Andreas Kaiser. Vea C<"setpriority, getpriority">.
+
+=head2 Remezclado de nombre en las DLL: pre 5.6.2
+
+Con la versión 5.003_01, las bibliotecas cargables dinámicamente debe reconstruirse cuando se compila una versión diferente de Perl. En particular, DLL (incluyendo F<perl.dll>) ahora se crean con los nombres que contienen una suma de comprobación, lo que permite una solución alternativa para el esquema OS/2 de almacenamiento en caché de archivos DLL.
+
+Puede ser posible codificar una solución más simple que 
+
+=over
+
+=item *
+
+encuentre las DLL antiguas mirando a través del antiguo @INC;
+
+=item *
+
+modifique los nombres de acuerdo con el esquema del nuevo perl y copie las DLL a estos nombres;
+
+=item *
+
+edite las tablas internas C<LX> de DLL para reflejar el cambio de nombre (probablemente no sea necesario para las DLL de extensión de Perl, ya que los nombres codificados internamente no se usan para archivos DLL "específicos", solo se usan para archivos DLL "globales").
+
+=item *
+
+edite las tablas internas C<IMPORT> y cambie el nombre del "antiguo" F<perl????.dll> al "nuevo" F<perl????.dll>.
+
+=back
+
+=head2 Remezclado de nombre en las DLL: 5.6.2 y siguientes
+
+De hecho la modificación de la I<extensión> de las DLL se hizo debido a un malentendido del modelo de carga dinámica de OS/2.  OS/2 (efectivamente) mantiene dos diferentes tablas de DLL cargadas:
+
+=over
+
+=item DLL Globales
+
+las cargadas por el nombre base de C<LIBPATH>; incluyendo aquellas asociadas en el momento del enlace;
+
+=item DLL específicas
+
+cargadas por su nombre completo.
+
+=back
+
+Al resolver una solicitud de una DLL global, la tabla de las DLL específicas ya cargadas se ignoran (efectivamente); además, las DLL específicas son I<siempre> cargadas desde la ruta prescrita.
+
+Hay/hubo un giro menor que hace que este esquema sea frágil: qué hacer con archivos DLL cargados desde
+
+=over
+
+=item C<BEGINLIBPATH> y C<ENDLIBPATH>
+
+(que depende del proceso)
+
+=item F<.> desde C<LIBPATH>
+
+que I<efectivamente> depende del proceso (aunque C<LIBPATH> es el mismo para todos los procesos).
+
+=back
+
+A menos que C<LIBPATHSTRICT> se establece en C<T> (y el núcleo está después de 2000/09/01), dichas DLL se consideran globales.  Al cargar una DLL global, primero se mira en la tabla de archivos DLL globales ya cargadas.  Debido a esto, el hecho de que un ejecutable cargó una DLL desde C<BEGINLIBPATH> y C<ENDLIBPATH>, o F<.> de C<LIBPATH> puede afectar I<qué> DLL se carga cuando I<otro> ejecutable solicita una DLL con el mismo nombre.  I<Este> es el motivo de la manipulación específica de la versión del nombre DLL para perl DLL.
+
+Dado que las DLL de extensión Perl siempre se cargan con la ruta completa, no hay necesidad de alterar sus nombres en formas específicas de la versión: su directorio ya refleja la versión correspondiente de perl, y @INC tiene en cuenta la compatibilidad binaria con la versión anterior.
+A partir de C<5.6.2>, el esquema de manipulación de nombres se fija para que sea el mismo que para Perl 5.005_53 (igual que en una versión binaria popular).  Por lo tanto los nuevos Perl podrán I<resolver los nombres> de las antiguas extensiones DLL si @INC permite encontrar sus directorios.
+
+Sin embargo, esto aún no garantiza que estas DLL puedan cargarse.
+La razón es la modificación del nombre de la I<DLL Perl>.  Y desde las extensiones DLL enlazan con la DLL de Perl, las extensiones DLL para versiones anteriores cargarían una DLL de Perl más antigua, y lo más probable es que haya un fallo de segmentación (ya que los datos en esta DLL no se inicializan correctamente).
+
+Existe una solución parcial (que se puede completar con los nuevos núcleos OS/2): cree una DLL de reenvío con el mismo nombre que la DLL de la versión anterior de Perl, que reenvíe los puntos de entrada a la DLL de Perl más reciente.  Haga que esta DLL sea accesible en (digamos) la C<BEGINLIBPATH> del nuevo ejecutable de Perl.  Cuando el nuevo ejecutable accede a la antigua extensión DLL de Perl, solicitarían a la antigua DLL de Perl por nombre, obtendrían el reenviador en su lugar, por lo que efectivamente se vinculará con el que se está ejecutando actualmente el (nuevo) Perl DLL.
+
+Esto puede romperse de dos maneras:
+
+=over
+
+=item *
+
+El antiguo ejecutable Perl se inicia cuando se corre un nuevo ejecutable que cargó una extensión compilada para el antiguo ejecutable (¡uf!).  En este caso el ejecutable anterior obtendrá una DLL de reenvío en lugar de la anterior perl DLL, por lo que se vincularía con el nuevo perl DLL.  Aunque no directamente fatal, se comportará igual que un nuevo ejecutable.  Esto le gana a todo propósito de iniciar explícitamente un ejecutable antiguo.
+
+=item *
+
+Un nuevo ejecutable carga una extensión compilada para el antiguo ejecutable cuando se está ejecutando un antiguo ejecutable de perl.  En este caso la extensión no escogerá al reenviador, con resultados fatales.
+
+=back
+
+Con soporte para C<LIBPATHSTRICT> esto se puede eludir, a menos que una de las DLL se inicia desde F<.> desde C<LIBPATH> (No sé si C<LIBPATHSTRICT> afecta a este caso).
+
+B<OBSERVACIONES>.  A menos que los núcleos más nuevos permitan F<.> en C<BEGINLIBPATH> (más viejo no lo hace), este desorden no se puede limpiar por completo.  (Resulta que a principios de 2002, F<.> no estaba permitido, pero F<.\.> sí - y tiene el mismo efecto).
+
+
+B<OBSERVACIONES>.  C<LIBPATHSTRICT>, C<BEGINLIBPATH> y C<ENDLIBPATH> no son variables de entorno, aunque F<cmd.exe> los emula en líneas C<SET ...>.  Desde Perl se puede acceder a ellos mediante L<Cwd::extLibpath|/Cwd::extLibpath([type])> y L<Cwd::extLibpath_set|/Cwd::extLibpath_set( path [, type ] )>.
+
+=head2 Generación del reenviador DLL
+
+Suponga que la antigua DLL se llama F<perlE0AC.dll> (como es uno para 5.005_53), y la nueva versión es la 5.6.1.  Cree un archivo F<perl5shim.def-leader> con
+
+  LIBRARY 'perlE0AC' INITINSTANCE TERMINSTANCE
+  DESCRIPTION '@#perl5-porters@perl.org:5.006001#@ Perl module for 5.00553 -> Perl 5.6.1 forwarder'
+  CODE LOADONCALL
+  DATA LOADONCALL NONSHARED MULTIPLE
+  EXPORTS
+
+modificando las versiones/nombres como necesite.  Ejecutar
+
+ perl -wnle "next if 0../EXPORTS/; print qq(  \"$1\")
+                                          if /\"(\w+)\"/" perl5.def >lst
+
+en el directorio de compilación de Perl (para hacer que la DLL sea más pequeña, reemplace perl5.def con el archivo de definición de la versión anterior de Perl, si está presente).
+
+ cat perl5shim.def-leader lst >perl5shim.def
+ gcc -Zomf -Zdll -o perlE0AC.dll perl5shim.def -s -llibperl
+
+(ignore múltiples C<warning L4085>).
+
+=head2 Hilos
+
+A partir de la versión 5.003_01, Perl está vinculado a C RTL multiproceso DLL.  Si perl en sí mismo no está compilado habilitado para múltiples subprocesos, tampoco lo estará malloc(). Sin embargo, las extensiones pueden usar varios subprocesos por su propio riesgo. 
+
+Esto era necesario para compilar C<Perl/Tk> para XFree86-OS/2 listo para usar, y enlace con archivos DLL para otras bibliotecas útiles, que normalmente se compilan con C<-Zmt -Zcrtdll>.
+
+=head2 Llamada a programas externos
+
+Por demanda popular, la llamada al programa externo de perl se ha cambiado por la adaptación de Andreas Kaiser.  I<Si> perl necesita llamar a un programa externo I<vía shell>, la F<f:/bin/sh.exe> se llamará, o cualquiera que sea la anulación, consulte L<"PERL_SH_DIR">.
+
+Por lo tanto, significa que necesita obtener una copia de una F<sh.exe> también (yo uso uno de pdksh). El camino F<F:/bin> anterior se establece automáticamente durante la construcción a un valor correcto en la máquina de compilación, pero se reemplaza en tiempo de ejecución,
+
+B<Razones:> un consenso en C<perl5-porters> era que perl debería usar un shell no anulable por plataforma. Las opciones obvias para OS/2 son F<cmd.exe> y F<sh.exe>. Tener perl compilado por sí mismo sería imposible con F<cmd.exe> como shell, así escogí C<sh.exe>. Esto asegura casi un 100 % de compatibilidad con los I<scripts> provenientes de *nix. Como beneficio adicional esto funciona también en DOS si usa la adaptación de pdksh habilitada para DOS (vea L</Prerrequisitos>).
+
+B<Desventajas:> actualmente F<sh.exe> de pdksh llama a programas externos por medio de fork()/exec(), y ahí I<no> está funcionando exec() en OS/2. exec() es emulado por EMX mediante una llamada asíncrona mientras el llamante espera a que el hijo termine (para pretender que el C<pid> no cambió). Esto significa que una copia I<extra> de F<sh.exe> se activa mediante fork()/exec(), lo que puede conducir a algunos recursos tomados del sistema (incluso si no contamos el trabajo adicional necesario para bifurcar (fork())).
+
+Tenga en cuenta que este es un problema menor ahora que no generamos F<sh.exe> a menos que sea necesario (que se encuentren metacaracteres).
+
+Uno siempre puede comenzar F<cmd.exe> explícitamente a través de
+
+  system 'cmd', '/c', 'mycmd', 'arg1', 'arg2', ...
+
+Si necesita usar F<cmd.exe> y no desea editar a mano miles de sus I<scripts>, la solución a largo plazo propuesta en p5-p es tener una directiva
+
+  use OS2::Cmd;
+
+que anulará system(), exec(), C<``> y C<open(,'...|')>. Con el Perl actual, solo puede anular system(), readpipe(); la versión explícita de C<``>, y tal vez exec(). El código sustituirá la llamada de un argumento a system() por C<CORE::system('cmd.exe', '/c', shift)>.
+
+Si tiene algún código de trabajo para C<OS2::Cmd>, por favor envíamelo, lo incluiré en la distribución. No necesito un módulo así, así que no se puede probar.
+
+Para conocer los detalles de la situación actual con la llamada a programas externos, vea L<Iniciar OSE<sol>2 (y DOS) programas bajo Perl>.  Háganos mencionar un par de características:
+
+=over 4
+
+=item *
+
+Los I<scripts> externos pueden llamarse por su nombre base.  Perl intentará las mismas extensiones como cuando se procesa el cambio de línea de comando B<-S>.
+
+=item *
+
+I<Scripts> externos que comienzan con C<#!> o C<extproc > se ejecutará directamente, sin llamar al shell, llamando al programa especificado en el resto de la primera línea
+
+=back
+
+=head2 Asignación de memoria
+
+Perl utiliza su propio malloc() en OS/2; los intérpretes suelen estar vinculados a malloc por velocidad, pero Perl no, ya que su malloc es ultrarrápido.
+Los puntos de referencia ajustados al uso de la memoria de Perl muestran que el malloc de Perl es 5 veces más rápido que EMX uno.  No tengo datos convincentes sobre la huella de memoria, pero un punto de referencia (bastante aleatorio) mostró que el de Perl es un 5 % mejor.
+
+La combinación de malloc() de perl y la resolución rígida de nombres DLL crea un problema especial con las funciones de biblioteca que esperan que su valor de retorno se libere por el free() del sistema. Para facilitar a las extensiones que necesitan llamar a tales funciones, las funciones de asignación de memoria del sistema todavía están disponibles con el prefijo C<emx_> añadido. (Actualmente solo DLL perl tiene esto, debería propagarse a F<perl_.exe> dentro de poco).
+
+=head2 Hilos
+
+Uno puede compilar perl con soporte de subprocesos habilitado al proporcionar la opción C<-D usethreads> a F<Configure>.  Actualmente, el soporte OS/2 de subprocesos es muy preliminar.
+
+Problema más notables: 
+
+=over 4
+
+=item C<COND_WAIT> 
+
+puede tener una condición de carrera (pero probablemente no debido a la naturaleza de los semáforos de eventos de OS/2).  (¿Necesita una reimplementación (¿en términos de encadenar hilos de espera, con la lista enlazada almacenada en una estructura por subproceso?)?)
+
+=item F<os2.c>
+
+tiene un par de variables estáticas utilizadas en funciones específicas de OS/2.  (¿Necesitan moverse a una estructura por hilos o serializarlo?)
+
+=back
+
+Tenga en cuenta que estos problemas no deben desalentar la experimentación, ya que tienen una baja probabilidad de afectar a los programas pequeños.
+
+=head1 ERRORES
+
+Esta descripción no se actualiza con frecuencia (¿desde 5.6.1?), consulte F<./os2/Changes> para más información.
+
+=cut
+
+Extensiones OS/2
+~~~~~~~~~~~~~~~~
+He incluido tres extensiones de Andreas Kaiser, OS2::REXX, OS2::UPMy OS2::FTP, en mi directorio ftp, espejado en CPAN. Hice algunos cambios menores necesarios para compilarlos con herramientas estándar. No puedo probar UPM y FTP, por lo que agradeceré sus comentarios. Otras extensiones son OS2::ExtAttr, OS2::PrfDB para acceso vinculado a EA y archivos .INI, y tal vez algunas otras extensiones en el momento en que lo lea.
+
+Tenga en cuenta que OS2 perl define dos funciones de pseudo-extensión OS2::Copy::copy y DynaLoader::mod2fname (muchos más ahora, vea L<Métodos precompilados>).
+
+La opción -R de los perl más viejos está obsoleta. Si necesita llamar a un código REXX que necesita acceso a las variables, incluya la llamada en un compartimento REXX creado por 
+	REXX_call {... bloque ...};
+
+Dos nuevas funciones son compatibles con el código REXX, 
+	REXX_eval 'cadena';
+	REXX_eval_with 'cadena', REXX_function_name => \&perl_sub_referencia;
+
+Si tiene otras extensiones que desee compartir, envíeme el código.  Hay al menos dos disponibles: acceso vinculado a EA y acceso vinculado a las bases de datos del sistema.
+
+=head1 AUTOR
+
+Ilya Zakharevich, cpan@ilyaz.org
+
+=head1 VEA TAMBIÉN
+
+perl(1).
+
+=cut
+

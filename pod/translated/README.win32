@@ -498,7 +498,7 @@ Hay una facilidad llamada "asociaciones de extensiones de archivo".  Se puede ma
 
 =item 2
 
-Ya que las asociaciones de archivo no funcionan en todas partes, y hay errores documentados donde funcionan, se puede usar el viejo método de envolver el I<script> perl para hacer que aparezca al SO como un archivo batch normal.  El proceso de instalación hace disponible el I<script> "pl2bat.bat" que se puede usar para envolver los i<scripts> perl en archivos batch.  Por ejemplo:
+Ya que las asociaciones de archivo no funcionan en todas partes, y hay errores documentados donde funcionan, se puede usar el viejo método de envolver el I<script> perl para hacer que aparezca al SO como un archivo batch normal.  El proceso de instalación hace disponible el I<script> "pl2bat.bat" que se puede usar para envolver los I<scripts> perl en archivos batch.  Por ejemplo:
 
 	pl2bat foo.pl
 

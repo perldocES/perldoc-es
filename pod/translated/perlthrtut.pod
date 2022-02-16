@@ -730,13 +730,13 @@ Gracias (sin un orden en particular) a Chaim Frenkel, Steve Fink, Gurusamy Sarat
 
 =head1 AUTOR
 
-Dan Sugalski E<lt>dan@sidhe.org<gt>
+Dan Sugalski E<lt>dan@sidhe.orgE<gt>
 
 Ligeramente modificado por Arthur Bergman para encajar el nuevo modelo/módulo de hilos.
 
-Reescrito ligeramente por Jörg Walter E<lt>jwalt@cpan.org<gt> para ser más conciso sobre el código Perl de hilos seguros.
+Reescrito ligeramente por Jörg Walter E<lt>jwalt@cpan.orgE<gt> para ser más conciso sobre el código Perl de hilos seguros.
 
-Reestructurado ligeramente por Elizabeth Mattijsen E<lt>liz@dijkmat.nl<gt> para enfatizar menos sobre yield().
+Reestructurado ligeramente por Elizabeth Mattijsen E<lt>liz@dijkmat.nlE<gt> para enfatizar menos sobre yield().
 
 =head1 COPYRIGHTS
 

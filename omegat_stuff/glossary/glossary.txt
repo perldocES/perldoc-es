@@ -291,3 +291,24 @@ protection	protección
 encrypted	codificada
 encryption	encriptación
 repository	repositorio
+contains	contiene
+best	mejor
+start	inicio
+stupid	estúpida
+limitations	limitaciones
+redirection	redirección
+installations	instalaciones
+deeper	profundo
+follow	siga
+installer	instalador
+need	necesita
+them	ellos
+find	encuentra
+compile	compilar
+people	personas
+form	formato
+manpages	páginas de manual
+drive	dispositivo
+build	compilación
+finish	terminar
+implemented	implementada

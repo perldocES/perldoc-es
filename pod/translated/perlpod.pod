@@ -527,7 +527,7 @@ Algunos traductores Pod antiguos requieren que los párrafos (incluidos los pár
 
 Traductores antiguos pueden agregar texto alrededor de un enlace LE<lt>E<gt>, por lo que C<LE<lt>Foo::BarE<gt>> puede convertirse en "la página de manual de Foo::Bar", por ejemplo.
 Así que no debería escribir cosas como C<la documentación LE<lt>fooE<gt>>, si desea que el documento traducido sea leído de forma sensata.
-En su lugar, escriba C<la documentación LE<lt>Foo::Bar|Foo::BarE<gt>> o C<LE<lt>la documentación Foo::Bar|Foo::Bar<gt>>, para controlar el modo en que aparece el enlace.
+En su lugar, escriba C<la documentación LE<lt>Foo::Bar|Foo::BarE<gt>> o C<LE<lt>la documentación Foo::Bar|Foo::BarE<gt>>, para controlar el modo en que aparece el enlace.
 
 =item *
 
