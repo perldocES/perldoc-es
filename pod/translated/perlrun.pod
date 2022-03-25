@@ -912,7 +912,7 @@ Solo para VMS, un nombre lógico que hace referencia a la raíz y dispositivo l�
 =item PERL_SIGNALS
 X<PERL_SIGNALS>
 
-Disponible en Perls 5.8.1 y versiones posteriores.  Si se establece a C<"unsafe">, se restaura el comportamiento de señales como en pre-Perl-5.8.0 (que es rápido, pero inseguro).  Si se establece a C<safe>, entonces se usan señales seguras (pero diferidas).  Vea L<perlipc/"Señales Diferidas (Señales Seguras)">.
+Disponible en Perls 5.8.1 y versiones posteriores.  Si se establece a C<"unsafe">, se restaura el comportamiento de señales como en pre-Perl-5.8.0 (que es rápido, pero inseguro).  Si se establece a C<safe>, entonces se usan señales seguras (pero aplazadas).  Vea L<perlipc/"Señales aplazadas (Señales Seguras)">.
 
 =item PERL_UNICODE
 X<PERL_UNICODE>

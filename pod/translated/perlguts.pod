@@ -1,0 +1,2255 @@
+=head1 NAME
+
+perlguts - Introducción a la API de Perl
+
+=head1 DESCRIPCIÓN
+
+Este documento intenta describir cómo usar la API de Perl, así como proporcionar alguna información sobre los funcionamientos básicos del núcleo de Perl.  Está de lejos de estar completo y probablemente contiene muchos errores.  Refiera cualquier pregunta o comentario al autor, a continuación.
+
+=head1 Variables
+
+=head2 Tipos de datos
+
+Perl tiene tres typedefs que manejan los tres tipos de datos principales de Perl:
+
+    SV  Valor escalar
+    AV  Valor de array
+    HV  Valor de hash
+
+Cada typedef tiene rutinas específicas que manipulan los distintos tipos de datos.
+
+=head2 ¿Qué es un "IV"?
+
+Perl usa un typedef IV especial que es un tipo simple entero con signo que se garantiza lo suficientemente grande como para almacenar un puntero (así como un entero).
+Además, está el UV, que es simplemente un IV sin signo.
+
+Perl también usa dos typedefs especiales, I32 e I16, que siempre será de largo de al menos 32 y 16 bits, respectivamente.  (De nuevo, también existen U32 y U16).  Por lo general, tendrán exactamente 32 y 16 bits de longitud, pero en Cray ambos serán de 64 bits.
+
+=head2 Trabajando con SV
+
+Un SV se puede crear y cargar con un comando.  Hay cinco tipos de valores que se pueden cargar: un valor entero (IV), un valor entero sin signo (UV), un doble (NV), una cadena (PV) y otro escalar (SV).
+("PV" significa "Valor de Puntero".  Podría pensar que está mal llamarlo así porque se describe como que apunta sólo a cadenas.  Sin embargo, es posible hacer que apunte a otras cosas.  Por ejemplo, podría apuntar a un array de UV.  Pero, usarlo para algo que no sea cadenas requiere cuidado, ya que la suposición subyacente de gran parte de los aspectos internos es que los PV son solo para cadenas.  A menudo, por ejemplo, un C<NUL> final se agrega automáticamente.  El uso para algo distinto de las cadenas se documenta solamente en este párrafo).
+
+Las siete rutinas son:
+
+    SV*  newSViv(IV);
+    SV*  newSVuv(UV);
+    SV*  newSVnv(double);
+    SV*  newSVpv(const char*, STRLEN);
+    SV*  newSVpvn(const char*, STRLEN);
+    SV*  newSVpvf(const char*, ...);
+    SV*  newSVsv(SV*);
+
+C<STRLEN> es un tipo entero (Size_t, normalmente definido como size_t en F<config.h>) que garantiza ser lo suficientemente grande como para representar el tamaño de cualquier cadena que perl pueda manejar.
+
+En el caso improbable de que un SV requiera una inicialización más compleja, puede crear un SV vacío con newSV(len).  si C<len> es 0 se devuelve un SV vacío de tipo NULL, de lo contrario se devuelve un SV de tipo PV len + 1 (por el C<NUL>) de bytes de almacenamiento asignado, accesible a través de SvPVX.  En ambos casos el SV tiene el valor undef.
+
+    SV *sv = newSV(0);   /* no se asigna almacenamiento */
+    SV *sv = newSV(10);  /* 10 (+1) bytes de almacenamiento no inicializado
+                          * asignado */
+
+Para cambiar el valor de un SV I<ya existente>, existen ocho rutinas:
+
+    void  sv_setiv(SV*, IV);
+    void  sv_setuv(SV*, UV);
+    void  sv_setnv(SV*, double);
+    void  sv_setpv(SV*, const char*);
+    void  sv_setpvn(SV*, const char*, STRLEN)
+    void  sv_setpvf(SV*, const char*, ...);
+    void  sv_vsetpvfn(SV*, const char*, STRLEN, va_list *,
+                                                    SV **, I32, bool *);
+    void  sv_setsv(SV*, SV*);
+
+Tenga en cuenta que puede optar por especificar la longitud de la cadena que se va a asignar usando C<sv_setpvn>, C<newSVpvn> o C<newSVpv> o puede permitir que Perl calcule la longitud usando C<sv_setpv> o especificando 0 como segundo argumento de C<newSVpv>.  Sin embargo, tenga en cuenta que Perl determinará la longitud de la cadena usando C<strlen>, que depende de la cadena que termina con un carácter C<NUL>, y que no contenga otro C<NUL>.
+
+Los argumentos de C<sv_setpvf> se procesan como C<sprintf>, y la salida formateada se convierte en el valor.
+
+C<sv_vsetpvfn> es un análogo de C<vsprintf>, pero le permite especificar tanto un puntero a una lista variable de argumentos como la dirección y longitud de un array de SV.  El último argumento apunta a un valor booleano; a la vuelta, si ese booleano es verdadero, entonces se ha utilizado información específica de la localización para formatear la cadena y, por lo tanto, el contenido de la cadena no es confiable (vea L<perlsec>).  Este puntero puede ser NULL si esa información no es importante.  Tenga en cuenta que esta función requiere que especifique la longitud del formato.
+
+Las funciones C<sv_set*()> no son lo suficientemente genéricas para operar sobre valores que tienen "magia".  Vea L<Tablas virtuales mágicas> más adelante en este documento.
+
+Todos los SV que contienen cadenas deben terminarse con un carácter C<NUL>.
+Si no termina en C<NUL> existe el riesgo de volcados de núcleo y corrupciones del código que pase la cadena a funciones C o llamadas al sistema que esperan una cadena terminada en C<NUL>.
+Las propias funciones de Perl normalmente agregan un C<NUL> final por esta razón.
+Sin embargo, debe tener mucho cuidado cuando pase una cadena almacenada en un SV a una función C o llamada del sistema.
+
+Para acceder al valor real al que apunta un SV, puede usar las macros:
+
+    SvIV(SV*)
+    SvUV(SV*)
+    SvNV(SV*)
+    SvPV(SV*, STRLEN len)
+    SvPV_nolen(SV*)
+
+que ajustará automáticamente el actual tipo escalar en un IV, UV, doble o cadena.
+
+En la macro C<SvPV>, la longitud de la cadena devuelta se coloca en la variable C<len> (esto es una macro, así que I<no> use C<&len>).  Si no importa cuál sea la longitud de los datos, use la macro C<SvPV_nolen>.
+Históricamente se ha utilizado la macro C<SvPV> con la variable global C<PL_na> para este caso.  Pero eso puede ser bastante ineficiente porque C<PL_na> debe accederse en el almacenamiento local de hilos en Perl con hilos.  En cualquier caso, recuerde que Perl permite cadenas arbitrarias de datos que pueden contener NUL y podrían no estar terminadas en C<NUL>.
+
+También recuerde que C no le permite decir con seguridad C<foo(SvPV(s, len), len);>  Podría funcionar con su compilador, pero no funcionará para todos.
+Divida este tipo de sentencia en asignaciones separadas:
+
+    SV *s;
+    STRLEN len;
+    char *ptr;
+    ptr = SvPV(s, len);
+    foo(ptr, len);
+
+Si desea saber si el valor escalar es VERDADERO, puede usar:
+
+    SvTRUE(SV*)
+
+Aunque Perl aumentará cadenas automáticamente por usted, si necesita forzar a Perl para que asigne más memoria para su SV, puede usar la macro
+
+    SvGROW(SV*, STRLEN newlen)
+
+determinará si es necesario asignar más memoria.  Si es así, llamará a la función C<sv_grow>.  Tenga en cuenta que C<SvGROW> sólo puede aumentar, no disminuir, la memoria asignada de un SV y que no agrega automáticamente espacio para el byte C<NUL> final (las propias funciones de cadena de perl normalmente hacen C<SvGROW(sv, len + 1)>).
+
+Si desea escribir en el búfer de un SV actual y establecer su valor a una cadena, use SvPV_force() o una de sus variantes para forzar a que el SV sea un PV  Esto eliminará cualquiera de los diversos tipos distintos de la cadena de texto del SV mientras conserva el contenido del SV en el PV.  Esto se puede utilizar, por ejemplo, para agregar datos de una función API a un búfer sin copia adicional:
+
+    (void)SvPVbyte_force(sv, len);
+    s = SvGROW(sv, len + needlen + 1);
+    /* algo que modifica hasta needlen bytes en s+len, pero
+       modifica newlen bytes
+         por ejemplo newlen = read(fd, s + len, needlen);
+       ignorar errores para estos ejemplos
+     */
+    s[len + newlen] = '\0';
+    SvCUR_set(sv, len + newlen);
+    SvUTF8_off(sv);
+    SvSETMAGIC(sv);
+
+Si ya tiene los datos en la memoria o si desea mantener su código simple, puede usar una de las variantes sv_cat*(), como sv_catpvn().  Si desea insertar en cualquier lugar de la cadena, puede usar sv_insert() o sv_insert_flags().
+
+Si no necesita el contenido actual del SV, puede evitar algunas copiando con:
+
+    sv_setpvn(sv, "", 0);
+    s = SvGROW(sv, needlen + 1);
+    /* algo que modifica hasta needlen bytes en s+len, pero modifica
+       newlen bytes
+         por ejemplo newlen = read(fd, s. needlen);
+     */
+    s[newlen] = '\0';
+    SvCUR_set(sv, newlen);
+    SvPOK_only(sv); /* también limpia SVf_UTF8 */
+    SvSETMAGIC(sv);
+
+De nuevo, si ya tiene los datos en la memoria o quiere evitar la complejidad de lo anterior, puede usar sv_setpvn().
+
+Si tiene un búfer asignado con Newx() y desea configurarlo como un valor de SV, puede usar sv_usepvn_flags().  Eso tiene unos requisitos si desea evitar que Perl vuelva a asignar el búfer para que se ajuste al NUL final:
+
+   Newx(buf, somesize+1, char);
+   /* ... rellenar en buf ... */
+   buf[somesize] = '\0';
+   sv_usepvn_flags(sv, buf, somesize, SV_SMAGIC | SV_HAS_TRAILING_NUL);
+   /* buf ahora se lleva a perl, no lo libere */
+
+Si tiene un SV y desea saber qué tipo de datos cree Perl que se almacenan en él, puede usar las siguientes macros para verificar el tipo de SV que tiene.
+
+    SvIOK(SV*)
+    SvNOK(SV*)
+    SvPOK(SV*)
+
+Puede obtener y establecer la longitud actual de la cadena almacenada en un SV con las siguientes macros:
+
+    SvCUR(SV*)
+    SvCUR_set(SV*, I32 val)
+
+También puede obtener un puntero al final de la cadena almacenada en el SV con la macro:
+
+    SvEND(SV*)
+
+Pero tenga en cuenta que estas últimas tres macros son válidas sólo si C<SvPOK()> es verdadero.
+
+Si desea agregar algo al final de la cadena almacenada en un C<SV*>, puede utilizar las siguientes funciones:
+
+    void  sv_catpv(SV*, const char*);
+    void  sv_catpvn(SV*, const char*, STRLEN);
+    void  sv_catpvf(SV*, const char*, ...);
+    void  sv_vcatpvfn(SV*, const char*, STRLEN, va_list *, SV **,
+                                                             I32, bool);
+    void  sv_catsv(SV*, SV*);
+
+La primera función calcula la longitud de la cadena que se agregará usando C<strlen>.  En el segundo, usted mismo especifica la longitud de la cadena.  La tercera función procesa sus argumentos como C<sprintf> y agrega la salida formateada.  La cuarta función funciona como C<vsprintf>.
+Puede especificar la dirección y la longitud de un array de SV en lugar del argumento va_list.  La quinta función extiende la cadena almacenada en el primer SV con la cadena almacenada en el segundo SV.  También fuerza al segundo SV a interpretarse como una cadena.
+
+Las funciones C<sv_cat*()> no son lo suficientemente genéricas para operar sobre valores que tienen "magia".  Vea L<Tablas virtuales mágicas> más adelante en este documento.
+
+Si conoce el nombre de una variable escalar, puede obtener un puntero a su SV usando lo siguiente:
+
+    SV*  get_sv("package::varname", 0);
+
+Esto devuelve NULL si la variable no existe.
+
+Si quiere saber si esta variable (o cualquier otro SV) está C<defined>, puede llamar:
+
+    SvOK(SV*)
+
+El valor escalar C<undef> se almacena en una instancia SV llamada C<PL_sv_undef>.
+
+Su dirección se puede utilizar cada vez que se necesite C<SV*>.  Asegúrese de que no intenta comparar un sv aleatorio con C<&PL_sv_undef>.  Por ejemplo al interactuar con el código Perl, funcionará correctamente para:
+
+  foo(undef);
+
+Pero no funcionará cuando se le llame así:
+
+  $x = undef;
+  foo($x);
+
+Entonces, para repetir, siempre use SvOK() para verificar si un sv está definido.
+
+También debe tener cuidado al usar C<&PL_sv_undef> como un valor en AV o HV (vea L<AV, HV y valor indefinido>).
+
+También están los dos valores C<PL_sv_yes> y C<PL_sv_no>, que contienen valores booleanos VERDADERO y FALSO, respectivamente.  Igual que C<PL_sv_undef>, sus direcciones se pueden utilizar siempre que se necesite C<SV*>.
+
+No se deje engañar pensando que C<(SV *) 0> es lo mismo que C<&PL_sv_undef>.
+Tome este código:
+
+    SV* sv = (SV*) 0;
+    if (Voy-a-devolver-un-valor-real) {
+            sv = sv_2mortal(newSViv(42));
+    }
+    sv_setsv(ST(0), sv);
+
+Este código intenta devolver un nuevo SV (que contiene el valor 42) si debería devolver un valor real, o undef en caso contrario.  En su lugar, devuelve un puntero NULL que, en algún lugar de la línea, causará una violación de segmentación, error de bus, o simplemente resultados extraños.  Cambie el cero a C<&PL_sv_undef> en la primera línea y todo estará bien.
+
+Para liberar un SV que haya creado, llame a C<SvREFCNT_dec(SV*)>.  Normalmente esta llamada no es necesaria (vea L<Cuentas de referencia y mortalidad>).
+
+=head2 Desplazamientos
+
+Perl proporciona la función C<sv_chop> para eliminar caracteres de manera eficiente desde el comienzo de una cadena; se le da un SV y un puntero a algún lugar dentro del PV, y descarta todo lo que haya antes del puntero.  La eficiencia viene por medio de un pequeño truco: en lugar de realmente eliminar los caracteres, C<sv_chop> establece la bandera C<OOK> (I<Offset> OK) para señalar a otras funciones que el truco del desplazamiento está en efecto, y mueve el puntero PV (llamado C<SvPVX>) hacia adelante por el número de bytes cortados, y ajusta C<SvCUR> y C<SvLEN> respectivamente.  (Una porción del espacio entre el viejo y el nuevo puntero PV se utiliza para almacenar el recuento de bytes cortados).
+
+Por lo tanto, en este punto, el inicio del búfer que asignamos reside en C<SvPVX(sv) - SvIV(sv)> en memoria y el puntero PV apunta en medio de este almacenamiento asignado.
+
+Esto se demuestra mejor con un ejemplo.  Normalmente, la copia en escritura le evitará al operador usar este truco, pero si puede crear una cadena para la que no es posible copiar en escritura, puede verla en juego.  En la implementación actual, el byte final de un búfer de cadena se utiliza como un recuento de referencias de copia en escritura.  Si el búfer no es lo suficientemente grande, entonces se omite la copia en escritura.  Primero eche un vistazo a una cadena vacía:
+
+  % ./perl -Ilib -MDevel::Peek -le '$a=""; $a .= ""; Dump $a'
+  SV = PV(0x7ffb7c008a70) at 0x7ffb7c030390
+    REFCNT = 1
+    FLAGS = (POK,pPOK)
+    PV = 0x7ffb7bc05b50 ""\0
+    CUR = 0
+    LEN = 10
+
+Observe aquí que LEN es 10.  (Puede diferir en su plataforma).  Extender la longitud de la cadena a uno menos de 10, y haga una sustitución:
+
+ % ./perl -Ilib -MDevel::Peek -le '$a=""; $a.="123456789"; $a=~s/.//; \
+                                                            Dump($a)'
+ SV = PV(0x7ffa04008a70) at 0x7ffa04030390
+   REFCNT = 1
+   FLAGS = (POK,OOK,pPOK)
+   OFFSET = 1
+   PV = 0x7ffa03c05b61 ( "\1" . ) "23456789"\0
+   CUR = 8
+   LEN = 9
+
+Aquí, el número de bytes cortados (1) se muestra a continuación como OFFSET.  La parte de la cadena entre los comienzos "real" y "falso" se muestra entre paréntesis, y los valores de C<SvCUR> y C<SvLEN> reflejan el comienzo falso, no el real.  (El primer carácter del búfer de cadena ha cambiado aquí a "\1", no a "1", porque la implementación actual almacena el recuento de desplazamientos en el búfer de cadenas.  Esto está sujeto a cambios).
+
+Algo similar al truco de desplazamiento se realiza en AV para habilitar desplazamiento y empalme eficientes desde el comienzo del array; mientras que C<AvARRAY> apunta al primer elemento del array que es visible desde Perl, C<AvALLOC> apunta al comienzo real del array C.  Estos son generalmente lo mismo, pero una operación C<shift> se puede realizar aumentando C<AvARRAY> por uno y decrecer C<AvFILL> y C<AvMAX>.
+Nuevamente, la ubicación del comienzo real del array C solo entra en juego al liberar el array.  Vea C<av_shift> en F<av.c>.
+
+=head2 ¿Qué es lo que realmente se almacena en un SV?
+
+Recuerde que el método habitual para determinar el tipo de escalar que tiene es usar las macros C<Sv*OK>.  Como un escalar puede ser tanto un número como una cadena, por lo general, estas macros siempre devolverán VERDADERO y llamar a las macros C<Sv*V> harán la conversión apropiada de cadena a entero/doble o entero/doble a cadena.
+
+Si I<realmente> necesita saber si tiene un número entero, doble o puntero de cadena en un SV, puede usar en su lugar las siguientes tres macros:
+
+    SvIOKp(SV*)
+    SvNOKp(SV*)
+    SvPOKp(SV*)
+
+Estos le dirán si realmente tiene un entero, doble o puntero de cadena almacenado en su SV.  La "p" significa privado.
+
+Hay varias formas en las que las banderas privadas y públicas pueden diferir.
+Por ejemplo, en perl 5.16 y versiones anteriores, un SV vinculado puede tener un valor subyacente en la ranura IV (por lo que SvIOKp es verdadero), pero los datos se deben acceder a través de la rutina FETCH en lugar de directamente, entonces SvIOK es falso.  (En perl 5.18 en adelante, los escalares vinculados usan las banderas de la misma manera que los escalares desvinculados).  Otra es cuando se ha producido una conversión numérica y se ha perdido precisión: sólo la bandera privada se establece en valores 'con pérdida'.  Entonces, cuando un NV se convierte en un IV con pérdida, se establecerán SvIOKp, SvNOKp y SvNOK, mientras que SvIOK no.
+
+En general, sin embargo, es mejor usar las macros C<Sv*V>.
+
+=head2 Trabajar con AV
+
+Hay dos formas de crear y cargar un AV.  El primer método crea un AV vacío:
+
+    AV*  newAV();
+
+El segundo método crea el AV e inicialmente lo llena con SV:
+
+    AV*  av_make(SSize_t num, SV **ptr);
+
+El segundo argumento apunta a un array que contiene C<num> de C<SV*>.  Una vez que se ha creado el AV, los SV se pueden destruir, si así se desea.
+
+Una vez que se ha creado el AV, las siguientes operaciones son posibles en él:
+
+    void  av_push(AV*, SV*);
+    SV*   av_pop(AV*);
+    SV*   av_shift(AV*);
+    void  av_unshift(AV*, SSize_t num);
+
+Estas deben ser operaciones familiares, con la excepción de C<av_unshift>.
+Esta rutina agrega C<num> elementos al principio del array con el valor C<undef>.  A continuación, debe utilizar C<av_store> (descrito a continuación) para asignar valores a estos nuevos elementos.
+
+Aquí hay algunas otras funciones:
+
+    SSize_t av_top_index(AV*);
+    SV**    av_fetch(AV*, SSize_t key, I32 lval);
+    SV**    av_store(AV*, SSize_t key, SV* val);
+
+La función C<av_top_index> devuelve el valor de índice más alto en un array (igual que $#array en Perl).  Si la matriz está vacía, se devuelve -1.  La función C<av_fetch> devuelve el valor en el índice C<key>, pero si C<lval> es distinto de cero, entonces C<av_fetch> almacenará un valor undef en ese índice.
+La función C<av_store> almacena el valor C<val> en el índice C<key>, y no incrementa el conteo de referencia de C<val>.  Por lo tanto, el llamante es responsable de cuidar eso, y si C<av_store> devuelve NULL, el llamante tiene que disminuir el número de referencias para evitar una fuga de memoria.  Tenga en cuenta que ambos C<av_fetch> y C<av_store> devuelven C<SV**>, no C<SV*> como sus valores de retorno.
+
+Un poco más:
+
+    void  av_clear(AV*);
+    void  av_undef(AV*);
+    void  av_extend(AV*, SSize_t key);
+
+La función C<av_clear> elimina todos los elementos del array AV*, pero en realidad no elimina el array en sí.  La función C<av_undef> eliminará todos los elementos del array más el propio array.  La función C<av_extend> extiende el array para que contenga al menos C<key+1> elementos.  Si C<key+1> es menor que la longitud actualmente asignada del array, entonces no se hace nada.
+
+Si conoce el nombre de una variable de array, puede obtener un puntero a su AV usando lo siguiente:
+
+    AV*  get_av("package::varname", 0);
+
+Esto devuelve NULL si la variable no existe.
+
+Vea L<Entendiendo la magia de los hashes y arrays enlazados> para más información sobre cómo utilizar las funciones de acceso a array en arrays enlazados.
+
+=head2 Trabajar con HV
+
+Para crear un HV, utiliza la siguiente rutina:
+
+    HV*  newHV();
+
+Una vez que se ha creado el HV, las siguientes operaciones son posibles en él:
+
+    SV**  hv_store(HV*, const char* key, U32 klen, SV* val, U32 hash);
+    SV**  hv_fetch(HV*, const char* key, U32 klen, I32 lval);
+
+El parámetro C<klen> es la longitud de la clave que se pasa (tenga en cuenta que no puede pasar 0 como un valor de C<klen> decirle a Perl que mida la longitud de la clave).  El argumento C<val> contiene el puntero SV al escalar almacenado, y C<hash> es el valor hash calculado previamente (cero si quiere calcular por sí mismo C<hv_store>).  El parámetro C<lval> indica si esta búsqueda es realmente parte de una operación de almacenamiento, en cuyo caso se agregará un nuevo valor indefinido al HV con la clave suministrada y C<hv_fetch> regresará como si el valor ya existiera.
+
+Recuerde que C<hv_store> y C<hv_fetch> devuelve C<SV**> y no sólo C<SV*>.  Para acceder al valor escalar, primero debe desreferenciar el valor retorno.  Sin embargo, debe comprobar para asegurarse de que el valor de retorno no es NULL antes de desreferenciarlo.
+
+La primera de estas dos funciones comprueba si existe una entrada en la tabla hash y el segundo lo elimina.
+
+    bool  hv_exists(HV*, const char* key, U32 klen);
+    SV*   hv_delete(HV*, const char* key, U32 klen, I32 flags);
+
+Si C<flags> no incluye el indicador C<G_DISCARD> entonces C<hv_delete> creará y devolverá una copia mortal del valor eliminado.
+
+Y más funciones variadas:
+
+    void   hv_clear(HV*);
+    void   hv_undef(HV*);
+
+Al igual que sus contrapartes AV, C<hv_clear> borra todas las entradas en la tabla hash pero en realidad no elimina la tabla hash.  La C<hv_undef> elimina tanto las entradas como la propia tabla hash.
+
+Perl mantiene los datos reales en una lista enlazada de estructuras con un typedef de HE.
+Estos contienen la clave real y los punteros de valor (además de burocracia adicional).  La clave es un puntero de cadena; el valor es una c<SV*>.  Sin embargo, una vez que tiene una C<HE*>, para obtener la clave y el valor reales, use las rutinas especificadas a continuación.
+
+    I32    hv_iterinit(HV*);
+            /* Prepara el punto de partida para recorrer la tabla hash */
+    HE*    hv_iternext(HV*);
+            /* Obtener la siguiente entrada y devolver un puntero a una
+               estructura que tiene tanto la clave como el valor */
+    char*  hv_iterkey(HE* entry, I32* retlen);
+            /* Obtener la clave de una estructura HE y también regresar
+               la longitud de la cadena clave */
+    SV*    hv_iterval(HV*, HE* entry);
+            /* Devolver un puntero SV al valor de la
+               estructura HE */
+    SV*    hv_iternextsv(HV*, char** key, I32* retlen);
+            /* Esta rutina de conveniencia combina hv_iternext,
+	       hv_iterkey, y hv_iterval.  Los argumentos key y retlen
+	       son valores de retorno para la clave y su
+	       longitud.  El valor se devuelve en el argumento SV* */
+
+Si conoce el nombre de una variable hash, puede obtener un puntero a su HV usando lo siguiente:
+
+    HV*  get_hv("package::varname", 0);
+
+Esto devuelve NULL si la variable no existe.
+
+El algoritmo hash se define en la macro C<PERL_HASH>:
+
+    PERL_HASH(hash, key, klen)
+
+La implementación exacta de esta macro varía según la arquitectura y la versión de perl, y el valor devuelto puede cambiar por invocación, por lo que el valor solo es válido durante la duración de un único proceso perl.
+
+Vea L<Entendiendo la magia de los hashes y arrays enlazados> para más información sobre cómo utilizar las funciones de acceso a hash en hashes enlazados.
+
+=head2 Extensiones API para hashes
+
+A partir de la versión 5.004, también se admiten las siguientes funciones:
+
+    HE*     hv_fetch_ent  (HV* tb, SV* key, I32 lval, U32 hash);
+    HE*     hv_store_ent  (HV* tb, SV* key, SV* val, U32 hash);
+
+    bool    hv_exists_ent (HV* tb, SV* key, U32 hash);
+    SV*     hv_delete_ent (HV* tb, SV* key, I32 flags, U32 hash);
+
+    SV*     hv_iterkeysv  (HE* entry);
+
+Tenga en cuenta que estas funciones toman claves C<SV*>, lo que simplifica la escritura de código de extensión que trata con estructuras hash.  Estas funciones también permiten el paso de claves C<SV*> para enlazar (C<tie>) funciones sin forzarle a convertir las claves en cadenas (a diferencia del conjunto anterior de funciones).
+
+También devuelven y aceptan entradas hash completas (C<HE*>), haciendo su uso más eficiente (ya que el número hash para una cadena en particular no tiene que volver a calcularse cada vez).  Vea L<perlapi> para descripciones detalladas.
+
+Las siguientes macros siempre deben usarse para acceder al contenido de entradas hash.  Tenga en cuenta que los argumentos de estas macros deben ser variables simples, ya que pueden evaluarse más de una vez.  Vea L<perlapi> para descripciones detalladas de estas macros.
+
+    HePV(HE* he, STRLEN len)
+    HeVAL(HE* he)
+    HeHASH(HE* he)
+    HeSVKEY(HE* he)
+    HeSVKEY_force(HE* he)
+    HeSVKEY_set(HE* he, SV* sv)
+
+Estas dos macros de bajo nivel están definidas, pero solo deben usarse cuando tratan con claves que no son C<SV*>:
+
+    HeKEY(HE* he)
+    HeKLEN(HE* he)
+
+Tenga en cuenta que tanto C<hv_store> y C<hv_store_ent> no incrementan el contador de referencia almacenado en C<val>, que es responsabilidad del llamante.
+Si estas funciones devuelven un valor NULL, el llamante generalmente tendrá que disminuir el contador de referencia de C<val> para evitar una pérdida de memoria.
+
+=head2 AV, HV y valores indefinidos
+
+A veces debe almacenar valores indefinidos en AV o HV.  Aunque este puede ser un caso raro, puede ser complicado.  Eso es porque está acostumbrado a usar C<&PL_sv_undef> si necesita un SV indefinido.
+
+Por ejemplo, la intuición le dice que este código XS:
+
+    AV *av = newAV();
+    av_store( av, 0, &PL_sv_undef );
+
+es equivalente a este código Perl:
+
+    my @av;
+    $av[0] = undef;
+
+Desafortunadamente, esto no es cierto.  En perl 5.18 y anteriores, los AV usan C<&PL_sv_undef> como marcador para indicar que un elemento de matriz aún no se ha inicializado.
+Por lo tanto, C<exists $av[0]> sería verdadero para el código Perl anterior, pero falso para el array generado por el código XS.  En perl 5.20, almacenar &PL_sv_undef creará un elemento de solo lectura, porque el escalar &PL_sv_undef se almacena en sí mismo, no una copia.
+
+Pueden ocurrir problemas similares al almacenar C<&PL_sv_undef> en HV:
+
+    hv_store( hv, "key", 3, &PL_sv_undef, 0 );
+
+De hecho, esto hará que el valor C<undef>, pero si intentas modificar el valor de C<key>, obtendrá el siguiente error:
+
+    Modification of non-creatable hash value attempted (Se intentó una modificación de un valor hash no generable)
+
+En perl 5.8.0, C<&PL_sv_undef> también se usaba para indicar marcadores de posición en hashes restringidos.  Esto hizo que tales entradas hash no aparecieran al iterar sobre el hash o al verificar las claves con la función C<hv_exists>.
+
+Puede encontrarse con problemas similares cuando almacena C<&PL_sv_yes> o C<&PL_sv_no> en AV o HV.  Tratando de modificar tales elementos le dará el siguiente error:
+
+    Modification of a read-only value attempted (Se intentó la modificación de un valor de sólo lectura)
+
+Para resumir, puede usar las variables especiales C<&PL_sv_undef>, C<&PL_sv_yes> y C<&PL_sv_no> con AV y HV, pero tiene que asegurarse de que sabe lo que está haciendo.
+
+Generalmente, si desea almacenar un valor indefinido en un AV o HV, no debe usar C<&PL_sv_undef>, sino crear un nuevo valor indefinido usando la función C<newSV>, por ejemplo:
+
+    av_store( av, 42, newSV(0) );
+    hv_store( hv, "foo", 3, newSV(0), 0 );
+
+=head2 Referencias
+
+Las referencias son un tipo especial de escalar que apuntan a otros tipos de datos (incluidas otras referencias).
+
+Para crear una referencia, use cualquiera de las siguientes funciones:
+
+    SV* newRV_inc((SV*) thing);
+    SV* newRV_noinc((SV*) thing);
+
+El argumento C<thing> puede ser cualquiera de un C<SV*>, C<AV*> o C<HV*>.  Las funciones son idénticas excepto que C<newRV_inc> incrementa la cuenta de referencias de la C<thing>, mientras que C<newRV_noinc> no.  Por razones históricas, C<newRV> es un sinónimo de C<newRV_inc>.
+
+Una vez que tenga una referencia, puede usar la siguiente macro para desreferenciar la referencia:
+
+    SvRV(SV*)
+
+luego llame a las rutinas apropiadas, emitiendo el C<SV*> devuelto ya sea a un C<AV*> o C<HV*>, si se requiere.
+
+Para determinar si un SV es una referencia, puede usar la siguiente macro:
+
+    SvROK(SV*)
+
+Para descubrir a qué tipo de valor se refiere la referencia, utilice la siguiente macro y luego verifique el valor devuelto.
+
+    SvTYPE(SvRV(SV*))
+
+Los tipos más útiles que se devolverán son:
+
+    < SVt_PVAV  Escalar
+    SVt_PVAV    Array
+    SVt_PVHV    Hash
+    SVt_PVCV    Código
+    SVt_PVGV    Glob (posiblemente un identificador de archivo)
+
+Vea L<perlapi/svtype> para más detalles.
+
+=head2 Referencias bendecidas y objetos de clase
+
+Las referencias también se utilizan para soportar la programación orientada a objetos.  En el léxico OO de perl, un objeto es simplemente una referencia que ha sido bendecido en un paquete (o clase).  Una vez bendecido, el programador ahora puede usar la referencia para acceder a los diversos métodos de la clase.
+
+Una referencia se puede bendecir en un paquete con la siguiente función:
+
+    SV* sv_bless(SV* sv, HV* stash);
+
+El argumento C<sv> debe ser un valor de referencia.  El argumento C<stash> especifica a qué clase pertenecerá la referencia.  Vea L<Reservas y Globs> para obtener información sobre cómo convertir nombres de clase en reservas.
+
+/* Todavía en construcción */
+
+La siguiente función actualiza rv a referencia si aún no lo es.
+Crea un nuevo SV para que apunte rv.  Si C<classname> no es nulo, el SV es bendecido en la clase especificada.  Se devuelve SV.
+
+	SV* newSVrv(SV* rv, const char* classname);
+
+Las siguientes tres funciones copian entero, entero sin signo o doble en un SV cuya referencia es C<rv>.  SV es bendecido si C<classname> es no nulo.
+
+	SV* sv_setref_iv(SV* rv, const char* classname, IV iv);
+	SV* sv_setref_uv(SV* rv, const char* classname, UV uv);
+	SV* sv_setref_nv(SV* rv, const char* classname, NV iv);
+
+La siguiente función copia el valor del puntero (I<¡la dirección, no la cadena!>) en un SV cuya referencia es rv.  SV es bendecido si C<classname> es no nulo.
+
+	SV* sv_setref_pv(SV* rv, const char* classname, void* pv);
+
+La siguiente función copia una cadena en un SV cuya referencia es C<rv>.
+Establezca la longitud a 0 para permitir que Perl calcule la longitud de la cadena.  SV es bendecido si C<classname> es no nulo.
+
+    SV* sv_setref_pvn(SV* rv, const char* classname, char* pv,
+                                                         STRLEN length);
+
+La siguiente función testea si el SV está bendecido en la clase especificada.  No verifica las relaciones de herencia.
+
+	int  sv_isa(SV* sv, const char* name);
+
+La siguiente función prueba si el SV es una referencia a un objeto bendito.
+
+	int  sv_isobject(SV* sv);
+
+La siguiente función prueba si el SV se deriva de la clase especificada.  SV puede ser una referencia a un objeto bendecida o una cadena que contiene un nombre de clase.  Esta es la función que implementa la funcionalidad C<UNIVERSAL::isa>.
+
+	bool sv_derived_from(SV* sv, const char* name);
+
+Para verificar si tiene un objeto derivado de una clase específica, tiene que escribir:
+
+	if (sv_isobject(sv) && sv_derived_from(sv, class)) { ... }
+
+=head2 Crear nuevas variables
+
+Para crear una nueva variable Perl con un valor undef al que se puede acceder desde su secuencia de comandos Perl, utilice las siguientes rutinas, según el tipo de variable.
+
+    SV*  get_sv("package::varname", GV_ADD);
+    AV*  get_av("package::varname", GV_ADD);
+    HV*  get_hv("package::varname", GV_ADD);
+
+Observe el uso de GV_ADD como segundo parámetro.  La nueva variable ahora puede configurarse, usando las rutinas apropiadas para el tipo de datos.
+
+Hay macros adicionales cuyos valores pueden ser OReadas bit a bit con el argumento C<GV_ADD> para habilitar ciertas características adicionales.  Esos bits son:
+
+=over
+
+=item GV_ADDMULTI
+
+Marca la variable como definida de forma múltiple, evitando así la
+
+  Name <varname> used only once: possible typo
+
+advertencia.
+
+=item GV_ADDWARN
+
+Emite la advertencia:
+
+  Had to create <varname> unexpectedly
+
+si la variable no existía antes de llamar a la función.
+
+=back
+
+Si no especifica un nombre de paquete, la variable se crea en el paquete actual.
+
+=head2 Recuentos de referencia y mortalidad
+
+Perl utiliza un mecanismo de recolección de elementos no utilizados basado en el recuento de referencias.  SV, AV o HV (xV para abreviar en lo siguiente) comienzan su vida con un recuento de referencia de 1.  Si el conteo de referencia de un xV alguna vez cae a 0, entonces se destruirá y su memoria quedará disponible para su reutilización.
+
+Esto normalmente no sucede a nivel de Perl a menos que una variable sea indefinida (con undef) o que la última variable que contiene una referencia a ella se cambie o sobrescriba.  Sin embargo, a nivel interno, los conteos de referencia se pueden manipular con las siguientes macros:
+
+    int SvREFCNT(SV* sv);
+    SV* SvREFCNT_inc(SV* sv);
+    void SvREFCNT_dec(SV* sv);
+
+Sin embargo, hay otra función que manipula la cuenta de referencia de su argumento.  La función C<newRV_inc>, recordará, crea una referencia al argumento especificado.  Como efecto secundario, incrementa el recuento de referencias del argumento.  Si esto no es lo que quiere, use en su lugar C<newRV_noinc>.
+
+Por ejemplo, imagine que desea devolver una referencia de una función XSUB.
+Dentro de la rutina XSUB, cree un SV que inicialmente tiene una cuenta de referencia de uno.  Entonces llame a C<newRV_inc>, pasándole el SV recién creado.
+Esto devuelve la referencia como un nuevo SV, pero el recuento de referencias del SV que pasó a C<newRV_inc> se ha incrementado a dos.  Ahora devuelva la referencia desde la rutina XSUB y olvídese del SV.
+¡Pero Perl no lo hace!  Cada vez que se destruye la referencia devuelta, el recuento de referencia del SV original se reduce a uno y no sucede nada.
+El SV permanecerá sin ninguna forma de acceder a él hasta que el propio Perl termine.  Esto es una fuga de memoria.
+
+El procedimiento correcto, entonces, es usar C<newRV_noinc> en lugar de C<newRV_inc>.  Entonces, cuando se destruye la última referencia, el conteo de referencia del SV va a cero y será destruido, deteniendo cualquier pérdida de memoria.
+
+Hay algunas funciones convenientes disponibles que pueden ayudar con la destrucción de xV.  Estas funciones introducen el concepto de "mortalidad".
+Un xV que es mortal tuvo su cuenta de referencia marcada para ser decrementada, pero en realidad no lo hizo, hasta "un poco tiempo después".  Generalmente el término "un poco tiempo después" significa una sola sentencia de Perl, como una llamada a una función XSUB.  El determinante real de cuándo los xV mortales tienen su recuento de referencia decrementado depende de dos macros, SAVETMPS y FREETMPS.
+Vea L<perlcall> y L<perlxs> para obtener más detalles sobre estas macros.
+
+"Mortalización" entonces es en su forma más simple una C<SvREFCNT_dec> aplazada.
+Sin embargo, si mortaliza una variable dos veces, el recuento de referencia se decrementará más tarde dos veces.
+
+Los SV "mortales" se utilizan principalmente para los SV que se colocan en la pila de Perl.
+Por ejemplo, un SV que se crea solo para pasar un número a una sub llamada se vuelve mortal para que se limpie automáticamente cuando salga de la pila.  De manera similar, los resultados devueltos por XSUB (que se insertan en la pila) a menudo se hacen mortales.
+
+Para crear una variable mortal, use las funciones:
+
+    SV*  sv_newmortal()
+    SV*  sv_2mortal(SV*)
+    SV*  sv_mortalcopy(SV*)
+
+La primera llamada crea un SV mortal (sin valor), la segunda convierte un existente SV a un SV mortal (y por lo tanto difiere una llamada a C<SvREFCNT_dec>), y el tercero crea una copia mortal de un SV existente.
+Debido a que C<sv_newmortal> no le da valor al nuevo SV, normalmente se le debe dar uno a través de C<sv_setpv>, C<sv_setiv>, etc.:
+
+    SV *tmp = sv_newmortal();
+    sv_setiv(tmp, an_integer);
+
+Como se trata de múltiples declaraciones C, es bastante común que vea en su lugar este modismo:
+
+    SV *tmp = sv_2mortal(newSViv(an_integer));
+
+
+Debe tener cuidado al crear variables mortales.  Cosas extrañas pueden suceder si pone el mismo valor mortal en múltiples contextos, o si hace mortal una variable múltiples veces.  Pensar en "Mortalización" como un C<SvREFCNT_dec> aplazado debería ayudar a minimizar tales problemas.
+Por ejemplo si está pasando un SV que I<sabe> que tiene un REFCNT bastante alto para sobrevivir su uso en la pila, entonces no necesita ninguna mortalización.
+Si no está seguro, entonces haga un C<SvREFCNT_inc> y C<sv_2mortal>, o un C<sv_mortalcopy> es más seguro.
+
+Las rutinas mortales no son sólo para SV; AV y HV pueden hacerse mortales pasando su dirección (convertidos a C<SV*>) a las rutinas C<sv_2mortal> o C<sv_mortalcopy>.
+
+=head2 Almacenes y Globs
+
+Un almacén (B<stash>) es un hash que contiene todas las variables que están definidas en un paquete.  Cada clave del almacén es un nombre de símbolo (compartido por todos los tipos diferentes de objetos que tienen el mismo nombre), y cada valor en la tabla hash es un GV (Valor Glob).  Este GV contiene referencias a los diversos objetos del mismo nombre, incluyendo (pero no limitado a) lo siguiente:
+
+    Valor Escalar
+    Valor Array
+    Valor Hash
+    Identificador I/O
+    Formato
+    Subrutina
+
+Hay un único almacén llamado C<PL_defstash> que guarda los elementos que existen en el paquete C<main>.  Para obtener los elementos en otros paquetes, anexe la cadena "::" al nombre del paquete.  Los elementos en el paquete C<Foo> están en el almacén C<Foo::> en PL_defstash.  Los elementos en el paquete C<Bar::Baz> están en el almacén C<Baz::> en el almacén de C<Bar::>.
+
+Para obtener el puntero del almacén para un paquete en particular, use la función:
+
+    HV*  gv_stashpv(const char* name, I32 flags)
+    HV*  gv_stashsv(SV*, I32 flags)
+
+La primera función toma una cadena literal, la segunda usa la cadena almacenada en el SV.  Recuerde que un almacén sólo es una tabla hash, así que recibe un C<HV*>.  El indicador C<flags> creará un nuevo paquete si se establece a GV_ADD.
+
+El nombre que C<gv_stash*v> quiere es el nombre del paquete de cuya tabla de símbolos usted busca.  El paquete por defecto se llama C<main>.  Si tiene múltiples paquetes anidados, pase sus nombres a C<gv_stash*v>, separados con C<::> como hace el propio lenguaje Perl.
+
+De otra forma, si tiene un SV que es una referencia bendecida, puede encontrar el puntero de almacén utilizando:
+
+    HV*  SvSTASH(SvRV(SV*));
+
+y luego use lo siguiente para obtener el propio nombre del paquete:
+
+    char*  HvNAME(HV* stash);
+
+Si necesita bendecir o rebendecir un objeto puede usar la siguiente función:
+
+    SV*  sv_bless(SV*, HV* stash)
+
+donde el primer argumento, un C<SV*>, debe ser una referencia, y el segundo argumento es un almacén.  El C<SV*> devuelto ahora se puede utilizar de la misma manera como cualquier otro SV.
+
+Para más información sobre referencias y bendiciones, consulte L<perlref>.
+
+=head2 SV de doble tipo
+
+Las variables escalares normalmente contienen sólo un tipo de valor, un entero, doble, puntero, o referencia.  Perl automáticamente convertirá el dato escalar real del tipo almacenado al tipo solicitado.
+
+Algunas variables escalares contienen más de un tipo de dato escalar.  Por ejemplo, la variable C<$!> contiene tanto el valor numérico de C<errno> como su cadena equivalente tanto desde C<strerror> como C<sys_errlist[]>.
+
+Para forzar múltiple valores de datos en un SV, tiene que hacer dos cosas: use las rutinas C<sv_set*v> para añadir el tipo escalar adicional, luego establezca un indicador de modo que Perl creerá que contiene más de uno tipo de datos.  Las cuatro macros para poner los indicadores son:
+
+	SvIOK_on
+	SvNOK_on
+	SvPOK_on
+	SvROK_on
+
+La macro en particular que debe usar depende de qué rutina C<sv_set*v> llamó primero.  Esto es porque cada rutina C<sv_set*v> activa sólo el bit para el tipo particular de los datos establecidos, y apaga todos los demás.
+
+Por ejemplo, para crear una nueva variable Perl llamada "dberror" que contiene tanto el valor numérico como la cadena descriptiva del error, podría usar el código siguiente:
+
+    extern int  dberror;
+    extern char *dberror_list;
+
+    SV* sv = get_sv("dberror", GV_ADD);
+    sv_setiv(sv, (IV) dberror);
+    sv_setpv(sv, dberror_list[dberror]);
+    SvIOK_on(sv);
+
+Si se invirtió el orden de C<sv_setiv> y C<sv_setpv>, entonces necesitará llamar a la macro C<SvPOK_on> en lugar de a la C<SvIOK_on>.
+
+=head2 Valores de sólo lectura
+
+En Perl 5.16 y anteriores, la copia-en-escritura (I<copy-on-write>) (vea la siguiente sección) compartía un bit indicador con escalares de sólo lectura.  Así que la única manera de probar si C<sv_setsv>, etc., levantarán un error de "Modificación de un valor de sólo lectura" en aquellas versiones es:
+
+    SvREADONLY(sv) && !SvIsCOW(sv)
+
+Bajo Perl 5.18 y siguientes, SvREADONLY sólo aplica a variables de sólo lectura y, bajo 5.20 los escalares de copia-en-escritura también pueden ser de sólo lectura, así que la prueba anterior es incorrecta.  Sólo necesita:
+
+    SvREADONLY(sv)
+
+Si necesita hacer esta comprobación, defina su propia macro como esta:
+
+    #if PERL_VERSION >= 18
+    # define SvTRULYREADONLY(sv) SvREADONLY(sv)
+    #else
+    # define SvTRULYREADONLY(sv) (SvREADONLY(sv) && !SvIsCOW(sv))
+    #endif
+
+=head2 Copia en escritura
+
+Perl implementa un mecanismo de copia-en-escritura (COW) para escalares, en el cual las copias de cadena no se realizan inmediatamente cuando se solicita, sino que se posponen hasta que se hace necesario por cambiar el uno u el otro escalar.  Esto es mayoritariamente transparente, pero uno tiene que cuidar de no modificar cadenas de búferes que estén compartidas por múltiples SV.
+
+Puede probar si un SV está utilizando copia-en-escritura con C<SvIsCOW(sv)>.
+
+Puede forzar a que un SV haga su propia copia de su cadena de búfer llamando a C<sv_force_normal(sv)> o C<SvPV_force_nolen(sv)>.
+
+Si quiere que SV tire su cadena de búfer, use C<sv_force_normal_flags(sv, SV_COW_DROP_PV)>, o sencillamente C<sv_setsv(sv, NULL)>.
+
+Todas estas funciones se quejarán en escalares de sólo lectura (vea la sección anterior para saber más sobre ellos).
+
+Para probar que su código se comporta correctamente y no modifica búferes COW, en sistemas que soporte L<mmap(2)> (p.e., Unix) puede configurar perl con C<-Accflags=-DPERL_DEBUG_READONLY_COW> y convierta violaciones de búfer en cuelgues.  Lo encontrará maravillosamente lento, así que puede querer saltar las propias pruebas de perl.
+
+=head2 Variables mágicas
+
+[Esta sección sigue bajo construcción.  Ignora todo lo que hay aquí.  El correo no cuesta dinero.  Todo lo que no está permitido, está prohibido].
+
+Cualquier SV puede ser mágico, es decir, tiene características especiales que un SV normal no tiene.  Estas características están almacenadas en la estructura del SV en una lista enlazada de C<struct magic>, ajustada a C<MAGIC> con un typedef.
+
+    struct magic {
+        MAGIC*      mg_moremagic;
+        MGVTBL*     mg_virtual;
+        U16         mg_private;
+        char        mg_type;
+        U8          mg_flags;
+        I32         mg_len;
+        SV*         mg_obj;
+        char*       mg_ptr;
+    };
+
+Note que esto es lo actual con el patchlevel 0, y podría cambiar en cualquier momento.
+
+=head2 Asignar magia
+
+Perl añade magia a un SV usando la función C<sv_magic>:
+
+  void sv_magic(SV* sv, SV* obj, int how, const char* name, I32 namlen);
+
+El argumento C<sv> es un puntero al SV que va a adquirir una nueva característica mágica.
+
+Si C<sv> no es ya mágico, Perl utiliza la macro C<SvUPGRADE> para convertir C<sv> al tipo C<SVt_PVMG>.
+Perl entonces continúa por añadir nueva magia al principio de la lista enlazada de características mágicas.  Cualquier entrada previa del mismo tipo de la magia, se elimina.  Note que esto puede ser sobreescrito, y múltiples instancias del mismo tipo de magia se puede asociar con un SV.
+
+Los argumentos C<name> y C<namlen> suelen asociar una cadena con la magia, típicamente el nombre de una variable.  C<namlen> se almacena en el campo C<mg_len> y si C<name> no es nulo entonces tanto una copia C<savepvn> de C<name> o el propio C<name> se almacena en el campo C<mg_ptr>, dependiendo de si C<namlen> es más grande que cero o igual a cero, respectivamente.  Como caso especial, si C<(name && namlen == HEf_SVKEY)> entonces se asume que C<name> contiene un C<SV*> y se almacena tal cual con su REFCNT incrementado.
+
+La función C<sv_magic> usa C<how> para determinar cuál, si hay, "Magic Virtual Table" predefinida debería asignarse al campo C<mg_virtual>.
+Vea la sección L<Magic Virtual Tables> más abajo.  El argumento C<how> también se almacena en el campo C<mg_type>.  El valor de C<how> tendría que escogerse del conjunto de macros C<PERL_MAGIC_foo> encontrado en F<perl.h>.  Note que antes de que estas macros se añadieran, se usaban partes internas de Perl para usar directamente caracteres literales, así que ocasionalmente puede encontrar documentación o código viejo que refieren a la magia 'U' más que C<PERL_MAGIC_uvar>, por ejemplo.
+
+El argumento C<obj> está almacenado en el campo C<mg_obj> de la estructura C<MAGIC>.  Si no es igual que el argumento C<sv>, la cuenta de referencia del objeto C<obj> se incrementa.  Si es igual, o si el argumento C<how> es C<PERL_MAGIC_arylen>, o si es un puntero NULL, entonces C<obj> simplemente se almacena, sin que se incremente la cuenta de referencia.
+
+Vea también C<sv_magicext> en L<perlapi> para una manera más flexible para añadir magia a un SV.
+
+Hay también una función para añadir magia a un C<HV>:
+
+    void hv_magic(HV *hv, GV *gv, int how);
+
+Esto simplemente llama a C<sv_magic> y cambia el argumento C<gv> en un C<SV>.
+
+Para quitar la magia de un SV, llame a la función sv_*unmagic:
+
+    int sv_unmagic(SV *sv, int type);
+
+El argumento C<type> tendría que ser igual al valor C<how> cuando C<SV> inicialmente se hizo mágico.
+
+Aun así, note que C<sv_unmagic> elimina toda la magia de un cierto C<type> del C<SV>.  Si quiere eliminar sólo cierta magia de un C<type> basado en la tabla virtual mágica, use en cambio C<sv_unmagicext>:
+
+    int sv_unmagicext(SV *sv, int type, MGVTBL *vtbl);
+
+=head2 Tabla Virtual Mágica
+
+El campo C<mg_virtual> en la estructura C<MAGIC> es un puntero a un C<MGVTBL>, el cual es una estructura de punteros de función y se llama "Tabla Virtual Mágica" para manejar las diversas operaciones que podrían aplicarse a esa variable.
+
+El C<MGVTBL> tiene cinco (o a veces ocho) punteros a los tipos de rutinas siguientes:
+
+    int  (*svt_get)(SV* sv, MAGIC* mg);
+    int  (*svt_set)(SV* sv, MAGIC* mg);
+    U32  (*svt_len)(SV* sv, MAGIC* mg);
+    int  (*svt_clear)(SV* sv, MAGIC* mg);
+    int  (*svt_free)(SV* sv, MAGIC* mg);
+
+    int  (*svt_copy)(SV *sv, MAGIC* mg, SV *nsv,
+                                          const char *name, I32 namlen);
+    int  (*svt_dup)(MAGIC *mg, CLONE_PARAMS *param);
+    int  (*svt_local)(SV *nsv, MAGIC *mg);
+
+
+Esta estructura MGVTBL se establece en tiempo de compilación en F<perl.h> y existen actualmente 32 tipos.  Estas diferentes estructuras contienen punteros a varias rutinas que realicen acciones adicionales que dependen de qué función se está llamando.
+
+   Puntero de función  Acción tomada
+   ------------------  ------------
+   svt_get             Hacer algo antes de que el valor del SV se
+                       recupere.
+   svt_set             Hacer algo después de que se le asigne un valor a SV.
+   svt_len             Reporta la longitud del SV.
+   svt_clear           Limpiar algo que SV representa.
+   svt_free            Libera cualquier almacenamiento extra asociado con el SV.
+
+   svt_copy            Copia variable mágica enlazada a un elemento enlazado.
+   svt_dup             Duplica una estructura mágica durante el clonado de hilos.
+   svt_local           Copia la magia a un valor local durante 'local'.
+
+Por ejemplo, la estructura MGVTBL llamó a C<vtbl_sv> (que corresponde a un C<mg_type> de C<PERL_MAGIC_sv>) contiene:
+
+    { magic_get, magic_set, magic_len, 0, 0 }
+
+Así, cuando se determina un SV para que sea mágico y de tipo C<PERL_MAGIC_sv>, si se realiza una operación C<get>, se llama a la rutina C<magic_get>.  Todas las diversas rutinas para los diversos tipos mágicos comienzan con C<magic_>.  NOTA: las rutinas mágicas no se consideran parte de la API de Perl, y no se puede exportar por la biblioteca Perl.
+
+Las últimas tres ranuras son una reciente adición, y para compatibilidad del código fuente se comprueban sólo si uno de los tres indicadores C<MGf_COPY>, C<MGf_DUP> o C<MGf_LOCAL> esté activo en C<mg_flags>.
+Esto significa que la mayoría de código puede continuar declarando una vtable como un valor de 5 elementos.  Estos tres se es utiliza actualmente exclusivamente por el código de hilos, y está altamente sujeto de cambiar.
+
+Las clases actuales de las Tablas Virtuales Mágicas son:
+
+=for comment
+Esta tabla se genera por regen/mg_vtable.pl  Se perderán todos los cambios que se realicen aquí.
+
+=for mg_vtable.pl begin
+
+ mg_type
+ (car. y macro anteriores)    MGVTBL         Tipo de magia
+ --------------------------   ------         -------------
+ \0 PERL_MAGIC_sv             vtbl_sv        Variable escalar especial
+ #  PERL_MAGIC_arylen         vtbl_arylen    Longitud del array ($#ary)
+ %  PERL_MAGIC_rhash          (ninguno)      Datos extra para hashes restringidos
+                                             hashes
+ *  PERL_MAGIC_debugvar       vtbl_debugvar  $DB::single, señal, traza de
+                                             vars.
+ .  PERL_MAGIC_pos            vtbl_pos       valor a la izquierda de pos()
+ :  PERL_MAGIC_symtab         (ninguno)      Datos extra para las tablas de símbolos
+                                             tablas
+ <  PERL_MAGIC_backref        vtbl_backref   Para datos de ref. débil
+ @  PERL_MAGIC_arylen_p       (ninguno)      Para mover arylen fuera de XPVAV
+ B  PERL_MAGIC_bm             vtbl_regexp    Boyer-Moore 
+                                             (búsqueda rápido en cadenas)
+ c  PERL_MAGIC_overload_table vtbl_ovrld     Almacena la tabla de sobrecarga 
+                                             (AMT) en el almacén
+ D  PERL_MAGIC_regdata        vtbl_regdata   Datos de posición de coincidencia Regex 
+                                             (vars. @+ y @-)
+ d  PERL_MAGIC_regdatum       vtbl_regdatum  Datos de posición de coincidencia del Regex
+                                             elemento
+ E  PERL_MAGIC_env            vtbl_env       %ENV hash
+ e  PERL_MAGIC_envelem        vtbl_envelem   %ENV elemento hash
+ f  PERL_MAGIC_fm             vtbl_regexp    Línea de formato 
+                                             (formato 'compilado')
+ g  PERL_MAGIC_regex_global   vtbl_mglob     objetivo de m//g
+ H  PERL_MAGIC_hints          vtbl_hints     %^H hash
+ h  PERL_MAGIC_hintselem      vtbl_hintselem %^H elemento hash
+ I  PERL_MAGIC_isa            vtbl_isa       Array @ISA
+ i  PERL_MAGIC_isaelem        vtbl_isaelem   Elemento de array @ISA
+ k  PERL_MAGIC_nkeys          vtbl_nkeys     valor a la izquierda de scalar(keys())
+ L  PERL_MAGIC_dbfile         (ninguno)      Depurador %_<nombre_de_archivo
+ l  PERL_MAGIC_dbline         vtbl_dbline    Depurador %_<nombre_de_archivo
+                                             elemento
+ N  PERL_MAGIC_shared         (ninguno)      Compartido entre hilos
+ n  PERL_MAGIC_shared_scalar  (ninguno)      Compartido entre hilos
+ o  PERL_MAGIC_collxfrm       vtbl_collxfrm  Transformación de configuración regional
+ P  PERL_MAGIC_tied           vtbl_pack      Array o hash enlazado
+ p  PERL_MAGIC_tiedelem       vtbl_packelem  Elemento de array o hash enlazado
+ q  PERL_MAGIC_tiedscalar     vtbl_packelem  Escalar o identificador enlazado
+ r  PERL_MAGIC_qr             vtbl_regexp    Regex qr// precompilado
+ S  PERL_MAGIC_sig            (ninguno)      %SIG hash
+ s  PERL_MAGIC_sigelem        vtbl_sigelem   %SIG elemento hash
+ t  PERL_MAGIC_taint          vtbl_taint     Entintado
+ U  PERL_MAGIC_uvar           vtbl_uvar      Disponible para usarse por
+                                             extensiones
+ u  PERL_MAGIC_uvar_elem      (ninguno)      Reservado para usarse por
+                                             extensiones
+ V  PERL_MAGIC_vstring        (ninguno)      SV era vstring literal
+ v  PERL_MAGIC_vec            vtbl_vec       vec() como valor a la izquierda
+ w  PERL_MAGIC_utf8           vtbl_utf8      Información UTF-8 cacheada
+ x  PERL_MAGIC_substr         vtbl_substr    substr() como valor a la izquierda
+ y  PERL_MAGIC_defelem        vtbl_defelem   Iterador "foreach" en la oculta
+                                             variable / parámetro inteligente
+                                             vivificación
+ \  PERL_MAGIC_lvref          vtbl_lvref     Constructor de referencia como valos a la izquierda
+                                             constructor
+ ]  PERL_MAGIC_checkcall      vtbl_checkcall En la propia línea/mutación de llamada
+                                             a este CV
+ ~  PERL_MAGIC_ext            (ninguno)      Disponible para usarse por
+                                             extensiones
+
+=for mg_vtable.pl end
+
+Cuándo existen en la tabla tanto una letra en mayúscula como en minúscula, entonces la letra mayúscula se usa típicamente para representar alguna clase de tipo compuesto (una lista o un hash), y la letra minúscula suele representar un elemento de ese tipo compuesto.  Algún código interno hacen uso de este caso de relación.  Sin embargo, 'v' y 'V' (vec y v-string) no están relacionados de ninguna forma.
+
+Los tipos mágicos C<PERL_MAGIC_ext> y C<PERL_MAGIC_uvar> están definidos específicamente para usarse por las extensiones y no será utilizado por el propio perl.
+Las extensiones pueden utilizar la magia de C<PERL_MAGIC_ext> para 'adjuntar' información privada a variables (típicamente objetos).  Esto es especialmente útil porque no hay ninguna manera para el código normal perl corromper esta información privada (a diferencia de usar elementos extras de un objeto hash).
+
+De modo parecido, la magia C<PERL_MAGIC_uvar> se puede utilizar como tie() para llamar a una función C en cualquier momento en que se utilice o cambie un valor de escalar.  Los puntos de campo C<mg_ptr> de C<MAGIC> apuntan a una estructura C<ufuncs>:
+
+    struct ufuncs {
+        I32 (*uf_val)(pTHX_ IV, SV*);
+        I32 (*uf_set)(pTHX_ IV, SV*);
+        IV uf_index;
+    };
+
+Cuándo se lea o escriba el SV, se llamará a la función C<uf_val> o C<uf_set> con C<uf_index> como primer argumento y un puntero al SV como el segundo.  Un ejemplo sencillo de cómo añadir la magia C<PERL_MAGIC_uvar> se muestra más abajo.  Note que sv_magia copia la estructura ufuncs, así que la puede reservar con seguridad en la pila.
+
+    void
+    Umagic(sv)
+        SV *sv;
+    PREINIT:
+        struct ufuncs uf;
+    CODE:
+        uf.uf_val   = &my_get_fn;
+        uf.uf_set   = &my_set_fn;
+        uf.uf_index = 0;
+        sv_magic(sv, 0, PERL_MAGIC_uvar, (char*)&uf, sizeof(uf));
+
+Adjuntar C<PERL_MAGIC_uvar> a arrays es permisible pero no tiene efecto.
+
+Para hashes hay un gancho especializado que da control sobre las claves hash (pero no los valores).  Este gancho llama al C<PERL_MAGIC_uvar> 'get' mágico si la función "set" en la estructura C<ufuncs> es NULL.  El gancho está activado siempre que el hash se acceda con una clave especificada como un C<SV> a través de las funciones C<hv_store_ent>, C<hv_fetch_ent>, C<hv_delete_ent> y C<hv_exists_ent>.  Acceder a la clave como una cadena a través de las funciones sin el sufijo C<..._ent> elude el gancho.  Vea L<Hash::Util::FieldHash/GUTS> para una descripción detallada.
+
+Note que por que las múltiples extensiones se puede utilizar la magia C<PERL_MAGIC_ext> o C<PERL_MAGIC_uvar>, es importante para extensiones para tener cuidado extra para evitar conflicto.  Típicamente es suficiente en utilizar sólo la magia en los objetos bendecidos de la misma clase en la extensión.
+Para la magia C<PERL_MAGIC_ext>, es normalmente una buena idea para definir un C<MGVTBL>, incluso si todos sus campos serán C<0>, de modo que punteros particulares C<MAGIC> se pueden identificar como una clase particular de magia utilizando su tabla virtual mágica.  C<mg_findext> proporciona una manera fácil de hacer que:
+
+    STATIC MGVTBL my_vtbl = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    MAGIC *mg;
+    if ((mg = mg_findext(sv, PERL_MAGIC_ext, &my_vtbl))) {
+        /* esto es realmente nuestro, no es el PERL_MAGIC_ext de otro módulo */
+        my_priv_data_t *priv = (my_priv_data_t *)mg->mg_ptr;
+        ...
+    }
+
+También note que las funciones C<sv_set*()> y C<sv_cat*()> descritas antes B<no> invocan la magia 'set' en sus objetivos.  Esto tiene que hacerse por el tanto llamando a la macro C<SvSETMAGIC()> después de llamar a estas funciones, o usar una de las funciones C<sv_set*_mg()> o C<sv_cat*_mg()>.  De modo parecido, código genérico C tiene que llamar a la macro C<SvGETMAGIC()> para invocar cualquier 'get' mágico si usan un SV obtenido de fuentes externas en funciones que no manejan la magia.
+Vea L<perlapi> para una descripción de estas funciones.
+Por ejemplo, las llamadas a las funciones C<sv_cat*()> típicamente necesitan seguirse por C<SvSETMAGIC()>, pero no necesitan una previa C<SvGETMAGIC()> ya que su implementación maneja la magia 'get'.
+
+=head2 Encontrando la magia
+
+    MAGIC *mg_find(SV *sv, int type); /* Encuentre el puntero mágico de este
+                                       * tipo */
+
+Esta rutina devuelve un puntero a una estructura C<MAGIC> almacenada en el SV.
+Si el SV no tiene esa característica mágica, se devuelve C<NULL>.  Si el SV tiene múltiples instancias de esa característica mágica, el primero será el que se devuelva.  C<mg_findext> se puede usar para encontrar una estructura C<MAGIC> de un SV basado tanto en su tipo mágico y su tabla virtual mágica:
+
+    MAGIC *mg_findext(SV *sv, int type, MGVTBL *vtbl);
+
+También, si el SV que se pasó a C<mg_find> o C<mg_findext> no es de tipo SVt_PVMG, Perl hará un volcado de núcleo.
+
+    int mg_copy(SV* sv, SV* nsv, const char* key, STRLEN klen);
+
+Esta rutina mira a ver qué tipos de magia C<sv> tiene.  Si el campo C<mg_type> es una letra mayúscula, entonces el C<mg_obj> se copia a C<nsv>, pero el campo C<mg_type> se cambia a letra minúscula.
+
+=head2 Entendiendo la magia de los hashes y arrays enlazados
+
+Los hashes y arrays enlazados son bestias mágicas del tipo mágico C<PERL_MAGIC_tied>.
+
+AVISO: A partir de la publicación de 5.004, el uso apropiado de las funciones de acceso a array y hash requiere entender unas cuantas advertencias.  Algunas de estas advertencias se consideran errores en la API, para arreglarse en publicaciones posteriores, y están más abajo entre marcados con [PUEDECAMBIAR].  Si se encuentra de hecho aplicando tal información en esta sección, sea consciente de que el comportamiento puede cambiar en el futuro, hum, sin advertencia previa.
+
+La función perl C<tie> asocia una variable con un objeto que implementa los diversos métodos GET, SET, etc.  Para realizar lo equivalente de la función perl C<tie> desde una XSUB, debe imitar ese comportamiento.  El código siguiente lleva a cabo los pasos necesarios; en primer lugar crea un nuevo hash, y entonces crea un segundo hash el cuál bendice a la clase que implementará los métodos C<tie>.  Finalmente, enlaza juntos los dos hashes, y devuelve una referencia al nuevo hash enlazado.  Note que el código siguiente NO llama al método TIEHASH en la clase MyTie (vea L<Llamar a rutinas Perl desde programas C> para detalles sobre cómo hacer esto.
+
+    SV*
+    mytie()
+    PREINIT:
+        HV *hash;
+        HV *stash;
+        SV *tie;
+    CODE:
+        hash = newHV();
+        tie = newRV_noinc((SV*)newHV());
+        stash = gv_stashpv("MyTie", GV_ADD);
+        sv_bless(tie, stash);
+        hv_magic(hash, (GV*)tie, PERL_MAGIC_tied);
+        RETVAL = newRV_noinc(hash);
+    OUTPUT:
+        RETVAL
+
+A la función C<av_store>, cuando se le da un array enlazado como argumento, simplemente copia la magia del array en el valor que se "almacenará", utilizando C<mg_copy>.  También pueda regresar C<NULL>, indicando que el valor realmente no necesita almacenarse en el array.  [PUEDECAMBIAR] Después de una llamada a C<av_store> en un array enlazado, el llamante necesitará normalmente llamar a C<mg_set(val)> para invocar realmente al método a nivel de perl "STORE" en el objeto TIEARRAY.  Si C<av_store> devolvió C<NULL>, normalmente también será necesaria una llamada a C<SvREFCNT_dec(val)> para evitar una fuga de memoria. [/PUEDECAMBIAR]
+
+El párrafo anterior es aplicable literalmente al acceso del hash enlazado utilizando también las funciones C<hv_store> y C<hv_store_ent>.
+
+C<av_fetch> y las correspondientes funciones hash C<hv_fetch> y C<hv_fetch_ent> realmente devuelven un valor mortal indefinido cuya magia se ha inicializado utilizando C<mg_copy>.  Nota que el valor así devuelto no necesita liberarse, ya que ya es mortal.  [PUEDECAMBIAR] Pero necesitará llamar a C<mg_get()> sobre el valor devuelto para invocar a nivel de perl al método "FETCH" sobre el objeto TIE subyacente.  De modo parecido, también puede llamar a C<mg_set()> sobre el valor devuelto después de posiblemente asignar un valor adecuado para él utilizando C<sv_setsv>, el cual invocará al "método" "STORE" sobre el objeto TIE. [/PUEDECAMBIAR]
+
+[PUEDECAMBIAR] En otras palabras, las funciones de recuperar/almacenar para array o hash realmente no recuperan o almacenan valores reales en el caso de array y hashes enlazados.  Ellas simplemente llaman a C<mg_copy> para adjuntar magia a los valores que iban a ser "almacenados" o "recuperados".  Las últimas llamadas a C<mg_get> y C<mg_set> realmente hacen el trabajo de invocar a los métodos TIE en los objetos subyacentes.  Por ello el mecanismo mágico actualmente implementa una clase de acceso perezoso a arrays y hashes.
+
+Actualmente (a partir de perl versión 5.004), uso de las funciones de acceso a hash y array requieren que el usuario sea consciente de si están operando en hashes y arrays "normales", o en sus variantes enlazados.  El API se puede cambiar para proporcionar acceso más transparente a ambos tipos de datos enlazados y normales en versiones futuras.
+[/PUEDECAMBIAR]
+
+Haría bien para entender que el TIEARRAY y TIEHASH las interfaces es mero azúcar para invocar algunas llamadas de métodos perl mientras utiliza la sintaxis uniforme de hash y array.  El uso de este azúcar impone alguna sobrecarga (típicamente sobre dos a cuatro códigos de operación extras por operación FETCH/STORE, además de la creación de todas las variables mortales requeridas para invocar los métodos).
+Esta sobrecarga será comparativamente pequeña si los métodos TIE son sustanciales, pero si son sólo unas pocas largas sentencias, la sobrecarga no será insignificante.
+
+=head2 Cambios en locales
+
+Perl tiene una construcción muy hábil
+
+  {
+    local $var = 2;
+    ...
+  }
+
+Esta construcción es I<aproximadamente> equivalente a
+
+  {
+    my $oldvar = $var;
+    $var = 2;
+    ...
+    $var = $oldvar;
+  }
+
+La diferencia más grande es que la primera construcción restablecería el valor inicial de $var, independientemente de cómo el control salga del bloque: C<goto>, C<return>, C<die>/C<eval>, etc. Es un poco más eficaz también.
+
+Hay una manera de conseguir una tarea similar de C vía Perl API: crear un I<pseudo-bloque>, y hacer algunos cambios para que automáticamente se deshagan al final de él, tanto explícitamente o por una salida no local (vía die()).  Una construcción parecida a un I<bloque> se crea por un par de macros C<ENTER>/C<LEAVE> (vea L<perlcall/"Devolver un escalar">).
+Tal construcción se puede crear especialmente para alguna tarea importante localizada, o utilizar una actual (como fronteras de cierre de un bloque/subrutina Perl, o un par actual para liberar TMP).  (En el segundo caso la sobrecarga de localización adicional tiene que ser casi insignificante).  Nota que cualquier XSUB es encerrada automáticamente en un par C<ENTER>/C<LEAVE>.
+
+Dentro de tal I<pseudo-bloque> el servicio siguiente está disponible:
+
+=over 4
+
+=item C<SAVEINT(int i)>
+
+=item C<SAVEIV(IV i)>
+
+=item C<SAVEI32(I32 i)>
+
+=item C<SAVELONG(long i)>
+
+Estas macros disponen las cosas para restaurar el valor de variable entero C<i> al final del cierre I<pseudo-bloque>.
+
+=item C<SAVESPTR(s)>
+
+=item C<SAVEPPTR(p)>
+
+Estas macros disponen las cosas para restaurar el valor de los punteros C<s> y C<p>.  C<s> tiene que ser un puntero de un tipo que sobreviva a la conversión a C<SV*> y al revés, C<p> tendría que ser capaz de sobrevivir a la conversión a C<char*> y al revés.
+
+=item C<SAVEFREESV(SV *sv)>
+
+El contador de referencias de C<sv> se decrementará al final de I<pseudo-bloque>.  Esto es similar a C<sv_2mortal> en que es también un mecanismo para hacer un C<SvREFCNT_dec> retrasado.  Aun así, mientras C<sv_2mortal> extiende el tiempo de vida de C<sv> hasta el principio de la próxima declaración, C<SAVEFREESV> lo extiende hasta el fin del ámbito de cierre.  Estos tiempos de vida pueden ser enormemente diferentes.
+
+Compare también con C<SAVEMORTALIZESV>.
+
+=item C<SAVEMORTALIZESV(SV *sv)>
+
+Justo como C<SAVEFREESV>, pero mortaliza C<sv> al final del ámbito actual en vez de decrementar su contador de referencia.  Esto normalmente tiene el efecto de mantener C<sv> vivo hasta que termine la ejecución de la sentencia que llamó el ámbito actual.
+
+=item C<SAVEFREEOP(OP *op)>
+
+El C<OP *> se libera (op_free()) al final del I<pseudo-bloque>.
+
+=item C<SAVEFREEPV(p)>
+
+El bloque de memoria apuntado por C<p> se libera (con Safefree()) al final del I<pseudo-bloque>.
+
+=item C<SAVECLEARSV(SV *sv)>
+
+Limpia una ranura en el scratchpad actual que corresponde a C<sv> al final del I<pseudo-bloque>.
+
+=item C<SAVEDELETE(HV *hv, char *key, I32 length)>
+
+La clave C<key> de C<hv> se elimina al final de I<pseudo-bloque>.  La cadena apuntada por C<key> se libera (con Safefree()).  Si uno tiene una I<key> en un almacenamiento de corta vida, la cadena correspondiente se puede reasignar así:
+
+  SAVEDELETE(PL_defstash, savepv(tmpbuf), strlen(tmpbuf));
+
+=item C<SAVEDESTRUCTOR(DESTRUCTORFUNC_NOCONTEXT_t f, void *p)>
+
+Al final del I<pseudo-bloque> la función C<f> se llama con el único argumento C<p>.
+
+=item C<SAVEDESTRUCTOR_X(DESTRUCTORFUNC_t f, void *p)>
+
+Al final del I<pseudo-bloque> la función C<f> se llama con el argumento de contexto implícito (si hay), y C<p>.
+
+=item C<SAVESTACK_POS()>
+
+El desplazamiento actual en la pila interna de Perl (es decir, C<SP>) se restaura al final del I<pseudo-bloque>.
+
+=back
+
+La siguiente lista de API contiene funciones, por lo que necesita proporcionar explícitamente punteros a los datos modificables (tanto punteros C como C<GV *> perleros).  Dónde las anteriores macros toman C<int>, una función similar toma C<int *>.
+
+=over 4
+
+=item C<SV* save_scalar(GV *gv)>
+
+Equivalente al código Perl C<local $gv>.
+
+=item C<AV* save_ary(GV *gv)>
+
+=item C<HV* save_hash(GV *gv)>
+
+Similar a C<save_scalar>, pero localiza C<@gv> y C<%gv>.
+
+=item C<void save_item(SV *item)>
+
+Duplica el valor actual de C<SV>, en la salida del actual I<pseudo-bloque> C<ENTER>/C<LEAVE> restaurará el valor de C<SV> utilizando el valor almacenado.  No maneja magia.  Use C<save_scalar> si se afectó a la magia.
+
+=item C<void save_list(SV **sarg, I32 maxsarg)>
+
+Una variante de C<save_item> que toma múltiples argumentos vía un array C<sarg> de C<SV*> de longitud C<maxsarg>.
+
+=item C<SV* save_svref(SV **sptr)>
+
+Similar a C<save_scalar>, pero reinstalará un C<SV *>.
+
+=item C<void save_aptr(AV **aptr)>
+
+=item C<void save_hptr(HV **hptr)>
+
+Similar a C<save_svref>, pero localiza C<AV *> y C<HV *>.
+
+=back
+
+El módulo C<Alias> implementa la localización de los tipos básicos dentro del I<ámbito del llamante>.  También las personas que estén interesadas en cómo localizar cosas en el ámbito que lo contiene debería echar un vistazo.
+
+=head1 Subrutinas
+
+=head2 XSUB y la pila de argumentos
+
+El mecanismo XSUB es una forma sencilla para los programas Perl accedan a subrutinas C.
+Una rutina XSUB tendrá una pila que contendrá los argumentos desde el programa Perl, y una manera de mapear desde las estructuras de datos Perl a una equivalente en C.
+
+La pila de argumentos son accesibles a través de la macro C<ST(n)>, que devuelve el C<n>-ésimo argumento de la pila.  El argumento 0 es el primer argumento pasado en la llamada de la subrutina Perl.  Estos argumentos son C<SV*>, y se pueden usar en cualquier lugar donde se use un C<SV*>.
+
+La mayor parte del tiempo, la salida de la rutina C se puede manejar a través del uso de las directivas RETVAL y OUTPUT.  Aun así, hay algunos casos donde la pila de argumentos no es lo suficientemente grande para manejar todos los valores de retorno.
+Un ejemplo es la llamada POSIX tzname(), el cual no toma ningún argumento, pero retorna dos, el huso horario local estándar y las abreviaturas de tiempo del verano.
+
+Para manejar esta situación, se utiliza la directiva PPCODE y la pila se extiende utilizando la macro:
+
+    EXTEND(SP, num);
+
+donde C<SP> es la macro que representa la copia local del puntero de pila y C<num> es el número de elementos que la pila tendría que ampliarse.
+
+Ahora que hay espacio en la pila, los valores se pueden poner utilizando la macro C<PUSHs>.  Los valores puestos a menudo necesitarán ser "mortales" (vea L</Contadores de referencia y mortalidad>):
+
+    PUSHs(sv_2mortal(newSViv(an_integer)))
+    PUSHs(sv_2mortal(newSVuv(an_unsigned_integer)))
+    PUSHs(sv_2mortal(newSVnv(a_double)))
+    PUSHs(sv_2mortal(newSVpv("Alguna cadena",0)))
+    /* Aunque el último ejemplo es mejor escribirlo de forma más
+     * eficiente: */
+    PUSHs(newSVpvs_flags("Alguna cadena", SVs_TEMP))
+
+Y ahora el programa Perl que llama a C<tzname>, los dos valores se asignarán como en:
+
+    ($standard_abbrev, $summer_abbrev) = POSIX::tzname;
+
+Una alternativa (and posiblemente más simple) método para poner valores en la pila es usar la macro:
+
+    XPUSHs(SV*)
+
+Esta macro ajusta automáticamente la pila por usted, si se necesita.  Así, no necesita llamar a C<EXTEND> para extender la pila.
+
+A pesar de sus sugerencias en versiones más tempranas de este documento las macros C<(X)PUSH[iunp]> I<no> son convenientes para las XSUB que retornan resultados múltiples.
+Para eso, puede usar las macros C<(X)PUSHs> mostradas antes, o usar en su lugar las nuevas macros C<m(X)PUSH[iunp]>; vea L</Poner un valor C en la pila Perl>.
+
+Para más información, consulte L<perlxs> y L<perlxstut>.
+
+=head2 Autocarga con XSUB
+
+Si una rutina AUTOLOAD es una XSUB, igual que con subrutinas Perl, Perl pone el nombre completamente cualificado de la subrutina autocargada en la variable $AUTOLOAD del paquete de la XSUB.
+
+Pero también pone la misma información en ciertos campos de la propia XSUB:
+
+    HV *stash           = CvSTASH(cv);
+    const char *subname = SvPVX(cv);
+    STRLEN name_length  = SvCUR(cv); /* en bytes */
+    U32 is_utf8         = SvUTF8(cv);
+
+C<SvPVX(cv)> contiene sólo el propio nombre de la sub, sin incluir el paquete.
+Para una rutina AUTOLOAD en UNIVERSAL o una de su superclase, C<CvSTASH(cv)> devuelve NULL durante una llamada a un método en un paquete inexistente.
+
+B<Nota>: Establecer $AUTOLOAD dejó de funcionar en 5.6.1, que tampoco soporta sub AUTOLOAD en XS.  Perl 5.8.0 presentó el uso de campos en el propio XSUB.  Perl 5.16.0 recuperó el establecimiento de $AUTOLOAD.  Si necesita dar soporte a 5.8-5.14, use los campos de XSUB.
+
+=head2 Llamar a rutinas Perl desde los programas C
+
+Hay cuatro rutinas que se pueden usar para llamar a una subrutina Perl desde dentro de un C programa.  Estas cuatro son:
+
+    I32  call_sv(SV*, I32);
+    I32  call_pv(const char*, I32);
+    I32  call_method(const char*, I32);
+    I32  call_argv(const char*, I32, char**);
+
+La rutina que se usa más a menudo es C<call_sv>.  El argumento C<SV*> contiene tanto el nombre de la subrutina Perl que se va a llamar, o una referencia a la subrutina.  El segundo argumento consta de identificadores que controlan el contexto en el cual se llama a la subrutina, si se pasarán argumentos a la subrutina, cómo deberían atraparse los errores, y cómo tratar los valores de retorno.
+
+Las cuatro rutinas devuelven el número de argumentos que la subrutina devuelve en la pila Perl.
+
+Estas rutinas se utilizaban para llamar a C<perl_call_sv>, etc., antes de Perl v5.6.0, pero esos nombres ahora están obsoletos; por compatibilidad se proporcionan macros con el mismo nombre.
+
+Cuando use cualquiera de estas rutinas (excepto C<call_argv>), el programador tiene que manipular la pila Perl.  Estas incluyen las siguientes macros y funciones:
+
+    dSP
+    SP
+    PUSHMARK()
+    PUTBACK
+    SPAGAIN
+    ENTER
+    SAVETMPS
+    FREETMPS
+    LEAVE
+    XPUSH*()
+    POP*()
+
+Para una descripción detallada de las convenciones de llamada de C a Perl, consulte L<perlcall>.
+
+=head2 Poner un valor C en la pila Perl
+
+Un montón de códigos de operación (esto es una operación elemental en la pila de la máquina interna de perl) ponen un SV* en la pila.  Aun así, como una optimización el correspondiente SV es (normalmente) no se recrea en cada ocasión.  Los códigos de operación reutilizan especialmente los SV asignados (I<objetivo>s) que no estén (como un corolario) constantemente liberados/creados.
+
+Cada uno de los objetivos se crea una sola vez (pero vea L<Scratchpads y recursión> más abajo), y cuándo un código de operación necesite poner un entero, un doble, o una cadena en la pila, simplemente establece las partes correspondientes de su I<objetivo> y pone el I<objetivo> en la pila.
+
+La macro para poner este objetivo en la pila es C<PUSHTARG>, y se utiliza directamente en algunos códigos de operación, así como indirectamente en millones de otros, los cuales lo utilizan por medio de C<(X)PUSH[iunp]>.
+
+Ya que se reutiliza el objetivo, tiene que ser prudente cuando ponga múltiples valores en la pila.  El código siguiente no hace lo que piensa:
+
+    XPUSHi(10);
+    XPUSHi(20);
+
+Esto se traduce en "establece C<TARG> a 10, pon un puntero a C<TARG> en la pila; establece C<TARG> a 20, pon un puntero a C<TARG> en la pila".
+Al final de la operación, la pila no contiene los valores 10 y 20, pero de hecho contiene dos punteros a C<TARG>, el cual hemos establecido a 20.
+
+Si necesita poner empujar valores diferentes entonces debería o usar las macros C<(X)PUSHs>, o sino usar las nuevas macros C<m(X)PUSH[iunp]>, ninguna de las cuales usan C<TARG>.  Las macros C<(X)PUSHs> sencillamente ponen un SV* en la pila, la cual, como se indicó en L</XSUB y la pila de argumentos>, a menudo necesitará ser "mortal".  Las nuevas macros C<m(X)PUSH[iunp]> hacen esto un poco más fácil de conseguir creando un nuevo mortal por usted (vía C<(X)PUSHmortal>), poniéndolo en la pila (extendiéndolo si es necesario en el caso de las macros C<mXPUSH[iunp]>), y entonces estableciendo su valor.
+Así, en vez de escribir esto para "arreglar" el ejemplo anterior:
+
+    XPUSHs(sv_2mortal(newSViv(10)))
+    XPUSHs(sv_2mortal(newSViv(20)))
+
+puede simplemente escribir:
+
+    mXPUSHi(10)
+    mXPUSHi(20)
+
+En una nota relacionada, si usa C<(X)PUSH[iunp]>, entonces va a necesitar un C<dTARG> en las declaraciones de sus variables de modo que las macros C<*PUSH*> puede hacer uso de la variable local C<TARG>.  Vea también C<dTARGET> y C<dXSTARG>.
+
+=head2 Scratchpads
+
+Queda la cuestión sobre cuándo se crean los SV que son I<objetivo>s para los códigos de operación.  La respuesta es que se crean cuando la unidad actual -una subrutina o un archivo (para códigos de operación para sentencias exteriores de las subrutinas)- se compile.  Durante este momento se crea un array Perl especial anónimo, el cual llama a un scratchpad para la unidad actual.
+
+Un scratchpad mantiene los SV que son léxicos para la unidad actual y son objetivos para los códigos de operación.  Una versión anterior de este documento declaraba que uno puede deducir que un SV se mantiene en un scratchpad mirando en sus indicadores: los léxicos tienen establecido C<SVs_PADMY>, y los I<objetivo>s tienen establecido C<SVs_PADTMP>.  Pero esto nunca ha sido plenamente cierto.
+C<SVs_PADMY> podría establecer en una variable que ya no reside en ningún pad.
+Mientras que los I<objetivo>s tengan establecido C<SVs_PADTMP>, también se puede establecer en variables que nunca han residido en un pad, pero no obstante actúan como I<objetivo>s.  A partir de perl 5.21.5, el indicador C<SVs_PADMY> ya no se utiliza y se define como 0.  C<SvPADMY()> ahora retorna verdadero para cualquier cosa sin C<SVs_PADTMP>.
+
+La correspondencia entre OP y I<objetivo>s no es 1 a 1.  Diferentes OP en el árbol de compilación de la unidad puede usar el mismo objetivo, si esto no chocara con la vida esperada del provisional.
+
+=head2 Scratchpads y recursión
+
+De hecho no es 100 % cierto que una unidad compilada contiene un puntero al scratchpad AV.  De hecho contiene un puntero a un AV (inicialmente) de un elemento, y este elemento es el scratchpad AV.  ¿Por qué necesitamos un nivel extra de indirección?
+
+La respuesta es B<recursión>, y quizás B<hilos>.  Ambos pueden crear varios punteros de ejecución que van a la misma subrutina.  Para que la subrutina-hijo no escriba sobre los temporales de la subrutina-padre (el tiempo de vida que cubre la llamada al hijo), el padre y el hijo deberían tener diferentes scratchpads.  (¡I<Y> las léxicas deberían estar siempre separadas!)
+
+Así que cada subrutina nace con un array de scratchpads (de longitud 1).
+En cada entrada a la subrutina se comprueba que la profundidad actual de la recursión no sea superior a la longitud de este array, y si ocurre, se crea un nuevo scratchpad y se pone en el array.
+
+Los I<objetivo>s en este scratchpad están C<undef>, pero ya están marcados con los indicadores correctos.
+
+=head1 Asignación de memoria
+
+=head2 Asignación
+
+Toda la memoria que se usará con las funciones de la API Perl que debería manipularse usando las macros descritas en esta sección.  Las macros proporcionan la transparencia necesaria entre diferencias en la implementación actual de malloc que se esté utilizando en perl.
+
+Se sugiere que habilite la versión de malloc que se distribuye con Perl.  Mantiene seguimiento de diversos tamaños de memoria no asignada para satisfacer más rápidamente las peticiones de asignación.  Aun así, en algunas plataformas, pueda provocar errores espurios de malloc o free.
+
+Las siguientes tres macros se usan para inicializar memoria reservada:
+
+    Newx(pointer, number, type);
+    Newxc(pointer, number, type, cast);
+    Newxz(pointer, number, type);
+
+El primer argumento C<pointer> debería ser el nombre de una variable que apuntará a la nueva memoria reservada.
+
+El segundo y tercer argumentos C<number> and C<type> especifican cuánto de los datos estructurados del tipo especificado debería reservarse.  El argumento C<type> se pasa a C<sizeof>.  El argumento final a C<Newxc>, C<cast>, debería usarse si el argumento C<pointer> es diferente del argumento C<type>.
+
+A diferencia de las macros C<Newx> y C<Newxc>, la macro C<Newxz> llama a C<memzero> para poner a cero toda la memoria recientemente reservada.
+
+=head2 Reasignación
+
+    Renew(pointer, number, type);
+    Renewc(pointer, number, type, cast);
+    Safefree(pointer)
+
+Estas tres macros se usan para cambiar el tamaño de un búfer de memoria o para liberar una parte de la memoria que ya no se necesita.  Los argumentos a C<Renew> y C<Renewc> coinciden con los de C<New> y C<Newc> con la excepción de no necesitar el argumento "galleta mágica".
+
+=head2 Mover
+
+    Move(source, dest, number, type);
+    Copy(source, dest, number, type);
+    Zero(dest, number, type);
+
+Estas tres macros se usan para mover, copiar, o poner a cero memoria reservada anteriormente.  Los argumentos C<source> y C<dest> apuntan a los puntos iniciales del origen y destino.  Perl moverá, copiará, o pondrá a cero C<number> instancias del tamaño de la estructura de datos C<type> (utilizando la función C<sizeof>).
+
+=head1 PerlIO
+
+Las publicaciones más reciente de Perl han experimentado con eliminar la dependencia de Perl del conjunto estándar "normal" de E/S y permitir usar otras implementaciones de stdio.  Esto implica crear una nueva capa de abstracción que entonces llame a cualquier implementación con la que se compiló el stdio de Perl.  Todas las XSUB deberían usar ahora las funciones en la capa de abstracción PerlIO y no hacer ninguna suposición sobre qué clase de stdio se va a usar.
+
+Para una completa descripción de la abstracción PerlIO, consulte L<perlapio>.
+
+=head1 Código compilado
+
+=head2 Árbol de código
+
+Aquí describimos la forma interna en que Perl convierte su código.  Empezamos con un ejemplo sencillo:
+
+  $a = $b + $c;
+
+Esto se convierte a un árbol similar a este:
+
+             assign-to
+           /           \
+          +             $a
+        /   \
+      $b     $c
+
+(pero algo ligeramente más complicado).  Este árbol refleja la manera en que Perl interpreta su código, pero no tiene nada que ver con el orden de ejecución.
+Hay un "hilo" adicional que pasa por los nodos del árbol que muestra el orden de ejecución de los nodos.  En nuestro ejemplo simplificado anterior se parece a:
+
+     $b ---> $c ---> + ---> $a ---> assign-to
+
+Pero el árbol de compilado real para C<$a = $b + $c> es diferente: algunos nodos son I<optimizados>.  Como corolario, aunque el árbol real contiene más nodos que nuestro ejemplo simplificado, el orden de ejecución es el mismo que en nuestro ejemplo.
+
+=head2 Examinar el árbol
+
+Si tiene su perl compilado para depurar (normalmente compilado con C<-DDEBUGGING> en la línea de comandos de C<Configure>), puede examinar el árbol compilado especificando C<-Dx> en la línea de comando Perl.  La salida toma diversas líneas por nodo, y para C<$b+$c> se parece esto:
+
+    5           TYPE = add  ===> 6
+                TARG = 1
+                FLAGS = (SCALAR,KIDS)
+                {
+                    TYPE = null  ===> (4)
+                      (era rv2sv)
+                    FLAGS = (SCALAR,KIDS)
+                    {
+    3                   TYPE = gvsv  ===> 4
+                        FLAGS = (SCALAR)
+                        GV = main::b
+                    }
+                }
+                {
+                    TYPE = null  ===> (5)
+                      (era rv2sv)
+                    FLAGS = (SCALAR,KIDS)
+                    {
+    4                   TYPE = gvsv  ===> 5
+                        FLAGS = (SCALAR)
+                        GV = main::c
+                    }
+                }
+
+Este árbol tiene 5 nodos (uno por especificador C<TYPE>), sólo 3 de ellos no están optimizados (uno por cada número en la columna de la izquierda).  Los hijos directos del nodo proporcionado corresponde a pares C<{}> en el mismo nivel de sangría, por ello este listado corresponde al árbol:
+
+                   add
+                 /     \
+               null    null
+                |       |
+               gvsv    gvsv
+
+El orden de ejecución se indica por marcas C<===E<gt>>, como en C<3 4 5 6> (nodo C<6> no se incluye en el listado anterior), es decir, C<gvsv gvsv add loquesea>.
+
+Cada cual de estos nodos representa una op., una operación fundamental dentro del núcleo Perl.  El código qué implementa cada operación se puede encontrar en los archivos F<pp*.c>; la función que implementa la op. con tipo C<gvsv> es C<pp_gvsv>, y así.  Como muestra el árbol anterior, diferentes ops. tiene números diferentes de hijos: C<add> es un operador binario, cuando uno esperaría, y así que tiene dos hijos.  Para acomodar los diferentes números de hijos, hay diversos tipos de op. de estructura de dato, y se enlazan juntos en diferentes maneras.
+
+El tipo más sencillo de op. de la estructura es C<OP>: este no tiene ningún hijo.  Los operadores unarios, C<UNOP>, tienen un hijo, y este está apuntado por el campo C<op_first>.  Operadores binarios (C<BINOP>) no sólo tienen un campo C<op_first> pero también un campo C<op_last>.  El tipo más complejo de op. es un C<LISTOP>, el cual tiene cualquier número de hijos.  En este caso, C<op_first> apunta al primer hijo y C<op_last> al último hijo.  Los hijos entre ellos se puede encontrar iterando siguiendo el puntero C<OpSIBLING> del primer hijo al último (pero vea más abajo).
+
+Hay también otros tipos de op.: un C<PMOP> controla una expresión regular, y no tiene ningún hijo, y un C<LOOP> puede o no tener hijos.  Si el campo C<op_children> no es cero, se comporta como C<LISTOP>.  Para complicar el tema, si un C<UNOP> es de hecho un op. C<null> después de la optimización (vea L</Compilación pase 2: propagación de contexto>) sigue teniendo hijos de acuerdo con su tipo anterior.
+
+Finalmente, hay C<LOGOP>, u op. lógico. Como un C<LISTOP>, esto tiene uno o más hijos, pero no tiene un campo C<op_last>: así que tiene que seguir C<op_first> y luego la propia cadena C<OpSIBLING> para encontrar al último hijo. En cambio tiene un campo C<op_other>, que es comparable al campo C<op_next> descrito más abajo, y representa un camino alternativo de ejecución. Los operadores como C<and>, C<or> y C<?> son C<LOGOP>. Note que en general, C<op_other> no puede apuntar a cualquiera de los hijos directos del C<LOGOP>.
+
+Empezar en versión 5.21.2, perl compilado con la definición experimental C<-DPERL_OP_PARENT> añade un indicador booleano extra por cada op., C<op_moresib>.  Cuando no está puesto, indica que esto es el último op. en una cadena C<OpSIBLING>. Esto libera el campo C<op_sibling> en el último hermano para apuntar al op. padre. Bajo esta compilación, ese campo también se renombra a C<op_sibparent> para reflejar su papel. La macro C<OpSIBLING(o)> envuelve este comportamiento especial, y siempre devuelve NULL en el último hermano.  Con esta compilación la función C<op_parent(o)> se puede usar para encontrar el padre de cualquier op. Así para futura compatibilidades, siempre debería utilizar la macro C<OpSIBLING(o)> en lugar de acceder directamente C<op_sibling>.
+
+Otra manera de examinar el árbol es utilizar un módulo de soporte de compilación, tal como L<B::Concise>.
+
+=head2 Compilación paso 1: comprobar rutinas
+
+El árbol lo crea el compilador mientras el código I<yacc> alimenta las construcciones que reconoce.  Ya que I<yacc> funciona de abajo a arriba, hace el primer paso de la compilación perl.
+
+Lo que hace interesante para los desarrolladores perl es que se puede realizar alguna optimización en este paso.  Esto es lo que se llama optimización por "rutinas de control".  La correspondencia entre nombres de nodo y las correspondientes rutinas de control se describe en F<opcode.pl> (no olvide ejecutar C<make regen_headers> si modifica este archivo).
+
+Se llama a una rutina de control cuando el nodo se construye completamente excepto para el hijo de orden de ejecución.  Ya que en estos momentos no hay retro-enlaces al nodo recientemente construido, uno puede hacer cualquier operación al nivel del nodo superior, incluyendo liberarlo y/o crear nuevos nodos por encima/debajo de él.
+
+La rutina de control devuelve el nodo que tendría que insertarse en el árbol (si el nodo de nivel superior no se modificó, la rutina de control devuelve su argumento).
+
+Por convención, las rutinas de control tienen nombres como C<ck_*>.  Se llaman normalmente desde subrutinas C<new*OP> (o C<convert>) (que a su vez se llaman desde F<perly.y>).
+
+=head2 Compilación paso 1a: plegado de constantes
+
+Inmediatamente después de que se llame a la rutina de control el nodo devuelto se comprueba para que sea ejecutable en tiempo de compilación.  Si lo es (el valor juzgado para ser constante) es inmediatamente ejecutado, y se sustituye por un nodo I<constant> con el "valor de retorno" del correspondiente subárbol.  El subárbol es eliminado.
+
+Si el plegado de constantes no se realizó, se crea el hilo de orden de ejecución.
+
+=head2 Compilación paso 2: propagación de contexto
+
+Cuándo se conoce el contexto para una parte del árbol de compilación, se propaga hacia abajo a través del árbol.  En este momento el contexto puede tener 5 valores (en vez de 2 para el contexto en tiempo de ejecución): void, booleano, escalar, lista y lvalue.  En contraste con el paso 1, este paso se procesa de arriba a abajo: el contexto de un nodo determina el contexto para sus hijos.
+
+En este momento se realizan optimizaciones adicionales dependientes del contexto.
+Ya que en este momento el árbol de compilación contiene retro-referencias (vía punteros de "hilo"), los nodos ahora no se pueden liberar (free()).  Para permitir liberar nodos optimizados en esta etapa, tales nodos son puestos a NULL (null()) en lugar de liberarlos (free()) (es decir, su tipo ha cambiado a OP_NULL).
+
+=head2 Compilación paso 3: optimización I<peephole>
+
+Después de crearse el árbol de compilación para una subrutina (o para un C<eval> o un archivo), se realiza un pase adicional sobre el código.  Este paso no es ni arriba-abajo ni abajo-arriba, sino el en orden de ejecución (con complicaciones adicionales para las condicionales).  Las optimizaciones realizadas en esta etapa están sujetas a las mismas restricciones que en el paso 2.
+
+Las optimizaciones I<peephole> se realizan llamando a la función apuntada por la variable global C<PL_peepp>.  Por defecto, C<PL_peepp> simplemente llama a la función apuntada por la variable global C<PL_rpeepp>.
+Por defecto, realiza algunos arreglos de ops. básicos y optimizaciones a lo largo de la ejecución en orden de la cadena de op., y llama recursivamente a C<PL_rpeepp> para cada cadena de ops. (resultante de las condicionales).  Las extensiones pueden proporcionar optimizaciones adicionales o arreglos, enganchando tanto por subrutina o etapa recursiva, así:
+
+    static peep_t prev_peepp;
+    static void my_peep(pTHX_ OP *o)
+    {
+        /* optimización personalizada por subrutina va aquí */
+        prev_peepp(aTHX_ o);
+        /* optimización personalizada por subrutina puede ir aquí también */
+    }
+    BOOT:
+        prev_peepp = PL_peepp;
+        PL_peepp = my_peep;
+
+    static peep_t prev_rpeepp;
+    static void my_rpeep(pTHX_ OP *o)
+    {
+        OP *orig_o = o;
+        for(; o; o = o->op_next) {
+            /* optimización personalizada por op. va aquí */
+        }
+        prev_rpeepp(aTHX_ orig_o);
+    }
+    BOOT:
+        prev_rpeepp = PL_rpeepp;
+        PL_rpeepp = my_rpeep;
+
+=head2 Ejecuta ops. pinchables
+
+El árbol de compilación se ejecuta en una función I<runops> (ejecutador de ops.).  Hay dos funciones I<runops>, en F<run.c> y en F<dump.c>.  C<Perl_runops_debug> se usa con DEBUGGING y C<Perl_runops_standard> se usa para todo lo demás.  Para un control fino sobre la ejecución del árbol de compilación es posible proporcionar sus propias funciones I<runops>.
+
+Es probablemente mejor copiar uno de las actuales funciones I<runops> y cambiarlo para ajustarlo a sus necesidades.  Entonces, en la sección BOOT de su XS archivo, añada la línea:
+
+  PL_runops = my_runops;
+
+Esta función debería ser tan eficaz como sea posible para mantener sus programas ejecutándose tan rápidamente como sea posible.
+
+=head2 Enganches de ámbito en tiempo de compilación
+
+A partir de perl 5.14 es posible enganchar en tiempo de compilación al mecanismo de ámbito léxico utilizando C<Perl_blockhook_register>.  Esto se utiliza así:
+
+    STATIC void my_start_hook(pTHX_ int full);
+    STATIC BHK my_hooks;
+
+    BOOT:
+        BhkENTRY_set(&my_hooks, bhk_start, my_start_hook);
+        Perl_blockhook_register(aTHX_ &my_hooks);
+
+Esto se dispondrá a llamar a C<my_start_hook> al inicio de la compilación en cada ámbito léxico.  Los enganches disponibles son:
+
+=over 4
+
+=item C<void bhk_start(pTHX_ int full)>
+
+Esto se llama justo después de empezar un nuevo ámbito léxico.  Nota que código Perl como este
+
+    if ($x) { ... }
+
+Crea dos ámbitos: el primero arranca en el C<(> y tiene C<full == 1>, el segundo arranca en el C<{> y tiene C<full == 0>.  Ambos terminan en C<}>, así que coincidirán con llamadas a C<start> y C<pre>/C<post_end>.  Cualquier cosa metida en la pila de salvaguarda por este gancho será expulsada justo antes del final del ámbito (de hecho entre los enganches C<pre_> y C<post_end>).
+
+=item C<void bhk_pre_end(pTHX_ OP **o)>
+
+Esto se llama al final de un ámbito léxico, justo antes de desenrollar la pila.  I<o> es la raíz del árbol de op. representando el ámbito; es un puntero doble así que puede reemplazar el OP si lo necesita.
+
+=item C<void bhk_post_end(pTHX_ OP **o)>
+
+Esto se llama al final de un ámbito léxico, justo después de desenrollar la pila.  I<o> es como antes.  Nota que es posible anidar las llamadas a C<pre_> y C<post_end>, si hay algo en la pila de salvaguarda que llame a una cadena eval.
+
+=item C<void bhk_eval(pTHX_ OP *const o)>
+
+Esto se llama justo antes de empezar a compilar un C<eval STRING>, C<do FILE>, C<require> o C<use>, después de que se haya establecido un eval.  I<o> es la OP que solicitó el eval, y normalmente será C<OP_ENTEREVAL>, C<OP_DOFILE> o C<OP_REQUIRE>.
+
+=back
+
+Una vez que tiene sus funciones de enganche, necesita una estructura C<BHK> para ponerles en ella.  Es mejor asignarlo estáticamente, ya que no hay ninguna manera de liberarlo una vez que esté registrado.  Los punteros de función deberían insertarse en esta estructura utilizando la macro C<BhkENTRY_set>, la cual también establece los indicadores que indican qué entradas son válidas.  Si por alguna razón necesita asignar su C<BHK> dinámicamente, asegúrese de ponerlo a cero antes de empezar.
+
+Una vez registrado, no hay ningún mecanismo para quitar estos ganchos, así que necesariamente tendrá que hacerlo usted mismo.  Una entrada en C<%^H> es probablemente la manera mejor, así que el efecto es en ámbito léxico; aun así es también posible utilizar las macros C<BhkDISABLE> y C<BhkENABLE> para cambiar las entradas temporalmente de encendidas a apagadas.  También debería ser consciente que en general al menos un ámbito se habrá abierto antes de que se haya cargado su extensión, así que verá algunos pares C<pre>/C<post_end> que no tienen un correspondiente C<start>.
+
+=head1 Examinar estructuras de datos internos con las funciones C<dump>
+
+Para ayudar a la depuración, el archivo fuente F<dump.c> contiene un número de funciones que produce una salida formateada de las estructuras de datos internos.
+
+El uso más común de estas funciones es C<Perl_sv_dump>; se utiliza para volcar SV, AV, HV y CV.  El módulo C<Devel::Peek> llama a C<sv_dump> para producir salida de depuración desde el espacio Perl, así que usuarios de ese módulo deberían estar ya familiarizados con su formato.
+
+C<Perl_op_dump> se puede usar para volcar una estructura C<OP> o cualquiera de sus derivadas, y producir una salida similar a C<perl -Dx>; de hecho, C<Perl_dump_eval> volcará la raíz principal del código evaluado, exactamente como C<-Dx>.
+
+Otras funciones útiles son C<Perl_dump_sub>, la cual conviete un C<GV> a un árbol de op.; C<Perl_dump_packsubs> la cuál llama a C<Perl_dump_sub> en todas las subrutinas de un paquete, así: (Afortunadamente, todas estas son xsubs, así que no hay árbol op.)
+
+    (gdb) print Perl_dump_packsubs(PL_defstash)
+
+    SUB attributes::bootstrap = (xsub 0x811fedc 0)
+
+    SUB UNIVERSAL::can = (xsub 0x811f50c 0)
+
+    SUB UNIVERSAL::isa = (xsub 0x811f304 0)
+
+    SUB UNIVERSAL::VERSION = (xsub 0x811f7ac 0)
+
+    SUB DynaLoader::boot_DynaLoader = (xsub 0x805b188 0)
+
+y C<Perl_dump_all>, que vuelva todas las subrutinas en el almacén y el árbol de op. de la raíz principal.
+
+=head1 Cuántos intérpretes múltiples y concurrentes se soportan
+
+=head2 Trasfondo y PERL_IMPLICIT_CONTEXT
+
+El intérprete Perl se puede considerar como una caja cerrada: tiene una API para alimentarlo con código o cualquier otra cosa que haga cosas, pero también tiene funciones para uso propio.  Esto huele mucho a un objeto, y tiene maneras para compilar Perl para que pueda tener múltiples intérpretes, con un intérprete representado tanto como una estructura C, o dentro de una estructura específica para hilos.  Estas estructuras contienen todo el contexto, el estado de ese intérprete.
+
+Una macro controla el sabor principal de compilación Perl: MULTIPLICITY.  La compilación MULTIPLICITY tiene una estructura C que empaqueta todo el estado del intérprete.  Con multiplicity habilitado en el pero, normalmente se define también PERL_IMPLICIT_CONTEXT, y habilita el soporte para pasar un primer argumento "escondido" que representa a las tres estructuras de datos.  MULTIPLICITY hace posibles a los perl multihilo (con el modelo de hilos I<ithreads>, relacionado con la macro USE_ITHREADS).
+
+Otras dos macros de "encapsulación" son PERL_GLOBAL_STRUCT y PERL_GLOBAL_STRUCT_PRIVATE (la última se convierte en la primera, y la primera se convierte en MULTIPLICITY).  La PERL_GLOBAL_STRUCT hace que todas las variables internas de Perl se envuelvan dentro de una única estructura global, struct perl_vars, accesible como (globales) &PL_Vars o PL_VarsPtr o la función Perl_GetVars().  El PERL_GLOBAL_STRUCT_PRIVADO va un paso más allá, hay todavía un sola estructura (alojada en main() tanto desde el montículo o desde la pila) pero no hay símbolos de datos globales que apuntan a él.  En cualquier caso la estructura global debería inicializarse como lo primero a hacer en main() utilizando Perl_init_global_struct() y consecuentemente deshacerlo después de perl_free() utilizando Perl_libre_global_struct(); por favor vea F<miniperlmain.c> para detalles sobre su uso.  También puede necesitar utilizar C<dVAR> en su codificación para "declarar las variables globales" cuándo las está utilizando.  dTHX hace esto por usted automáticamente.
+
+Para ver si tiene datos no-constantes puede utilizar un C<nm> BSD (o GNU) compatible:
+
+  nm libperl.a | grep -v ' [TURtr] '
+
+Si esto muestra cualesquiera símbolos C<D> o C<d> (o posiblemente C<C> o C<c>), tienen datos no-constantes.  Los símbolos que C<grep> elimina son como sigue: C<Tt> son I<texto>, o código; los C<Rr> son datos (constantes) de solo lectura (I<read-only>); y C<U> es I<indefinido>, a los símbolos externos referidos.
+
+La prueba F<t/porting/libperl.t> hace esta clase de comprobación de salud de símbolos en C<libperl.a>.
+
+Por razones de retro compatibilidad definir solamente PERL_GLOBAL_STRUCT no esconde realmente todos los símbolos dentro de una gran estructura global: algunas vtables PerlIO_xxx quedan visibles.  La PERL_GLOBAL_STRUCT_PRIVATE entonces esconde todo (vea cómo se usa PERLIO_FUNCS_DECL).
+
+Todo esto evidentemente requiere una manera para que las funciones internas de Perl sea o bien subrutinas que toman alguna clase de estructura como primer argumento, o bien las subrutinas que no toman nada como primer argumento.  Para habilitar estas dos muy diferentes maneras de compilar el intérprete, el código fuente de Perl (al igual que en muchas otras situaciones) hace un fuerte uso de las convenciones de nombres de macros y subrutinas.
+
+Primer problema: decidir qué funciones serán funciones públicas API y cuáles serán privadas.  Todas las funciones cuyos nombres empiezan con C<S_> son privadas (piense en "S" como "secreto" o "silente").  Todas las demás funciones comienzan con "Perl_", pero simplemente porque una función comience con "Perl_" no significa que es parte de la API.  (Vea L</Funciones internas>).  La manera más fácil de B<asegurar> que una función es parte de la API es encontrar su entrada en L<perlapi>.
+Si existe en L<perlapi>, es parte de la API.  Si no está, y cree que debería (es decir, lo necesita para su extensión), envíe un correo vía L<perlbug> explicando por qué piensa que debería ser.
+
+Segundo problema: tiene que haber una sintaxis de modo que las mismas declaraciones y llamadas de subrutina pueden pasar una estructura como su primer argumento, o no pasar nada.  Para solucionar esto, las subrutinas se nombran y declaran de una manera particular.  Aquí hay un inicio típico de una función estática utilizada dentro de las tripas de Perl:
+
+  STATIC void
+  S_incline(pTHX_ char *s)
+
+STATIC se vuelve "static" en C, y puede definirse (#define) a nada en algunas configuraciones, en el futuro.
+
+Una función pública (es decir, parte de la API interna, pero no necesariamente sancionada para usarse en extensiones) empieza así:
+
+  void
+  Perl_sv_setiv(pTHX_ SV* dsv, IV num)
+
+C<pTHX_> es una de un número de macros (en F<perl.h>) que esconden los detalles del contexto del intérprete.  THX representa "hilo" ("thread"), "esto" ("this"), o cosa ("thingy"), como es el caso.  (Y no, George Lucas no tiene nada que ver. :-). El primer carácter podría ser 'p' para un B<p>rototipo, 'a' para B<a>rgumento, o 'd' para B<d>eclaración, así que tenemos C<pTHX>, C<aTHX> y C<dTHX>, y sus variantes.
+
+Cuando Perl se compila sin opciones que establezcan PERL_IMPLICIT_CONTEXT, no hay ningún primer argumento que contenga el contexto del intérprete.  El guión bajo en la macro pTHX_ indica que la expansión de la macro necesita una coma después del argumento de contexto porque otros argumentos lo siguen.  Si no se define PERL_IMPLICIT_CONTEXT, pTHX_ se ignorará, y la subrutina no tendrá un prototipo que tome un argumento extra.  La forma de la macro sin el guión bajo final se utiliza cuándo hay no argumentos explícitos adicionales.
+
+Cuándo una función de núcleo llama a otra, debe pasarle el contexto.  Esto se esconde normalmente por medio de macros.  Considere C<sv_setiv>.  Se expande el algo como esto:
+
+    #ifdef PERL_IMPLICIT_CONTEXT
+      #define sv_setiv(a,b)      Perl_sv_setiv(aTHX_ a, b)
+      /* no puede hacer esto para funciones vararg; vea más abajo */
+    #else
+      #define sv_setiv           Perl_sv_setiv
+    #endif
+
+Esto funciona bien, y significa que los autores de XS pueden escribir alegremente:
+
+    sv_setiv(foo, bar);
+
+y seguir teniendo trabajo bajo todos los modos en que Perl podría haberse compilado.
+
+Esto no funciona tan limpiamente para funciones varargs, aunque las macros impliquen que el número de argumentos se sepa por adelantado.  En cambio necesitamos deletrearles completamente, pasando C<aTHX_> como el primer argumento (el núcleo de Perl tiende a hacer esto con funciones como Perl_warner), o utilizar una versión de contexto libre.
+
+La versión de contexto libre de Perl_warner se llama Perl_warner_nocontext, y no toma el argumento extra.  En cambio el hace dTHX; para conseguir el contexto desde el almacenamiento de hilo local.  Nosotros definimos C<#define warner Perl_warner_nocontext> para que esas extensiones obtengan la compatibilidad a nivel de código fuente a expensas del rendimiento.  (Pasar un arg es más barato que obtenerlo desde el almacenamiento del hilo local.)
+
+Puede ignorar [pad]THXx cuando explore las cabeceras/fuentes de Perl.
+Aquellos son estrictamente para usarse dentro del núcleo.  Las extensiones y embebedores sólo necesitan ser conscientes de [pad]THX.
+
+=head2 ¿Qué le sucedió a dTHR?
+
+C<dTHR> se presentó en perl 5.005 para soportar el viejo modelo de hilos.
+El viejo modelo de hilos ahora usa el mecanismo C<THX> para pasarle punteros de contexto, así que C<dTHR> ya no es útil.  Perl 5.6.0 y siguientes lo siguen manteniendo para compatibilidad del código fuente, pero se define como una no-op.
+
+=head2 ¿Cómo uso todo esto en extensiones?
+
+Cuándo Perl se compila con PERL_IMPLICIT_CONTEXT, las extensiones que llaman a cualesquiera funciones en la API Perl necesitará pasar el argumento de contexto inicial de alguna manera.  Lo más importante es que necesitará escribirlo de tal manera que la extensión aún se compile cuando Perl no se haya compilado con PERL_IMPLICIT_CONTEXT habilitado.
+
+Hay tres formas de hacerlo:  Primero, la forma fácil pero ineficiente, que también es el predeterminado, con el fin de mantener la compatibilidad de fuentes con extensiones: cada vez que F<XSUB.h> está #incluido, redefine el aTHX y aTHX_ macros para llamar a una función que devolverá el contexto.
+Entonces, algo como:
+
+        sv_setiv(sv, num);
+
+en su extensión se traducirá a esto cuando PERL_IMPLICIT_CONTEXT esté activo:
+
+        Perl_sv_setiv(Perl_get_context(), sv, num);
+
+o a esto otro:
+
+        Perl_sv_setiv(sv, num);
+
+No tiene que hacer nada nuevo en su extensión para obtener esto; ya que la biblioteca Perl proporciona Perl_get_context(), todo funcionará.
+
+La segunda forma, más eficiente, es usar la siguiente plantilla para su Foo.xs:
+
+        #define PERL_NO_GET_CONTEXT     /* queremos eficiencia */
+        #include "EXTERN.h"
+        #include "perl.h"
+        #include "XSUB.h"
+
+        STATIC void my_private_function(int arg1, int arg2);
+
+        STATIC void
+        my_private_function(int arg1, int arg2)
+        {
+            dTHX;       /* sacar el contexto */
+            ... llamar a muchas funciones de la API ...
+        }
+
+        [... etc ...]
+
+        MODULE = Foo            PACKAGE = Foo
+
+        /* XSUB típica */
+
+        void
+        my_xsub(arg)
+                int arg
+            CODE:
+                my_private_function(arg, 10);
+
+Tenga en cuenta que los únicos dos cambios de la forma normal de escribir una extensión es la adición de un C<#define PERL_NO_GET_CONTEXT> antes de incluir los encabezados de Perl, seguido de una declaración C<dTHX;> en el inicio de cada función que llamará a la API de Perl.  (Sabrá qué funciones necesitan esto, porque el compilador de C se quejará que hay un identificador no declarado en esas funciones).  No se necesitan cambios para las XSUB propias, porque la macro XS() se define correctamente para pasarlo en el contexto implícito si es necesario.
+
+La tercera forma, aún más eficiente, es asimilar cómo se hace dentro de las tripas de Perl:
+
+
+        #define PERL_NO_GET_CONTEXT     /* queremos eficiencia */
+        #include "EXTERN.h"
+        #include "perl.h"
+        #include "XSUB.h"
+
+        /* pTHX_ necesario sólo para funciones que llama a la API Perl */
+        STATIC void my_private_function(pTHX_ int arg1, int arg2);
+
+        STATIC void
+        my_private_function(pTHX_ int arg1, int arg2)
+        {
+            /* dTHX; no necesario aquí, porque THX es un argumento */
+            ... llamar a funciones de la API ...
+        }
+
+        [... etc ...]
+
+        MODULE = Foo            PACKAGE = Foo
+
+        /* XSUB típica */
+
+        void
+        my_xsub(arg)
+                int arg
+            CODE:
+                my_private_function(aTHX_ arg, 10);
+
+Esta implementación nunca tiene que recuperar el contexto usando una llamada de función, ya que siempre se pasa como un argumento adicional.  Dependiendo de sus necesidades de simplicidad o eficiencia, puede mezclar libremente los anteriores dos enfoques.
+
+Nunca añada una coma después de C<pTHX>: siempre use la forma de la macro con el guión bajo para funciones que toman argumentos explícitos, o el formulario sin el argumento para funciones sin argumentos explícitos.
+
+Si se está compilando Perl con el C<-DPERL_GLOBAL_STRUCT> la definición C<dVAR> es necesaria si las variables globales de Perl (vea F<perlvars.h> o F<globvar.sym>) se acceden en la función y C<dTHX> no se utiliza (si es necesario el C<dTHX> incluye el C<dVAR>).  Uno se da cuenta de la necesidad de C<dVAR> sólo con dicha definición de tiempo de compilación, porque de lo contrario, las variables globales de Perl son visibles tal cual.
+
+=head2 ¿Debería hacer algo especial si llamo a perl desde múltiples hilos?
+
+Si crea intérpretes en un hilo y luego procede a llamarlos en otro, debe asegurarse de que la ranura de almacenamiento local de subprocesos (Thread Local Storage, TLS) de perl se inicialice correctamente en cada uno de esos hilos.
+
+Las funciones de la API C<perl_alloc> y C<perl_clone> se establecerán automáticamente la TLS al intérprete que crearon, para que no haya necesidad de hacer nada especial si siempre se accede al intérprete en el mismo hilo que lo creó, y ese hilo no creó ni llamó a ningún otro intérprete después.  Si ese no es el caso, tiene que establecer la TLS del hilo antes de llamar a cualquier función en la API de Perl en ese intérprete en particular.  Esto se hace llamando a la macro C<PERL_SET_CONTEXT> en ese hilo como la primera cosa que hace:
+
+	/* hacer esto antes de hacer nada con some_perl */
+	PERL_SET_CONTEXT(some_perl);
+
+	... otras llamadas API de Perl en some_perl van aquí ...
+
+=head2 Planes futuros y PERL_IMPLICIT_SYS
+
+Así como PERL_IMPLICIT_CONTEXT proporciona una forma de agrupar todo lo que el intérprete sabe sobre sí mismo y lo transmite, por lo que también hay planes para permitir que el intérprete acumule todo lo que sabe sobre el entorno en el que se ejecuta.  Esto se habilita con la macro PERL_IMPLICIT_SYS.  Actualmente sólo funciona con USE_ITHREADS en Windows.
+
+Esto permite la capacidad de proporcionar un puntero adicional (llamado entorno "anfitrión") para todas las llamadas del sistema.  Esto hace posible para todo el material del sistema mantener su propio estado, dividido en siete estructuras C.  Estos son envoltorios delgados alrededor del sistema habitual de llamadas (vea F<win32/perllib.c>) para el ejecutable de perl predeterminado, pero para un anfitrión más ambicioso (como el que haría la emulación de fork()) todo el trabajo adicional necesario para fingir que diferentes intérpretes son en realidad diferentes "procesos", se haría aquí.
+
+El intérprete/motor Perl y el anfitrión son entidades ortogonales.
+Podría haber uno o más intérpretes en un proceso, y uno o más "anfitriones", con asociación libre entre ellos.
+
+=head1 Funciones internas
+
+Todas las funciones internas de Perl que se expondrán al mundo exterior son prefijados por C<Perl_> para que no entren en conflicto con funciones XS o funciones utilizadas en un programa en el que Perl está incrustado.
+De forma similar, todas las variables globales comienzan con C<PL_>.  (Por convención, las funciones estáticas comienzan con C<S_>).
+
+Dentro del núcleo de Perl (definido C<PERL_CORE>), puede acceder a las funciones ya sea con o sin el prefijo C<Perl_>, gracias a un montón de definiciones que viven en F<embed.h>.  Tenga en cuenta que el código de extensión debería I<not> establecer C<PERL_CORE>; esto expone los internos de perl completos, y es probable que cause rotura del XS en cada nueva versión de perl.
+
+El archivo F<embed.h> se genera automáticamente desde F<embed.pl> y F<embed.fnc>.  F<embed.pl> también crea los prototipos de los archivos de cabecera para las funciones internas, genera la documentación y muchas otras partes y piezas.  Es importante que cuando añada una nueva función al núcleo o cambie una existente, se cambian también los datos en la tabla en F<embed.fnc>.  Aquí una entrada de ejemplo desde la tabla:
+
+    Apd |SV**   |av_fetch   |AV* ar|I32 key|I32 lval
+
+La segunda columna es el tipo de retorno, la tercera columna el nombre.  Las columnas siguientes son los argumentos.  La primera columna es un conjunto de indicadores:
+
+=over 3
+
+=item A
+
+Esta función es una parte de la API pública.  Todas estas funciones deberían tener también 'd', muy pocas no.
+
+=item p
+
+Esta función tiene un prefijo C<Perl_>; es decir, se define como C<Perl_av_fetch>.
+
+=item d
+
+Esta función tiene documentación usando la función C<apidoc> que veremos en un segundo.  Algunas funciones tienen 'd' pero no 'A'; la doc. está bien.
+
+=back
+
+Otros indicadores disponibles son:
+
+=over 3
+
+=item s
+
+Esta es una función estática y se define como C<STATIC S_whatever>, y usualmente llamada dentro de las fuentes como C<whatever(...)>.
+
+=item n
+
+Esto no necesita un contexto de intérprete, por lo que la definición no tiene C<pTHX>, y se deduce que los llamantes no usan C<aTHX>.  (Vea L</Background and PERL_IMPLICIT_CONTEXT>).
+
+=item r
+
+Esta función nunca regresa; C<croak>, C<exit> y amigos.
+
+=item f
+
+Esta función toma un número variable de argumentos, estilo C<printf>.
+La lista de argumentos debe terminar con C<...>, así:
+
+    Afprd   |void   |croak          |const char* pat|...
+
+=item M
+
+Esta función forma parte de la API de desarrollo experimental y puede cambiar o desaparecer sin previo aviso.
+
+=item o
+
+Esta función no debe tener una macro de compatibilidad para definir, por ejemplo, C<Perl_parse> a C<parse>.  Se debe llamar como C<Perl_parse>.
+
+=item x
+
+Esta función no se exporta más allá del núcleo de Perl.
+
+=item m
+
+Está implementada como una macro.
+
+=item X
+
+Esta función se exporta explícitamente.
+
+=item E
+
+Esta función es visible a extensiones incluidas en el núcleo de Perl.
+
+=item b
+
+Compatibilidad hacia atrás binaria; esta función es una macro pero también tiene una implementación C<Perl_> (que se exporta).
+
+=item otros
+
+Vea los comentarios al principio de C<embed.fnc> para otros.
+
+=back
+
+Si edita F<embed.pl> o F<embed.fnc>, tendrá que ejecutar C<make regen_headers> para forzar una reconstrucción de F<embed.h> y otros archivos generados automáticamente.
+
+=head2 Impresión formateada de IV, UV y NV
+
+Si está imprimiendo IV, UV o NV en lugar de los códigos de formateo estilo stdio(3) como C<%d>, C<%ld>, C<%f>, debería usar las siguientes macros, por portabilidad
+
+        IVdf            IV en decimal
+        UVuf            UV en decimal
+        UVof            UV en octal
+        UVxf            UV en hexadecimal
+        NVef            NV como %e
+        NVff            NV como %f
+        NVgf            NV como %g
+
+Estos se encargarán de enteros de 64 bits y dobles largos.
+Por ejemplo:
+
+        printf("IV es %"IVdf"\n", iv);
+
+El IVdf se ampliará a lo que sea el formato correcto para las IV.
+
+Tenga en cuenta que hay diferentes "dobles largos": Perl usará lo que tenga el compilador.
+
+Si está imprimiendo direcciones de punteros, use UVxf combinado con PTR2UV(), no utilice %lx o %p.
+
+=head2 Puntero-a-Entero y Entero-a-Puntero
+
+Ya que el tamaño de puntero no es necesariamente igual al tamaño de un entero, use las siguientes macros para hacer lo correcto.
+
+        PTR2UV(puntero)
+        PTR2IV(puntero)
+        PTR2NV(puntero)
+        INT2PTR(tipodepuntero, entero)
+
+Por ejemplo:
+
+        IV  iv = ...;
+        SV *sv = INT2PTR(SV*, iv);
+
+y
+
+        AV *av = ...;
+        UV  uv = PTR2UV(av);
+
+=head2 Gestión de excepciones
+
+Existen una pareja de macros para hacer una gestión muy básica en los módulos XS.  Tiene que definir C<NO_XSLOCKS> antes de incluir F<XSUB.h> para poder usar estas macros:
+
+        #define NO_XSLOCKS
+        #include "XSUB.h"
+
+Puede usar estas macros si llama a código que puede croar, pero necesita hacer algo de limpieza antes de devolver el control a Perl.  Por ejemplo:
+
+        dXCPT;    /* establecer las variables necesarias */
+
+        XCPT_TRY_START {
+          código_que_puede_croar();
+        } XCPT_TRY_END
+
+        XCPT_CATCH
+        {
+          /* hacer la limpieza aquí */
+          XCPT_RETHROW;
+        }
+
+Tenga en cuenta que siempre tiene que volver a lanzar una excepción que ha sido capturada.  Usando estas macros, no es posible simplemente atrapar la excepción e ignorarla.  Si tiene que ignorar la excepción, tiene que usar la función C<call_*>.
+
+La ventaja de usar las macros anteriores es que no tiene que configurar una función adicional para C<call_*>, y que el uso de estas macros es más rápida que usar C<call_*>.
+
+=head2 Documentación del Código fuente
+
+Se está haciendo un esfuerzo para documentar las funciones internas y producir automáticamente manuales de referencia a partir de ellas: L<perlapi> es uno de tales manuales que detalla todas las funciones que están disponibles para los escritores de XS.  L<perlintern> es el manual autogenerado para las funciones que no forman parte de la API y son supuestamente solo para uso interno.
+
+La documentación del código fuente se crea poniendo comentarios POD en el código fuente C, así:
+
+ /*
+ =for apidoc sv_setiv
+
+ Copia un entero en el SV dado.  No maneja la magia de 'set'.  Vea
+ L<perlapi/sv_setiv_mg>.
+
+ =cut
+ */
+
+Por favor intente suministrar alguna documentación su añade funciones al núcleo de Perl.
+
+=head2 Compatibilidad con versiones anteriores
+
+La API de Perl API cambia con el tiempo.  Se añaden nuevas funciones o se cambian las interfaces de las funciones existentes.  El módulo C<Devel::PPPort> intenta proporcionar código de compatibilidad para algunos de estos cambios, para que los escritores XS no tengan que codificarlo ellos mismos cuando admitan varias versiones de Perl.
+
+C<Devel::PPPort> genera un archivo de cabecera C F<ppport.h> que también puede ejecutarse como un script Perl.  Para generar F<ppport.h>, ejecute:
+
+    perl -MDevel::PPPort -eDevel::PPPort::WriteFile
+
+Además de comprobar el código XS existente, el I<script> también se puede utilizar para recuperar información de compatibilidad para varias llamadas API usando la opción C<--api-info> en línea de comandos.  Por ejemplo:
+
+  % perl ppport.h --api-info=sv_magicext
+
+Para detalles, vea C<perldoc ppport.h>.
+
+=head1 Compatibilidad con Unicode
+
+Perl 5.6.0 presentó compatibilidad con Unicode.  Es importante para los portadores y autores de XS para entender este apoyo y asegurarse de que el código que escriben no corrompe los datos Unicode.
+
+=head2 De todas formas, ¿qué B<es> Unicode?
+
+En los viejos tiempos, menos iluminados, todos solíamos usar ASCII.  De hecho, la mayoría de nosotros.  El principal problema con ASCII es que es Norteamericano.  Bueno, no, ese no es realmente el problema; el problema es que no es particularmente útil para las personas que no usan el alfabeto Romano.  Lo que solía suceder era que ciertos idiomas adjuntaban sus propios alfabetos en el rango superior de la secuencia, entre 128 y 255.  Por supuesto, terminamos entonces con un montón de variantes que no eran muy ASCII, y todo el punto de ser un estándar se perdió.
+
+Peor aún, si tiene un idioma como el chino o Japonés que tiene cientos o miles de caracteres, entonces realmente no puede caber en un simple 256, por lo que tuvieron que olvidarse de ASCII en conjunto, y construir sus propios sistemas utilizando pares de números para referirse a un carácter.
+
+Para arreglar esto, algunas personas fundaron Unicode, Inc. y produjo un nuevo conjunto de caracteres que contenía todos los caracteres que pueda pensar, y más.  Hay varias formas de representar estos caracteres, y la que usa Perl se llama UTF-8.  UTF-8 usa un número variable de bytes para representar un carácter.  Puede aprender más sobre Unicode y el modelo Unicode de Perl en L<perlunicode>.
+
+(En plataformas EBCDIC, Perl en lugar de eso usa UTF-EBCDIC, que es una forma de UTF-8 adaptado para plataformas EBCDIC.  A continuación, sólo hablamos de UTF-8.
+UTF-EBCDIC es como UTF-8, pero los detalles son diferentes.  Las macros le ocultan las diferencias; sólo recuerde que los números particulares y los patrones de bits presentados a continuación diferirán en UTF-EBCDIC).
+
+=head2 ¿Cómo puedo reconocer una cadena UTF-8?
+
+No se puede.  Esto es porque los datos UTF-8 se almacenan en bytes justo igual que los datos no UTF-8.  El carácter Unicode 200 (C<0xC8> en hexadecimal), la mayúscula E con un acento grave, está representada por los dos bytes C<v196.172>.  Desafortunadamente, la cadena no Unicode C<chr(196).chr(172)> tiene esa misma secuencia de bytes.  Así que no se puede decir con sólo mirar... esto es lo que hace que la lectura en Unicode sea un problema interesante.
+
+En general, o bien tiene que saber con qué está lidiando, o adivinarlo.  La función API C<is_utf8_string> puede ayudar; le dirá si una cadena contiene sólo caracteres UTF-8 válidos, y se reducen las posibilidades de que una cadena que no sea UTF-8 se parezca a una UTF-8 válida, más rápidamente a medida que aumente la longitud de la cadena.  Mirando carácter por carácter, C<isUTF8_CHAR> le dirá si el carácter actual en una cadena es un UTF-8 válido. 
+
+=head2 ¿Cómo se representan caracteres Unicode en UTF-8?
+
+Como se mencionó antes, UTF-8 usa un número variable de bytes para almacenar un carácter.  Los caracteres con valores 0..127 se almacenan en un byte, igual que el viejo ASCII.  El carácter 128 se almacena como C<v194.128>; y así sigue hasta el carácter 191, que es C<v194.191>.  Se nos acabaron los bits (191 C<10111111> en binario) así que lo saltamos; el carácter 192 es C<v195.128>.  Y así continúa, hasta sumar tres bytes en el carácter 2048.
+L<perlunicode/Codificaciones Unicode> tiene un esquema de cómo funciona esto.
+
+Suponiendo que sepa que está tratando con una cadena UTF-8, puede descubrir cómo de largo es el primer carácter con la macro C<UTF8SKIP>:
+
+    char *utf = "\305\233\340\240\201";
+    I32 len;
+
+    len = UTF8SKIP(utf); /* aquí len es 2 */
+    utf += len;
+    len = UTF8SKIP(utf); /* aquí len es 3 */
+
+Otra forma de omitir caracteres en una cadena UTF-8 es usar C<utf8_hop>, que toma una cadena y un número de caracteres a saltar.  Sin embargo, recae en usted la verificación de los límites, así que no lo use a la ligera.
+
+Todos los bytes en un carácter UTF-8 de varios bytes tendrán puesto el bit alto, para que pueda probar si necesita hacer algo especial con este carácter, como este (la C<UTF8_IS_INVARIANT()> es una macro que prueba si el byte está codificado como un solo byte incluso en UTF-8):
+
+    U8 *utf;
+    U8 *utf_end; /* 1 más allá del búfer apuntado por utf */
+    UV uv;	/* Nota: a UV, no un U8, no un car. */
+    STRLEN len; /* longitud del carácter en bytes */
+
+    if (!UTF8_IS_INVARIANT(*utf))
+        /* Debe tratarse como un UTF-8 */
+        uv = utf8_to_uvchr_buf(utf, utf_end, &len);
+    else
+        /* Es correcto tratar este carácter como un byte */
+        uv = *utf;
+
+También se puede ver en ese ejemplo que usamos C<utf8_to_uvchr_buf> para obtener el valor del carácter; la función inversa C<uvchr_to_utf8> está disponible para poner un UV en UTF-8:
+
+    if (!UVCHR_IS_INVARIANT(uv))
+        /* Debe tratarse como un UTF8 */
+        utf8 = uvchr_to_utf8(utf8, uv);
+    else
+        /* Es correcto tratar este carácter como un byte */
+        *utf8++ = uv;
+
+Usted B<debe> convertir caracteres a UV usando las funciones anteriores si alguna vez se encuentra en una situación en la que tiene que emparejar caracteres UTF-8 y no UTF-8.  En este caso no puede saltarse los caracteres UTF-8.  Si hace esto, perderá la capacidad de emparejar caracteres con bits altos que no sean UTF-8; por ejemplo, si su cadena UTF-8 contiene C<v196.172>, y omite ese carácter, nunca podrá coincidir con un C<chr(200)> en una cadena que no sea UTF-8.
+¡Así que no lo haga!
+
+(Note que no tenemos que probar por caracteres invariantes en el ejemplo anterior.  Las funciones función en cualquier entrada UTF-8 bien formada.
+Es sólo que es más rápido para evitar la sobrecarga de la función cuando no es necesita).
+
+=head2 ¿Cómo Perl almacena cadenas UTF-8?
+
+Actualmente, Perl maneja las cadenas UTF-8 y las cadenas que no son UTF-8 de forma ligeramente diferente.  Un indicador en el SV, C<SVf_UTF8>, indica que la cadena está codificada internamente como UTF-8.  Sin él, el valor de byte es el número de punto de código y viceversa.  Este indicador sólo es significativo si el SV es C<SvPOK> o inmediatamente después de la conversión a cadena a través de C<SvPV> o una macro similar.  Puede comprobar y manipular este indicador con las siguientes macros:
+
+    SvUTF8(sv)
+    SvUTF8_on(sv)
+    SvUTF8_off(sv)
+
+Este indicador tiene un efecto importante en el tratamiento de la cadena por parte de Perl: si los datos UTF-8 no se distinguen adecuadamente, las expresiones regulares, C<length>, C<substr> y otras operaciones de manejo de cadenas tendrán resultados indeseables (incorrectos).
+
+El problema viene cuando tiene, por ejemplo, una cadena que no está marcada como UTF-8, y contiene una secuencia de bytes que podría ser UTF-8 -especialmente cuando se combinan cadenas que no son UTF-8 y UTF-8-.
+
+Nunca olvide que el indicador C<SVf_UTF8> está separado del valor PV; debe asegurarse de no modificarlo accidentalmente mientras manipula los SV.  Más específicamente, no espere hacer esto:
+
+    SV *sv;
+    SV *nsv;
+    STRLEN len;
+    char *p;
+
+    p = SvPV(sv, len);
+    frobnicate(p);
+    nsv = newSVpvn(p, len);
+
+La cadena C<char*> no le cuenta toda la historia, y no puede copiar o reconstruir un SV simplemente copiando el valor de la cadena.  Compruebe si el antiguo SV tiene el indicador UTF8 establecido (I<después> de la llamada a C<SvPV>), y actúe acorde:
+
+    p = SvPV(sv, len);
+    is_utf8 = SvUTF8(sv);
+    frobnicate(p, is_utf8);
+    nsv = newSVpvn(p, len);
+    if (is_utf8)
+        SvUTF8_on(nsv);
+
+En lo anterior, su función C<frobnicate> se ha cambiado para que sea consciente de si se trata o no de datos UTF-8, para que pueda manipular la cadena de forma adecuada.
+
+Desde que simplemente pasamos un SV a una función XS y copiamos los datos del SV no es suficiente para copiar los indicadores UTF8, incluso menos correcto es simplemente pasar un S<C<char *>> a una función XS.
+
+Para una generalidad completa, use la macro L<C<DO_UTF8>|perlapi/DO_UTF8> para ver si la cadena en un SV debe ser I<tratada> como UTF-8.  Esto tiene en cuenta si la llamada a la función XS se realiza desde el ámbito de L<S<C<use bytes>>|bytes>.  Si es así, los bytes subyacentes que comprenden la cadena UTF-8 debe exponerse, en lugar del carácter que representan.  Pero este I<pragma> realmente sólo debe usarse para depurar y tal vez pruebas de bajo nivel a nivel de byte.  Por lo tanto, la mayoría del código XS no necesita ocuparse de esto, pero varias áreas del núcleo de perl necesitan apoyarlo.
+
+Y esto no es toda la historia.  A partir de Perl v5.12, las cadenas que no están codificadas en UTF-8 también pueden tratarse como Unicode bajo diversas condiciones (vea L<perlunicode/Reglas ASCII Rules versus Reglas Unicode>).
+Esto sólo es realmente un problema para los caracteres cuyos ordinales están entre 128 y 255, y su comportamiento varía según las reglas ASCII versus reglas Unicode de manera que su código lo debe tener en cuenta (consulte L<perlunicode/The "Error Unicode">).
+No existe una API publicada para hacer frente a esto, ya que está sujeta a cambios, pero puede ver el código para C<pp_lc> en F<pp.c> para un ejemplo de cómo se hace actualmente.
+
+=head2 ¿Cómo convierto una cadena a UTF-8?
+
+Si está mezclando cadenas UTF-8 y no UTF-8, es necesario actualizar las cadenas que no son de UTF-8 a UTF-8.  Si tiene un SV, la forma más sencilla es hacer esto:
+
+    sv_utf8_upgrade(sv);
+
+Sin embargo, no debe hacer esto, por ejemplo:
+
+    if (!SvUTF8(left))
+        sv_utf8_upgrade(left);
+
+Si hace esto en un operador binario, en realidad cambiará una de las cadenas que vienen con el operador, y, aunque no debería ser perceptible por el usuario final, puede causar problemas en código deficiente.
+
+En su lugar, C<bytes_to_utf8> le dará una B<copia> codificada en UTF-8 de su argumento de cadena.  Esto es útil para tener los datos disponibles para comparaciones y así sucesivamente, sin perjudicar al SV original.  También está C<utf8_to_bytes> para ir hacia el otro lado, pero naturalmente, esto fallará si la cadena contiene cualquier carácter por encima de 255 que no se pueda representar en un solo byte.
+
+=head2 ¿Cómo comparo cadenas?
+
+L<perlapi/sv_cmp> y L<perlapi/sv_cmp_flags> hacen una comparación lexicográfica de dos SV y maneja correctamente lo del UTF-8.  Tenga en cuenta, sin embargo, que Unicode especifica un mecanismo mucho más elegante para el cotejo, disponible a través del módulo L<Unicode::Collate>.
+
+Para comparar solo dos cadenas para la igualdad/no igualdad, solo puede usar L<C<memEQ()>|perlapi/memEQ> y L<C<memNE()>|perlapi/memEQ> como de costumbre, excepto que las cadenas deben ser ambas codificadas UTF-8 o no UTF-8.
+
+Para comparar dos cadenas de forma insensible a las mayúsculas y minúsculas, utilice L<C<foldEQ_utf8()>|perlapi/foldEQ_utf8> (las cadenas no tienen que tener la misma característica de UTF-8).
+
+=head2 ¿Hay alguna otra cosa que necesito conocer?
+
+No realmente.  Sólo recuerde estas cosas:
+
+=over 3
+
+=item *
+
+No hay forma de decir si una cadena S<C<char *>> o S<C<U8 *>> es UTF-8 o no.  Pero puede saber si un SV debe tratarse como UTF-8 llamando a C<DO_UTF8> en él, después de convertirlo en cadena con C<SvPV> o una macro similar.  Y, se puede decir si SV es realmente UTF-8 (incluso si no es para ser tratado como tal) mirando su indicador C<SvUTF8> (una vez más después de convertirlo en cadena).  No olvide establecer el indicador si algo debería ser UTF-8.
+Tratar el indicador como parte del PV, aunque no lo sea: si se pasa el PV a algún otro lugar, pase también el indicador.
+
+=item *
+
+Si una cadena es UTF-8, B<siempre> use C<utf8_to_uvchr_buf> para obtener el valor, a menos que C<UTF8_IS_INVARIANT(*s)> en cuyo caso se puede utilizar C<*s>.
+
+=item *
+
+Al escribir un carácter UV en una cadena UTF-8, B<siempre> use C<uvchr_to_utf8>, a menos que C<UVCHR_IS_INVARIANT(uv))> en cuyo caso puede usar C<*s = uv>.
+
+=item *
+
+Es complicado mezclar cadenas UTF-8 y no-UTF-8.  Use C<bytes_to_utf8> para obtener una nueva cadena que esté codificada en UTF-8, y luego combínelas.
+
+=back
+
+=head1 Operadores personalizados
+
+El soporte de operador personalizado es una característica experimental que le permite definir sus propios oper.  Esto es principalmente para permitir la construcción de intérpretes para otros idiomas en el núcleo de Perl, pero también permite optimizaciones a través de la creación de "macro-oper." (oper. que realizan las funciones de múltiples oper. que generalmente se ejecutan juntas, como C<gvsv, gvsv, add>).
+
+Esta característica se implementa como un nuevo tipo de op., C<OP_CUSTOM>.  El núcleo de Perl no "sabe" nada especial sobre este tipo de op,, por lo que no participará en ninguna optimización.  Esto también significa que puede definir sus op. personalizadas como cualquier estructura de op.: unaria, binaria, lista y así... lo que quiera.
+
+Es importante saber qué operaciones personalizadas no harán nada por usted.  No le permitirán añadir una nueva sintaxis a Perl, directamente.  Ni siquiera le dejarán añadir nuevas palabras clave, directamente.  De hecho, no cambiarán en absoluto la forma en que Perl compila un programa.  Tiene que hacer esos cambios usted mismo, después de Perl haya compilado el programa.  Esto se hace ya sea manipulando el árbol de op. usando un bloque C<CHECK> y el módulo C<B::Generate>, o añadiendo un optimizador de mirilla personalizado con el módulo C<optimize>.
+
+Cuando haga esto, reemplace las oper. ordinarias de Perl con oper. personalizadas creando oper. con el tipo C<OP_CUSTOM> y el C<op_ppaddr> de su propia función PP.  Esto debe definirse en el código XS, y debe verse como las oper. PP en C<pp_*.c>.  Usted es responsable de garantizar que su op. toma el número apropiado de valores de la pila, y es responsable de añadir marcas de pila, si fuera necesario.
+
+También debería "registrar" su op. con el intérprete de Perl para que pueda producir mensajes acordes de error y de advertencia.  Dado que es posible tener múltiples op. personalizadas dentro del tipo de op. "lógica" C<OP_CUSTOM>, Perl utiliza el valor de C<< o->op_ppaddr >> para determinar qué op. personalizada con el que está lidiando.  Debe crear una estructura C<XOP> para cada ppaddr que use, establezca las propiedades de la op. personalizada con C<XopENTRY_set>, y registre la estructura contra el ppaddr usando C<Perl_custom_op_register>.  En ejemplo trivial podría ser así:
+
+    static XOP my_xop;
+    static OP *my_pp(pTHX);
+
+    BOOT:
+        XopENTRY_set(&my_xop, xop_name, "myxop");
+        XopENTRY_set(&my_xop, xop_desc, "Operador personalizado");
+        Perl_custom_op_register(aTHX_ my_pp, &my_xop);
+
+Los campos disponibles en la estructura son:
+
+=over 4
+
+=item xop_name
+
+Un nombre corto para su op.  Esto se incluirá en algunos mensajes de error, y también se devolverá como C<< $op->nombre >> por el módulo L<B|B>, por lo que aparecerá en la salida del módulo como L<B::Concise|B::Concise>.
+
+=item xop_desc
+
+Una breve descripción de la función de la op.
+
+=item xop_class
+
+Cuáles de las diversas estructuras C<*OP> que este op. usa.  Esto debería ser una de las constantes C<OA_*> desde F<op.h>, concretamente
+
+=over 4
+
+=item OA_BASEOP
+
+=item OA_UNOP
+
+=item OA_BINOP
+
+=item OA_LOGOP
+
+=item OA_LISTOP
+
+=item OA_PMOP
+
+=item OA_SVOP
+
+=item OA_PADOP
+
+=item OA_PVOP_OR_SVOP
+
+Esto debería interpretarse sólo como 'C<PVOP>'.  El C<_OR_SVOP> es porque sólo el principal C<PVOP>, C<OP_TRANS>, puede ser algunas veces C<SVOP>.
+
+=item OA_LOOP
+
+=item OA_COP
+
+=back
+
+Las otras constantes C<OA_*> no deberían usarse.
+
+=item xop_peep
+
+Este miembro es del tipo C<Perl_cpeep_t>, que expande a C<void (*Perl_cpeep_t)(aTHX_ OP *o, OP *oldop)>.  Si está configurado, esta función se llamará desde C<Perl_rpeep> cuando se encuentren ops. de este tipo por el optimizador.  I<o> es el OP que necesita optimización; I<oldop> es el OP anterior optimizado, cuya C<op_next> apunta a I<o>.
+
+=back
+
+C<B::Generate> soporta directamente la creación de ops. personalizados por nombre.
+
+
+=head1 Ámbito dinámico y la pila de contexto
+
+B<Nota:> esta sección describe API interna no pública que está sujeto a cambio, sin avisar.
+
+=head2 Introducción a la pila de contexto
+
+En Perl, el ámbito dinámico se refiere al anidamiento en tiempo de ejecución de cosas como llamadas de subrutina, eval, etc., así como la entrada y salida de ámbitos de bloques. Por ejemplo, la restauración de una variable C<local>izada se determina por el ámbito dinámico.
+
+Perl rastrea el ámbito dinámico mediante una estructura de datos llamada pila de contexto, que es un array de estructuras C<PERL_CONTEXT>, y que es una gran unión para todos los tipos de contexto. Siempre que aparezca un nuevo ámbito (como un bloque, un bucle C<for> o una llamada de subrutina), una nueva entrada de contexto se inserta en la pila. Del mismo modo al salir de un bloque o regresando de una llamada de subrutina, etc., aparece un contexto. Dado que la pila de contexto representa el ámbito dinámico actual, se puede buscar.
+Por ejemplo, C<next LABEL> busca a través de la pila en busca de un contexto de bucle que coincida con la etiqueta; C<return> devuelve contextos hasta que encuentre un contexto sub o eval o similar; C<caller> examina subcontextos en la pila.
+
+Cada entrada de contexto se etiqueta con un tipo de contexto, C<cx_type>. Los tipos de contexto típicos son C<CXt_SUB>, C<CXt_EVAL>, etc., así como C<CXt_BLOCK> y C<CXt_NULL> que representan un ámbito básico (como lo que mete C<pp_enter>) y un bloque de ordenación. El tipo determina qué parte de la unión de contexto es válida.
+
+La división principal en la estructura de contexto es entre un ámbito de sustitución (C<CXt_SUBST>) y ámbitos de bloques, que son todo lo demás. El primero sólo se utiliza mientras se ejecuta C<s///e>, y no se hablará más de él.
+
+Todos los tipos de ámbito de bloques comparten una base común, que corresponde a C<CXt_BLOCK>. Esto almacena los valores antiguos de diversas variables relacionados con el ámbito como C<PL_curpm>, así como información sobre el ámbito alcance, como C<gimme>. A la salida del ámbito, se recuperan las variables anteriores.
+
+Los tipos de ámbito de bloques particulares almacenan información adicional por tipo. Por ejemplo, C<CXt_SUB> almacena el CV actualmente en ejecución, mientras que los diversos tipos de bucle pueden contener la variable de bucle original SV. Al salir del ámbito, se procesan los datos por tipo; por ejemplo, el CV tiene su recuento de referencia decrementado, y se restaura la variable de bucle original.
+
+La macro C<cxstack> devuelve la base de la pila de contexto actual, mientras que C<cxstack_ix> es el índice del marco actual dentro de esa pila.
+
+De hecho, la pila de contexto es en realidad parte de un sistema de pila de pilas; cada vez que se hace algo inusual, como llamar a C<DESTROY> o manejador de enlazado, se mete una nueva pila y luego sale al final.
+
+Tenga en cuenta que la API descrita aquí cambió considerablemente en perl 5.24; antes de eso, se usaron las grandes macros como C<PUSHBLOCK> y C<POPSUB>; en 5.24 fueron reemplazadas por las funciones estáticas en línea descritas a continuación. Además, el orden y detalle de cómo funcionan estas macros/funciones ha cambiado de muchas maneras, a menudo sutilmente. En particular, no manejaban el guardar las posiciones de la pila de guardado y de la pila temporal, y se requiere C<ENTER>, C<SAVETMPS> y C<LEAVE> adicionales en comparación con las nuevas funciones. Las macros del estilo anterior ya no se describirán.
+
+
+=head2 Contextos de almacenamiento
+
+Para almacenar un nuevo contexto, las dos funciones básicas son C<cx = cx_pushblock()>, que guarda un nuevo bloque de contexto básico y devuelve su dirección, y una familia de funciones similares con nombres como C<cx_pushsub(cx)> que rellenan los campos adicionales dependientes del tipo en la estructura C<cx>. Tenga en cuenta que C<CXt_NULL> y C<CXt_BLOCK> no tienen su propias funciones push, ya que no almacenan ningún dato más allá del almacenado por C<cx_pushblock>.
+
+Los campos de la estructura de contexto y los argumentos a las funciones C<cx_*> están sujetas a cambios entre versiones de perl, lo que representa lo que sea conveniente o eficiente para esa versión.
+
+Un almacenamiento típico de la pila de contexto se puede encontrar en C<pp_entersub>; lo siguiente muestra un ejemplo simplificado y despojado de una llamada que no es XS, junto con comentarios que muestran aproximadamente lo que hace cada función.
+
+ dMARK;
+ U8 gimme      = GIMME_V;
+ bool hasargs  = cBOOL(PL_op->op_flags & OPf_STACKED);
+ OP *retop     = PL_op->op_next;
+ I32 old_ss_ix = PL_savestack_ix;
+ CV *cv        = ....;
+
+ /* ... hace copias mortales de los args. de pila que aquí son PADTMP ... */
+
+ /* ... aquí cualquier almacenamiento adicional en la pila de guardado ... */
+
+ /* Ahora meta una nueva entrada de contexto del tipo 'CXt_SUB'; inicialmente simplemente
+  * haciendo las acciones comunes a todos los tipos de bloques: */
+
+ cx = cx_pushblock(CXt_SUB, gimme, MARK, old_ss_ix);
+
+     /* esto hace (aproximadamente):
+         CXINC;              /* cxstack_ix++ (crece si es necesario) */
+         cx = CX_CUR();      /* y obtiene la dirección de un nuevo marco */
+         cx->cx_type        = CXt_SUB;
+         cx->blk_gimme      = gimme;
+         cx->blk_oldsp      = MARK - PL_stack_base;
+         cx->blk_oldsaveix  = old_ss_ix;
+         cx->blk_oldcop     = PL_curcop;
+         cx->blk_oldmarksp  = PL_markstack_ptr - PL_markstack;
+         cx->blk_oldscopesp = PL_scopestack_ix;
+         cx->blk_oldpm      = PL_curpm;
+         cx->blk_old_tmpsfloor = PL_tmps_floor;
+
+         PL_tmps_floor        = PL_tmps_ix;
+     */
+
+
+ /* y entonces actualice el nuevo marco de contexto con información específica de la subrutina,
+  * tales como el CV sobre lo ejecutado: */
+
+ cx_pushsub(cx, cv, retop, hasargs);
+
+     /* esto hace (aproximadamente):
+         cx->blk_sub.cv          = cv;
+         cx->blk_sub.olddepth    = CvDEPTH(cv);
+         cx->blk_sub.prevcomppad = PL_comppad;
+         cx->cx_type            |= (hasargs) ? CXp_HASARGS : 0;
+         cx->blk_sub.retop       = retop;
+         SvREFCNT_inc_simple_void_NN(cv);
+     */
+
+Tenga en cuenta que C<cx_pushblock()> establece dos nuevos pisos: para la pila de args. (para C<MARK>) y la pila de temps. (a C<PL_tmps_ix>). Mientras se ejecuta en este nivel de ámbito, cada C<nextstate> (entre otros) restablecerá los argumentos y niveles de pila de tmps. a estos pisos. Tenga en cuenta que ya que C<cx_pushblock> utiliza el valor actual de C<PL_tmps_ix> en lugar de que se pase como arg., esto dicta en qué punto se debe llamar C<cx_pushblock>. En particular, cualquier nuevo mortal que deba ser liberado solo a la salida del ámbito (en lugar de en la siguiente C<nextstate>) debe crearse primero.
+
+La mayoría de los llamantes a C<cx_pushblock> simplemente establecen el nuevo suelo de la pila de args. a la parte superior del marco de la pila anterior, pero para C<CXt_LOOP_LIST> almacena los elementos que se repiten en la pila, y por lo tanto establece en su lugar C<blk_oldsp> en la parte superior de estos elementos. Tenga en cuenta que, contrariamente a su nombre, C<blk_oldsp> no siempre representa el valor al que restaurar C<PL_stack_sp> al salir del ámbito.
+
+Tenga en cuenta la captura temprana de C<PL_savestack_ix> a C<old_ss_ix>, que más tarde se pasa como un arg. a C<cx_pushblock>. En el caso de C<pp_entersub>, esto se debe a que, aunque la mayoría de los valores que necesitan guardarse se almacenan en campos de la estructura de contexto, un valor extra necesita guardarse solo cuando el depurador se está ejecutando, y no tiene sentido hinchar la estructura para este caso raro. Así que en su lugar se guarda en la pila de almacenamiento. Dado que este valor se obtiene calculado y guardado antes de que se meta el contexto, es necesario pasar el antiguo valor de C<PL_savestack_ix> a C<cx_pushblock>, para garantizar que el valor guardado se libera al salir del ámbito.  Para la mayoría de los usuarios de C<cx_pushblock>, donde no se necesita meterse nada en la pila de almacenamiento, C<PL_savestack_ix> se pasa directamente como arg. a C<cx_pushblock>.
+
+Tenga en cuenta que, cuando sea posible, los valores deben guardarse en la estructura de contexto en lugar de en la pila de guardado; es mucho más rápido de esa manera.
+
+Normalmente C<cx_pushblock> se debe seguir inmediatamente por el C<cx_pushfoo> adecuado, sin nada entre ellos; esto es porque si el código en el medio pudiera morir (por ejemplo, una advertencia actualizada a fatal), entonces el código de desenrollado de la pila de contexto en C<dounwind> vería (en el ejemplo anterior) un marco de contexto CC<CXt_SUB>, pero sin todos los campos específicos de la subrutina y pronto se producirían cuelgues.
+
+Cuando los dos deben estar separados, establezca inicialmente el tipo en C<CXt_NULL> o C<CXt_BLOCK>, y luego cambiarlo a C<CXt_foo> al hacer el C<cx_pushfoo>. Esto es exactamente lo que hace C<pp_enteriter>, una vez que se determina qué tipo de bucle se está almacenando.
+
+=head2 Sacando contextos
+
+Los contextos se sacan usando C<cx_popsub()>, etc. y C<cx_popblock()>. Tenga en cuenta sin embargo, que a diferencia de C<cx_pushblock>, ninguna de estas funciones en realidad decrementa el índice de la pila de contexto actual; esto se hace por separado usando C<CX_POP()>.
+
+Hay dos formas principales de sacar los contextos. Durante la ejecución normal a medida que se sale de los ámbitos, funciones como C<pp_leave>, C<pp_leaveloop> y C<pp_leavesub> se procesa y saca justo un contexto usando C<cx_popfoo> y C<cx_popblock>. Por otro lado, cosas como C<pp_return> y C<next> puede tener que sacar varios ámbitos hasta que se encuentre un contexto sub o de bucle, y excepciones (como C<die>) deben sacar contextos hasta que se encuentra un contexto de eval. Ambos son realizados por C<dounwind()>, que es capaz de procesar y extraer todos los contextos por encima del objetivo.
+
+Aquí hay un ejemplo típico de la extracción de contexto, como se encuentra en C<pp_leavesub> (simplificado ligeramente):
+
+ U8 gimme;
+ PERL_CONTEXT *cx;
+ SV **oldsp;
+ OP *retop;
+
+ cx = CX_CUR();
+
+ gimme = cx->blk_gimme;
+ oldsp = PL_stack_base + cx->blk_oldsp; /* último arg. del marco anterior */
+
+ if (gimme == G_VOID)
+     PL_stack_sp = oldsp;
+ else
+     leave_adjust_stacks(oldsp, oldsp, gimme, 0);
+
+ CX_LEAVE_SCOPE(cx);
+ cx_popsub(cx);
+ cx_popblock(cx);
+ retop = cx->blk_sub.retop;
+ CX_POP(cx);
+
+ return retop;
+
+Los pasos anteriores están en un orden muy específico, diseñado para estar en orden inverso de cuando se guardó el contexto. Lo primero que hay que hacer es copiar y/o proteger cualquier argumento de devolución y liberar cualquier temporal en el alcance actual. El ámbito sale como un valor de sub a la derecha normalmente devuelve una copia mortal de sus args. de retorno (a diferencia de las sub a la izquierda). Es importante hacer esta copia antes de sacarla de la pila de almacenamiento o se restauren las variables, o pueden suceder cosas malas como las siguientes:
+
+    sub f { my $x =...; $x }  # $x liberado antes de que obtengamos una copia de él
+    sub f { /(...)/;    $1 }  # PL_curpm recuperado antes de que copiar $1
+
+Aunque deseamos liberar cualquier temporal al mismo tiempo, tenemos que tener cuidado de no liberar ninguna temporal que esté manteniendo vivo los args. de retorno; ni para liberar los temps. que acabamos de crear mientras que la copia mortal devuelve los args. Afortunadamente, C<leave_adjust_stacks()> es capaz de hacer copias mortales de args. de retorno, desplazando args. hacia abajo en la pila, y solo procesando esas entradas en el pila de temps. que sean seguros hacerlo.
+
+En contexto vacío no se devuelven args., por lo que es más eficiente omitir la llamada a C<leave_adjust_stacks()>. También en contexto nulo, una op. C<nextstate> es probable que se llame inminentemente, lo que hará una C<FREETMPS>, por lo que tampoco no hay necesidad de hacer eso.
+
+El siguiente paso es sacar las entradas de la pila de almacenamiento: C<CX_LEAVE_SCOPE(cx)> está definido sólo como C<<LEAVE_SCOPE(cx->blk_oldsaveix)>>. Tenga en cuenta que durante la extracción, es posible que perl llame a los destructores, llame a C<STORE> para deshacer las localizaciones de las vars. enlazadas, y así sucesivamente. Cualquiera de ellas puede morir o llamar a C<exit()>. En este caso, se llamará a C<dounwind()>, y el marco actual de la pila de contexto se volverá a procesar. Por lo tanto, es vital que todos los pasos al sacar un contexto se hagan de tal manera que apoyen la reentrada.  La otra alternativa, la de decrementar el C<cxstack_ix> I<antes del> procesamiento del marco, daría lugar a fugas y similares si algo muriera a la mitad, o sobrescribir el marco actual.
+
+C<CX_LEAVE_SCOPE> en sí es reentrante de forma segura: si solo la mitad de los elementos extraídos de la pila de almacenamiento se han sacado antes de morir y quedar atrapados por eval, entonces los C<CX_LEAVE_SCOPE> en C<dounwind> o C<pp_leaveeval> continuará donde se fue el primero.
+
+El siguiente paso es procesar el contexto de tipo específico; en este caso C<cx_popsub>. En parte, esto se parece a:
+
+    cv = cx->blk_sub.cv;
+    CvDEPTH(cv) = cx->blk_sub.olddepth;
+    cx->blk_sub.cv = NULL;
+    SvREFCNT_dec(cv);
+
+donde está procesando el CV recién ejecutado. Note que antes de decrementar el contador de referencia del CV, pone a nulo el C<blk_sub.cv>. Esto significa que si reentra, el CV no será liberado dos veces. También significa que no puede confiar en que dichos campos específicos de tipo tengan valores útiles después del retorno de C<cx_popfoo>.
+
+A continuación, C<cx_popblock> restaura todas las diversas vars. de intérprete a sus valores anteriores o marcas de agua alta anteriores; se expande a:
+
+    PL_markstack_ptr = PL_markstack + cx->blk_oldmarksp;
+    PL_scopestack_ix = cx->blk_oldscopesp;
+    PL_curpm         = cx->blk_oldpm;
+    PL_curcop        = cx->blk_oldcop;
+    PL_tmps_floor    = cx->blk_old_tmpsfloor;
+
+Tenga en cuenta que I<no> restaura C<PL_stack_sp>; como se mencionó anteriormente, a qué valor restaurarlo depende del tipo de contexto (específicamente C<for (list) {}>), y qué args. (si los hay) devuelve; y eso que ya han sido ordenados anteriormente por C<leave_adjust_stacks()>.
+
+Por último, el puntero de la pila de contexto es en realidad decrementado por C<CX_POP(cx)>.
+Después de este punto, es posible que el marco de contexto actual pueda sobrescribirse por otros contextos que están siendo almacenados. Aunque cosas como enlazados y C<DESTROY> se supone que funcionan dentro de una nueva pila de contexto, lo mejor es no asumirlo. De hecho, en las compilaciones de depuración, C<CX_POP(cx)> deliberadamente establezca C<cx> a nulo para detectar código que todavía dependa del campo C<values> en ese marco de contexto. Tenga en cuenta que en el ejemplo C<pp_leavesub()> anterior, agarramos a C<blk_sub.retop> I<antes de> llamar a C<CX_POP>.
+
+=head2 Rehacer contextos
+
+Finalmente, está C<cx_topblock(cx)>, que actúa como un super-C<nextstate> en lo que respecta a restablecer varios vars. a sus valores base. Se utiliza en lugares como C<pp_next>, C<pp_redo> y C<pp_goto> donde en lugar de salir de un ámbito, queremos reinicializar el alcance. Además de restablecer C<PL_stack_sp> como C<nextstate>, también restablece C<PL_markstack_ptr>, C<PL_scopestack_ix> y C<PL_curpm>. Note que no hace un C<FREETMPS>.
+
+
+=head1 AUTORES
+
+Hasta mayo de 1997, este documento era mantenido por Jeff Okamoto E<lt>okamoto@corp.hp.comE<gt>.  Ahora está mantenido como parte del propio Perl por los portadores Perl 5 E<lt>perl5-porters@perl.orgE<gt>.
+
+Con mucha ayuda y sugerencias de Dean Roehrich, Malcolm Beattie, Andreas Koenig, Paul Hudson, Ilya Zakharevich, Paul Marquess y Neil Bowers, Matthew Green, Tim Bunce, Spider Boardman, Ulrich Pfeifer, Stephen McCamant, y Gurusamy Sarathy.
+
+=head1 VEA TAMBIÉN
+
+L<perlapi>, L<perlintern>, L<perlxs>, L<perlembed>

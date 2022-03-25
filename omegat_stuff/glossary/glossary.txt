@@ -312,3 +312,14 @@ drive	dispositivo
 build	compilación
 finish	terminar
 implemented	implementada
+stash	almacén
+deferred	pospuesto
+deferred	pospone
+deferred	aplazado
+caveat	advertencia
+tie	enlaza
+tied	enlazado
+irrespective	independientemente
+opcode	código de operación
+previously	anteriormente
+orthogonal	ortogonal

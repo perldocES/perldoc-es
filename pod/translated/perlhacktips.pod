@@ -694,7 +694,7 @@ Nosotros también volcamos este op: la op actual siempre se almacena en C<PL_op>
         FLAGS = (SCALAR,KIDS)
         {
             TYPE = null  ===> (12)
-              (was rv2sv)
+              (era rv2sv)
             FLAGS = (SCALAR,KIDS)
             {
     11          TYPE = gvsv  ===> 12

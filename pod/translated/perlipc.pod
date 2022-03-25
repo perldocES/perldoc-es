@@ -22,7 +22,7 @@ Por ejemplo, para atrapar un señal de interrupción, establezca un gestor como 
     $SIG{INT} = __PACKAGE__ . "::caza_zap";
     $SIG{INT} = \&caza_zap;  # mejor así
 
-Antes de Perl 5.8.0 era necesario hacer lo menos posible en el gestor; note que todo lo que hacemos es establecer una variable global y luego levanta una excepción.  Es porque en la mayor parte de los sistemas, las bibliotecas no son reentrantes; en particular, la reserva de memoria y las rutinas de E/S no lo son.  Eso significa que hacer I<cualquier cosa> en su gestor podría, en teoría, disparar un fallo de memoria y un subsecuente volcado del núcleo. Vea L</señales diferidas (Señales seguras)> más abajo.
+Antes de Perl 5.8.0 era necesario hacer lo menos posible en el gestor; note que todo lo que hacemos es establecer una variable global y luego levanta una excepción.  Es porque en la mayor parte de los sistemas, las bibliotecas no son reentrantes; en particular, la reserva de memoria y las rutinas de E/S no lo son.  Eso significa que hacer I<cualquier cosa> en su gestor podría, en teoría, disparar un fallo de memoria y un subsecuente volcado del núcleo. Vea L</señales aplazadas (Señales seguras)> más abajo.
 
 Los nombres de las señales son las listadas por C<kill -l> en su sistema, o puede recuperarlas usando el módulo de CPAN L<IPC::Signal>.
 
@@ -162,7 +162,7 @@ El siguiente ejemplo implementa un sencillo demonio, que se reinicia a sí mismo
   }
 
 
-=head2 Señales diferidas (Señales seguras)
+=head2 Señales aplazadas (Señales seguras)
 
 Antes de Perl 5.8.0, el instalar código Perl para tratar señales le expone a dos peligros.  Primero, pocas de las funciones de la biblioteca del sistema son reentrantes.  Si la señal interrumpe mientras Perl está ejecutando una función (como malloc(3) o printf(3)), y su gestor de señales llama de nuevo a la misma función, podría obtener un comportamiento impredecible; a menudo, un volcado del núcleo.
 Segundo, Perl no es, en sí mismo, reentrante, en los niveles más bajos.  Si la señal interrumpe mientras Perl está cambiando sus propias estructuras internas de datos, puede resultar en un similar comportamiento impredecible.
@@ -171,7 +171,7 @@ Sabiéndolo, hay dos cosas que podría hacer: ser paranoico o ser pragmático.  
 La solución pragmática era decir: "Conozco los riesgos, pero prefiero la comodidad", y hacer lo que quiera en su gestor de señal, y prepararse para limpiar los volcados de núcleo de vez en cuando.
 
 Perl 5.8.0 y siguientes evitan estos problemas "defiriendo" señales.  Esto es, cuando la señal se entrega al proceso por parte del sistema (al código C que implementa Perl) se establece un indicador, y el gestor regresa inmediatamente.
-Entonces en los puntos estratégicos "seguros" en el intérprete Perl (p.e. cuando está a punto de ejecutar un nuevo código de operación) se comprueban los indicadores y se ejecuta el gestor de %SIG a nivel de Perl. El esquema "diferido" permite mucha mayor flexibilidad en el código de los gestores de señal cuando sabemos que el intérprete Perl está en un estado seguro, y que no estamos en una función de biblioteca del sistema cuando se llama al gestor.  Sin embargo la implementación difiere de los Perl anteriores de las formas siguientes:
+Entonces en los puntos estratégicos "seguros" en el intérprete Perl (p.e. cuando está a punto de ejecutar un nuevo código de operación) se comprueban los indicadores y se ejecuta el gestor de %SIG a nivel de Perl. El esquema "aplazado" permite mucha mayor flexibilidad en el código de los gestores de señal cuando sabemos que el intérprete Perl está en un estado seguro, y que no estamos en una función de biblioteca del sistema cuando se llama al gestor.  Sin embargo la implementación difiere de los Perl anteriores de las formas siguientes:
 
 =over 4
 
@@ -179,11 +179,11 @@ Entonces en los puntos estratégicos "seguros" en el intérprete Perl (p.e. cuan
 
 Ya que el intérprete Perl mira por indicadores de señal cuando está a punto de ejecutar un nuevo código de operación, una señal que llegue durante un código de operación de larga ejecución (p.e. una operación de expresión regular en una cadena muy larga) no lo verá hasta que se complete el código de operación actual.
 
-Si una señal de cualquier tipo se dispara múltiples veces durante un código de operación (tales como un temporizador de gran resolución), el gestor para esa señal se llamará sólo una vez, después de que se complete el código de operación; las demás instancias se descartarán.  Además, si la cola de señales de su sistema se inunda al punto que hay señales que se han levantado pero no atendidas (y por lo tanto, no diferidas) en el momento en que un código de operación se completa, estas señales pueden ser atendidas y diferidas durante los siguientes códigos de operación, algunas veces con resultados sorprendentes.  Por ejemplo, puede ver alarmas atendidas después de llamar a C<alarm(0)> ya que ésta última detiene el levantamiento de alarmas pero no cancela la atención de alarmas levantadas pero todavía no cazadas.  No depende de los comportamientos descritos en este párrafo ya que son efectos colaterales de la implementación actual y puede cambiar en futuras versiones de Perl.
+Si una señal de cualquier tipo se dispara múltiples veces durante un código de operación (tales como un temporizador de gran resolución), el gestor para esa señal se llamará sólo una vez, después de que se complete el código de operación; las demás instancias se descartarán.  Además, si la cola de señales de su sistema se inunda al punto que hay señales que se han levantado pero no atendidas (y por lo tanto, no aplazadas) en el momento en que un código de operación se completa, estas señales se pueden atender y aplazar durante los siguientes códigos de operación, algunas veces con resultados sorprendentes.  Por ejemplo, puede ver alarmas atendidas después de llamar a C<alarm(0)> ya que ésta última detiene el levantamiento de alarmas pero no cancela la atención de alarmas levantadas pero todavía no cazadas.  No depende de los comportamientos descritos en este párrafo ya que son efectos colaterales de la implementación actual y puede cambiar en futuras versiones de Perl.
 
 =item Interrupción E/S
 
-Cuando se entrega una señal (p.e., SIGINT desde un control-C) el sistema operativo para las operaciones E/S como I<read>(2), que se usa para implementar la función readline() de Perl, el operador C<< <> >>. En Perl anteriores el gestor se llamaba inmediatamente (y como C<read> no es "inseguro", esto funciona bien). Con el esquema "diferido" el gestor I<no> se llama inmediatamente, y si Perl usa el C<stdio> de la biblioteca del sistema, esa biblioteca puede reiniciar el C<read> sin regresar a Perl para darle la oportunidad de llamar al gestor de %SIG. Si esto sucede en su sistema la solución es usar la capa C<:perlio> para hacer E/S (al menos en los gestores en los que quiere ser capaz de pararse con señales). (La capa C<:perlio> comprueba los indicadores de señal y llama a los gestores de %SIG antes de reanudar la operación de E/S).
+Cuando se entrega una señal (p.e., SIGINT desde un control-C) el sistema operativo para las operaciones E/S como I<read>(2), que se usa para implementar la función readline() de Perl, el operador C<< <> >>. En Perl anteriores el gestor se llamaba inmediatamente (y como C<read> no es "inseguro", esto funciona bien). Con el esquema "aplazado" el gestor I<no> se llama inmediatamente, y si Perl usa el C<stdio> de la biblioteca del sistema, esa biblioteca puede reiniciar el C<read> sin regresar a Perl para darle la oportunidad de llamar al gestor de %SIG. Si esto sucede en su sistema la solución es usar la capa C<:perlio> para hacer E/S (al menos en los gestores en los que quiere ser capaz de pararse con señales). (La capa C<:perlio> comprueba los indicadores de señal y llama a los gestores de %SIG antes de reanudar la operación de E/S).
 
 La acción por defecto en Perl 5.8.0 y siguientes es usar automáticamente la capa C<:perlio>.
 
@@ -206,7 +206,7 @@ Otra forma de desactivar el comportamiento local de señales seguras es usar el 
 
 =item Llamadas del sistema reiniciables
 
-En sistemas que lo soporten, las versiones anteriores de Perl usaban el indicador SA_RESTART cuando se instalan gestores %SIG.  Esto significa que las llamadas del sistema reiniciables podrían continuar en lugar de regresar cuando llegue la señal.  Para entregar señales diferidas sin demora, Perl 5.8.0 y siguientes I<no> usan SA_RESTART.  Consiguientemente, llamadas del sistema reiniciables pueden fallar (con $! establecido a C<EINTR>) en lugares donde previamente habrían tenido éxito.
+En sistemas que lo soporten, las versiones anteriores de Perl usaban el indicador SA_RESTART cuando se instalan gestores %SIG.  Esto significa que las llamadas del sistema reiniciables podrían continuar en lugar de regresar cuando llegue la señal.  Para entregar señales aplazadas sin demora, Perl 5.8.0 y siguientes I<no> usan SA_RESTART.  Consiguientemente, llamadas del sistema reiniciables pueden fallar (con $! establecido a C<EINTR>) en lugares donde previamente habrían tenido éxito.
 
 La capa por defecto C<:perlio> reintenta C<read>, C<write> y C<close> como se describió antes; las llamadas C<wait> y C<waitpid> interrumpidas siempre se reintentarán.
 
@@ -216,7 +216,7 @@ Ciertas señales como SEGV, ILL y BUS se generan por errores y "faltas" similare
 
 =item Señales disparadas por el estado del sistema operativo
 
-En algunos sistemas operativos se supone que ciertos gestores de señales hacen "algo" antes de regresar. Un ejemplo puede ser CHLD o CLD, que indica que un proceso hijo se ha completado. En algunos sistemas operativos se espera que el gestor de señal espere (C<wait>) por la terminación del proceso hijo. En tales sistemas el esquema de señal diferida no funcionará para estas señales: no hacen espera (C<wait>). De nuevo, el fallo se parecerá a un bucle en que el sistema operativo reintentará la señal porque hay procesos hijos completados por los que aún no se les ha esperado (C<wait>).
+En algunos sistemas operativos se supone que ciertos gestores de señales hacen "algo" antes de regresar. Un ejemplo puede ser CHLD o CLD, que indica que un proceso hijo se ha completado. En algunos sistemas operativos se espera que el gestor de señal espere (C<wait>) por la terminación del proceso hijo. En tales sistemas el esquema de señal aplazada no funcionará para estas señales: no hacen espera (C<wait>). De nuevo, el fallo se parecerá a un bucle en que el sistema operativo reintentará la señal porque hay procesos hijos completados por los que aún no se les ha esperado (C<wait>).
 
 =back
 
@@ -780,7 +780,7 @@ Y aquí hay una versión multitarea.  Es multitarea en la forma de la mayor part
 
 Este servidor se ocupa de clonar una versión del hijo, con fork(), por cada petición entrante.  De esta manera puede manejar muchas peticiones inmediatamente, que podría no ser lo que siempre querría.  Incluso si no puede hacer fork(), el listen() le permitirá tener muchas conexiones pendientes.  Los servidores bifurcados son particularmente cuidadosos sobre ocuparse de sus hijos muertos (llamados "zombies" en parloteo Unix), porque, de otra manera, se llenaría rápidamente su tabla de procesos.  La subrutina REAPER se usa aquí para llamar a waitpid() para cualesquiera procesos hijo que hayan terminado, asegurando así que terminan limpiamente y no se unen a las listas de muertos vivientes.
 
-Dentro del bucle while llamamos a accept() y comprobamos si devuelve un valor falso.  Eso, normalmente, indicaría que se necesita reportar un error del sistema.  Sin embargo, la introducción de señales seguras (vea L</Señales diferidas (Señales seguras)> más arriba) en Perl 5.8.0 significa que accept() podría también interrumpirse cuando el proceso recibe una señal.
+Dentro del bucle while llamamos a accept() y comprobamos si devuelve un valor falso.  Eso, normalmente, indicaría que se necesita reportar un error del sistema.  Sin embargo, la introducción de señales seguras (vea L</Señales aplazadas (Señales seguras)> más arriba) en Perl 5.8.0 significa que accept() podría también interrumpirse cuando el proceso recibe una señal.
 Esto sucede típicamente cuando uno de los subprocesos bifurcados sale y notifica al proceso padre con una señal CHLD.
 
 Si se interrumpe accept() con una señal, $! se establecerá a EINTR.

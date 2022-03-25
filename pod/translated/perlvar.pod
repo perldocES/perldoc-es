@@ -415,7 +415,7 @@ Asegúrese de no utilizar una palabra suelta como nombre de un controlador de se
 
 Si su sistema tiene la función C<sigaction()>, entonces los gestores de señales instalados la usarán.  Esto significa que obtiene un manejo de señales fiable.
 
-La política predeterminada de entrega de señales cambió en Perl v5.8.0, de "inmediato" (también conocido como "inseguro") a "diferido", también conocido como "señales seguras".  Vea L<perlipc> para más información.
+La política predeterminada de entrega de señales cambió en Perl v5.8.0, de "inmediato" (también conocido como "inseguro") a "aplazado", también conocido como "señales seguras".  Vea L<perlipc> para más información.
 
 Algunos enganches internos también se pueden establecer mediante el hash C<%SIG>.  La rutina indicada por C<$SIG{__WARN__}> se llama cuando un mensaje de advertencia está a punto de ser impreso.  El mensaje de advertencia se pasa como primer argumento.  La presencia de un enganche en C<__WARN__> hace que se suprima la impresión normal de las advertencias hacia C<STDERR>.  Puede usar esto para salvar las advertencias en una variable, o convertir las advertencias en errores fatales, como este:
 
@@ -1324,7 +1324,7 @@ Estas variables proporcionan información sobre el estado actual del intérprete
 X<$^C> X<$COMPILING>
 
 El valor actual del indicador asociado con la opción B<-c>.
-Su uso principal es con B<-MO=...> para permitir al código alterar su comportamiento cuando se compila, tal como por ejemplo hace C<AUTOLOAD> en tiempo de compilación, en lugar de lo más normal, después de cargarse.  Haciendo C<$^C = 1> es similar a llamar a C<B::minus_c>.
+Su uso principal es con B<-MO=...> para permitir al código alterar su comportamiento cuando se compila, tal como por ejemplo hace C<AUTOLOAD> en tiempo de compilación, en lugar de la más normal carga aplazada.  Haciendo C<$^C = 1> es similar a llamar a C<B::minus_c>.
 
 Esta variable se incorporó en Perl 5.6.0.
 

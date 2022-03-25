@@ -984,7 +984,7 @@ Ahora es una no-operación en datos UTF-8. (Yves Orton)
 
 =item Señales críticas
 
-Las señales SIGILL, SIGBUS y SIGSEGV ahora siempre se entregan en una forma "insegura" (a diferencia de otras señales, que son diferidas hasta que el intérprete perl llega a un estado razonablemente estable; vea L<perlipc/"Señales Diferidas (Señales Seguras)">). (Rafael)
+Las señales SIGILL, SIGBUS y SIGSEGV ahora siempre se entregan en una forma "insegura" (a diferencia de otras señales, que se posponen hasta que el intérprete perl llega a un estado razonablemente estable; vea L<perlipc/"Señales Diferidas (Señales Seguras)">). (Rafael)
 
 =item Arreglado el enganche con @INC
 

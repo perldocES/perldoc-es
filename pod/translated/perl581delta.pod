@@ -94,7 +94,7 @@ En Perl 5.8.0 fue introducido el concepto llamado "acceso a señales de forma se
 
 Sin embargo, el nuevo modelo de seguridad también tiene sus problemas.  Porque ahora un código de operación, una unidad básica de ejecución Perl, nunca es interrumpida, sino que va a ejecutarse hasta el final; ciertas operaciones que pueden tomar mucho tiempo ahora realmente se toman un largo tiempo.  Por ejemplo, ciertas operaciones de red tienen sus propios mecanismos de bloqueo de tiempo de espera, y ser capaz de interrumpirles de inmediato estaría bien.
 
-Por lo tanto, perl 5.8.1 introduce una "puerta trasera" para restaurar el comportamiento pre-5.8.0 (pre-5.7.3, en realidad) de las señales.  Sólo tiene que configurar la variable de entorno PERL_SIGNALS a C<unsafe>, e inmediatamente el antiguo (y peligroso) comportamiento de la gestión de señales volverá.  Vea L<perlrun/PERL_SIGNALS> y L<perlipc/"Señales diferidas (Acceso seguro a señales)">.
+Por lo tanto, perl 5.8.1 introduce una "puerta trasera" para restaurar el comportamiento pre-5.8.0 (pre-5.7.3, en realidad) de las señales.  Sólo tiene que configurar la variable de entorno PERL_SIGNALS a C<unsafe>, e inmediatamente el antiguo (y peligroso) comportamiento de la gestión de señales volverá.  Vea L<perlrun/PERL_SIGNALS> y L<perlipc/"Señales aplazadas (Señales seguras)">.
 
 En noticias aparte, ahora puede usar señales de forma segura con POSIX::sigaction.  Vea L<POSIX/POSIX::SigAction>.
 

@@ -155,7 +155,7 @@ El formato de salida de un L<write()|perlfunc/write> se determina por una declar
 
 =item *
 
-Se pueden compilar patrones de expresiones regulares utilizando L<qrE<sol>E<sol>|perlop/qrE<sol>STRINGE<sol>msixpodualn> para utilizarlas más tarde en las coincidencias.  De nuevo, si la compilación se hace o no dentro del ámbito de C<use locale> determina el comportamiento de la coincidencia, no si las coincidencias se realizan dentro de tal ámbito o no.
+Se pueden compilar patrones de expresiones regulares utilizando L<qrE<sol>E<sol>|perlop/qrE<sol>STRINGE<sol>msixpodualn> para utilizarse más tarde en las coincidencias.  De nuevo, si la compilación se hace o no dentro del ámbito de C<use locale> determina el comportamiento de la coincidencia, no si las coincidencias se realizan dentro de tal ámbito o no.
 
 =back
 
