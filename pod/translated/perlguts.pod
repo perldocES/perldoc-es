@@ -4,7 +4,7 @@ perlguts - Introducción a la API de Perl
 
 =head1 DESCRIPCIÓN
 
-Este documento intenta describir cómo usar la API de Perl, así como proporcionar alguna información sobre los funcionamientos básicos del núcleo de Perl.  Está de lejos de estar completo y probablemente contiene muchos errores.  Refiera cualquier pregunta o comentario al autor, a continuación.
+Este documento intenta describir cómo usar la API de Perl, así como proporcionar alguna información sobre los funcionamientos básicos del núcleo de Perl.  Está de lejos de estar completo y probablemente contiene muchos errores.  Refiera cualquier pregunta o comentario al autor, al final.
 
 =head1 Variables
 

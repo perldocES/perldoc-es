@@ -1,0 +1,2448 @@
+
+=encoding utf8
+
+=head1 NAME
+
+perlglossary - Glosario de Perl
+
+=head1 VERSIÓN
+
+versión 5.021010
+
+=head1 DESCRIPCIÓN
+
+Un glosario de términos (técnicos y de otro tipo) utilizados en la documentación Perl, derivada del Glosario de I<Programming Perl>, Cuarta Edición.  Palabras o frases en negrita se definen en otro lugar en este glosario.
+
+Otras fuentes útiles incluyen el Glosario Unicode L<http://unicode.org/glossary/>, el Free On-Line Dictionary of Computing L<http://foldoc.org/>, el archivo de jerga L<http://catb.org/~esr/jargon/> y Wikipedia L<http://www.wikipedia.org/>.
+
+=head2 A
+
+=over 4
+
+=item métodos de acceso
+
+Un B<X<accessor methods, defined>X<methods, accessor>método> que se usa para actualizar o inspeccionar de forma indirecta el estado de un B<objeto> (sus B<variables de instancia>).
+
+=item argumentos reales
+
+Los B<X<actual arguments>X<arguments, actual>valores escalares> que usted suministra a una B<función> o B<subrutina> cuando las llama. Por ejemplo, al realizar la llamada C<encendido("activar")>, la cadena C<"activar"> es el valor real del argumento. Vea también B<argumento> y B<argumentos formales>.
+
+=item operador de direccionamiento
+
+Algunos X<address operator>lenguajes usan directamente las direcciones de memoria de los valores, pero esto puede ser como jugar con fuego. Perl proporciona un conjunto de guantes de asbesto para controlar toda la administración de memoria. Lo más cercano a un operador de direccionamiento en Perl es el operador de barra diagonal inversa. Este operador devuelve una B<referencia estricta>, que es mucho más segura que una dirección de memoria.
+
+=item algoritmo
+
+Secuencia X<algorithms (term)>bien definida de pasos, lo suficientemente bien explicados como para que hasta un equipo informático pueda seguirlos.
+
+=item alias
+
+Apodo X<aliases, defined>de algo, que se comporta en todos los sentidos como si se usara el nombre original. Se crean implícitamente alias temporales en la variable de los bucles C<foreach>, en la variable C<$_> para los operadores C<map> y C<grep>, en C<$a> y C<$b> al ejecutar la función de comparación C<sort> y en cada elemento de C<@_> para los B<argumentos reales> de la llamada a una subrutina. Los apodos permanentes se crean explícitamente en los B<packages> al B<importar> símbolos o por asignación a B<typeglobs>. La declaración C<our> crea explícitamente alias de ámbito léxico para las variables de paquete.
+
+=item alfabético
+
+La X<alphabetic sort>ordenación de los caracteres que ponemos en palabras. En Unicode, todas estas letras incluyen todos los ideógrafos y ciertos diacríticos, números en letra como los números romanos y varias marcas combinadas.
+
+=item alternativas
+
+Lista X<alternative characters>de elecciones posibles de las que solo se puede seleccionar una, como en "¿Qué puerta elige, A, B o C?". En las expresiones regulares las alternativas se separan mediante una sola barra vertical: C<|>.
+En expresiones Perl normales, las alternativas se separan mediante una doble barra vertical: C<||>. En expresiones B<Boolean>, las alternativas lógicas se separan mediante C<||> u C<or>.
+
+=item anónimo
+
+Se usa para X<anonymous referents>X<referents, anonymous>describir un B<referente> que no es directamente accesible a través de una B<variable> con nombre. Un referente de este tipo debe ser accesible indirectamente a través de al menos una B<referencia estricta>. Cuando desaparece la última referencia estricta, se destruye sin compasión el referente anónimo.
+
+=item aplicación
+
+Una X<applications (term)>grande, elegante forma de un B<programa> con un nombre elegante para que las personas no piensen que están usando un programa.
+
+=item arquitectura
+
+El tipo de X<architecture>equipo con el que se trabaja, donde "tipo de equipo" quiere decir todos los equipos con código máquina compatible.
+Como los programas Perl son (normalmente) archivos de texto simple, no imágenes ejecutables, un programa Perl es mucho menos sensible a la arquitectura en la que se ejecuta que los programas escritos en otros lenguajes (como C) que se compilan a código máquina. Vea también B<plataforma> y B<sistema operativo>.
+
+=item argumento
+
+Elementos X<arguments, defined>de datos que se suministra a un B<programa>, una B<subrutina>, una B<función> o un B<método> para indicarle qué debe hacer. También se denomina "parámetro".
+
+=item ARGV
+
+Nombre del X<ARGV filehandle>array que contiene el B<vector> de B<argumento> de la línea de comandos. Si usa el operador C<E<lt>E<gt>> vacío, C<ARGV> es el nombre tanto del B<identificador de archivo> que se usa para recorrer los argumentos como del B<escalar> que contiene el nombre del archivo de entrada actual.
+
+=item operador aritmético
+
+Un B<X<arithmetic operators, about>símbolo>, como C<+> o C</>, que indica a Perl que haga una de las operaciones aritméticas que aprendimos en el colegio.
+
+=item array
+
+Secuencia X<arrays, defined>ordenada de B<valores>, almacenados de forma que se pueda acceder a cualquiera de esos valores mediante un I<subíndice entero> que especifique el B<desplazamiento> del valor en la secuencia.
+
+=item contexto de array
+
+Expresión X<array context>arcaica que se usa para designar algo cuyo nombre correcto es B<contexto de lista>.
+
+=item Licencia Artística
+
+La licencia X<Artistic License>de código fuente que X<Wall, Larry>Larry Wall creó para Perl, maximizando la utilidad disponibilidad y modificabilidad de Perl. La versión actual es 2. (L<http://www.opensource.org/licenses/artistic-license.php>).
+
+=item ASCII
+
+I<American Standard Code for Information Interchange> X<ASCII (American Standard Code for Information Interchange)>X<American Standard Code for Information Interchange (ASCII)>(un juego de caracteres de 7 bits que solo es adecuado para representar texto en inglés de una forma insuficiente). Se suele usar de manera informal para describir los primeros 128 valores de los distintos juegos de caracteres ISO-8859-X, un conjunto de códigos de 8 bits mutuamente incompatibles que a veces se describen como la mitad de ASCII. Vea también B<Unicode>.
+
+=item aserción
+
+Componente X<assertions (in regexes), defined>X<regular expressions, assertions in>de una B<expresión regular> que debe ser verdadero para que el patrón coincida, pero que no tiene por qué coincidir necesariamente con ningún carácter. Se suele usar específicamente para hacer referencia a una aserción de B<ancho cero>.
+
+=item asignación
+
+B<Operador> X<assignments, defined>cuya misión en la vida es cambiar el valor de una B<variable>.
+
+=item operador de asignación
+
+Puede ser una X<assignment operators, about>B<asignación> normal o un B<operador> compuesto, formado por una asignación normal y otro operador que cambie el valor de una variable in situ, es decir, con respecto a su valor anterior. Por ejemplo, C<$a += 2> suma C<2> a C<$a>.
+
+=item array asociativo
+
+Vea B<hash>. X<associative arrays>Por favor. El término "array asociativo" es el viejo término de Perl 4 para un B<hash>. Algunos lenguajes lo llaman diccionario.
+
+=item asociatividad
+
+Determina X<associativity>si en "A B<operador> B B<operador> C" se aplica primero el B<operador> de la izquierda o el B<operador> de la derecha cuando ambos operadores tienen la misma precedencia. Los operadores como C<+> son asociativos por la izquierda, mientras que operadores como C<**> son asociativos por la derecha. Vea el libro I<Programming Perl>, capítulo 3, "Unary and Binary Operators" para ver una lista de operadores y su asociatividad.
+
+=item asincrónico
+
+Se X<asynchronous event processing>dice de un evento o actividad cuyo orden temporal es indeterminado porque suceden demasiadas cosas a la vez. Así, un evento asincrónico es un evento que puede suceder en cualquier momento, pero no se sabe cuándo.
+
+=item átomo
+
+Componente X<atoms>de B<expresión regular> que puede coincidir con una B<subcadena> de uno o más caracteres y que cualquier B<cuantificador> que venga a continuación puede tratar como una unidad sintáctica indivisible. (Compare esta definición con la de B<aserción>, que detecta algo de B<ancho cero> y no se puede cuantificar).
+
+=item operación atómica
+
+Cuando X<atomic operation>Demócrito llamó "átomo" a las partes indivisibles de la materia, quería decir literalmente algo que no se puede dividir: I<ἀ-> (no) + I<-τομος> (divisible). Una operación atómica es una acción que no se puede interrumpir; no debe confundirse con una acción prohibida en una región libre de armas nucleares.
+
+=item atributo
+
+Nueva X<attribute feature>característica que permite declarar B<variables> y B<subrutinas> como modificadores, como en C<sub foo : locked method>. También es un nombre alternativo para una B<variable de instancia> de un B<objeto>.
+
+=item autogeneración
+
+Característica X<autogeneration, about>de la B<sobrecarga de operador> de B<objetos> que permite deducir de forma razonable mediante operadores básicos el comportamiento de determinados B<operadores>. Se supone que los operadores sobrecargados tendrán generalmente las mismas relaciones que los operadores normales. Vea el capítulo 13, "Overloading", del I<Programming Perl>.
+
+=item autoincrementar
+
+Sumar X<autoincrement (term)>automáticamente una unidad de algo; por eso el operador correspondiente se llama C<++>. Si en lugar de sumar se resta automáticamente una unidad de algo, la operación se llama "autodecrementar".
+
+=item carga automática
+
+Carga X<autoloading, defined>que se realiza a petición. (También se denomina carga "perezosa").
+Específicamente, se realiza la carga automática cuando se llama a una subrutina C<AUTOLOAD> en nombre de una subrutina indefinida.
+
+=item división automática
+
+Operación que X<autosplit (term)>divide una cadena automáticamente, como el B<modificador> I<-a> cuando se ejecuta con I<-p> or I<-n> para emular a B<awk>. (Vea también el módulo C<AutoSplit>X<AutoSplit module>, que no tiene nada que ver con el modificador C<-a>, pero está muy relacionado con la carga automática).
+
+=item autovivificación
+
+Palabra X<autovivification>grecorromana que significa "darse vida a uno mismo".
+En Perl, las ubicaciones de almacenamiento (B<valores-izquierda>) se generan espontáneamente cuando es necesario. Esto incluye la creación de cualquier valor de B<referencia estricta> que apunte al siguiente nivel de almacenamiento. La asignación C<$a[5][5][5][5][5] = "quinteto"> crea potencialmente cinco ubicaciones de almacenamiento escalar, además de cuatro referencias (en las cuatro primeras ubicaciones de escalares) que apuntan a cuatro arrays anónimos nuevos (que contendrán las cuatro últimas ubicaciones escalares). Pero la idea de la autovivificación es no tener que preocuparnos de esto.
+
+=item AV
+
+Abreviatura X<AV (array value)>X<array value (AV)>X<values, array>de "array value" (valor de array), que hace referencia a uno de los tipos de datos internos de Perl que contiene un B<array>. El tipo C<AV> es una subclase de B<SV>.
+
+=item awk
+
+Abreviatura X<awk (editing term)>descriptiva de "awkward". Casualmente, también hace referencia a un venerable lenguaje de procesamiento de texto del que Perl derivó algunas de sus ideas de alto nivel.
+
+=back
+
+=head2 B
+
+=over 4
+
+=item retrorreferencia
+
+Una X<backreferences, about>X<references, backreferences>subcadena B<capturada> por un subpatrón con unos paréntesis en una B<regex>. Números decimales con barras diagonales inversas (C<\1>, C<\2>, etc.) más tarde en el mismo patrón refieren al correspondiente patrón en la coincidencia actual. Fuera del patrón, las variables numeradas (C<$1>, C<$2>, etc.) hacen referencia a estos mismos valores, con tal de que ese patrón fuera la última coincidencia correcta en el actual
+B<ámbito dinámico>.
+
+=item vuelta atrás
+
+La X<backtracking>práctica de decir "Si pudiera volver a empezar, lo haría todo de otra manera", y después volver atrás y hacer las cosas de manera diferente. En términos matemáticos, consiste en volver de una recursión que no ha finalizado correctamente en un árbol de posibilidades. Perl vuelve atrás tras intentar detectar un patrón con una B<expresión regular> si los intentos previos no logran detectarlo. Vea la sección "The Little Engine That /Couldn(n’t)" en el I<Programming Perl>, capítulo 5, "Pattern Matching".
+
+=item compatibilidad con versiones anteriores
+
+Significa X<backward compatibility, defined>que aún puede usar sus programas antiguos porque no hemos modificado ninguna de las características o errores en los que se basaban.
+
+=item palabra suelta
+
+Palabra X<barewords, about>lo suficientemente ambigua como para no ser considerada válida cuando se activa C<use strict 'subs'>. Si no se usa este I<pragma>, se tratará la palabra como si estuviera escrita entre comillas.
+
+=item clase base
+
+Tipo de B<objeto> X<base classes>X<classes, base>genérico; es decir, una B<clase> de la que se derivan genéticamente otras clases más específicas mediante B<herencia>. Las X<superclasses>X<classes, superclasses>personas que respetan a sus antepasados también la denominan "superclases".
+
+=item big-endian
+
+Según X<big–endian, defined>X<endianness, big–endian>Swift, alguien que empieza a comer un huevo por su extremo más ancho (juego de palabras; en inglés "end" significa extremo). También se usa para designar a los equipos que almacenan el B<byte> más significativo de una palabra en una dirección de byte inferior a la del byte menos significativo. Estos equipos se suelen considerar superiores a los equipos I<little-endian>. Vea también B<little-endian>.
+
+=item binario
+
+Que X<binary (term)>tiene que ver con números representados en base 2. Eso significa que hay básicamente dos números, 0 y 1. También se usa para describir un archivo "que no es de texto", posiblemente porque dicho archivo usa todos los bits binarios de sus bytes. Con la llegada de B<Unicode>, esta distinción, ya de por sí sospechosa, tiene aún menos sentido.
+
+=item operador binario
+
+Un B<X<binary operators, about>operador> que toma dos B<operandos>.
+
+=item enlazar
+
+Asignar X<bind (term)>una B<dirección de red> específica a un B<socket>.
+
+=item bit
+
+Entero X<bits, defined>en el intervalo de 0 a 1, ambos incluidos. La unidad de almacenamiento de información más pequeña posible. Un octavo de un B<byte> o de un dólar.
+(En inglés, el término "Pieces of Eight" (partes de ocho) viene de la posibilidad de dividir el antiguo dólar español en 8 partes, cada una de las cuales se podía usar como dinero. Es por eso que actualmente una moneda de 25 centavos sigue llamándose "two bits" (dos partes)).
+
+=item desplazamiento de bits
+
+Movimiento X<bit–shift operators, defined>de bits hacia la izquierda o la derecha en una palabra de procesador, lo que tiene el efecto de multiplicar o dividir por una potencia de 2.
+
+=item cadena de bits
+
+Secuencia X<bit string>de B<bits> que, por una vez, se puede considerar una secuencia de bits.
+
+=item bendecir
+
+En X<bless function, about>X<bless (term)>el mundo empresarial, conceder oficialmente la aprobación a algo. Por ejemplo, "El vicepresidente del departamento de ingeniería ha bendecido el proyecto WebCruncher." De forma similar, en Perl significa conceder la aprobación oficial a un B<referente> para que pueda funcionar como un B<objeto> (por ejemplo, un objeto WebCruncher). Vea la función C<bless> en el libro I<Programming Perl>, capítulo 27, “Functions”.
+
+=item bloqueo-bloque
+
+Lo X<blocks, defined>que un B<proceso> hace mientras espera algo: "Mi proceso se bloqueó esperando la respuesta del disco.". La segunda acepción hace referencia a un fragmento de datos grande, del tamaño que al B<sistema operativo> le gusta procesar (normalmente una potencia de dos, como 512 o 8192). Normalmente se refiere a un fragmento de datos que se lee de (o se escribe en) un archivo del disco.
+
+=item BLOQUE
+
+Construcción X<BLOCK construct, about>X<constructs, BLOCK>sintáctica formada por una secuencia de B<instrucciones> Perl escritas entre llaves.
+Las instrucciones C<if> y C<while>, por ejemplo, también se definen en términos de I<C<BLOQUE>>. A veces también usamos la palabra "bloque" para hacer referencia a un ámbito léxico; es decir, una secuencia de instrucciones que actúan como un I<C<BLOQUE>>, por ejemplo, dentro de una función C<eval> o en un archivo, aunque las instrucciones no estén delimitadas por llaves.
+
+=item almacenamiento en búfer de bloques
+
+Método X<block buffering>X<buffering, block>para lograr una entrada y salida eficiente pasando un B<bloque> cada vez. De manera predeterminada, Perl realiza el almacenamiento en búfer de bloques en archivos de disco. Vea B<búfer> y B<almacenamiento en búfer de comandos>.
+
+=item booleano
+
+Un X<Boolean values>X<values, Boolean>valor que puede ser B<verdadero> o B<falso>.
+
+=item contexto booleano
+
+Tipo X<Boolean context, about>X<context, Boolean>especial de B<contexto escalar> que se usa en expresiones condicionales para decidir si el B<valor escalar> devuelto por una expresión es B<verdadero> o B<falso>. Su evaluación no devuelve una cadena ni un número. Vea B<contexto>.
+
+=item punto de interrupción
+
+Punto X<breakpoints, defined>del programa en el que se indica al depurador que debe detener la B<ejecución> para determinar si ya se ha producido alguna anomalía.
+
+=item difundir
+
+Enviar X<broadcast (networking term)>un B<datagrama> a varios destinos simultáneamente.
+
+=item BSD
+
+Droga X<BSD (Berkeley Standard Distribution)>X<Berkeley Standard Distribution (BSD)>psicoactiva, popular en los años ochenta, y probablemente diseñada en la U. C. Berkeley o en sus alrededores. Es similar en muchos aspectos al medicamento "System V", que solo se puede obtener con receta, pero infinitamente más útil. (O, al menos, más divertida). El nombre químico completo es "Berkeley Standard Distribution".
+
+=item casilla
+
+Ubicación X<buckets (term)>de una B<tabla hash> que puede contener varias entradas cuyas claves corresponde al mismo valor de hash según su función de hash. (Como política interna, no tiene que preocuparse de esto, a menos que le interesen los componentes internos o la política).
+
+=item búfer
+
+Ubicación X<buffers, defined>para el almacenamiento temporal de datos. El B<almacenamiento en búfer de bloques> significa que los datos se pasan a su destino cuando se llena el búfer. El B<almacenamiento en búfer de líneas> significa que se pasa el contenido siempre que se recibe una línea completa. El B<almacenamiento en búfer de comandos> significa que los datos se pasan cada vez que se ejecuta un comando C<print> (o equivalente). Si no se usa búfer para la salida, el sistema la procesa de byte en byte sin usar espacio de almacenamiento. Esto puede ser muy ineficaz.
+
+=item elemento predefinido
+
+Una X<built–in functions, about>B<función> predefinida del lenguaje. Incluso cuando se oculta B<sobrescribiendo>, siempre se puede obtener una función predefinida usando su B<nombre completo> (completándolo con el seudopaquete C<CORE::>).
+
+=item conjunto
+
+Conjunto X<bundles (term)>de módulos de B<CPAN> relacionados. (También puede referirse a un grupo de modificadores de línea de comandos agrupados en un B<grupo de modificadores>).
+
+=item byte
+
+En X<bytes (term)>la mayoría de los contextos es un elemento de datos formado por ocho B<bits>.
+
+=item bytecode
+
+Lenguaje tipo I<pidgin> que hablan los androides cuando no desean revelar su orientación (vea B<endian>). El nombre proviene de algunos lenguajes similares hablados (por razones parecidas) entre compiladores e intérpretes a finales del siglo XX. Estos lenguajes se caracterizan porque representan todo como una secuencia de bytes independiente de la arquitectura.
+
+=back
+
+=head2 C
+
+=over 4
+
+=item C
+
+Lenguaje X<C language, about>muy querido por muchos programadores por sus definiciones de B<tipos> I<inside-out>, sus reglas de B<precedencia> inescrutables y la intensa B<sobrecarga> del mecanismo de llamada de funciones. (En realidad, los programadores se pasaron a C porque les gustaban más los identificadores en minúsculas que en mayúsculas). Perl está escrito en C, por lo que no es sorprendente que haya heredado muchas ideas de C.
+
+=item caché
+
+Un X<cache (term)>almacén de datos. En vez de calcular respuestas costosas varias veces, calcularla una vez y salvar el resultado.
+
+=item devolución de llamada
+
+B<Controlador> X<callbacks>que se registra con alguna parte del programa para que otra parte del programa lo B<desencadene> cuando se produzca algún evento de interés.
+
+=item llamada por referencia
+
+Mecanismo X<call by reference>X<references, call by reference mechanism>para pasar B<argumentos> en el que los B<argumentos formales> hacen referencia directa a los B<argumentos reales> y la B<subrutina> puede cambiar los argumentos reales modificando los argumentos formales. Es decir, el argumento formal es un B<alias> del argumento real. Vea también B<llamada por valor>.
+
+=item llamada por valor
+
+Mecanismo X<call by value>para pasar B<argumentos> en el que los B<argumentos formales> hacen referencia a los B<argumentos reales> y la B<subrutina> no puede cambiar los argumentos reales modificando los argumentos formales. Vea también B<llamada por referencia>.
+
+=item canónico
+
+Reducido X<canonical (term)>a una forma estándar para facilitar la comparación.
+
+=item variables de captura
+
+Las X<capture variables>X<variables, capture>variables -tales como C<$1> y C<$2>, y C<%+> y C<%– >— que guardan los textos recordados en una coincidencia de patrón. Vea el libro I<Programming Perl>, capítulo 5, "Pattern Matching".
+
+=item capturar
+
+El X<capturing in pattern matching>X<subpatterns, capturing>X<pattern matching, capturing in>uso de paréntesis alrededor de un B<subpatrón> en una B<expresión regular> para almacenar la B<subcadena> coincidente como una B<retrorreferencia>. (Las cadenas capturadas también se devuelven como una lista en B<contexto de lista>). Vea el libro I<Programming Perl>, capítulo 5, "Pattern Matching".
+
+=item culto de carga
+
+Copiar X<cargo cult>y pegar código sin entenderlo, mientras se cree supersticiosamente en su valor. Este término se originó a partir de culturas preindustriales que trataban con las basuras de los exploradores y colonizadores de culturas tecnológicamente avanzadas. Vea I<Los dioses deben estar locos>.
+
+=item tamaño de caja
+
+Una X<case (character)>X<characters, case considerations>propiedad de ciertos caracteres. Originalmente, los tipógrafos almacenaban las letras mayúsculas en la superior de dos cajas, y las letras minúsculas en la inferior. Unicode reconoce tres tamaños de caja: B<minúscula> (B<propiedad de carácter> C<\p{lower}>), B<titular> (C<\p{title}>), y B<mayúscula> (C<\p{upper}>). Un cuarto tamaño de caja llamado B<caja plegable> no es en sí mismo un tamaño de caja distinto, pero se usa internamente para implementar el B<plegado>. No todas las letras tienen tamaño de caja, y algunas no-letras sí lo tienen.
+
+=item plegado
+
+Comparar X<casefolding>o coincidir insensiblemente con el tamaño de caja de una cadena. En Perl, se implementa con el modificador de patrón C</i>, la función C<fc>, y el escapado C<\F> en entrecomillado doble.
+
+=item cambio de tamaño de caja
+
+El X<casemapping>proceso de convertir una cadena de uno a otro de los cuatro B<mapeos> Unicode; en Perl, se implementa con las funciones C<fc>, C<lc>, C<ucfirst> y C<uc>.
+
+=item carácter
+
+El X<characters, defined>elemento individual más pequeño de una cadena. Las computadoras almacenan los caracteres como enteros, pero Perl nos permite operar en ellos como texto. El valor entero que se usa para representar un carácter en particular se denomina B<código de carácter> (I<code point>).
+
+=item clase de caracteres
+
+Lista X<character classes, about>X<classes, character>de caracteres entre corchetes que se usa en una B<expresión regular> para indicar que cualquier carácter del conjunto puede ocurrir en un punto determinado. En un sentido informal, cualquier conjunto de caracteres predefinido que se use para ello.
+
+=item propiedad de carácter
+
+B<Clase de caracteres> X<character property>que se puede detectar mediante el B<metasímbolo> C<\p>. B<Unicode> define cientos de propiedades estándares por cada código de carácter, y el propio Perl define también unos pocos más.
+
+=item operador envolvente
+
+Un X<circumfix operator>B<operador> que rodea a sus B<operandos>, como el operador de corchetes angulares o los paréntesis, o un abrazo.
+
+=item clase
+
+B<Tipo> X<classes, defined>definido por el usuario, implementado en Perl mediante un B<paquete> que proporciona (de forma directa o mediante herencia) B<métodos> (es decir, B<subrutinas>) para controlar B<instancias> de la clase (sus B<objetos>). Vea también B<herencia>.
+
+=item método de clase
+
+Un X<class methods>X<methods, class>B<método> cuyo B<invocante> es un nombre de B<paquete>, no una referencia a un B<objeto>. Un método asociado a la clase como un todo. Vea también B<método de instancia>.
+
+=item cliente
+
+En X<clients, defined>X<processes, client>contexto de redes, es un B<proceso> que inicia el contacto con un proceso de B<servidor> para intercambiar datos y, tal vez, recibir un servicio.
+
+=item clausura
+
+Subrutina X<closure subroutines>X<subroutines, closure>B<anónima> tal que, cuando se genera una referencia a ella en tiempo de ejecución, hace un seguimiento de las identidades de B<variable léxica> visibles externamente, incluso después de que dichas variables léxicas se salgan del B<ámbito>. Se llaman "clausuras" porque este tipo de comportamiento proporciona a los matemáticos una sensación de clausura, o cierre.
+
+=item clúster
+
+B<Subpatrón> X<clusters, defined>X<subpatterns, cluster>escrito entre paréntesis que se usa para agrupar partes de una B<expresión regular> en un solo B<átomo>.
+
+=item CODE
+
+La X<CODE (ref function)>X<ref function, about>palabra devuelta por la función C<ref> cuando se aplica a una referencia a una subrutina. Significa "código". Vea también B<CV>.
+
+=item generador de código
+
+Sistema X<code generators, defined>que escribe código automáticamente en un lenguaje de bajo nivel; por ejemplo, el código que implementa el I<backend> de un compilador. Vea B<generador de programas>.
+
+=item código de carácter
+
+Un X<codepoints, about>entero que usa la computadora para representar un cierto carácter. Los códigos de carácter en ASCII están en el rango 0 a 127; los códigos de carácter Unicode están en el rango 0 a 0x1F_FFFF; y los códigos de carácter Perl están en el rango 0 a 2³²−1 o 0 to 2⁶⁴−1, dependiendo del tamaño de su entero nativo. En la cultura Perl, a veces se les llama B<ordinales>.
+
+=item subpatrón de código
+
+Subpatrón de B<X<code subpatterns>X<subpatterns, code>expresión regular> cuyo propósito real es ejecutar código Perl, como por ejemplo los subpatrones C<(?{...})> y C<(??{...})>.
+
+=item secuencia de intercalación
+
+El X<collating sequence>X<collating sequence>orden en que se ordenan los B<caracteres>. Se usa en rutinas de comparación de B<cadenas> para decidir, por ejemplo, en qué parte de este glosario debe ir "secuencia de intercalación".
+
+=item co-mantenedor
+
+Una X<co–maintainers>persona con permisos para indexar un B<espacio de nombres> en B<PAUSE>. Cualquiera puede subir archivos en cualquier espacio de nombres, pero sólo el principal y los co-mantenedores obtendrán sus contribuciones indexadas.
+
+=item carácter combinante
+
+Cualquier X<combining characters>X<characters, combining>carácter con la I<General Category of Combining Mark> (Marca de la Categoría General de Combinación, C<\p{GC=M}>), que puede ser espaciados o no espaciados. Algunos incluso son invisibles. Una secuencia de caracteres de combinación que siguen a un carácter base de grafema forman juntos un único carácter visible para el usuario llamado B<grafema>. Casi todos los diacríticos son caracteres de combinación, y viceversa.
+
+=item comando
+
+En X<commands, defined>programación de B<shell>, la combinación sintáctica de un nombre de programa y sus argumentos. También se puede definir de forma más informal como cualquier cosa que, al escribirse en una shell (un intérprete de comandos), hace que esta inicie alguna acción. Según una definición todavía más informal, es una B<instrucción> Perl que puede empezar con una B<etiqueta> y terminar con un signo de punto y coma.
+
+=item almacenamiento en búfer de comandos
+
+Mecanismo X<command buffering>X<buffering, command>de Perl que permite almacenar la salida de cada B<comando> de Perl y después volcarlo como una sola solicitud al B<sistema operativo>. Para habilitarlo se establece la variable C<$|> (C<$AUTOFLUSH>) en un valor verdadero. Se usa cuando no se quiere que queden datos a la espera, sin ir a donde se supone que tienen que ir; esto es algo que puede suceder, ya que en un B<archivo> o una B<tubería> se usa B<almacenamiento en búfer de bloques> de manera predeterminada.
+
+=item argumentos de línea de comandos
+
+Los X<command–line arguments>B<X<arguments, command–line>valores> que se suministran con un nombre de programa para indicar a la B<shell> que debe ejecutar un B<comando>.
+Estos valores se pasan a un programa Perl a través de C<@ARGV>.
+
+=item nombre de comando
+
+El X<command names>nombre del programa que se está ejecutando actualmente, tal como se escribió en la línea de comandos. En C, el nombre de un B<comando> se pasa al programa como el primer argumento de línea de comandos. En Perl se incluye por separado, como C<$0>.
+
+=item comentario
+
+Observación X<comments, defined>que no afecta al significado del programa.
+En Perl se puede agregar un comentario mediante un carácter C<#>, y los comentarios se pueden extender hasta el final de la línea.
+
+=item unidad de compilación
+
+El X<compilation units>B<archivo> (o B<cadena>, en el caso de C<eval>) que se está compilando actualmente.
+
+=item compilar
+
+El proceso de convertir código fuente en una forma utilizable por la máquina. Vea B<fase de compilación>.
+
+=item fase de compilación
+
+Cualquier X<compile phase, defined>momento antes de que el intérprete de Perl inicie la ejecución del programa principal. Vea también B<fase de ejecución>. Durante la fase de compilación la mayor parte del tiempo se consume en B<tiempo de compilación>, pero también puede usarse en B<tiempo de ejecución> cuando se evalúan los bloques C<BEGIN>, las declaraciones C<use> o C<no>, o subexpresiones constantes. El código de inicio e importación de cualquier declaración C<use> también se ejecuta durante la fase de compilación.
+
+=item compilador
+
+En X<compilers and compiling, about>un sentido estricto, es un programa que procesa otro programa y devuelve un archivo que contiene el programa en un formato "más fácil de ejecutar", normalmente con instrucciones nativas de código máquina.
+Según esta definición, el intérprete I<perl> no es un compilador, pero contiene una especie de compilador que procesa un programa para convertirlo a un formato más fácil de ejecutar (B<árboles de sintaxis>) dentro del mismo proceso de I<perl> para que el B<intérprete> lo interprete a continuación. Sin embargo, existen B<módulos> de extensión que hacen que Perl se parezca más a un compilador "real". Vea el I<Programming Perl>, capítulo 16, “Compiling”.
+
+=item tiempo de compilación
+
+Tiempo X<compile time, defined>en el que Perl intenta entender el código, en contraste con el B<tiempo de ejecución>, que es el tiempo en que piensa que ya lo entiende y simplemente intenta ejecutar las instrucciones del código.
+
+=item sistema de composición
+
+"Constructor" X<composers, about>para un B<referente> que en realidad no es un B<objeto>, como un array o un hash anónimos (o, ya puestos, una sonata).
+Por ejemplo, un par de llaves actúa como un sistema de composición para un hash, y un par de corchetes actúa como un sistema de composición para un array. Vea la sección “Creating References” en el Libro del Camello, capítulo 8, “References”.
+
+=item concatenación
+
+El X<concatenating strings>X<strings, concatenating>proceso de colar la punta de algo con la cola de otra cosa del mismo tipo. Hace referencia a una operación similar con dos B<cadenas>.
+
+=item condicional
+
+Algo X<conditional (term)>"sí o no". Vea B<contexto Booleano>.
+
+=item conexión
+
+En X<connections (term)>telefonía, es el circuito eléctrico temporal que se establece entre el teléfono que hace la llamada y el que la recibe. En tecnología de redes, el mismo tipo de circuito temporal entre un B<cliente> y un B<servidor>.
+
+=item construcción, construir
+
+El X<constructs, defined>sustantivo se refiere a un fragmento de sintaxis formado por piezas más pequeñas. El verbo transitivo significa crear un B<objeto> con un B<constructor>.
+
+=item constructor
+
+Cualquier X<constructors, defined>B<método de clase>, B<instancia> o B<subrutina> que forma, inicializa, bendice y devuelve un B<objeto>. A veces usamos este término de forma informal para referirnos a un B<sistema de composición>.
+
+=item contexto
+
+Los X<context, about>alrededores o entorno. El contexto proporcionado por el código del entorno determina el tipo de datos que se espera que una B<expresión> concreta devuelva. Los tres tipos de contexto principales son B<contexto de lista>, B<contexto escalar> y B<contexto vacío>. A veces, el contexto escalar se subdivide en B<contexto booleano>, B<contexto numérico>, B<contexto de cadena> y B<contexto vacío>. También existe un contexto escalar "indiferente" (si siente curiosidad, se describe como el contexto "don't care" en el Capítulo 2, "Bits and Pieces", de la tercera edición de I<Programming Perl>).
+
+=item continuación
+
+Tratar X<continuation lines>más de una B<línea> física como una sola línea lógica. Para continuar las líneas de un archivo B<Makefile> se coloca una barra diagonal inversa antes del B<carácter de nueva línea>. Los encabezados de correo definidos en X<RFC 822>RFC 822 se continúan colocando un espacio o una tabulación I<a continuación> del carácter de nueva línea. En general, las líneas de código Perl no necesitan ningún tipo de marca de continuación, ya que el B<espacio en blanco> (incluidos los caracteres de nueva línea) se ignora alegremente. Casi siempre.
+
+=item volcado del núcleo
+
+Cadáver X<core dump>de un B<proceso>, en forma de archivo que queda en el B<directorio de trabajo> del proceso, generalmente como consecuencia de un determinado tipo de error irrecuperable.
+
+=item CPAN
+
+La X<Comprehensive Perl Archive Network>X<CPAN (Comprehensive Perl Archive
+Network), about>I<Comprehensive Perl Archive Network> (Comprensible Red de Archivos Perl). (Vea el Prefacio y el capítulo 19, "CPAN" de I<Programming Perl>, para los detalles).
+
+=item preprocesador de C
+
+El X<C preprocessor>primer barrido típico del compilador de C, que procesa las líneas que empiezan por C<#> para compilación condicional y definición de macros, y que manipula de varias maneras el texto del programa basándose en las definiciones actuales. También se denomina I<cpp>(1).
+
+=item cracker
+
+Alguien X<crackers>capaz de burlar la seguridad de los sistemas informáticos. Un cracker puede ser un auténtico B<hacker> o simplemente un B<script kiddie>.
+
+=item canal de salida seleccionado actualmente
+
+El X<currently selected output channel>último B<identificador de archivo> designado con C<select(IDENTIFICADOR DE ARCHIVO)>; si no se ha seleccionado ningún identificador de archivo, el canal de salida es B<STDOUT>.
+
+=item paquete actual
+
+El X<current package>B<paquete> en el que se B<compila> la instrucción actual. Recorre hacia atrás el texto del programa por el B<ámbito léxico> actual o cualquier ámbito léxico de nivel superior hasta llegar a la declaración del paquete. Ese es el nombre del paquete actual.
+
+=item directorio de trabajo actual
+
+Vea X<current working directory> B<directorio de trabajo>.
+
+=item CV
+
+En ámbito académico, un curriculum vitae, un clase elegante de decir "hoja de vida". En Perl, una X<CV (code value)>X<code value (CV)>definición de tipo "valor de código" interno que contiene una B<subrutina>. El tipo C<CV> es una subclase de B<SV>.
+
+=back
+
+=head2 D
+
+=over 4
+
+=item instrucción colgante
+
+Una X<dangling statements>X<statements, dangling>B<instrucción> individual suelta, sin llaves, que cuelga de un condicional C<if> o C<while>. C las permite. Perl no.
+
+=item datagrama
+
+Paquete de X<datagrams, defined>datos, como un mensaje B<UDP>, que (desde el punto de vista de los programas implicados) se puede enviar de forma independiente a través de la red. (De hecho, todos los paquetes se envían de forma independiente en el nivel B<IP>, pero los protocolos de envío de B<secuencias> como B<TCP> ocultan esto a los programas).
+
+=item estructura de datos
+
+Manera X<data structures, defined>en que diversos elementos de datos están relacionados entre sí y forma que adquieren cuando se colocan todos juntos (por ejemplo, en una tabla rectangular o en un árbol de forma triangular).
+
+=item tipo de datos
+
+Conjunto X<data types, defined>de valores posibles, junto con todas las operaciones que manipulan esos valores. Por ejemplo, un tipo de datos numérico tiene un determinado conjunto de números que se pueden usar y varias operaciones matemáticas que se pueden aplicar a los números pero que tendrían poco sentido con una cadena como C<"Kilroy">, por ejemplo. Las cadenas tienen sus propias operaciones, como la B<concatenación>. Los tipos compuestos formados por elementos más pequeños suelen tener operaciones de composición y descomposición, y quizás también de reordenación. Los B<objetos> que modelan cosas del mundo real suelen tener operaciones que se corresponden con actividades reales. Por ejemplo, si modela un ascensor, el objeto ascensor puede tener un B<método> C<abrir_puerta>.
+
+=item DBM
+
+Significa X<DBM (Database Management) routines>X<Database Management (DBM) routines>"Data Base Management" (administración de base de datos), y es un conjunto de rutinas que emulan un B<array asociativo> mediante archivos de disco. Las rutinas usan un esquema de hash dinámico para localizar cualquier entrada con solo dos accesos al disco. Los archivos DBM permiten que un programa Perl mantenga un B<hash> persistente entre varias invocaciones. Puede enlazar (C<tie>) sus variables hash a varias implementaciones DBM.
+
+=item declaración
+
+B<Aserción> X<declarations, defined>que declara que algo existe y que también puede describir cómo es, sin especificar cómo o dónde se va a usar. Una declaración es como la parte de una receta que dice "dos tazas de harina, un huevo grande, cuatro o cinco renacuajos...". Para ver una definición de su opuesto, vea B<instrucción>. Tenga en cuenta que algunas declaraciones también funcionan como instrucciones. Las declaraciones de subrutina también actúan como definiciones si se proporciona el cuerpo de la subrutina.
+
+=item declarador
+
+Algo X<declarators>que le dice a su programa qué suerte de variable quiere que sea. Perl no requiere que declare variables, pero puede usar C<my>, C<our> o C<state> para denotar que quiere algo distinto de lo normal.
+
+=item decrementar
+
+Restar X<decrementing values>X<values, decrementing>un valor de una variable, como en "decrementar C<$x>" (significa restar 1 de su valor) o "decrementar C<$x> en 3 unidades".
+
+=item valor predeterminado
+
+B<Valor> X<default values>X<values, default>elegido automáticamente si no se proporciona un valor.
+
+=item definido
+
+Tener X<defined (term)>un significado. Perl piensa que algunas de las cosas que las personas intentan hacer no tienen sentido, como usar variables a las que nunca se ha asignado un B<valor> o realizar determinadas operaciones con datos que no existen. Por ejemplo, si intenta leer datos cuando ya se ha acabado el archivo, Perl devolverá un valor indefinido. Vea también B<falso> y la entrada C<defined> en I<Programming Perl>, capítulo 27, “Functions”.
+
+=item delimitador
+
+B<Carácter> X<delimiters (term)>o B<cadena> que establece límites en un objeto de texto de tamaño arbitrario; no debe confundirse con un B<separador> o un B<terminador>. "Delimitar" significa simplemente "rodear" o "envolver" (lo que hacen estos paréntesis).
+
+=item desreferenciar
+
+Término X<dereference (term)>X<references, dereference>informático sofisticado que significa "seguir una B<referencia> hasta aquello a lo que apunta". El prefijo "des" hace referencia al hecho de que al hacer esto se elimina un nivel de B<indirección>.
+
+=item clase derivada
+
+B<Clase> X<derived classes>X<classes, derived>X<subclasses>X<classes, subclasses>que define alguno de sus B<métodos> en términos de una clase más genérica, denominada B<clase base>. Tenga en cuenta que las clases no se clasifican exclusivamente en clases base y clases derivadas: una clase puede funcionar a la vez como clase derivada y como clase base, lo que le da un toque de elegancia.
+
+=item descriptor
+
+Vea B<descriptor de archivo>.
+
+=item destruir
+
+Anular X<destroy (term)>la asignación de memoria de un B<referente> (antes se desencadena su método C<DESTROY>, si lo tuviera).
+
+=item destructor
+
+Un X<destructor method>X<methods, destructor>B<método> especial que se llama cuando un B<objeto> está pensando en auto-B<destruir>se. En realidad, el método C<DESTROY> de un programa Perl no se encarga de la destrucción; Perl solo B<desencadena> el método en caso de que la B<clase> desee realizar alguna limpieza asociada.
+
+=item dispositivo
+
+Artilugio X<devices (term)>de hardware prodigioso (como un disco, una unidad de cinta, un módem, una palanca de control o un ratón) conectado a su equipo que el B<sistema operativo> trata de hacer pasar por un B<archivo> (o un conjunto de archivos).
+En Unix, estos archivos simulados se encuentran en el directorio I</dev>.
+
+=item directiva
+
+Una X<directives, defined>directiva B<pod>. Vea el I<Programming Perl>, capítulo 23, "Plain Old Documentation".
+
+=item directorio
+
+Archivo X<directories, defined>especial que contiene otros archivos. Algunos B<sistemas operativos> llaman a estos archivos "carpetas", "cajones" o "catálogos".
+
+=item identificador de directorio
+
+Nombre X<directory handle>que representa una instancia concreta de un directorio abierto para lectura, hasta que se cierra dicho directorio. Vea la función C<opendir>.
+
+=item disciplina
+
+Algunas X<discipline (I/O layer)>personas lo necesitan y otras personas lo evitan.
+Para Perl, es una forma antigua de decir B<capa E/S>.
+
+=item distribuir
+
+Enviar X<dispatching>algo a su destino correcto. Normalmente se usa como metáfora para indicar una transferencia del control del programa a un destino seleccionado algorítmicamente, normalmente buscando en una tabla de B<referencias> de función o, en el caso de B<métodos> de objeto, recorriendo el árbol de herencia en busca de la definición más específica del método.
+
+=item distribución
+
+Versión X<distributions, defined>estándar empaquetada de un sistema de software. Su uso predeterminado implica la inclusión del código fuente. Si no es así, se dice que la distribución "solo incluye binarios".
+
+=item doble vida
+
+Algunos X<dual–lived modules>X<modules, dual–lived>módulos viven tanto en la B<Biblioteca estándar> y en B<CPAN>. Estos módulos podrían desarrollarse a la vez a medida que los desarrolladores modifican cada versión. La tendencia actualmente es desenredar estas situaciones.
+
+=item dweomer
+
+Un X<dweomer>encantamiento, ilusión, fantasmal o prestidigitación. Se dice cuando los efectos mágicos B<dwimmer> de Perl no ofrecen el resultado esperado, sino que parecen el producto de un encantamiento arcano, brujería o un prodigio maravilloso. [Del inglés medio].
+
+=item dwimmer
+
+DWIM X<DWIM (Do What I Mean) principle>X<Do What I Mean (DWIM) principle>es el acrónimo de "Do What I Mean" (Haz lo que te ordeno), el principio de que algo debe hacer lo que se le ordena sin rechistar. Se dice que un fragmento de código con esta propiedad es un "dwimmer". Esto puede requerir una gran cantidad de magia entre bastidores, en cuyo caso (si no permanece oculto entre bastidores) se llamará B<dweomer>.
+
+=item control de ámbito dinámico
+
+El X<dynamic scope>X<scopes, dynamic>control de ámbito dinámico se hace sobre un B<ámbito dinámico>, de forma que las variables estén visibles en el resto del B<bloque> en el que se usan por primera vez y en las B<subrutinas> llamadas por el resto del bloque. Se puede cambiar temporalmente el valor de las variables de ámbito dinámico (y restaurarlo posteriormente) mediante un operador B<local>.
+(Compárese con el B<control de ámbito léxico>). En un sentido más informal, significa que una subrutina que esté en la mitad de una llamada a otra subrutina "contiene" esa subrutina en B<tiempo de ejecución>.
+
+=back
+
+=head2 E
+
+=over 4
+
+=item ecléctico
+
+Derivado X<eclectic (term)>de muchas fuentes. Hay quien piense que de I<demasiadas>.
+
+=item elemento
+
+Componente X<elements, about>básico. Cuando se refiere a un B<array>, es uno de los elementos que forman el array.
+
+=item integrar
+
+Insertar X<embedding (term)>algo dentro de otra cosa, especialmente cuando se puede considerar sorprendente: "¡He incrustado un intérprete de Perl completo en mi editor!".
+
+=item prueba de subclase vacía
+
+La X<empty subclass test>noción de que una B<clase derivada> vacía debe comportarse exactamente igual que su B<clase base>.
+
+=item encapsulación
+
+El X<encapsulation (term)>velo de abstracción que separa la B<interfaz> de la B<implementación> (tanto si se fuerza como si no), que ordena que todo el acceso al estado de un B<objeto> sea solo a través de B<métodos>.
+
+=item endian
+
+Vea B<little-endian> y B<big-endian>.
+
+=item en passant
+
+Se dice de la acción de modificar un B<valor> mientras se copia. [Del francés, significa "al paso", como en la exótica maniobra de captura de peón del ajedrez].
+
+=item entorno
+
+El X<environment (term)>conjunto colectivo de B<variables de entorno> que el B<proceso> hereda del proceso principal. Se puede acceder a estas variables a través de C<%ENV>.
+
+=item variable de entorno
+
+Mecanismo X<environment variables>X<variables, environment>X<environment variables>mediante el cual un agente de alto nivel, como un usuario, puede pasar sus preferencias a sus futuros descendientes (B<procesos> derivados de primer nivel, de segundo nivel, etc.). Cada variable de entorno es un par B<clave>/B<valor>, como una entrada de un B<hash>.
+
+=item EOF
+
+Final del archivo. A X<End of File (EOF)>X<EOF (End of File)>veces se usa metafóricamente como la cadena de terminación de un B<documento incrustado>.
+
+=item errno
+
+El X<errno (error number)>X<error number (errno)>número de error devuelto por una B<llamada de sistema> si no tiene éxito. Perl usa la variable C<$!> (o bien C<$OS_ERROR>, si usa el módulo English) para hacer referencia a este error.
+
+=item error
+
+Vea B<excepción> o B<error irrecuperable>.
+
+=item secuencia de escape
+
+Vea B<metasímbolo>.
+
+=item excepción
+
+Término pretencioso para designar un error. Vea B<error irrecuperable>.
+
+=item control de excepciones
+
+La X<exception handling, defined>forma en que un programa responde a un error. En Perl, el mecanismo de control de excepciones es el operador B<eval>.
+
+=item exec
+
+Abandonar X<exec function>el programa del B<proceso> actual y reemplazarlo por otro sin salir del proceso ni renunciar a los recursos disponibles (salvo la imagen de memoria antigua).
+
+=item archivo ejecutable
+
+B<Archivo> X<executable files>X<files, executable>con una marca especial que indica al B<sistema operativo> que se puede ejecutar como un programa.
+Se suele usar la forma abreviada "ejecutable".
+
+=item ejecutar
+
+Ejecutar X<execute (term)>un B<programa> o una B<subrutina>. (No tiene nada que ver con la función predefinida B<kill>, a menos que intente ejecutar un B<controlador de señales>).
+
+=item bit de ejecución
+
+Marca X<execute bit>especial que indica al sistema operativo que puede ejecutar este programa. En realidad hay tres bits de ejecución en Unix, y el que se usa dependerá de si usted es el único propietario del archivo, si forma parte de un grupo de propietarios, o si no es propietario del archivo.
+
+=item estado de salida
+
+Vea B<estado>.
+
+=item vulnerabilidad
+
+Dicho X<exploits, security>así, se refiere a una forma conocida de comprometer un programa para que haga algo que el autor no pretendía.
+Su tarea es escribir programas no vulnerables.
+
+=item exportar
+
+Hacer X<exporting, defined>que los símbolos de un B<módulo> estén disponibles para B<importar> en otros módulos.
+
+=item expresión
+
+Todo X<expressions, defined>X<expressions>lo que sea válido en un punto del programa que requiera un B<valor>. Normalmente consta de B<literales>, B<variables>, B<operadores>, B<funciones> y llamadas a B<subrutinas>, no necesariamente en ese orden.
+
+=item extensión
+
+Módulo X<extensions, defined>Perl que también usa código C o C++ B<compilado>. De manera más general, cualquier opción experimental que se pueda B<compilar> en Perl, como la compatibilidad con múltiples hilos de ejecución.
+
+=back
+
+=head2 F
+
+=over 4
+
+=item falso
+
+En X<false values>X<values, false>Perl, cualquier valor equivalente a C<""> o C<"0">, si se evalúa en contexto de cadena. Puesto que los valores indefinidos se evalúan como C<"">, todos los valores indefinidos son falsos, pero no todos los valores falsos son indefinidos.
+
+=item P+F
+
+Preguntas X<FAQ (Frequently Asked Question)>X<Frequently Asked Question (FAQ)>más frecuentes (aunque no necesariamente frecuentemente contestadas, especialmente si la respuesta ya aparece en los documentos de preguntas más frecuentes sobre Perl que se incluyen en la distribución estándar de Perl).
+
+=item error irrecuperable
+
+Una X<fatal errors>B<excepción> no capturada que hace que el B<proceso> finalice tras imprimir un mensaje en la secuencia de B<error estándar>. Los errores que se producen dentro de una función B<eval> no son irrecuperables. La función B<eval> termina después de colocar el mensaje de excepción en la variable C<$@> (C<$EVAL_ERROR>).
+Puede intentar provocar un error irrecuperable con el operador C<die> (lo que se conoce como desencadenar o provocar una excepción), pero esto puede capturarse mediante un B<eval> aplicado dinámicamente. Si no se captura, el C<die> se vuelve un error irrecuperable.
+
+=item mejora progresiva
+
+Una X<feeping creaturism>X<creeping featurism>cucharada de "mejora progresiva", señalando el impulso biológico de agregar solo una característica más a un programa.
+
+=item campo
+
+Elemento X<fields (term)>individual de datos numéricos o de cadena que forma parte de una B<cadena>, un B<registro> o una B<línea> de mayor longitud. Los campos de ancho variable se suelen dividir mediante B<separadores> (use la función C<split> para extraer los campos), mientras que los campos de ancho fijo suelen estar en posiciones fijas (use C<unpack>).
+Las B<variables de instancia> también se denominan "campos".
+
+=item FIFO
+
+Primero X<First In, First Out (FIFO)>X<FIFO (First In, First Out)>que entra, primero que sale. Vea también B<LIFO>. También es un apodo de B<tubería con nombre>.
+
+=item archivo
+
+Conjunto X<files, defined>de datos con nombre que suele estar almacenado en disco, dentro de un B<directorio> de un B<sistema de archivos>. Puede considerarse equivalente a un documento, si le agradan las metáforas relacionadas con la oficina. Los sistemas de archivos modernos permiten asignar varios nombres a un archivo. Algunos archivos, como los directorios y los dispositivos, tienen propiedades especiales.
+
+=item descriptor de archivo
+
+El X<file descriptors>X<descriptors, file>número que el B<sistema operativo> usa para controlar a qué B<archivo> abierto se refiere.
+Perl oculta el descriptor de archivo dentro de una secuencia de B<EE<sol>S estándar> y asocia la secuencia a un B<identificador de archivo>.
+
+=item fileglob
+
+Detección X<fileglobs>con "comodines" en B<nombres de archivos>. Vea la función C<glob>.
+
+=item identificador de archivo
+
+Identificador X<filehandles, about>(no necesariamente relacionado con el nombre real del archivo) que representa una instancia concreta de un archivo abierto hasta que lo cierre. Si va a abrir y cerrar varios archivos seguidos, puede usar el mismo identificador para abrir los distintos archivos; no tiene que escribir código de apertura para cada archivo.
+
+=item nombre de archivo
+
+Identificador X<filenames, about>que se asigna a un archivo. Ese nombre se lista en un B<directorio>. Puede usarlo en una función C<open> para indicar al B<sistema operativo> exactamente qué archivo desea abrir, y asociar el archivo a un B<identificador de archivo> que asumirá la identidad de ese archivo en el programa hasta que lo cierre.
+
+=item sistema de archivos
+
+Conjunto X<filesystems, defined>de B<directorios> y B<archivos> que residen en una partición del disco. A veces se denomina "partición". Puede cambiar el nombre de un archivo o incluso moverlo de un directorio a otro en el sistema de archivos sin mover realmente el archivo (al menos en Unix).
+
+=item operador de prueba de archivo
+
+Operador X<file test operators, about>unario predefinido que se usa para determinar si algo referido a un archivo es B<verdadero>, como C<-o $archivo> para comprobar si se es el propietario del archivo.
+
+=item filtro
+
+Programa X<filters, defined>que consume una B<secuencia> de entrada y la transforma en una secuencia de salida.
+
+=item primero en entrar
+
+El X<first–come permissions>X<permissions, first–come>primer autor en B<PAUSE> en subir un B<espacio de nombres> se convierte automáticamente en el B<mantenedor primario> para ese espacio de nombres. Los permisos "primero en llegar" distingue a un B<mantenedor primario> como a quien se le asigna ese rol de quien lo recibe automáticamente.
+
+=item marca
+
+Normalmente X<flags (term)>evitamos usar este término porque tiene muchos significados posibles.
+Puede ser un B<modificador> de línea de comandos que no consume ningún argumento (como las indicadores C<-n> y C<-p> de Perl) o, de forma menos frecuente, un indicador de un solo bit (como los indicadores C<O_CREAT> y C<O_EXCL> que se usan en C<sysopen>). A veces se usa informalmente para referirse a ciertos modificadores I<regex>.
+
+=item punto flotante
+
+Método X<floating point methods>X<methods, floating point>para almacenar números con "notación científica" en el que la precisión del número es independiente de su magnitud (el punto decimal "flota"). Perl hace sus cálculos numéricos con números (llamados algunas veces "flotantes") cuando no puede usar B<enteros> para ello. Los números de punto flotante son meras aproximaciones de los números reales.
+
+=item vaciar
+
+El X<flushing buffers>X<buffers, flushing>acto de volcar un B<búfer>, generalmente antes de que se llene.
+
+=item FMTEYEWTK
+
+I<Far More Than Everything You Ever Wanted To Know> (X<FMTEYEWTK acronym>Mucho más que todo lo que siempre quisiste saber). Un tratado exhaustivo sobre un tema que no da para mucho, como unas súper-B<P+F>. Pregunta a Tom si quieres saber mucho más.
+
+=item plegado
+
+El X<foldcase (term)>mapeo de tamaño de caja que se usa en Unicode cuando se compara o coincide sin importar el tamaño de caja. Comparar minúsculas, titulares o mayúsculas no son totalmente fiables debido a la complejidad de Unicode, con sus mapeos uno-a-muchos. El Plegado es una variante de B<minúsculas> (utilizando una forma de B<normalización> parcialmente descompuesta para ciertos códigos de carácter) creada específicamente para resolver esto.
+
+=item fork
+
+Mecanismo X<forking processes>X<processes, forking>que crea un B<proceso> derivado idéntico al proceso principal en el momento de su creación, al menos hasta que tenga sus propias ideas. Es un hilo de ejecución con memoria protegida.
+
+=item argumentos formales
+
+Los X<formal arguments>X<arguments, formal>nombres genéricos por los que una B<subroutina> conoce a sus B<argumentos>. En muchos lenguajes los argumentos formales siempre reciben nombres individuales, pero en Perl solo son los elementos de un array. Los argumentos formales de un programa Perl son C<$ARGV[0]>, C<$ARGV[1]>, etc. De manera similar, los argumentos formales de una subrutina Perl son C<$_[0]>, C<$_[1]>, etc. Puede dar a los argumentos nombres individuales asignando los valores a una lista C<my>. Vea también B<argumentos actuales>.
+
+=item formato
+
+Especificación X<formats, defined>de cuántos espacios, dígitos y demás hay que poner en algún lugar para que el resultado impreso sea atractivo.
+
+=item disponible gratuitamente
+
+Significa X<freely available (term)>que no tiene que pagar a nadie para obtenerlo, pero los derechos de autor pueden pertenecer a alguien (como Larry).
+
+=item redistribuible gratuitamente
+
+Significa X<freely redistributable (term)>que si proporciona copias piratas a sus amigos y nos enteramos, no está infringiendo las leyes. De hecho, nos gustaría que regalara una copia a todos sus amigos.
+
+=item freeware
+
+Históricamente, X<freeware (term)>cualquier software que se regala, especialmente si también se incluye el código fuente. Ahora se suele llamar B<software open source>. Recientemente se ha puesto de moda usar este término en contradicción con B<software open source>, para referirse únicamente al software libre publicado con la licencia GPL (General Public License) de la Free Software Foundation, pero es difícil justificar esto desde un punto de vista etimológico.
+
+=item función
+
+En X<functions, about>matemáticas es una correspondencia entre los distintos valores del conjunto de valores de entrada y un valor de salida específico. En programación, es una B<subrutina> o un B<operador> que devuelve un B<valor>. Puede tener o no valores de entrada (denominados B<argumentos>).
+
+=item carácter extraño
+
+El de X<funny characters>X<characters, funny>Larry o alguno de sus peculiares amigos. También hace referencia a los extraños prefijos que Perl usa como marcas de nombres en sus variables.
+
+=back
+
+=head2 G
+
+=over 4
+
+=item recolección de elementos no utilizados
+
+Característica X<garbage collection, defined>con un nombre desafortunado; debería llamarse "esperar que tu madre limpie tu desorden". En un sentido estricto, Perl no hace esto, sino que se basa en un mecanismo de recuento de referencias para mantener el orden. Sin embargo, raramente hablamos en un sentido estricto y nos referiremos habitualmente al esquema de recuento de referencias como una forma de recolección de elementos no deseados. (Puede estar tranquilo, cuando finaliza la ejecución del intérprete se ejecuta un recolector de elementos no deseados "real" para garantizar que todo quede limpio si se ha desordenado con referencias circulares, etc.).
+
+=item GID
+
+I<Group ID> X<GID (Group ID)>X<Group ID (GID)>(identificador de grupo), en Unix es el identificador de grupo numérico que el B<sistema operativo> usa para identificarle a usted y a los miembros de su B<grupo>.
+
+=item glob
+
+Estrictamente, X<glob (* character)>el carácter C<*> de la shell, que detectará un "glob" de caracteres (grupo que coincide con un patrón) cuando se intenta generar una lista de nombres de archivos.
+En un sentido informal, el acto de usar I<globs> y símbolos similares para detectar patrones.
+Vea también B<fileglob> y B<typeglob>.
+
+=item global
+
+Algo X<global (term)>que se puede ver en cualquier lugar, generalmente B<variables> y B<subrutinas> que están visibles en cualquier punto del programa.  En Perl, solo algunas variables especiales son realmente globales; la mayoría de las variables (y todas las subrutinas) solo existen en el B<paquete> actual.
+Las variables globales se pueden declarar con B<our>. Vea "Global Declarations" en I<Programming Perl>, capítulo 4, "Statements and Declarations".
+
+=item destrucción global
+
+La X<global destruction>B<recolección de elementos no utilizados> de variables globales (y la ejecución de cualquier destructor de objetos asociado) que tiene lugar cuando se cierra un B<intérprete> de Perl. La destrucción global no debe confundirse con el Apocalipsis, salvo cuando se refiera a eso explícitamente.
+
+=item lenguaje pegamento
+
+Lenguaje X<glue language>como Perl, que es muy útil para conectar cosas que en principio no se usan juntas.
+
+=item granularidad
+
+El X<granularity>tamaño de los elementos con los que se trabaja (de forma abstracta).
+
+=item grafema
+
+Un X<graphemes, defined>grafeno es un alótropo del carbono con átomos organizados en un patrón regular hexagonal de un átomo de espesor. Un B<grafema>, o más específicamente, una I<cadena de grafemas agrupadas> es un único B<character> visible por el usuario, que en realidad sea de varios caracteres (B<codepoints>) de longitud. Por ejemplo, un retorno de carro más un avance de línea es un único grafema pero dos caracteres, mientras que un "ȫ" es un único grafema, pero uno, dos o incluso tres caracteres, dependiendo de la B<normalización>.
+
+=item avaricioso
+
+Se X<greedy subpatterns>X<subpatterns, greedy>dice de un B<subpatrón> cuyo B<cuantificador> desea detectar la mayor cantidad posible de cosas.
+
+=item grep
+
+Originalmente, X<grep function>el antiguo comando de editor Unix "I<Globally search for a Regular Expression and Print it>" (hacer una búsqueda global de una expresión regular e imprimir el resultado). En la actualidad se usa en el sentido general de cualquier tipo de búsqueda, especialmente las búsquedas de texto. Perl incluye una función C<grep> predefinida que permite buscar en una lista los elementos que cumplan algún criterio especificado, a diferencia del programa B<grep>(1), que busca líneas que coincidan con una B<expresión regular> en uno o varios archivos.
+
+=item grupo
+
+Un X<groups, defined>conjunto de usuarios de los que usted es miembro. En algunos sistemas operativos (como Unix) puede asignar determinados permisos de acceso a archivos a otros miembros de su grupo.
+
+=item GV
+
+Definición X<GV (glob value)>X<glob value (GV)>de tipo de "glob value" (valor de glob) interno que contiene un B<typeglob>. El tipo C<GV> es una subclase de B<SV>.
+
+=back
+
+=head2 H
+
+=over 4
+
+=item hacker
+
+Persona X<hackers>que se caracteriza por una persistencia brillante para resolver problemas técnicos, ya sean de golf, de lucha contra los orcos o de programación.
+Hacker es un término neutro, desde un punto de vista ético. No se deben confundir los hackers buenos con los malvados B<crackers> ni con los limitados B<script kiddies>. Si los confunde, supondremos que usted es malvado o limitado.
+
+=item controlador
+
+B<Subrutina> X<handlers, defined>o B<método> que Perl llama cuando el programa debe responder a algún evento interno, como una B<señal>, o un encuentro con un operador sujeto a B<sobrecarga de operador>. Vea también B<retrollamada>.
+
+=item referencia estricta
+
+B<Valor> X<hard references, about>X<references, hard>B<escalar> que contiene la dirección real de un B<referente>, de forma que el recuento de B<referencias> del referente la tenga en cuenta. (Algunas referencias estrictas se guardan internamente, como la referencia implícita de las vacantes de variable de un B<typeglob> a su referencia correspondiente). Una referencia estricta no es lo mismo que una B<referencia simbólica>.
+
+=item hash
+
+Asociación X<hashes, about>de pares B<clave>/B<valor> sin ordenar, almacenados de forma que se pueda usar fácilmente una B<clave> de tipo cadena para buscar el B<valor> de datos asociado. Este glosario es como un hash, en el que una palabra definida es la clave y su definición el valor. A veces se usa el septisílabo "array asociativo" para designar un hash. Esto es en sí una buena razón para preferir el nombre "hash".
+
+=item tabla hash
+
+Estructura X<hash tables>de datos usada internamente por Perl para implementar arrays asociativos (hashes) de manera eficiente. Vea también B<bucket>.
+
+=item archivo de encabezado
+
+Archivo X<header files>X<files, header>que contiene algunas definiciones necesarias que hay que incluir antes que el resto del programa para realizar determinadas operaciones "oscuras". Los archivos de encabezado de C tienen la extensión I<.h>. En realidad Perl no tiene archivos de encabezado, pero históricamente ha utilizado a veces archivos I<.h> traducidos con una extensión I<.ph>. Vea C<require> en I<Programming Perl>, capítulo 27, "Functions". (Los archivos de encabezado se han reemplazado por el mecanismo de B<módulos>).
+
+=item documento incrustado
+
+Del X<here documents>inglés I<here document>. Se llama así por una construcción similar de las B<shells> que simula que las B<líneas> que siguen al B<comando>, hasta una cadena de terminación, son un B<archivo> independiente que se debe pasar al comando. En Perl no es más que una forma sofisticada de escribir algo entre comillas.
+
+=item hexadecimal
+
+Número X<hexadecimals>en base 16 (se suele abreviar como "hex"). Los dígitos 10 a 15 se suelen representar mediante las letras entre C<a> y C<f>.
+En Perl, las constantes hexadecimales empiezan por C<0x>. Vea la función C<hex> en el libro I<Programming Perl>, capítulo 27, "Functions".
+
+=item directorio principal
+
+El X<home directory>X<directories, home>directorio en el que se encuentra cuando inicia sesión. En un sistema Unix, el I<inicio de sesión> suele colocar el nombre en C<$ENV{HOME}> o en C<$ENV{LOGDIR}>, pero también puede encontrarlo con C<(getpwuid($E<lt>))[7]>. (En algunas plataformas no existe el concepto de directorio principal).
+
+=item host
+
+El X<host computers>equipo en el que reside un programa (u otros datos).
+
+=item soberbia
+
+Hibris. X<hubris quality>Orgullo excesivo. El detalle por el que Zeus querría volatilizarle.  También es la cualidad que permite escribir (y mantener) programas de forma que los demás no los puedan criticar. Es por ello la tercera gran virtud de un programador. Vea también B<pereza> e B<impaciencia>.
+
+=item HV
+
+Abreviatura X<HV (hash value)>X<hash value (HV)>de la definición de tipo "hash value" (valor de hash), que contiene la representación interna en Perl de un hash. El tipo C<HV> es una subclase de B<SV>.
+
+=back
+
+=head2 I
+
+=over 4
+
+=item identificador
+
+Nombre X<identifiers, defined>válido para prácticamente cualquier cosa que pueda interesar a un programa. Muchos lenguajes (Perl incluido) permiten que los identificadores empiecen por una letra y contengan letras y dígitos. Perl también admite conectores de puntuación como el guión bajo donde se permita caract. alfabéticos. (Es posible usar nombres más complicados en Perl, como los B<nombres completos>).
+
+=item impaciencia
+
+La X<impatience quality>rabia que se siente ante los ataques de pereza del equipo.
+Esta cualidad le permite escribir programas que no solo reaccionarán a sus necesidades, sino que se anticiparán a ellas. O que al menos tratarán de hacerlo. Es por ello la segunda gran virtud de un programador. Vea también B<pereza> e B<soberbia>.
+
+=item implementación
+
+La X<implementation (term)>manera en que un fragmento de código hace su trabajo. Los usuarios del código no deben contar con que se mantengan los detalles de la implementación, a menos que formen parte de la B<interfaz> publicada.
+
+=item importar
+
+Obtener X<import (term)>acceso a símbolos exportados por otro módulo. Vea C<use> en I<Programming Perl>, capítulo 27, "Functions".
+
+=item incrementar
+
+Aumentar X<incrementing values>X<values, incrementing>el valor de algo en una unidad (o en cualquier otra cantidad especificada).
+
+=item indexar
+
+Antiguamente X<indexing (term)>era el acto de buscar una B<clave> en un índice real (como un listín telefónico) Pero actualmente no es más que el acto de usar cualquier tipo de clave o posición para buscar el B<valor> correspondiente, aunque no exista un índice. Las cosas han degenerado hasta el punto de que la función B<index> de Perl simplemente localiza la posición (el índice) de una cadena en otra.
+
+=item identificador de archivo indirecto
+
+B<Expresión> X<indirect filehandles>X<filehandles, indirect>que, al evaluarse, devuelve algo que se puede usar como B<identificador de archivo>: una B<cadena> (nombre de identificador de archivo), un B<typeglob>, una B<referencia> a typeglob, o un objeto B<IO> de bajo nivel.
+
+=item direccionamiento indirecto
+
+Si X<indirection (term)>algo en un programa no es el valor que se busca, sino una indicación de dónde se puede encontrar el valor, se habla de direccionamiento indirecto. Esto se puede hacer con B<referencias simbólicas> o con B<referencias estrictas>.
+
+=item objeto indirecto
+
+En X<indirect objects, defined>X<objects, indirect>gramática inglesa, una frase nominal corta, situada entre un verbo y su objeto directo, que indica el beneficiario o destinatario de la acción. En Perl, C<print STDOUT "$foo\n";> se puede leer como "verbo objeto-indirecto objeto", donde C<STDOUT> es el destinatario de la acción C<print> y C<"$foo"> es el objeto que se imprime.  De manera similar, al invocar un B<método> puede colocar el invocante entre el método y sus argumentos:
+
+    $gollum = new Criatura::Lamentable "Sméagol";
+    give $gollum "¡Pesssscar!";
+    give $gollum "¡Mi tesssoro!";
+
+=item vacante de objeto indirecto
+
+La X<indirect object slot>posición sintáctica situada entre una llamada a método y sus argumentos, cuando se usa la sintaxis indirecta de invocación de objetos. (La vacante se distingue por la ausencia de una coma entre ella y el siguiente argumento). Aquí B<STDERR> está en la vacante de objeto indirecto:
+
+    print STDERR "¡Despierta! ¡Despierta! ¡Miedo, fuego, enemigos! ¡Despierta!\n";
+
+=item infijo
+
+B<Operador> X<infix operators>que se usa entre sus B<operandos>, como el de multiplicación en C<24 * 7>.
+
+=item herencia
+
+Lo X<inheritance, defined>que se obtiene de los antepasados, ya sea por vía genética o de otro modo. Si usted fuera una B<clase>, sus antepasados serían B<clases base> y sus descendientes serían B<clases derivadas>. Vea B<herencia simple> y B<herencia múltiple>.
+
+=item instancia
+
+Abreviatura X<instances (term)>de "instancia de una clase", es decir, un B<objeto> de esa B<clase>.
+
+=item datos de instancia
+
+Vea X<instance data> B<variable de instancia>.
+
+=item método de instancia
+
+B<método> X<instance methods>X<methods, instance>de un B<objeto>, contrapuesto a B<método de clase>.
+
+Un B<método> cuyo B<invocante> es un B<objeto>, no un nombre de B<paquete>. Cada objeto de una clase comparte todos los métodos de esa clase, por lo que el método de una instancia se aplica a todas las instancias de la clase, en lugar de aplicarlo a una instancia concreta. Vea también B<método de clase>.
+
+=item variable de instancia
+
+B<Atributo> X<instance variables, defined>X<variables, instance>de un B<objeto>; datos almacenados en un objeto concreto, no en la clase como un todo.
+
+=item entero
+
+Número X<integers (term)>sin parte fraccionaria (decimal). Es un número que sirve para contar, como 1, 2, 3, etc. También se incluyen el 0 y los números negativos.
+
+=item interfaz
+
+Los X<interfaces (term)>servicios que un componente de código debe mantener para siempre, a diferencia de su B<implementación>, que se puede modificar siempre que sea necesario.
+
+=item interpolación
+
+Inserción X<interpolation, defined>de un escalar o un valor de lista dentro de otro valor, de forma que parezca que siempre ha estado allí. En Perl, la interpolación de variables se realiza en cadenas o patrones escritos entre comillas dobles, y la interpolación de listas se realiza al crear la lista de valores que se van a pasar a un operador de lista o a otra construcción similar que consuma una I<C<LISTA>>.
+
+=item intérprete
+
+En un X<interpreters, defined>sentido estricto, es un programa que lee otro programa y hace lo que este segundo programa dice sin convertirlo en un programa distinto, que es lo que haría un B<compilador>. Según esta definición, Perl no es un intérprete, ya que contiene una especie de compilador que convierte un programa a un formato más fácil de ejecutar (B<árboles de sintaxis>) dentro del mismo proceso de I<perl>, para que el sistema en B<tiempo de ejecución> de Perl lo interprete.
+
+=item invocante
+
+El X<invocants, defined>agente en cuyo nombre se invoca un B<método>. En un método de B<clase>, el invocante es un nombre de paquete. En un método de B<instancia>, el invocante es una referencia a objeto.
+
+=item invocación
+
+El X<invocation, method>acto de llamar a una deidad o un demonio, programa, método, subrutina o función para que haga lo que se supone que debe hacer.  Normalmente "llamamos" a las subrutinas, pero a los métodos los "invocamos", porque suena mejor.
+
+=item E/S
+
+Entrada X<I/O (Input/Output), defined>X<Input/Output (I/O), defined>desde (o salida a) un B<archivo> o B<dispositivo>.
+
+=item IO
+
+Objeto de E/S interno. También puede significar B<objeto indirecto>.
+
+=item capa E/S
+
+Uno de los X<I/O layer>filtros entre los datos y lo que tienes a la entrada o lo que terminas teniendo como salida.
+
+=item IPA
+
+India Pale Ale. El X<International Phonetic Alphabet (IPA)>X<IPA (International Phonetic Alphabet)>Alfabeto Fonético Internacional, el alfabeto estándar utilizado para la notación fonética mundial. Depende fuertemente de Unicode, incluyendo muchas combinaciones de caracteres.
+
+=item IP
+
+I<Internet Protocol> (Protocolo de Internet) X<Internet Protocol (IP)>X<IP (Internet Protocol)>, o X<IP (Intellectual Property)>X<Intellectual Property (IP)>I<Intellectual Property> (Propiedad Intelectual).
+
+=item IPC
+
+I<Interprocess Communication> (Comunicación Interprocesos) X<Interprocess Communication>X<IPC (Interprocess Communication), about>X<communication>.
+
+=item is-a
+
+Relación X<is–a relationship>entre dos B<objetos> en la que se considera que un objeto es una versión más específica del otro, que es un objeto genérico: "Un camello es un mamífero". Como en realidad el objeto genérico sólo existe en un sentido platónico, normalmente agregamos una pequeña abstracción a la noción de objetos, y pensamos en la relación como una relación entre una B<clase base> genérica y una B<clase derivada> específica. Sorprendentemente, las clases platónicas no siempre tienen relaciones platónicas (vea B<herencia>).
+
+=item iteración
+
+Hacer X<iteration>algo repetidamente.
+
+=item iterador
+
+Artilugio X<iterators>especial para programación que hace un seguimiento de dónde se está en algo que se intenta recorrer repetidamente. El bucle C<foreach> de Perl contiene un iterador; el hash también, es lo que permite usar la función C<each>.
+
+=item IV
+
+El X<IV (Integer Value)>X<Integer Value (IV)>entero cuatro; no debe confundirse con seis, el editor favorito de Tom. IV también puede ser un valor entero (I<Integer Value>) interno, del tipo que un B<escalar> puede contener. No debe confundirse con un B<NV>.
+
+=back
+
+=head2 J
+
+=over 4
+
+=item JAPH
+
+"Just Another Perl Hacker", un X<JAPH acronym>fragmento de código Perl que refleja astucia, aunque de forma críptica, y que cuando se ejecuta devuelve la cadena anterior. Se suele usar para ilustrar una característica determinada de Perl, y se viene usando de forma continuada en las firmas de USENET, como si de un concurso de Perl ofuscado se tratara.
+
+=back
+
+=head2 K
+
+=over 4
+
+=item clave
+
+Cadena X<keys, defined>de índice de un B<hash> que se usa para buscar el B<valor> asociado con esa clave.
+
+=item palabra clave
+
+Vea B<palabras reservadas>.
+
+=back
+
+=head2 L
+
+=over 4
+
+=item etiqueta
+
+Nombre X<labels, defined>que se asigna a una B<instrucción> para poder hacer referencia a la misma en otro punto del programa.
+
+=item pereza
+
+La X<laziness quality>cualidad que nos obliga a realizar un gran esfuerzo para reducir el gasto global de energía. Nos impulsa a escribir programas que nos ahorran trabajo y que pueden resultar útiles a otras personas, y a documentarlos para no tener que contestar consultas al respecto. Por esta razón, la consideremos la primera gran virtud de un programador. Sin ella, no estaría leyendo esto. Vea también B<impaciencia> y B<soberbia>.
+
+=item la más larga empezando por la izquierda
+
+La X<leftmost longest preference>X<regular expressions, leftmost longest preference>preferencia del motor de B<expresiones regulares> por detectar la primera aparición de un B<patrón> empezando por la izquierda, y una vez obtenida una posición de coincidencia, la preferencia por la coincidencia más larga (se supone que se usa un cuantificador B<avaricioso>). Vea el libro I<Programming Perl>, capítulo 5, "Pattern Matching" para I<mucho> más sobre este tema.
+
+=item desplazamiento a la izquierda
+
+B<Desplazamiento de bits> que multiplica X<left shift (E<lt>E<lt>) bit operator>X<bit–shift operators, left shift>X<E<lt>E<lt> (left shift) bit operator>un número por alguna potencia de 2.
+
+=item lexema
+
+Nombre X<lexeme (token)>elegante de B<token>.
+
+=item separador de lexemas
+
+Nombre X<lexer (tokener)>elegante para B<tokenizador>.
+
+=item análisis léxico
+
+Nombre X<lexical analysis>elegante de B<tokenizar>.
+
+=item control de ámbito léxico
+
+Consultar X<lexical scopes, defined>X<scopes>en el I<Diccionario de Inglés Oxford> con un microscopio. (También se conoce como B<control de ámbito estático>, ya que los diccionarios no se actualizan rápidamente). De forma similar, X<static scopes>X<scopes, static>significa mirar variables almacenadas en un diccionario (espacio de nombres) privado para cada ámbito, de forma que solo son visibles desde su punto de declaración hasta el final del ámbito léxico en que se declararon. --Sinónimo.
+B<ámbito estático>. --Antónimo. B<ámbito dinámico>.
+
+=item variable léxica
+
+B<Variable> X<lexical variables, about>X<variables, lexical>sujeta a un B<ámbito léxico>, declarado con C<my>. En inglés se suele llamar simplemente "lexical". (La declaración C<our> declara un nombre de ámbito léxico para una variable global, que no es una variable léxica).
+
+=item biblioteca
+
+Generalmente X<libraries, defined>es una colección de procedimientos. Antiguamente se llamaba así a un conjunto de subrutinas de un archivo I<.pl>. En la actualidad suele usarse para hacer referencia al conjunto completo de B<módulos> Perl del sistema.
+
+=item LIFO
+
+Último X<Last In, First Out (LIFO)>X<LIFO (Last In, First Out)>X<stacks, defined>que entra, primero que sale. Vea también B<FIFO>. LIFO también se suele llamar B<pila>.
+
+=item línea
+
+En X<line (term)>Unix, una serie de cero o más caracteres que no son de nueva línea, culminados con un B<carácter de nueva línea>. En equipos que no usan Unix esto se emula mediante la biblioteca de C, aunque el B<sistema operativo> subyacente tenga ideas distintas.
+
+=item ruptura de línea
+
+B<Grafema> X<linebreaks>consistente tanto en un retorno de carro seguido por un avance de línea o cualquier carácter con la B<propiedad de carácter> I<Unicode Vertical Space>.
+
+=item almacenamiento en búfer de líneas
+
+Se X<line buffering>X<buffering, line>usa en una secuencia de salida de B<EE<sol>S estándar> que vuelca el B<búfer> al recibir cada B<carácter de nueva línea>. Muchas bibliotecas de E/S estándar configuran automáticamente el almacenamiento en búfer de líneas en la salida que se dirige al terminal.
+
+=item número de línea
+
+El X<line number>número de líneas leídas antes que ésta, más 1. Perl mantiene un número de línea independiente para cada archivo de origen o de entrada que abre. El número línea actual del código se representa mediante C<__LINE__>. El número de línea de entrada actual (para el último archivo leído a través de C<E<lt>FHE<gt>>) se representa con la variable C<$.> (C<$INPUT_LINE_NUMBER>). Muchos mensajes de error notifican ambos valores, si están disponibles.
+
+=item vínculo/vincular
+
+El X<links, defined>sustantivo se refiere a un nombre en un B<directorio> que representa a un B<archivo>. Un archivo determinado puede tener varios vínculos asociados. Es como tener asociado en un listín telefónico un mismo número de teléfono con nombres distintos. El verbo (vincular) significa resolver los símbolos no resueltos de un archivo parcialmente B<compilado> como una imagen (casi) ejecutable. En general, la vinculación puede ser estática o dinámica; esto no tiene nada que ver con el control de ámbito estático o dinámico.
+
+=item LISTA
+
+Construcción X<LIST construct>X<constructs, LIST>sintáctica que representa una lista de expresiones separadas por comas y que al evaluarse produce un B<valor de lista>.
+Cada B<expresión> de una C<LISTA> se evalúa en B<contexto de lista> y se interpola en el valor de lista.
+
+=item lista
+
+Conjunto X<lists, defined>ordenado de valores escalares.
+
+=item contexto de lista
+
+Situación X<list context>X<context, list>en la que el entorno de una B<expresión> (el código que la llama) espera que esta devuelva una lista de valores, en lugar de un solo valor. Las funciones que consumen una C<LISTA> de argumentos indican a esos argumentos que deben producir un valor de lista. Vea también B<contexto>.
+
+=item operador de lista
+
+B<Operador> X<list operators, about>como C<join> o C<grep>, que hace algo con una lista de valores. Se suele usar en operadores predefinidos con nombre (como C<print>, C<unlink> y C<system>) para los que no es necesario escribir la lista de B<argumentos> entre paréntesis.
+
+=item valor de lista
+
+Lista X<list values, about>X<values, list>sin nombre de valores escalares temporales que se puede pasar en un programa desde cualquier función que genere listas a cualquier función o construcción que proporcione un B<contexto de lista>.
+
+=item literal
+
+I<Token> X<literals, defined>de un lenguaje de programación, como un número o una B<cadena>, que proporciona un B<valor> real, en lugar de simplemente representar valores posibles, como hace una B<variable>.
+
+=item little-endian
+
+Según Swift, X<little–endian, defined>X<endianness, little–endian>alguien que empieza a comer un huevo por su extremo más pequeño (juego de palabras; en inglés "end" significa extremo). También se usa para designar a los equipos que almacenan el B<byte> menos significativo de una palabra en una dirección de byte inferior a la del byte más significativo. Estos equipos se suelen considerar superiores a los equipos I<big-endian>. Vea también B<big-endian>.
+
+=item local
+
+No X<local operator, about>tiene el mismo significado en todas partes. Una variable global en Perl se puede hacer local dentro de un B<ámbito dinámico> a través del operador C<local>.
+
+=item operador lógico
+
+Símbolo X<logical operators, about>que representa conceptos como "and", "or", "xor" o "not".
+
+=item inspección hacia adelante
+
+B<Aserción> X<lookahead assertions>X<assertions (in regexes), lookahead>que mira a la cadena situada a la derecha de la posición de detección actual.
+
+=item inspección hacia atrás
+
+B<Aserción> X<lookbehind assertions>X<assertions (in regexes), lookbehind>que mira a la cadena situada a la izquierda de la posición de detección actual.
+
+=item bucle
+
+Construcción X<loop constructs and statements, about>X<constructs, loop>que realiza algo repetidamente, como una montaña rusa.
+
+=item instrucción de control de bucle
+
+Cualquier X<statements, loop control>instrucción del cuerpo de un bucle que puede hacer que el bucle se detenga prematuramente u omita una B<iteración>. En general, no debe probar esto en una montaña rusa.
+
+=item etiqueta de bucle
+
+Tipo X<loop labels>X<labels, loop>de clave o nombre asociado a un bucle (o una montaña rusa) que permite especificar en instrucciones de control de bucle el bucle que se desea controlar.
+
+=item minúscula
+
+En Unicode, X<lowercase characters>X<characters, lowercase>no sólo los caracteres con la I<General Category de Lowercase Letter>, sino cualquier carácter con la propiedad I<Lowercase>, incluyendo I<Modifier Letters>, I<Letter Numbers>, algunos I<Other Symbols>, y una I<Combining Mark>.
+
+=item compatible con valores-izquierda
+
+Lo que es capaz X<lvaluable function>X<functions, lvaluable>de servir como un B<valor-izquierda>.
+
+=item valor-izquierda
+
+Término X<lvalue (term)>X<values, lvalue>usado por defensores de la lengua para designar una ubicación de almacenamiento a la que se puede asignar un B<valor> nuevo, como una B<variable> o un elemento de un B<array>. Decimos "izquierda" porque un lugar típico de los valores-izquierda es el lado izquierdo de una asignación. Una función o expresión B<compatible con valores-izquierda> permite que se le asignen valores (por ejemplo, C<pos($x) = 10>).
+
+=item modificador de valor-izquierda
+
+Seudofunción X<lvalue modifier>X<modifiers, lvalue>de adjetivación que modifica el significado de un B<valor-izquierda> de alguna manera declarativa. Actualmente hay tres modificadores de valores-izquierda: C<my>, C<our> y C<local>.
+
+=back
+
+=head2 M
+
+=over 4
+
+=item magia
+
+Desde X<magic (term)>un punto de vista técnico, cualquier semántica adicional asociada a una variable, como C<$!>, C<$0>, C<%ENV> o C<%SIG>, o a cualquier variable atada.  Cuando se hacen trampas con estas variables, suceden cosas mágicas.
+
+=item incremento mágico
+
+Operador X<magical increment operator>de B<incremento> que sabe cómo recorrer los caracteres ASCII alfabéticos y los números.
+
+=item variables mágicas
+
+Variables X<magical variables>X<variables, magical>especiales que tienen efectos secundarios cuando se accede a ellas o se les asigna un valor. Por ejemplo, en Perl, si se cambian los elementos del array C<%ENV>, también se cambian las variables de entorno correspondientes que los subprocesos usarán. Puede leer el valor de la variable C<$!> para averiguar cuál es el número o mensaje de error actual del sistema.
+
+=item Makefile
+
+Archivo X<Makefile>que controla la compilación de un programa. En general, los programas Perl no necesitan un archivo B<Makefile> porque el compilador de Perl destaca por su autocontrol.
+
+=item man
+
+Programa X<man program (Unix)>de Unix que muestra la documentación en pantalla (páginas de manual).
+
+=item página de manual
+
+"Página" X<manpages, defined>de los manuales que se suele consultar mediante el comando I<man>(1). Una página de manual contiene una SINOPSIS, una DESCRIPCIÓN, una lista de ERRORES, etc., y generalmente no cabe en una sola página. Existen páginas de manual que documentan B<comandos>, B<llamadas de sistema>, B<funciones> de B<biblioteca>, B<dispositivos>, B<protocolos>, B<archivos>, etc. En este libro llamamos página de manual a cualquier archivo de documentación estándar de Perl (como L<perlop> o L<perldelta>), independientemente del formato con el que se haya instalado en el sistema.
+
+=item detección
+
+Vea X<matching> B<coincidencia de patrones>.
+
+=item datos de miembro
+
+Vea X<member data>B<variable de instancia>.
+
+=item memoria
+
+Siempre X<memory, defined>hace referencia a la memoria principal, no al disco.
+Algo que enturbia este asunto es el hecho de que el equipo puede tener implementada memoria B<virtual>; es decir, simulará que dispone de más memoria de la que realmente tiene, y usará el espacio en disco para almacenar bits inactivos. Esto puede hacer que parezca que se dispone de más memoria de la que realmente hay, pero no sustituye la memoria real. Lo mejor que se puede decir de la memoria virtual es que, cuando se agota la memoria real, hace que el rendimiento se degrade de forma gradual, no súbitamente. Pero el programa también puede finalizar cuando se agota la memoria virtual, si no se ha liquidado el disco antes.
+
+=item metacarácter
+
+B<Carácter> X<metacharacters, about>X<characters, regex metacharacters>que I<no> debe procesarse como un carácter normal. Los caracteres que deben tratarse de forma especial como metacaracteres varían en gran medida de un contexto a otro. Su B<shell> tendrá algunos metacaracteres, las B<cadenas> de Perl entre comillas tendrán otros metacaracteres y los patrones de B<expresión regular> tendrán todos los metacaracteres de comillas dobles y otros de su propia cosecha.
+
+=item metasímbolo
+
+Algo X<metasymbols, about>X<escape sequences>que podríamos llamar B<metacarácter> si no fuera porque está formado por una secuencia de varios caracteres.
+En general, el primer carácter de la secuencia debe ser un auténtico metacarácter para que los demás caracteres del metasímbolo le sigan en sus fechorías.
+
+=item método
+
+Tipo X<methods, defined>de acción que un B<objeto> puede realizar si se le ordena. Vea el libro I<Programming Perl>, capítulo 12, "Objects".
+
+=item orden de resolución de métodos
+
+La ruta X<method resolution order (mro)>X<mro (method resolution order)>que Perl toma desde C<@INC>. De manera predeterminada, es una doble búsqueda en profundidad, primero para buscar por métodos definidos y otra para C<AUTOLOAD>. Sin embargo, Perl le permite configurar esto con C<mro>.
+
+=item minicpan
+
+Un X<minicpan, defined>X<CPAN (Comprehensive Perl Archive Network), minicpan and>espejo de CPAN que incluye sólo las últimas versiones de cada distribución, creado probablemente con C<CPAN::Mini>X<CPAN::Mini module>. Vea I<Programming Perl>, capítulo 19, "CPAN".
+
+=item minimalismo
+
+La X<minimalism>creencia de que "lo pequeño es bello". Paradójicamente, si se dice algo en un lenguaje pequeño, acaba por ser grande; y si se dice en un lenguaje grande, acaba por ser pequeño. No hay quien lo entienda...
+
+=item modo
+
+En X<mode>el contexto de la llamada de sistema I<stat>(2), se refiere al campo que contiene los B<bits de permiso> y el tipo del B<archivo>.
+
+=item modificador
+
+Vea X<modifiers, defined>B<modificador de instrucción>, B<modificador de expresión regular> y B<modificador de valor-izquierda>, no necesariamente en ese orden.
+
+=item módulo
+
+B<Archivo> X<modules, defined>que define un B<paquete> que tiene (casi) el mismo nombre, y que puede B<exportar> símbolos o funciones como un B<objeto> de clase.
+(El archivo principal I<.pm> de un módulo también puede cargar otros archivos auxiliares del módulo). Vea la función predefinida C<use>.
+
+=item módulo (teoría de números)
+
+Divisor X<modulus (%) operator>X<% (modulus) operator>entero que se puede usar cuando se desea obtener el resto en lugar del cociente.
+
+=item mojibake
+
+Cuando X<mojibake>hablas en un lenguaje y el ordenador piensa que estás hablando en otro. Verá traducciones extrañas cuando envía UTF-8, por ejemplo, pero el ordenador piensa que envía Latin-1, mostrando en su lugar toda suerte de extraños caracteres. El término se escribe como 「文字化け」en Japones y significa "carácter putrefacto", una descripción apropiada. Pronunciado [C<modʑibake>] en fonética estándar B<IPA>, o aproximadamente “moh-jee-bah-keh”.
+
+=item monger
+
+Abreviatura X<mongers, Perl>X<Perl mongers>de B<Perl Monger>, un proveedor de servicios basados en Perl.
+
+=item mortal
+
+Valor X<mortal value>X<values, mortal>temporal programado para morir cuando finalice la instrucción actual.
+
+=item mro
+
+Vea B<orden de resolución de métodos>.
+
+=item array multidimensional
+
+Array X<multidimensional arrays>X<arrays, multidimensional>en el que cada elemento individual se localiza mediante varios subíndices. Perl lo implementa usando B<referencias>; vea I<Programming Perl>, capítulo 9, "Data Structures".
+
+=item herencia múltiple
+
+Las X<multiple inheritance>X<inheritance, multiple>características que heredamos de nuestra madre y nuestro padre, combinadas de forma impredecible. (Vea también B<herencia> y B<herencia simple>). En lenguajes informáticos (incluido Perl), la noción de que una clase determinada puede tener múltiples antepasados directos, o B<clases base>.
+
+=back
+
+=head2 N
+
+=over 4
+
+=item tubería con nombre
+
+B<Tubería> X<named pipes>X<pipes, names>con un nombre incrustado en el B<sistema de archivos>, de forma que dos B<procesos> no relacionados puedan acceder a dicha conexión.
+
+=item espacio de nombres
+
+Dominio X<namespaces, about>de nombres. Evita tener que preocuparse de si los nombres de un dominio se usan en el otro. Vea B<paquete>.
+
+=item NaN
+
+No es un número. El X<NaN (not a number)>X<not a number (NaN)>valor que Perl usa para ciertas operaciones de punto flotante inválidas o inexpresables.
+
+=item dirección de red
+
+El X<network address>atributo más importante de un I<socket> (equivalente al número de un teléfono). Generalmente una dirección IP. Vea también B<puerto>.
+
+=item carácter de nueva línea
+
+Carácter X<newline character>X<characters, newline>individual que representa el final de una línea, con un valor ASCII de 012 octal en Unix (015 en Mac) y que en las cadenas Perl se representa mediante C<\n>. En equipos Windows que escriben archivos de texto y en determinados dispositivos físicos como terminales, la biblioteca de C traduce automáticamente el carácter de nueva línea a un avance de línea y un retorno de carro, pero normalmente no hay que hacer esta traducción.
+
+=item NFS
+
+I<Network File System>, X<NFS (Network File System)>X<Network File System (NFS)>permite montar un sistema de archivos remoto como si fuera local.
+
+=item normalización
+
+Convertir X<normalization>una cadena de texto en una alternativa pero equivalente representación B<canónica> (o compatible) que se puede comparar por equivalencia. Unicode reconoce cuatro formas de normalizaciones diferentes: NFD, NFC, NFKD y NFKC.
+
+=item carácter nulo
+
+Un X<null character>X<characters, null>carácter con el valor numérico de cero. En C se usa para terminar cadenas, pero Perl permite que las cadenas contengan caracteres nulos.
+
+=item lista nula
+
+B<valor de lista> X<null lists>X<lists, null>con cero elementos, representado en Perl por C<()>.
+
+=item cadena nula
+
+B<cadena> X<null strings>X<strings, null>que no contiene caracteres; no confundir con una cadena que contenga un B<carácter nulo>, que tiene una longitud positiva y es B<verdadera>.
+
+=item contexto numérico
+
+Situación X<numeric context>X<context, numeric>en la que el entorno de una expresión (el código que la llama) espera que retorne un número.
+Vea también B<contexto> y B<contexto de cadena>.
+
+=item numificación
+
+(Algunas veces se dice I<numificación> y I<numerar>). Modismo X<numification>Perl para la conversión implícita a número; el verbo relacionado es I<numerar>.
+Se pretende que I<numificación> rime con I<momificación> y I<numerar> con I<momificar>. No está relacionado con las inglesas I<numen>, I<numina>, I<numinous>. Originalmente olvidamos la I<m> extra hace bastante tiempo, y a alguna gente le pareció divertida ese deletreo, igual que con la letra que le falta a C<HTTP_REFERER>, nuestro mal deletreo sigue con nosotros.
+
+=item NV
+
+Abreviatura X<Numeric Value (NV)>X<NV (Numeric Value)>de Nevada, un lugar donde no hay ni rastro de civilización. NV también es un valor numérico (I<Numeric Value>) de punto flotante interno del tipo que un B<escalar> puede contener; no se debe confundir con un B<IV>.
+
+=item nibble
+
+La mitad de un B<byte>, X<nybble>equivalente a un dígito B<hexadecimal> y que representa cuatro B<bits>.
+
+=back
+
+=head2 O
+
+=over 4
+
+=item objeto
+
+Una B<instancia> X<objects, defined>de una B<clase>. Algo que "sabe" a qué tipo definido por el usuario (clase) pertenece, y lo que puede hacer por ser de esa clase. El programa puede pedir al objeto que haga cosas, pero es el objeto el que decide si las hace o no. Algunos objetos son más complacientes que otros.
+
+=item octal
+
+Número X<octals>en base 8. Solo se admiten los dígitos 0 a 7. Las constantes octales en Perl empiezan por 0 (p. ej., 013). Vea también la función C<oct>.
+
+=item desplazamiento
+
+El X<offsets in strings>X<strings, offsets in>número de elementos que debe saltar al moverse desde el principio de una cadena o un array a una posición específica. El desplazamiento mínimo es cero, no uno, ya que no hay que saltar nada para llegar al primer elemento.
+
+=item I<script> de una sola línea
+
+En X<one–liner programs>inglés se llama I<one-liner>. Es un programa informático completo embutido en una sola línea de texto.
+
+=item software open source
+
+Programas X<open source software>para los que el código fuente está disponible gratuitamente y se puede redistribuir gratuitamente, sin descripción comercial asociada.
+Encontrará una definición más detallada en L<http://www.opensource.org/osd.html>.
+
+=item operando
+
+B<Expresión> X<operands (term)>que devuelve un B<valor> sobre el que actúa un B<operador>. Vea también B<precedencia>.
+
+=item sistema operativo
+
+Programa X<operating systems, defined>especial que se ejecuta directamente sobre la máquina y oculta los detalles poco agradables de la administración de B<procesos> y B<dispositivos>.
+Se suele usar también en un sentido más informal para indicar una cultura de programación específica. Este sentido informal se puede usar con varios niveles de especificidad.
+En un extremo, se puede decir que todas las versiones de Unix y los sistemas similares a Unix son un mismo sistema operativo (lo que molestará a muchas personas, especialmente a abogados y otros defensores). En el otro extremo, se puede decir que esta versión concreta del sistema operativo de este fabricante concreto es distinta de cualquier otra versión de sistema operativo de este fabricante o de cualquier otro fabricante. Perl es mucho más adaptable de un sistema operativo a otro que muchos lenguajes. Vea también B<arquitectura> y B<plataforma>.
+
+=item operador
+
+Artilugio X<operators, about>que transforma un número determinado de valores de entrada en un número determinado de valores de salida, y que suele estar predefinido en un lenguaje con una sintaxis o símbolo especiales. Un operador determinado pueden tener expectativas específicas sobre los B<tipos> de datos que se le deben pasar como argumentos (B<operandos>) y el tipo de datos que debe devolver.
+
+=item sobrecarga de operador
+
+Tipo X<operator overloading, about>X<overloading, operator>de B<sobrecarga> que se puede realizar en B<operadores> predefinidos para que se apliquen a B<objetos> como si estos fueran valores escalares normales, pero con la semántica suministrada por la clase del objeto. Esto se establece con el B<pragma> C<overload>; vea I<Programming Perl>, capítulo 13, "Overloading".
+
+=item opciones
+
+Vea X<options>B<modificadores> o B<modificadores de expresión regular>.
+
+=item ordinal
+
+Valor X<ordinals (term)>entero del carácter abstracto. Lo mismo que B<código de carácter>.
+
+=item sobrecarga
+
+Otorgar X<overloading, defined>significados adicionales a un símbolo o una construcción.
+En realidad, todos los lenguajes usan la sobrecarga en mayor o menor medida, ya que los humanos tenemos facilidad para interpretar las cosas en B<contexto>.
+
+=item sobrescribir
+
+Ocultar o X<overriding, defined>invalidar otra definición con el mismo nombre. (No se debe confundir con B<sobrecargar>, que consiste en agregar definiciones que hay que desambiguar de alguna manera alternativa). Para aumentar la confusión, usamos la palabra con dos definiciones sobrecargadas: describir cómo puede definir su propia B<subrutina> para ocultar una B<función> predefinida del mismo nombre (vea "Overriding Built-in Functions" en I<Programming Perl>, capítulo 11, "Modules") y describir cómo se puede definir un B<método> de sustitución en una B<clase derivada> para ocultar un método de la B<clase base> con el mismo nombre (vea el capítulo 12, "Objects" en I<Programming Perl>).
+
+=item propietario
+
+El X<ownership, file>X<files, ownership of>usuario (aparte del superusuario) que tiene el control absoluto sobre un B<archivo>. Un archivo también puede tener un B<grupo> de usuarios que pueden ser copropietarios, si el propietario real lo permite. Vea B<bits de permiso>.
+
+=back
+
+=head2 P
+
+=over 4
+
+=item paquete
+
+B<Espacio de nombre> X<packages, defined>para B<variables> globales, B<subrutinas>, etc., que permite distinguirlas de B<símbolos> con el mismo nombre de otros espacios de nombres. En cierto modo, solo el paquete es global, ya que fuera del paquete solo se puede acceder a los símbolos de la tabla de símbolos del paquete haciendo referencia al paquete. Pero en otro sentido, todos los símbolos de paquete son variables globales, solo que bien organizadas.
+
+=item bloc
+
+Abreviatura X<pads (scratchpads)>de B<bloc de notas>.
+
+=item parámetro
+
+Vea X<parameters> B<argumento>.
+
+=item clase primaria
+
+Vea X<parent classes>X<classes, parent> B<clase base>.
+
+=item árbol de análisis
+
+Vea X<parse tree> B<árbol de sintaxis>.
+
+=item analizar
+
+El X<parsing, about>arte sutil, y a veces brutal, de intentar convertir un programa posiblemente mal escrito en un B<árbol de sintaxis> válido.
+
+=item parchear/parche
+
+Parchear X<patches>consiste en aplicar un parche. En el mundo I<hacker>, un parche es una lista de diferencias entre dos versiones de un programa como las que se pueden aplicar mediante el programa C<patch>(1) cuando se desea corregir un error o actualizar una versión antigua.
+
+=item PATH
+
+Lista X<PATH environment variable>X<variables, environment>de B<directorios> en los que el sistema busca el programa que el usuario desea B<ejecutar>.  La lista se almacena como una de las B<variables de entorno>, a la que se accede en Perl a través de C<$ENV{PATH}>.
+
+=item ruta de acceso
+
+Nombre X<pathname>completo de archivo, como I</usr/bin/perl>. A veces se confunde con C<PATH>.
+
+=item patrón
+
+Plantilla X<patterns, defined>usada en B<detección de patrones>.
+
+=item detección de patrones
+
+Comparación X<pattern matching, about>realizada de diversas maneras de un patrón (generalmente una B<expresión regular>) con una cadena para intentar detectarlo. Se suele usar para seleccionar fragmentos interesantes de un archivo.
+
+=item PAUSE
+
+I<Perl Authors Upload SErver> X<Perl Authors Upload SErver (PAUSE)>X<PAUSE (Perl Authors Upload SErver)>(Servidor de archivos de autores Perl) (L<http://pause.perl.org>), la pasarela de los B<módulos> en su camino a B<CPAN>.
+
+=item Perl mongers
+
+I<Perl user group> (grupo de usuarios Perl), X<Perl mongers>X<mongers, Perl>toma su nombre de los Perl mongers de Nueva York, el primer grupo de usuarios Perl. Encuentre al más cercano en L<http://www.pm.org>.
+
+=item bits de permiso
+
+Bits X<permission bits>X<bits, permission>que el B<propietario> de un archivo establece o quita para permitir o prohibir el acceso a otras personas. Estos bits forman parte de la palabra de B<modo> devuelta por la función predefinida C<stat> cuando se pregunta sobre un archivo. En sistemas Unix puede consultar la página de manual I<ls>(1) para obtener más información.
+
+=item Pern
+
+Lo X<Pern (term)>que se obtiene al ejecutar C<Perl++> dos veces. Hacerlo una sola vez simplemente le riza el pelo (Permanente). Debe incrementar tres veces para aclarar el pelo (Peróxido). Enjabonar, aclarar, repetir.
+
+=item tubería
+
+B<Conexión> X<pipes, defined>directa que pasa la salida de un B<proceso> a la entrada de otro sin usar un archivo temporal intermedio.
+Una vez establecida la tubería, los dos procesos en cuestión pueden leer y escribir como si se comunicaran con un archivo normal, aunque con algunas limitaciones.
+
+=item canalización
+
+Serie X<pipeline>de B<procesos> seguidos, vinculados mediante B<tuberías>, cada una de las cuales pasa la secuencia de salida al siguiente proceso.
+
+=item plataforma
+
+El X<platforms, defined>contexto de hardware y software en el que se ejecuta un programa. Un programa escrito en un lenguaje dependiente de la plataforma puede no funcionar si se cambia alguno de los elementos siguientes: el equipo, el sistema operativo, las bibliotecas, el compilador o la configuración del sistema. El intérprete I<perl> debe B<compilarse> de distinta manera para cada plataforma, ya que está implementado en C, pero los programas escritos en el lenguaje Perl son en gran medida independientes de la plataforma.
+
+=item pod
+
+Lenguaje X<pod (plain old documentation), about>X<plain old documentation>de marcado que se usa para incrustar documentación en código Perl. Pod significa I<Plain old documentation> (Simple documentación antigua). Vea el I<Programming Perl>, capítulo 23, "Plain Old Documentation".
+
+=item comando pod
+
+Una X<pod commands>X<commands, pod>secuencia, tal como C<=head1>, que denota el inicio de una sección B<pod>.
+
+=item puntero
+
+En X<pointers>un lenguaje como C, es una B<variable> que contiene la posición exacta de algún elemento en la memoria. Perl controla los punteros internamente para que no tengamos que preocuparnos de ello. Solo tenemos que usar punteros simbólicos en forma de B<claves> y nombres de B<variable>, o B<referencias estrictas>, que no son punteros (pero actúan como si lo fueran; de hecho, contienen punteros).
+
+=item polimorfismo
+
+La X<polymorphism>noción de que se puede decir a un B<objeto> que haga algo genérico y este interpretará el comando de distinta manera en función de su tipo. [E<lt> Greek πολυ- + μορϕή, muchas formas.]
+
+=item puerto-adaptar
+
+La X<ports (term)>parte de la dirección de un I<socket> TCP o UDP que dirige los paquetes al proceso correcto tras localizar el equipo correcto. Es como la extensión telefónica que se teclea tras marcar el número. "Adaptación" es el resultado de convertir código para que se ejecute en una plataforma distinta de la original. "Adaptar" es el verbo usado para designar esta conversión.
+
+=item portable
+
+En X<portability, about>su día, se llamaba así al código C compilable en BSD y SysV. En general, se designa así al código que se puede adaptar fácilmente a otra B<plataforma>; puede definir "fácilmente" como le parezca (y generalmente se hace así).  Todo nos parecerá portable si lo deseamos con la suficiente intensidad, como un teléfono móvil o el Puente de Londres.
+
+=item portador
+
+Miembro X<porters>del equipo de desarrollo principal. Alguien que adapta software de una B<plataforma> a otra.
+Adaptar programas escritos en lenguajes dependientes de la plataforma, como C, puede ser difícil, pero la adaptación de programas como Perl merece la pena.
+
+=item posesivo
+
+Dicho X<possessive (term)>de los cuantificares y grupos en patrones que rechazan soltar nada una vez que ponen sus mitones sobre él. Forma más pegadiza y sencilla que decir la más formal "no rastreable" (I<nonbacktrackable>).
+
+=item POSIX
+
+Especificación X<Portable Operating System Interface (POSIX), about>X<POSIX (Portable Operating System Interface), about>de la I<Portable Operating System Interface> (Interfaz portable de sistema operativo).
+
+=item postfijo
+
+B<Operador> X<postfix operator>que sigue a su B<operando>, como en C<$x++>.
+
+=item pp
+
+Abreviatura X<pp (push–pop) code>X<push–pop (pp) code>interna de código "push-pop", es decir, el código C que implementa la pila de Perl.
+
+=item I<pragma>
+
+Módulo X<pragmas, about>X<modules>estándar cuyos prácticos indicios y sugerencias se reciben (y posiblemente omiten) en tiempo de compilación. Los nombres de I<pragmas> se escriben en minúsculas.
+
+=item precedencia
+
+Las X<precedence rules, about>X<operators, precedence rules>normas de conducta que, en ausencia de otros criterios, determinan qué debe suceder primero.  Por ejemplo, si no se usan paréntesis, una multiplicación siempre se realizará antes que una suma.
+
+=item prefijo
+
+B<Operador> que precede a su B<operando>, como en C<++$x>.
+
+=item preprocesamiento
+
+Lo X<preprocessing>que hace algún B<proceso> auxiliar para transformar los datos entrantes a un formato más adecuada para el proceso actual. Estos datos suelen llegar a través de una B<tubería>. Vea también B<preprocesador de C>.
+
+=item primer mantenedor
+
+Autor X<primary maintainer>al que PAUSE le permite asignar permisos de B<co-mantenedor> a un B<espacio de nombres>. Un mantenedor primario puede dejar esta distinción para asignarlo a otro autor de PAUSE. Vea I<Programming Perl>, capítulo 19, "CPAN".
+
+=item procedimiento
+
+Una X<procedures, defined> B<subrutina>.
+
+=item proceso
+
+Instancia X<processes, defined>de un programa en ejecución. En sistemas multitarea como Unix, dos o más procesos independientes pueden ejecutar el mismo programa por separado simultáneamente; de hecho, la función C<fork> está diseñada para proporcionar esta sensación de felicidad. En otros sistemas operativos, los procesos se llaman a veces "hilos de ejecución", "tareas" o "trabajos", generalmente con ligeros matices de significado.
+
+=item programa
+
+Vea B<script> (guión).
+
+=item generador de programas
+
+Sistema X<program generators>que usa un algoritmo para escribir código automáticamente en un lenguaje de alto nivel. Vea también B<generador de código>.
+
+=item detección progresiva
+
+B<Detección de patrones> X<progressive matching>X<pattern matching, progressive matching>que reanuda la detección desde el punto en que la dejó.
+
+=item propiedad
+
+Vea X<property>B<variable de instancia> o B<propiedad de carácter>.
+
+=item protocolo
+
+En X<protocols (term)>contexto de redes, una forma acordada de enviar mensajes de forma que ninguno de los interlocutores se confunda.
+
+=item prototipo
+
+Parte opcional de una declaración de B<subrutina> que indica al compilador de Perl cuántos argumentos y de qué tipo se pueden pasar como B<argumentos reales>, a fin de poder escribir llamadas a subrutinas que se analizan de forma similar a las funciones predefinidas. (O que no se analizan, si fuera el caso).
+
+=item seudofunción
+
+Construcción X<pseudofunctions>X<constructs, pseudofunctions>X<functions, pseudofunctions>que a veces parece una función, sin serlo realmente. Se suele reservar para modificadores de B<valor-izquierda> como C<my>, para modificadores de B<contexto> como C<scalar> y para construcciones con distintos tipos de comillas, C<q//>, C<qq//>, C<qx//>, C<qw//>, C<qr//>, C<m//>, C<s///>, C<y///> y C<tr///>.
+
+=item seudohash
+
+Referencia X<pseudohashes>X<hashes, pseudohashes>a un array cuyo primer elemento parece contener una referencia a un hash. Puede tratar una referencia de seudohash como una referencia de array o una referencia de hash. Ya no se da soporte a los seudohashes.
+
+=item seudoliteral
+
+B<Operador> X<pseudoliterals>que se parece a un B<literal>, como el operador de recolección de salida, C<`>I<C<comando>>C<`>.
+
+=item dominio público
+
+Se X<public domain>dice de algo que no es propiedad de nadie. Perl está protegido por derechos de autor y, por consiguiente, I<no es> de dominio público, simplemente está B<disponible gratuitamente> y es B<redistribuible gratuitamente>.
+
+=item calabaza de parches
+
+"Testigo" X<pumpkin (term)>teórico que se transmite en la comunidad Perl para indicar quién es el integrador jefe en algún campo de desarrollo.
+
+=item calabacero
+
+La X<pumpking>persona que tiene la B<calabaza de parches> en su poder, el encargado de activar la bomba, o al menos de cebarla. Debe estar dispuesto a representar el papel de la Gran Calabaza cada cierto tiempo.
+
+=item PV
+
+Un X<PV (pointer value)>X<pointer value (PV)>valor de puntero (I<pointer value>), que en la jerga de componentes internos de Perl equivale a C<char*>.
+
+=back
+
+=head2 Q
+
+=over 4
+
+=item nombre completo
+
+Que X<qualified (term)>posee un nombre completamente cualificado. El símbolo C<$Ent::moot> es completo; C<$moot> no es completo. Un nombre de archivo completo se especifica con respecto al directorio de nivel superior.
+
+=item cuantificador
+
+Componente X<quantifiers, about>de una B<expresión regular> que especifica cuántas veces puede ocurrir el B<átomo> precedente.
+
+=back
+
+=head2 R
+
+=over 4
+
+=item condición de carrera
+
+Una X<race conditions, defined>condición de carrera existe cuando el resultado de varios eventos interrelacionados depende de la ordenación de esos eventos, pero ese orden no se puede garantizar debido a los efectos no deterministas del tiempo. Si dos o más programas, o partes del mismo programa, intentan ir a través de las mismas series de eventos, uno podría interrumpir el trabajo de otro. Esta es una buena forma de encontrar un B<fallo de seguridad>.
+
+=item legible
+
+Si X<readable (term)>se refiere a un archivo, quiere decir que tiene establecido el bit de permiso apropiado para permitir el acceso al archivo.
+
+With X<readable (term)>respect to files, one that has the proper permission
+bit set to let you access the file. Si se refiere a un programa informático, indica que está lo suficientemente bien escrito para que otros puedan entender cómo funciona.
+
+=item siega
+
+Los X<reaping zombie processes>últimos rituales realizados por un B<proceso> primario en nombre de un proceso derivado fallecido para que no acabe convertido en un B<zombie>.  Vea las llamadas de función C<wait> y C<waitpid>.
+
+=item registro
+
+Conjunto X<records, defined>de valores de datos relacionados de un B<archivo> o una B<secuencia> que suelen estar asociados con un campo de B<clave> única. En Unix, suele corresponder a una B<línea>, o un conjunto de líneas que termina en una línea en blanco (un "párrafo").
+Cada línea del archivo C</etc/passwd> es un registro correspondiente a un nombre de inicio de sesión, que contiene información sobre dicho usuario.
+
+=item recursividad
+
+El X<recursion, defined>arte de definir algo (al menos parcialmente) en términos de sí mismo, algo que no está bien visto en los diccionarios pero que suele funcionar en programas informáticos si se procura evitar que el proceso continúe indefinidamente (lo que sería parecido a un bucle infinito pero con modos de error más espectaculares).
+
+=item referencia
+
+Donde X<references, about>se busca un puntero a información que está en otra parte. (Vea B<indirección>). Referencias viene en dos sabores: B<referencias simbólicos> and B<referencias estrictas>.
+
+=item referente
+
+Aquello X<referents, defined>a lo que una referencia hace referencia; puede tener nombre o no. Algunos tipos comunes de referentes son los escalares, arrays, hashes o subrutinas.
+
+=item regex
+
+Vea B<expresión regular>.
+
+=item expresión regular
+
+Una X<regular expressions, defined>sola entidad con diversas interpretaciones, como un elefante. Para un informático, es una gramática de un minilenguaje en el que algunas cadenas son válidas y otras no. Para las personas normales, es un patrón que se puede usar para encontrar lo que se busca cuando varía según el caso. Las expresiones regulares de Perl no son regulares en un sentido teórico, pero su uso regular produce muy buenos resultados.
+Ejemplo de expresión regular: C</Ast.*ores/>. Esto detectará cadenas como "C<Asturias patria querida, Asturias de mis amores>" o "C<Astutos programadores>". Vea el libro I<Programming Perl>, capítulo 5, "Pattern Matching".
+
+=item modificador de expresión regular
+
+Opción X<regular expression modifiers>X<modifiers, regular expression>de un patrón o sustitución, como C</i>, que hace que no se distingan mayúsculas de minúsculas en el patrón.
+
+=item archivo normal
+
+B<Archivo> que no es un B<directorio>, un B<dispositivo>, una B<tubería> o un B<socket> con nombre, o un B<vínculo simbólico>. Perl usa la prueba de archivo C<-f> para identificar archivos normales. A veces se llama archivo "simple".
+
+=item operador relacional
+
+B<Operador> X<relational operators>que indica si una relación de orden concreta es B<verdadera> para un par de B<operandos>. Perl tiene operadores relaciones numéricos y de cadena. Vea B<secuencia de intercalación>.
+
+=item palabras reservadas
+
+Palabras X<reserved words>X<keywords (term)>con un significado predefinido específico para un B<compilador>, como C<if> o C<delete>. A diferencia de Perl, muchos lenguajes permiten usar palabras reservadas para designar otras cosas. (Por eso se llaman reservadas). En Perl no puede usar palabras reservadas para designar B<etiquetas> o B<identificadores de archivo>. También se denominan "palabras clave".
+
+=item valor devuelto
+
+El B<valor> producido al evaluar una B<subrutina> o B<expresión>. En Perl, un valor devuelto puede ser una B<lista> o un B<escalar>.
+
+=item RFC
+
+I<Request For Comment> X<Request For Comment (RFC)>X<RFC (Request For Comment)>(Solicitud de comentarios). Pese a sus tímidas connotaciones, es el nombre de una serie de importantes documentos sobre normas.
+
+=item desplazamiento a la derecha
+
+B<Desplazamiento de bits> X<right shift (E<gt>E<gt>) bit operator>X<bit–shift operators, right shift>X<E<gt>E<gt> (right shift) bit operator>que divide un número por alguna potencia de 2.
+
+=item rol
+
+Nombre X<roles (term)>para un concreto conjunto de comportamientos. Un rol es una forma de añadir comportamiento a una clase sin usar herencia.
+
+=item root
+
+El X<root (term)>superusuario (C<UID> == 0). También es el directorio de nivel superior (raíz) del sistema de archivos.
+
+=item RTFM
+
+I<Read The Fine Manual>, X<RTFM acronym>lo que le dirán cuando piensen que lo que tiene que hacer es leer el magnífico manual disponible.
+
+=item fase de ejecución
+
+Cualquier X<run phase, defined>momento posterior al comienzo de la ejecución del programa principal.
+Vea también B<fase de compilación>. La fase de ejecución se dedica en su mayor parte al B<tiempo de ejecución>, pero también puede dedicarse a B<tiempo de compilación> si se ejecutan los operadores C<require>, C<do> C<ARCHIVO> o C<eval> C<CADENA>, o cuando una sustitución usa el modificador C</ee>.
+
+=item tiempo de ejecución
+
+El X<runtime (term), defined>tiempo en el que Perl hace lo que el código dice, en contraste con el periodo de tiempo anterior, en el que intentaba averiguar si lo que el programa decía tenía sentido (el B<tiempo de compilación>).
+
+=item patrón en tiempo de ejecución
+
+Patrón X<runtime patterns>X<patterns, runtime>que contiene una o más variables que deben interpolarse antes de que se analice el patrón como una B<expresión regular> y que, por tanto, no se puede analizar en tiempo de compilación, sino que se debe volver a analizar cada vez que se evalúa el operador de detección de patrón.
+Los patrones de tiempo de ejecución son útiles pero costosos.
+
+=item RV
+
+Vehículo X<Reference Value (RV)>X<RV (Reference Value)>recreativo ("recreational vehicle" en inglés). No debe confundirse con "vehicular recreation" (excursiones campo a través). RV también es un valor de referencia (I<Reference Value>) interno del tipo que se puede almacenar en un b<escalar>. Si aún no se siente confundido, vea también B<IV> y B<NV>.
+
+=item valor-derecha
+
+B<Valor> X<rvalue (term)>X<values, rvalue>que se encuentra en el lado derecho de una B<asignación>. Vea también B<lvalue>.
+
+=back
+
+=head2 S
+
+=over 4
+
+=item caja de arena
+
+Área X<sandbox, defined>amurallada de la que se supone que no tendrá efecto más allá de sus muros. Usted permitiría jugar a sus hijos en la caja de arena en lugar de correr por la calle.
+Vea el libro I<Programming Perl>, capítulo 20, "Security".
+
+=item escalar
+
+Valor X<scalars, defined>singular, simple; un número, una B<cadena> o una B<referencia>.
+
+=item contexto escalar
+
+Situación X<scalar context, about>X<context, scalar>en la que el entorno de una B<expresión> (el código que la llama) espera que esta devuelva un solo B<valor>, en lugar de una B<lista> de valores. Vea también B<contexto> y B<contexto de lista>. A veces un contexto escalar impone restricciones adicionales al valor devuelto (vea B<contexto de cadena> y B<contexto numérico>). A veces hablamos de un B<contexto booleano> en condicionales, pero esto no impone ninguna restricción adicional, puesto que cualquier valor escalar, tanto numérico como de tipo B<cadena>, ya es verdadero o falso.
+
+=item literal escalar
+
+Número X<scalar literals>X<literals, scalar>o B<cadena> entre comillas; un B<valor> real en el texto del programa, en contraste con una B<variable>.
+
+=item valor escalar
+
+Valor X<scalar values, about>X<values, scalar>X<SV>que es un B<escalar>, en contraste con una B<lista>.
+
+=item variable escalar
+
+B<Variable> X<scalar variables, defined>X<variables, scalar>con el prefijo C<$> que contiene un único valor.
+
+=item ámbito
+
+Cómo X<scopes, defined>de lejos puede ver a una variable, ver su interior. Perl tiene dos mecanismos de visibilidad. Realiza un B<control de ámbito dinámico> de B<variables> locales (C<local>), lo que significa que el resto del B<bloque> y las B<subrutinas> llamadas por el resto del bloque pueden ver las variables locales para ese bloque. Asimismo, Perl realiza B<control de ámbito léxico> de variables C<my>, lo que significa que el resto del bloque puede ver la variable, pero otras subrutinas llamadas por el bloque I<no> la pueden ver.
+
+=item bloc de notas
+
+Área X<scratchpads>en la que una invocación específica de un archivo o una subrutina concretos mantiene algunos de sus valores temporales, incluidas las variables de ámbito léxico.
+
+=item I<script>
+
+B<Archivo> X<scripts (term)>X<programs, defined>de texto que es un programa que debe B<ejecutarse> directamente, en lugar de B<compilarse> a otro tipo de archivo antes de su B<ejecución>.
+
+Además, en el contexto de B<Unicode>, un sistema de escritura para un lenguaje o grupo de lenguajes específicos, como Griego, Bengalí o Klingon.
+
+=item I<script kiddie>
+
+Un B<cracker> X<script kiddie>que no es un B<hacker> pero que sabe lo suficiente para ejecutar I<scripts> enlatados. Un programador que no sabe lo que se trae entre manos (vea B<culto de carga>).
+
+=item sed
+
+El venerable Stream EDitor X<sed (Stream EDitor)>X<Stream EDitor (sed)>del que Perl ha derivado algunas de sus ideas.
+
+=item semáforo
+
+Tipo X<semaphore>de interbloqueo sofisticado que impide que varios B<hilos de ejecución> o B<procesos> usen los mismos recursos simultáneamente.
+
+=item separador
+
+B<Carácter> o B<cadena> X<separators>X<characters, separators>X<strings, separators>que evita que dos cadenas se confundan. La X<split function, separators and>función C<split> usa estos separadores. No se debe confundir con un B<delimitador> o un B<terminador>. En la frase anterior se usa la palabra "o" como separador de las dos alternativas.
+
+=item serialización
+
+Proceso X<serialization>X<marshalling (term)>de colocar una B<estructura de datos> sofisticada en orden lineal de forma que se pueda almacenar como una B<cadena> en un archivo de disco o una base de datos, o se pueda enviar a través de una B<tubería>. En inglés también se llama I<marshalling>.
+
+=item servidor
+
+En X<servers, defined>X<processes, server>contexto de redes, un B<proceso> que anuncia un B<servicio> o que simplemente espera en una ubicación conocida a que los B<clientes> que necesitan el servicio se pongan en contacto con él.
+
+=item servicio
+
+Algo X<services (term)>que se hace por alguien para darle felicidad, como alegrarle el día (o incluso justificar toda una vida). En algunos equipos, la X<getservent function>función C<getservent> muestra los servicios conocidos.
+
+=item setgid
+
+Igual X<setgid program, about>que B<setuid>, solo que otorga privilegios de B<grupo>.
+
+=item setuid
+
+Se dice de un X<setuid program, about>programa que se ejecuta con los privilegios de su B<propietario> en lugar de (como suele ser el caso) los privilegios de quien lo ejecuta. También describe el bit de la palabra de modo (B<bits de permiso>) que controla la característica. Este bit se debe establecer explícitamente por el propietario y hay que tener cuidado para que el programa no otorgue más privilegios que los debidos.
+
+=item memoria compartida
+
+Parte X<shared memory>X<memory, shared>de la B<memoria> accesible para dos B<procesos> distintos que, de otro modo, no podrían ver la memoria del otro.
+
+=item shebang
+
+Versión X<shebang (term)>irlandesa de los McGillicuddy. En la cultura Perl es la combinación de las palabras "sharp" y "bang", y se refiere a la secuencia C<#!> que indica al sistema dónde puede encontrar el intérprete.
+
+=item I<shell>
+
+B<Intérprete> X<shell program, defined>de línea de B<comandos>. Es el programa que muestra un símbolo del sistema interactivo, acepta una o varias B<líneas> de entrada y ejecuta los programas especificados, cada uno con sus B<argumentos> y datos de entrada adecuados. Una shell también puede ejecutar I<scripts> que contienen estos comandos. En Unix, las shells típicas son Bourne shell (I</bin/sh>), C shell (I</bin/csh>) y Korn
+shell (I</bin/ksh>).
+En sentido estricto, Perl no es una shell porque no es interactivo, aunque los programas Perl pueden ser interactivos.
+
+=item efectos secundarios
+
+Algo X<side effects>adicional que sucede cuando se evalúa una B<expresión>. Actualmente se puede referir casi a cualquier cosa. Por ejemplo, la evaluación de una instrucción de asignación sencilla suele tener el "efecto secundario" de asignar un valor a una variable. (¡Y pensaba que asignar el valor era la intención de hacerlo!) Del mismo modo, la asignación de un valor a la variable especial C<$|> (C<$AUTOFLUSH>) tiene el efecto secundario de forzar un volcado en cada operación C<write> o C<print> en el identificador de archivo seleccionado actualmente.
+
+=item sigilo
+
+Un X<sigils, defined>sello utilizado en ocultismo. O, para Perl, el símbolo delante del nombre de una variable, tales como C<$>, C<@> y C<%>.
+
+=item señal
+
+Un X<signals and signal handling, about>rayo surgido de la nada; es decir, un evento desencadenado por el B<sistema operativo>, probablemente cuando menos se espera.
+
+=item controlador de señales
+
+B<Subrutina> X<handlers, signal>que, en lugar de contentarse con recibir las llamadas habituales, espera a que salga un rayo de la nada antes de dignarse a B<ejecutarse>. En Perl, los rayos que salen de la nada se llaman señales, y se envían con la función predefinida C<kill>. Vea el hash C<%SIG> en I<Programming Perl>, capítulo 25, "Special Names" y la sección "Signals" en el capítulo 15, "Interprocess Communication".
+
+=item herencia simple
+
+Las X<single inheritance>X<inheritance, single>características que heredó de su madre, si esta le dijo que no tiene padre. (Vea también B<herencia> y B<herencia múltiple>). En lenguajes informáticos, la noción de que las B<clases> se reproducen asexualmente, de forma que una clase determinada solo puede tener un ancestro directo (una B<clase base>). Perl no impone esta restricción, pero si lo desea puede programar Perl de esta manera.
+
+=item porción
+
+Selección X<slices of elements>X<elements, slices of>de un número de B<elementos> de una B<lista>, un B<array> o un B<hash>.
+
+=item succionar
+
+(En inglés, I<slurp>). Leer X<slurp (term)>un B<archivo> entero y asignar su contenido a una B<cadena> en una sola operación.
+
+=item I<socket>
+
+Extremo X<sockets, defined>para comunicación de red entre varios B<procesos> que representa un papel parecido al de un teléfono o un apartado de correos. La característica más importante de un I<socket> es su B<dirección de red> (es como un número de teléfono). Los distintos tipos de I<sockets> tienen distintos tipos de direcciones; algunas parecen nombres de archivo y otras no.
+
+=item referencia no estricta
+
+Vea X<soft references>X<references, soft> B<referencia simbólica>.
+
+=item filtro de código fuente
+
+Tipo X<source filters>X<filters, source>de B<módulo> especial que hace un B<preprocesamiento> del I<script> justo antes de que llegue al B<tokenizador>.
+
+=item pila
+
+Dispositivo X<stacks, defined>en el que se pueden colocar cosas para recuperarlas posteriormente en orden inverso al de colocación. Vea B<LIFO>.
+
+=item estándar
+
+Incluido X<standard (term)>en la distribución de Perl oficial como un módulo estándar, una herramienta estándar o una B<página de manual> estándar de Perl.
+
+=item error estándar
+
+La B<secuencia> de salida por defecto para comentarios desagradables que no corresponden a la B<salida estándar>. En X<STDERR filehandle, about>un programa Perl se representa mediante el B<identificador de archivo> C<STDERR>. Puede usar esta secuencia explícitamente, pero las funciones predefinidas C<die> y C<warn> escriben en la secuencia de error estándar automáticamente (a menos que sean capturadas o interceptadas de otra manera).
+
+=item entrada estándar
+
+B<Secuencia> X<STDIN filehandle, about>de entrada predeterminada del programa, que no debe preocuparse del origen de los datos, si es posible. En un programa Perl se representa mediante el B<identificador de archivo> C<STDIN>.
+
+=item E/S estándar
+
+Biblioteca X<standard I/O>X<I/O (Input/Output), standard>X<Input/Output (I/O), standard>X<STDIO filehandle>de C estándar para entrada y salida con B<almacenamiento en búfer> en el B<sistema operativo>. (La palabra "estándar" de E/S estándar solo tiene una relación tangencial con la "estándar" de las entrada y salida estándar).
+En general, Perl se basa en la implementación de E/S estándar proporcionada por un sistema operativo determinado, por lo que las características de almacenamiento en búfer de un programa Perl en una máquina pueden no coincidir exactamente con las de otra máquina.
+Normalmente, esto solo influye en la eficiencia, no en la semántica. Si el paquete de E/S estándar realiza almacenamiento en búfer de bloques y desea que B<vuelque> el búfer más a menudo, debe establecer la variable C<$|> en un valor verdadero.
+
+=item Biblioteca estándar
+
+Todo X<Standard Perl Library, about>lo que viene con la distribución oficial I<perl>. Algunas versiones de I<perl> hechas por los distribuidores son distintas, no incluyendo algunas partes o incluyendo otras. Vea también B<doble vida>.
+
+=item salida estándar
+
+B<Secuencia> X<STDOUT filehandle, about>de salida predeterminada del programa, que no debe preocuparse del destino de los datos, si es posible. En un programa Perl se representa mediante el B<identificador de archivo> C<STDOUT>.
+
+=item instrucción
+
+B<Comando> X<statements, about>que indica al equipo qué debe hacer a continuación, como un paso de una receta: "Añadir mermelada y batir hasta obtener una mezcla homogénea". Una instrucción se distingue de una B<declaración> en que esta última no ordena al equipo que haga nada; simplemente informa de algo.
+
+=item modificador de instrucción
+
+B<Condicional> X<statement modifiers, about>X<modifiers, statement>o B<bucle> que se coloca a continuación de la B<instrucción>, no antes.
+
+=item estático
+
+Que X<static (term)>varía lentamente en comparación con lo demás. (Por desgracia, todo es relativamente estable en comparación con otra cosa, salvo algunas partículas elementales, y en este caso tampoco tenemos la seguridad). En un contexto informático, en el que se supone que las cosas cambian rápidamente, el adjetivo "estático" tiene una connotación peyorativa, que indica que la B<variable>, B<subrutina> o B<método> es ligeramente disfuncional. En la cultura Perl es de buena educación evitar el uso de esta palabra.
+
+Si es usted un programador de C o C++, podría buscar la palabra clave C<state> de Perl.
+
+=item método estático
+
+Esto X<static methods>X<methods, static>no existe. Vea B<método de clase>.
+
+=item control de ámbito estático
+
+Esto no existe. Vea B<ámbito léxico>.
+
+=item variable estática
+
+Esto X<static variables>X<variables, static>no existe. Simplemente use una B<variable léxica> en un ámbito más amplio que el de la B<subrutina>, o declárera con C<state> en lugar de con C<my>.
+
+=item estructura stat
+
+Área X<stat structure>X<data structures, stat structure>interna especial en la que Perl mantiene información sobre el último B<archivo> del que se solicitó información.
+
+=item estado
+
+El B<valor> X<status value>X<values, status>X<exit status>devuelto al B<proceso> primario cuando finaliza uno de sus procesos derivados. Este valor se coloca en la variable especial C<$?>. Los ocho B<bits> superiores son el estado de salida del proceso finalizado, mientras que los ocho bits inferiores identifican la señal (si existe) que hizo que finalizara el proceso. En sistemas Unix, este valor de estado es el mismo que la palabra de estado devuelta por I<wait>(2). Vea C<system> en I<Programming Perl>, capítulo 27, "Functions".
+
+=item STDERR
+
+Vea B<error estándar>.
+
+=item STDIN
+
+Vea B<entrada estándar>.
+
+=item STDIO
+
+vea B<E/S estándar>.
+
+=item STDOUT
+
+Vea B<salida estándar>.
+
+=item secuencia
+
+Flujo X<streaming data>X<processes, streaming data>de datos que entra o sale en un proceso como una serie continua de bytes o caracteres sin la apariencia de estar dividido en paquetes. Es un tipo de L</interfaz>; la L</implementación> subyacente puede dividir los datos en paquetes independientes para su entrega, pero estos detalles se ocultan.
+
+=item cadena
+
+Secuencia X<strings, defined>de caracteres como "Dijo !@#*&%@#*?!".
+Una cadena no tiene por qué ser completamente imprimible.
+
+=item contexto de cadena
+
+Situación X<string context>X<context, string>en la que el entorno de una expresión (es decir, el código que la llama) espera que devuelva una B<cadena>.
+Vea también B<contexto> y B<contexto numérico>.
+
+=item conversión en cadena
+
+El X<stringification>proceso de crear una representación en forma de B<cadena> de un objeto abstracto.
+
+=item struct
+
+Palabra X<struct keyword>clave de C que introduce una definición o un nombre de estructura.
+
+=item estructura
+
+Vea X<structures>B<estructura de datos>.
+
+=item subclase
+
+Vea B<clase derivada>.
+
+=item subpatrón
+
+Componente X<subpatterns, defined>de un patrón de B<expresión regular>.
+
+=item subrutina
+
+Parte X<subroutines, defined>de un programa que tiene un nombre o es accesible de otra manera, de forma que se pueda invocar desde otro punto del programa para realizar alguna tarea secundaria. Una subrutina se suele parametrizar para realizar cosas distintas aunque relacionadas en función de sus B<argumentos> de entrada. Si la subrutina devuelve un B<valor> significativo, también se denomina B<función>.
+
+=item subíndice
+
+B<Valor> X<subscripts>que indica la posición de un B<elemento> concreto de un B<array>.
+
+=item sustitución
+
+Modificación X<substitution (s///) operator, about>X<strings, substitution in>X<s/// (substitution) operator, about>de partes de una cadena mediante el operador C<s///>. (Evitamos usar este término para designar la B<interpolación de variables>).
+
+=item subcadena
+
+Parte X<substrings (term)>de una B<cadena>, que empieza en una posición de B<carácter> (B<desplazamiento>) determinada y mide un número determinado de caracteres.
+
+=item superclase
+
+Vea B<clase base>.
+
+=item superusuario
+
+La X<superusers>persona a la que el B<sistema operativo> deja hacer casi todo. Normalmente, el administrador del sistema o alguien que finge ser el administrador del sistema. En sistemas Unix, el usuario B<root>. En sistemas Windows, generalmente el usuario Administrador.
+
+=item SV
+
+Abreviatura X<scalar values, about>X<values, scalar>para "valor escalar". En el intérprete de Perl cada B<referente> se trata como un miembro de una clase derivada de SV de forma orientada a objetos. En Perl, todo B<valor> se pasa como un puntero C<SV*> del lenguaje C. La estructura de datos (C<struct>) de SV conoce su propio "tipo de referente" y el código es lo suficientemente inteligente (o eso esperamos) para no intentar llamar a una función de B<hash> en una B<subrutina>.
+
+=item modificador/switch
+
+Opción X<switches, about>X<switches>de línea de comandos que influye en el funcionamiento de un programa. Generalmente se especifica con un signo menos delante.
+"Switch" es un alias de la B<instrucción switch>.
+
+=item grupo de modificadores
+
+Combinación X<switch clusters>X<clusters, switch>de varios modificadores de línea de comandos (p. ej., C<-a -b -c>) en un solo modificador (p. ej., C<-abc>).
+Cualquier modificador que tenga un B<argumento> adicional deberá ser el último modificador del grupo.
+
+=item instrucción switch
+
+Técnica X<switch statement>X<statements, switch>de programación que permite evaluar una B<expresión> y, a continuación, en función del valor de la expresión, bifurcar la ejecución al fragmento de código correspondiente a ese valor. También se denominada "estructura case", por una construcción similar del lenguaje Pascal. La mayor parte de las sentencias switch en Perl se detallan en C<given>. Vea "The C<given> statement" en I<Programmin Perl>, capítulo 4, "Statements and Declarations".
+
+=item símbolo
+
+Generalmente, X<symbols>X<symbols>cualquier B<token> o B<metasímbolo>. Se suele usar de manera más específica para designar el tipo de nombre que se puede encontrar en una B<tabla de símbolos>.
+
+=item depurador simbólico
+
+Programa X<symbolic debugger>X<debugger, about>que permite recorrer paso a paso la B<ejecución> del programa, deteniéndose en distintos puntos para ver si se ha producido algún error y, en caso afirmativo, cuál. El término "simbólico" simplemente quiere decir que puede comunicarse con el depurador mediante los mismos símbolos que usó para escribir el programa.
+
+=item vínculo simbólico
+
+Nombre X<symbolic links>X<links, symbolic>de archivo alternativo que apunta al B<nombre de archivo> real, que a su vez apunta al B<archivo> real. Siempre que el B<sistema operativo> intenta analizar una B<ruta de acceso> que contiene un vínculo simbólico, simplemente sustituye el nombre nuevo y continúa con el análisis.
+
+=item referencia simbólica
+
+Variable X<symbolic references>X<references, symbolic>cuyo valor es el nombre de otra variable o subrutina. Al B<desreferenciar> la primera variable, obtiene la segunda. Las referencias simbólicas están prohibidas bajo el I<pragma> C<use strict "refs">.
+
+=item tabla de símbolos
+
+Área X<symbol tables, about>que un B<compilador> usa para recordar símbolos. Un programa como el intérprete perl debe recordar todos los nombres de todas las B<variables>, B<identificadores de archivos> y B<subrutinas> que se han usado. Para ello coloca los nombres en un tabla de símbolos que se implementa en Perl como una B<tabla hash>. Existe una tabla de símbolos independiente para cada B<paquete>, a fin de asignar a cada paquete su propio B<espacio de nombres>.
+
+=item sincrónico
+
+Programación X<synchronous (term)>en la que se puede determinar la secuencia ordenada de eventos; es decir, las cosas suceden de una en una, no a la vez.
+
+=item azúcar sintáctico
+
+Forma X<syntactic sugar>alternativa y más sencilla de escribir algo; un método abreviado.
+
+=item sintaxis
+
+Viene X<syntax, about>del griego y significa "con orden". Especifica cómo deben disponerse las cosas (en particular, los símbolos).
+
+=item árbol de sintaxis
+
+Representación X<syntax tree>interna del programa en la que las B<construcciones> de bajo nivel cuelgan de las construcciones de nivel más alto que las contienen.
+
+=item llamada de sistema
+
+Llamada de B<función> X<syscall function, about>dirigida directamente al B<sistema operativo>. Muchas de las subrutinas y funciones importantes que se usan no son llamadas directas de sistema, sino que se crean una o varias capas por encima del nivel de llamada de sistema. En general, los programadores que usan Perl no tienen que preocuparse por esta distinción. Sin embargo, si sabe qué funciones de Perl son realmente llamadas de sistema, puede predecir cuál de estas establecerá el valor de la variable C<$!> (C<$ERRNO>) cuando se produzca un error. Por desgracia, los programadores principiantes suelen emplear de forma confusa el término "llamada de sistema" para referirse a lo que sucede cuando se llama a la función C<system> de Perl, que es algo que en realidad requiere realizar muchas llamadas de sistema. Para evitar confusiones, casi siempre diremos "llamada de sistema" para referirnos a algo que se puede llamar indirectamente mediante la función C<syscall> de Perl; nunca lo usaremos para algo que se llame a través de la función C<system> de Perl.
+
+=back
+
+=head2 T
+
+=over 4
+
+=item comprobaciones de seguridad
+
+El X<taint checks, about>especial seguimiento que Perl hace al flujo de datos externo a través de su programa y el rechazo de su uso en los comandos del sistema.
+
+=item contaminado
+
+Se X<tainted data, about>dice de los datos provenientes de las manos grasientas de un usuario y que, por lo tanto, deben considerarse como datos inseguros para un programa en el que la seguridad es importante. Perl hace comprobaciones de seguridad si se ejecuta un programa B<setuid> (o B<setgid>), o si se usa el modificador B<-T>.
+
+=item modo contaminación
+
+Ejecutar X<taint mode>bajo el modificador C<–T>, marcando todos los datos externos como sospechosos y rechazar usarlos en los comandos del sistema. Vea el libro I<Programming Perl>, capítulo 20, "Security".
+
+=item TCP
+
+Abreviatura X<TCP (Transmission Control Protocol)>X<Transmission Control Protocol (TCP)>de Protocolo de control de transmisión. Protocolo que envuelve al Protocolo de Internet (IP) y que hace que un programa de aplicación vea un mecanismo de transmisión de paquetes poco fiable como una B<secuencia> de bytes fiable.
+(Casi siempre).
+
+=item terminal/término
+
+Nodo X<terms, defined>hoja de un B<árbol de sintaxis>. Cosa que desempeña el rol gramatical de un B<operando> para los operadores de una expresión.
+
+=item terminador
+
+Un B<carácter> X<terminators (term)>X<characters, terminators>X<strings, terminators in>o B<cadena> que marca el final de otra cadena. La variable C<$/> contiene la cadena con la que termina una operación C<readline>, que C<chomp> elimina del final. No se debe confundir con un B<delimitador> o un B<terminador>. El punto al final de esta frase es un terminador.
+
+=item ternario
+
+Un B<operador> X<ternary operators>que toma tres B<operandos>. A veces también se le llama B<trino>.
+
+=item texto
+
+B<Cadena> o B<archivo> X<text, defined>X<strings, text>X<files, text>X<text>que contiene principalmente caracteres que se pueden imprimir.
+
+=item hilo de ejecución
+
+Igual X<threads (term)>que un proceso generado mediante B<fork>, pero sin la protección de memoria que conlleva el uso de B<fork>. Un hilo de ejecución es más ligero que un proceso completo, en el sentido de que un proceso puede tener varios hilos de ejecución compitiendo en el mismo espacio de memoria del proceso, a menos que se tomen las medidas adecuadas para proteger a unos hilos de otros.
+
+=item atadura
+
+Unión X<tied variables, about>de una variable mágica a su clase de implementación. Vea la función C<tie> en I<Programming Perl>, capítulo 27, "Functions" y capítulo 14, "Tied Variables".
+
+=item Capitular
+
+El tamaño de caja X<titlecase characters>X<characters, titlecase>utilizada para las mayúsculas seguidas por minúsculas, y no por más mayúsculas.
+Algunas veces se le llama tamaño de caja de frase o titular. El inglés no usa las capitulares Unicode, pero las reglas de capitulación para el inglés son más complicadas que simplemente capitalizar el primer carácter de cada palabra.
+
+=item TMTOWTDI
+
+I<There's More Than One Way To Do It> (Se puede hacer de varias maneras), el lema de X<TMTOWTDI acronym>Perl. La noción de que puede haber más de una forma válida de solucionar un problema de programación en un contexto determinado. (Esto no significa que siempre sea mejor tener más maneras de hacer algo ni que todas las maneras posibles sean igualmente deseables, sino simplemente que no tiene que haber una única manera de hacer las cosas).
+
+=item token
+
+Morfema X<tokens, defined>en un lenguaje de programación. Es la unidad de texto con significado semántico más pequeña.
+
+=item tokenizador
+
+Módulo X<tokeners, defined>que divide el texto de un programa en una secuencia de B<tokens> para que el analizador los analice posteriormente.
+
+=item tokenizar
+
+Dividir X<tokenizing>el texto de un programa en B<tokens>. También se llama "separar en lexemas", en cuyo caso obtenemos "lexemas" en lugar de I<tokens>.
+
+=item enfoque de caja de herramientas
+
+La X<toolbox approach>noción de que basta un conjunto completo de herramientas sencillas que funcionan bien juntas para construir todo lo que se desee. Lo cual es fantástico si lo que se pretende es montar un triciclo, pero si vamos a acometer una empresa faraónica necesitaremos nuestro propio taller de maquinaria para fabricar herramientas especiales. Perl es una especie de taller de maquinaria.
+
+=item tópico
+
+La X<topics (term)>cosa en la que estás trabajando. Estructuras como C<while(E<lt>E<gt>)>, C<for>, C<foreach> y C<given> establecen el tópico (tema) por usted al asignarlo a C<$_>, la variable por omisión.
+
+=item transliterar
+
+Convertir X<tr/// (transliteration) operator, about>X<strings, transliteration of>X<transliteration (tr///) operator, about>una representación de cadena en otra mediante la asignación de cada carácter de la cadena de origen a su carácter correspondiente en la cadena resultante. No confundir con la traducción: por ejemplo, el griego I<πολύχρωμος> translitera a I<polychromos> pero se traduce en I<muy colorido>. Vea el operador C<tr///> en el I<Programming Perl>, capítulo 5, "Pattern Matching".
+
+=item desencadenador
+
+Evento X<triggers (term)>que hace que se ejecute un B<controlador>.
+
+=item trino
+
+No X<trinary operators>es un sistema estelar con tres estrellas, sino un B<operador> que se aplica a tres B<operandos>. Es equivalente a B<ternario>.
+
+=item troff
+
+Venerable X<troff language>lenguaje de composición tipográfica del que Perl deriva el nombre de su variable C<$%> y que se usa en secreto para producir libros del camello.
+
+=item verdadero
+
+Cualquier X<true values>X<values, true>valor escalar cuya evaluación no devuelva 0 o C<"">.
+
+=item truncar
+
+Vaciar X<truncate function>X<files, truncating>un archivo de contenido existente, ya sea de forma automática al abrir un archivo para escritura o explícitamente mediante la función C<truncate>.
+
+=item tipo
+
+Vea X<type>B<tipo de datos> y B<clase>.
+
+=item conversión de tipo
+
+Convertir X<type casting>datos de un tipo a otro. C lo permite.
+Perl no lo necesita. Ni lo desea.
+
+=item typedef
+
+Definición X<typedef>de tipo en el lenguaje C y C++.
+
+=item variable léxica con tipo
+
+B<Variable léxica> X<typed lexicals>X<lexical variables, typed lexicals>X<variables, variable>que se declara con un tipo de B<clase>: C<my Pony $guillermo>.
+
+=item typeglob
+
+Uso X<typeglobs, defined>de un solo identificador con el prefijo C<*>. Por ejemplo, C<*nombre> puede significar C<$nombre>, C<@nombre>, C<%nombre>, C<&nombre> o simplemente C<nombre>. El uso que le dé determinará si se interpreta como todas las opciones o como una sola de ellas. Vea "Typeglobs and Filehandles" en I<Programming Perl> capítulo 2, "Bits and Pieces".
+
+=item mapa de tipos
+
+Descripción X<typemap>de cómo pueden transformarse los tipos de C en tipos de Perl y viceversa en un módulo de B<extensión> escrito en B<XS>.
+
+=back
+
+=head2 U
+
+=over 4
+
+=item UDP
+
+Protocolo X<User Datagram Protocol (UDP)>X<UDP (User Datagram Protocol)>X<datagrams, UDP support>de datagramas de usuario, la manera típica de enviar B<datagramas> a través de Internet.
+
+=item UID
+
+El identificador de un usuario. Se X<UID (user ID)>X<user ID (UID)>suele usar en el contexto de propiedad de un B<archivo> o B<proceso>.
+
+=item umask
+
+Máscara X<umask function>de los B<bits de permiso> que deben desactivarse al crear archivos o directorios, a fin de establecer una política de usuarios a los que normalmente se les denegaría el acceso. Vea la función C<umask>.
+
+=item operador unario
+
+Un X<unary operators, about>operador con sólo un B<operando>, como C<!> o C<chdir>. Los operadores unarios son generalmente operadores de prefijo; es decir, preceden al operando. Los operadores C<++> y C<--> pueden ser de prefijo o de postfijo. (Su posición I<cambia> su significado).
+
+=item Unicode
+
+Juego X<Unicode, about>de caracteres que contiene prácticamente todos los juegos de caracteres usados en el planeta. Vea L<http://www.unicode.org>.
+
+=item Unix
+
+Lenguaje X<Unix language>muy grande y en constante evolución, con varias sintaxis alternativas y en gran medida incompatibles con las que todos pueden definir lo que deseen de la forma que prefieran, y normalmente lo hacen. Los hablantes de esta lengua piensan que es fácil de aprender, ya que se adapta fácilmente a sus necesidades, pero las diferencias entre dialectos hacen que la comunicación entre las distintas tribus sea prácticamente imposible; los viajeros deben resignarse a usar un subconjunto tipo I<pidgin> de la lengua. Un programador de shell Unix debe dedicar muchos años al estudio del oficio para lograr que todos le entiendan. Muchos han abandonado esta disciplina y ahora se comunican en un lenguaje similar al Esperanto denominado Perl.
+
+Antiguamente también se llamaba Unix al código que un par de empleados de Bell Labs escribió para usar un equipo PDP-7 que en ese momento estaba más bien ocioso.
+
+=item mayúscula
+
+En Unicode, X<uppercase characters>X<characters, uppercase>no sólo los caracteres con la I<General Category de Uppercase Letter>, sino cualquier carácter con la propiedad I<Uppercase>, incluyendo algunas I<Letter Numbers> y I<Symbols>. No se debe confundir con B<capitalizar>.
+
+=back
+
+=head2 V
+
+=over 4
+
+=item valor
+
+Elemento X<values, defined>de datos real, en contraste con todas las variables, referencias,
+claves, índices, operadores, etc. que se necesitan para acceder al valor.
+
+=item variable
+
+Ubicación X<variables, defined>X<variables>de almacenamiento con nombre que puede contener cualquiera de los distintos tipos de B<valores> que necesite el programa.
+
+=item interpolación de variables
+
+La X<variable interpolation>X<interpolation, variable>B<interpolación> de una variable escalar o de array en una cadena.
+
+=item variádica
+
+Se X<variadic (term)>dice de una B<función> que recibe alegremente un número indeterminado de B<argumentos reales>.
+
+=item vector
+
+En X<vectors>jerga matemática, una lista de B<valores escalares>.
+
+=item virtual
+
+Proporciona X<virtual (term)>el aspecto de algo que no es real, como en "la memoria virtual no es memoria real". (Vea también B<memoria>). Lo opuesto de "virtual" es "transparente", que significa que proporciona la realidad de algo sin la apariencia. Por ejemplo, Perl procesa la codificación de caracteres UTF-8 de longitud variable de forma transparente.
+
+=item contexto vacío
+
+Forma X<void context>X<context, void>de B<contexto escalar> en el que no se espera que una B<expresión> devuelva ningún B<valor> y solo se evalúa por sus B<efectos secundarios>.
+
+=item cadena de versión
+
+B<Cadena> X<v–strings>X<strings, v–strings>de "versión" o de tipo "vector" especificada mediante C<v> seguida de una serie de enteros decimales separados por puntos; por ejemplo, C<v1.20.300.4000>. Cada número se convierte en un B<carácter> con el valor ordinal especificado. (La C<v> es opcional si hay al menos tres enteros).
+
+=back
+
+=head2 W
+
+=over 4
+
+=item advertencia
+
+Mensaje X<warning messages>X<STDERR filehandle, warning messages and>que se imprime en la secuencia B<STDERR> para indicar que puede haber un problema, pero que no es necesario detener la ejecución. Vea la función C<warn> en I<Programming Perl>, capítulo 27, "Functions" y el I<pragma> C<warnings> en el capítulo 28, "Pragmantic Modules".
+
+=item expresión de inspección
+
+Expresión X<watch expression>X<expressions, watch>que, al cambiar de valor, activa un punto de interrupción en el depurador de Perl.
+
+=item Referencia débil
+
+Una X<weak references>X<references, weak>referencia que normalmente no se cuenta. Cuando todas las referencias normales a datos desaparecen, los datos desaparecen. Hay referencias circulares útiles que de otro modo nunca desaparecerían.
+
+=item espacio en blanco
+
+B<Carácter> X<whitespace characters>X<characters, whitespace>que mueve el cursor pero que no imprime nada en pantalla. Normalmente se refiere espacios, tabulaciones, avances de línea, retornos de carro o avances de página. En Unicode, coincide con muchos otros caracteres que Unicode considera espacio en blanco, incluyendo ɴ-ʙʀ .
+
+=item palabra
+
+En lenguaje informático normal, X<words (term)>fragmento de datos del tamaño procesado de forma más eficiente por el equipo, normalmente 32 bits, quitando o sumando algunas potencias de 2. En la cultura Perl normalmente hace referencia a un B<identificador> alfanumérico (guiones bajos incluidos) o a una cadena de B<caracteres> sin espacios en blanco limitada por espacio en blanco o delimitadores de cadena.
+
+=item directorio de trabajo
+
+El B<directorio> X<working directory>X<directories, working>actual, que B<sistema operativo> usa para interpretar las rutas de acceso relativas. El sistema operativo sabe cuál es el directorio actual porque se lo ha comunicado mediante la función C<chdir> o porque empezó en el lugar en el que nació el B<proceso> primario.
+
+=item encapsulador
+
+Programa X<wrappers (term)>o subrutina que ejecuta automáticamente otro programa o subrutina, modificando parte de la entrada o la salida para adaptar mejor el resultado a sus necesidades.
+
+=item WYSIWYG
+
+I<What You See Is What You Get> (Lo que ves es lo que obtienes) X<WYSIWYG acronym>. Se suele usar cuando algo que aparece en pantalla coincide con el aspecto final, como las declaraciones C<format> de Perl. También para indicar lo opuesto a lo mágico, porque todo funciona exactamente de la manera esperada, como el formato de tres argumentos de la función C<open>.
+
+=back
+
+=head2 X
+
+=over 4
+
+=item XS
+
+Un X<XS (eXternal Subroutine)>X<eXternal Subroutine (XS)>subrutina extraordinariamente exportada, expeditivamente excelente, expresivamente externa, ejecutada en un C o C++ actual o en una excitante extensión del lenguaje llamada(exasperantemente) XS.
+
+=item XSUB
+
+B<Subrutina> X<XSUB (term)>externa definida en B<XS>.
+
+=back
+
+=head2 Y
+
+=over 4
+
+=item yacc
+
+I<Yet Another Compiler Compiler> (Y otro compilador más de compiladores) X<yacc acronym>. Un generador de analizadores sin el cual Perl probablemente no habría existido. Vea el archivo I<perly.y> de la distribución de código fuente de Perl.
+
+=back
+
+=head2 Z
+
+=over 4
+
+=item ancho cero
+
+Subpatrón de B<aserción> X<zero–width assertions>X<subpatterns, zero–width assertions>X<assertions (in regexes), zero–width> que coincide con el B<carácter nulo> entre B<caracteres>.
+
+=item zombie
+
+Proceso X<zombie processes>X<processes, zombie>fallecido (finalizado) cuyo proceso primario aún no ha recibido la notificación correspondiente por haber llamado a C<wait> o C<waitpid>. Si usó C<fork>, debe realizar la limpieza de los procesos derivados que finalicen; de lo contrario, la tabla del proceso se llenará y esto no gustará nada al administrador del sistema.
+
+=back
+
+=head1 AUTOR Y COPYRIGHT
+
+Basado en el Glosario de I<Programming Perl>, cuarta edición, de Tom Christiansen, brian d foy y Larry Wall, con Jon Orwant.
+Copyright (c) 2000, 1996, 1991, 2012 O'Reilly Media, Inc.
+Puede distribuir este documento en los mismos términos que Perl.
